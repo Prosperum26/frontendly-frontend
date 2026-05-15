@@ -1,73 +1,140 @@
-# React + TypeScript + Vite
+# Frontendly
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A gamified frontend learning platform built with React, TypeScript, and Vite.
 
-Currently, two official plugins are available:
+## Project Structure
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+This project follows a feature-based architecture for scalability and maintainability:
 
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```
+src/
+├── main.tsx                 # Entry point
+├── App.tsx                  # Router and ThemeProvider setup
+├── index.css                # Global styles with Tailwind directives
+├── assets/                  # Static assets (images, icons, fonts)
+├── components/              # Shared reusable UI components
+│   ├── Button/
+│   ├── Input/
+│   ├── Card/
+│   ├── Modal/
+│   ├── Badge/
+│   ├── Avatar/
+│   ├── ProgressBar/
+│   ├── Toast/
+│   └── Loader/
+├── layouts/                 # Page layout wrappers
+│   ├── MainLayout/
+│   ├── AuthLayout/
+│   └── WorkspaceLayout/
+├── pages/                   # Route-level pages
+│   ├── HomePage.tsx
+│   ├── LearningPathPage.tsx
+│   ├── WorkspacePage.tsx
+│   ├── ChallengeLobbyPage.tsx
+│   ├── ChallengeBattlePage.tsx
+│   ├── ProfilePage.tsx
+│   ├── LeaderboardPage.tsx
+│   ├── LoginPage.tsx
+│   └── NotFoundPage.tsx
+├── features/                # Feature modules
+│   ├── auth/
+│   ├── learning-path/
+│   ├── editor/
+│   ├── challenge/
+│   ├── profile/
+│   ├── leaderboard/
+│   ├── gamification/
+│   └── notifications/
+├── services/                # Global API config
+│   ├── api.ts               # Axios instance
+│   └── socket.ts            # Socket.IO client
+├── hooks/                   # Global custom hooks
+│   ├── useDebounce.ts
+│   ├── useFetch.ts
+│   └── useWindowSize.ts
+├── store/                   # Global state (Zustand)
+│   ├── auth.store.ts
+│   ├── notification.store.ts
+│   └── index.ts
+├── utils/                   # Helper functions
+│   ├── format.ts
+│   ├── validate.ts
+│   └── cn.ts                # Tailwind class merging
+├── constants/               # App-wide constants
+│   ├── routes.ts
+│   ├── xp.ts
+│   └── app.ts
+├── types/                   # Global TypeScript types
+│   ├── api.types.ts
+│   └── common.types.ts
+└── config/
+    ├── env.ts               # Environment variables
+    └── theme.ts             # Theme configuration
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Features
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+- **Authentication**: Login, registration, and session management
+- **Learning Path**: Structured roadmap with milestones and lessons
+- **Code Editor**: Live code editing with real-time preview
+- **Challenges**: Real-time coding battles with matchmaking
+- **Profile**: User stats, badges, and activity tracking
+- **Leaderboard**: Global rankings with tier system
+- **Gamification**: XP system, levels, streaks, and achievements
+- **Notifications**: Real-time notification system
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Tech Stack
+
+- **Frontend**: React 18, TypeScript, Vite
+- **Styling**: Tailwind CSS
+- **State Management**: Zustand
+- **Routing**: React Router v6
+- **Data Fetching**: TanStack Query
+- **API Client**: Axios
+- **Real-time**: Socket.IO
+- **Theming**: next-themes
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js 18+
+- Yarn or npm
+
+### Installation
+
+```bash
+# Install dependencies
+yarn install
+
+# Start development server
+yarn dev
+
+# Build for production
+yarn build
+
+# Preview production build
+yarn preview
 ```
+
+### Environment Variables
+
+Create a `.env` file in the root directory:
+
+```env
+VITE_API_URL=http://localhost:3000/api
+VITE_SOCKET_URL=http://localhost:3000
+```
+
+## Naming Conventions
+
+- **Components**: PascalCase files ending in `.tsx` (e.g., `LearningCard.tsx`)
+- **Hooks**: camelCase starting with `use` (e.g., `useLearningProgress.ts`)
+- **Services/Utils**: camelCase `.ts` files (e.g., `learning.service.ts`, `format.ts`)
+- **Constants**: `UPPER_CASE` inside files (e.g., `const MAX_LEVEL = 50`)
+- **Folders**: `kebab-case` (e.g., `learning-path/`)
+- **Exports**: Each feature exports via `index.ts`
+
+## License
+
+MIT
