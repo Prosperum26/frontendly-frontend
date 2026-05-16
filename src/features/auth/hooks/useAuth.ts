@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useAuthStore } from '../../../store/auth.store';
 import { authService } from '../services/auth.service';
 import { LoginCredentials, RegisterCredentials } from '../types/auth.types';
@@ -14,8 +14,6 @@ export const useAuth = () => {
       localStorage.setItem('accessToken', response.accessToken);
       localStorage.setItem('refreshToken', response.refreshToken);
       setAuth(true, response.user);
-    } catch (error) {
-      throw error;
     } finally {
       setLoading(false);
     }
@@ -28,8 +26,6 @@ export const useAuth = () => {
       localStorage.setItem('accessToken', response.accessToken);
       localStorage.setItem('refreshToken', response.refreshToken);
       setAuth(true, response.user);
-    } catch (error) {
-      throw error;
     } finally {
       setLoading(false);
     }

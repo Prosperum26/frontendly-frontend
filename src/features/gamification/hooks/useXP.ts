@@ -1,14 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
-export const useXP = (userId: string) => {
+export const useXP = () => {
   const [xp, setXP] = useState<number>(0);
-  const [level, setLevel] = useState<number>(1);
-
-  useEffect(() => {
-    // TODO: Fetch XP from API
-    setXP(0);
-    setLevel(1);
-  }, [userId]);
+  const level = Math.max(1, Math.floor(xp / 100) + 1);
 
   const addXP = (amount: number) => {
     setXP((prev) => prev + amount);

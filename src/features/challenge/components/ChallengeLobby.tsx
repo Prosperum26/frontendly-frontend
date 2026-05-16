@@ -2,7 +2,7 @@ import React from 'react';
 import { useMatchmaking } from '../hooks/useMatchmaking';
 
 export const ChallengeLobby: React.FC = () => {
-  const { rooms, loading, loadRooms, createRoom } = useMatchmaking();
+  const { rooms, loading, loadRooms } = useMatchmaking();
 
   React.useEffect(() => {
     loadRooms();
