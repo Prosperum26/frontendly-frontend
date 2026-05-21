@@ -1,3 +1,16 @@
+/* Full-width workspace without horizontal page scroll */
+#root:has(.workspace-shell) {
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  border: none;
+  overflow-x: hidden;
+}
+
+body:has(.workspace-shell) {
+  overflow-x: hidden;
+}
+
 /* Workspace page — Figma tokens */
 .workspace-shell {
   --ws-primary: #2563eb;
@@ -23,11 +36,11 @@
   --ws-font-display: 'Space Grotesk', 'Inter', system-ui, sans-serif;
   --ws-font-mono: 'JetBrains Mono', ui-monospace, monospace;
 
-  width: 100vw;
-  max-width: 100vw;
-  margin-left: calc(50% - 50vw);
-  margin-right: calc(50% - 50vw);
+  width: 100%;
+  max-width: 100%;
   min-height: 100svh;
+  overflow-x: hidden;
+  box-sizing: border-box;
   text-align: left;
   border: none;
   background: var(--ws-page-bg);
@@ -43,11 +56,14 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 48px;
+  padding: 0 clamp(16px, 3vw, 48px);
   height: 70px;
+  width: 100%;
+  max-width: 100%;
   background: var(--ws-white);
   border-bottom: 1px solid var(--ws-border);
   flex-shrink: 0;
+  overflow-x: hidden;
 }
 
 .workspace-nav__left {
@@ -153,22 +169,28 @@
   display: flex;
   flex-direction: column;
   min-height: 0;
+  min-width: 0;
+  overflow-x: hidden;
 }
 
 /* —— Exercise header (Target section) —— */
 .workspace-exercise {
   background: var(--ws-surface);
-  padding: 50px 48px;
+  padding: 50px clamp(16px, 3vw, 48px);
   flex-shrink: 0;
+  box-sizing: border-box;
+  width: 100%;
 }
 
 .workspace-exercise__grid {
   display: grid;
-  grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.9fr) minmax(260px, 0.75fr);
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.9fr) minmax(0, 0.75fr);
   gap: 30px;
+  width: 100%;
   max-width: 1820px;
   margin: 0 auto;
   align-items: stretch;
+  box-sizing: border-box;
 }
 
 .workspace-exercise__intro {
@@ -348,18 +370,28 @@
 
 /* —— Coding area —— */
 .workspace-coding {
-  padding: 0 48px 50px;
+  padding: 0 clamp(16px, 3vw, 48px) 50px;
   flex: 1;
   min-height: 0;
+  min-width: 0;
+  width: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden;
 }
 
 .workspace-coding__panels {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 30px;
+  width: 100%;
   max-width: 1824px;
   margin: 0 auto;
   min-height: 650px;
+  box-sizing: border-box;
+}
+
+.workspace-coding__panels > * {
+  min-width: 0;
 }
 
 /* Editor panel */
@@ -429,16 +461,18 @@
 .workspace-editor__body {
   flex: 1;
   padding: 32px;
-  overflow: auto;
+  overflow-x: auto;
+  overflow-y: auto;
   font-family: var(--ws-font-mono);
   font-size: 14px;
   line-height: 28px;
+  min-width: 0;
 }
 
 .workspace-editor__line {
   display: flex;
   gap: 16px;
-  white-space: pre;
+  min-width: min-content;
 }
 
 .workspace-editor__ln {
@@ -640,11 +674,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0 48px;
+  padding: 0 clamp(16px, 3vw, 48px);
   height: 100px;
+  width: 100%;
   background: var(--ws-white);
   border-top: 1px solid var(--ws-border);
   flex-shrink: 0;
+  overflow-x: hidden;
 }
 
 .workspace-footer__inner {
@@ -653,6 +689,7 @@
   justify-content: space-between;
   width: 100%;
   max-width: 1824px;
+  box-sizing: border-box;
 }
 
 .workspace-footer__back {
