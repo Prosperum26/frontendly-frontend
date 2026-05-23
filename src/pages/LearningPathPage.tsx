@@ -138,7 +138,7 @@ export const LearningPathPage: React.FC = () => {
             <img src="/learning-path/certificate_icon.svg"></img>
             CERTIFICATION PATH
           </div>
-          <h1 className="text-4xl font-black text-h mb-4 tracking-tight leading-tight">
+          <h1 className="text-4xl font-[#191B23] text-h mb-4 tracking-tight leading-tight">
             Frontend Learning Path
           </h1>
           <p className="text-slate-500 text-sm font-medium leading-relaxed max-w-2xl">

@@ -15,7 +15,7 @@ export const MilestoneCard: React.FC<MilestoneCardProps> = ({ milestone }) => {
 
   return (
     <div
-      className={`p-6 rounded-2xl border-2 mb-8 bg-[C2C6D6] transition-all ${
+      className={`p-6 rounded-2xl border-2 mb-8 bg-[#C2C6D6] transition-all ${
         milestone.completed
           ? "border-emerald-500"
           : isInProgress
