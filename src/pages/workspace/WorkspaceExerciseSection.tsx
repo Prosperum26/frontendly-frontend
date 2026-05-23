@@ -1,13 +1,11 @@
 import React, { useState } from 'react';
+import type { ExerciseDefinition } from '../../features/editor/types/editor.types';
 
-const REQUIREMENTS = [
-  { id: '1', label: 'Use CSS Grid with a 2-column asymmetric layout', done: true },
-  { id: '2', label: 'Hero cell spans 2 rows on the left column', done: true },
-  { id: '3', label: 'Maintain 16px gap between all grid items', done: false },
-  { id: '4', label: 'Layout remains fluid on viewports under 768px', done: false },
-];
+export interface WorkspaceExerciseSectionProps {
+  exercise: ExerciseDefinition;
+}
 
-export const WorkspaceExerciseSection: React.FC = () => {
+export const WorkspaceExerciseSection: React.FC<WorkspaceExerciseSectionProps> = ({ exercise }) => {
   const [expanded, setExpanded] = useState(true);
 
   return (
@@ -23,10 +21,10 @@ export const WorkspaceExerciseSection: React.FC = () => {
           <div className="workspace-exercise-panel__summary">
             <span className="workspace-exercise-panel__summary-badge">
               <span className="workspace-exercise__badge-icon" aria-hidden />
-              Practice 1
+              {exercise.practiceLabel}
             </span>
             <h2 id="workspace-exercise-title" className="workspace-exercise-panel__summary-title">
-              Building a Responsive Grid
+              {exercise.title}
             </h2>
           </div>
           <button
@@ -61,18 +59,13 @@ export const WorkspaceExerciseSection: React.FC = () => {
         <div id="workspace-exercise-panel-body" className="workspace-exercise-panel__body">
           <div className="workspace-exercise__grid">
             <div className="workspace-exercise__intro">
-              <p className="workspace-exercise__desc">
-                In this exercise, you will implement a modern bento-style grid layout using CSS Grid.
-                Your goal is to create an asymmetric layout that maintains visual hierarchy while
-                remaining fully fluid. Pay close attention to the aspect ratios and padding between
-                elements.
-              </p>
+              <p className="workspace-exercise__desc">{exercise.description}</p>
             </div>
 
             <aside className="workspace-requirements">
               <h3 className="workspace-requirements__title">Requirements</h3>
               <ul className="workspace-requirements__list">
-                {REQUIREMENTS.map((item) => (
+                {exercise.requirements.map((item) => (
                   <li key={item.id} className="workspace-requirements__item">
                     <span
                       className={

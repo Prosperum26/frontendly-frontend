@@ -9,6 +9,7 @@
 
 body:has(.workspace-shell) {
   overflow-x: hidden;
+  overflow-y: auto;
 }
 
 /* Workspace page — Figma tokens */
@@ -39,7 +40,9 @@ body:has(.workspace-shell) {
   width: 100%;
   max-width: 100%;
   min-height: 100svh;
+  height: auto;
   overflow-x: hidden;
+  overflow-y: visible;
   box-sizing: border-box;
   text-align: left;
   border: none;
@@ -165,21 +168,29 @@ body:has(.workspace-shell) {
 
 /* —— Main scroll area —— */
 .workspace-main {
-  flex: 1;
+  flex: 1 1 auto;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 16px;
   min-height: 0;
   min-width: 0;
+  width: 100%;
+  padding: 12px clamp(16px, 3vw, 48px) 16px;
+  box-sizing: border-box;
   overflow-x: hidden;
+  overflow-y: auto;
 }
 
 /* —— Exercise panel (collapsible) —— */
 .workspace-exercise {
-  background: var(--ws-surface);
-  padding: 24px clamp(16px, 3vw, 48px);
+  background: transparent;
+  padding: 0;
   flex-shrink: 0;
   box-sizing: border-box;
   width: 100%;
+  max-width: 1820px;
 }
 
 .workspace-exercise-panel {
@@ -460,30 +471,38 @@ body:has(.workspace-shell) {
   border-radius: 4px;
 }
 
-/* —— Coding area —— */
+/* —— Coding area (main focus of the page) —— */
 .workspace-coding {
-  padding: 0 clamp(16px, 3vw, 48px) 50px;
-  flex: 1;
-  min-height: 0;
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  /* Tall workspace: scroll page + scroll inside Monaco */
+  min-height: max(720px, calc(100svh - 220px));
+  height: max(720px, calc(100svh - 220px));
   min-width: 0;
-  width: 100%;
-  box-sizing: border-box;
-  overflow-x: hidden;
-}
-
-.workspace-coding__panels {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: 30px;
   width: 100%;
   max-width: 1824px;
-  margin: 0 auto;
-  min-height: 650px;
   box-sizing: border-box;
 }
 
-.workspace-coding__panels > * {
-  min-width: 0;
+.workspace-coding--editor {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  border: 1px solid var(--ws-border, #c7c5d4);
+  border-radius: 12px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.workspace-coding--editor .editor-panels {
+  flex: 1 1 auto;
+  min-height: 640px;
+  overflow: hidden;
 }
 
 /* Editor panel */
@@ -831,8 +850,8 @@ body:has(.workspace-shell) {
     grid-template-columns: 1fr;
   }
 
-  .workspace-coding__panels {
-    grid-template-columns: 1fr;
+  .workspace-coding {
+    min-height: clamp(480px, calc(100svh - 280px), 800px);
   }
 
   .workspace-nav {

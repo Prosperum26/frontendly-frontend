@@ -13,7 +13,8 @@ import ProfilePage from './pages/ProfilePage';
 import LeaderboardPage from './pages/LeaderboardPage';
 import LoginPage from './pages/LoginPage';
 import NotFoundPage from './pages/NotFoundPage';
-import { ROUTES } from './constants/routes';
+import { DEFAULT_EXERCISE_ID } from './features/editor/mocks/exercises.mock';
+import { ROUTES, workspacePath } from './constants/routes';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -47,6 +48,10 @@ function App() {
             {/* Workspace routes */}
             <Route element={<WorkspaceLayout />}>
               <Route path={ROUTES.WORKSPACE} element={<WorkspacePage />} />
+              <Route
+                path="/workspace"
+                element={<Navigate to={workspacePath(DEFAULT_EXERCISE_ID)} replace />}
+              />
               <Route path={ROUTES.CHALLENGE_BATTLE} element={<ChallengeBattlePage />} />
             </Route>
 
