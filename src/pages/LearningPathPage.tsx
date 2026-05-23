@@ -2,7 +2,8 @@ import React from "react";
 import { MilestoneCard } from "../features/learning-path/components/MilestoneCard";
 import type { Milestone } from "../features/learning-path/types/learning-path.types";
 
-//dummy data theo mẫu figma 
+//dummy data theo mẫu figma
+//tạo tạm 3 milestone dummy để test 3 giai đoạn thôi nha: hoàn thành - đang diễn ra - bị khóa :v
 const DUMMY_MILESTONES: Milestone[] = [
   {
     id: "m1",

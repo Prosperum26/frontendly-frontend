@@ -37,9 +37,15 @@ export const MilestoneCard: React.FC<MilestoneCardProps> = ({ milestone }) => {
           </div>
           <div>
             <div className="flex items-center gap-2 mb-1">
+
+              {/* Chưa chỉnh lại màu cho từng milestone, 
+              hiện tại nó vẫn đang còn màu đen đồng bộ: 
+              hoàn thành (xanh) - đang làm (cam) - khóa(xám)*/}
               <span className="text-[10px] font-black uppercase text-slate-400 tracking-widest">
                 Milestone {milestone.order}
               </span>
+
+              {/*Chưa chỉnh lại căn phải cho mấy cái label + fix nhỏ cái box lại cho đẹp :v */}
               {milestone.completed && (
                 <span className="bg-emerald-500 text-white text-[9px] font-bold px-2 py-0.5 rounded-full uppercase">
                   Completed
