@@ -20,7 +20,7 @@ export const MilestoneCard: React.FC<MilestoneCardProps> = ({ milestone }) => {
   } else if (isInProgress) {
     statusClass = "is-in-progress";
   }
-  
+
   return (
     <div className={`milestone-card ${statusClass}`}>
       {/* Milestone Header */}
@@ -52,7 +52,7 @@ export const MilestoneCard: React.FC<MilestoneCardProps> = ({ milestone }) => {
 
               {milestone.completed && (
                 <span className="milestone-badge badge-completed">
-                  Completed
+                  100% Completed
                 </span>
               )}
               {isInProgress && (
@@ -65,7 +65,6 @@ export const MilestoneCard: React.FC<MilestoneCardProps> = ({ milestone }) => {
           </div>
         </div>
       </div>
-
       {/* Thanh tiến độ */}
       {isInProgress && (
         <div className="milestone-progress-section">
