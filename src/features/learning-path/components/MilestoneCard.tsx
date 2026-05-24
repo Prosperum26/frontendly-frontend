@@ -1,5 +1,6 @@
 import React from "react";
 import type { Milestone } from "../types/learning-path.types";
+import "./MilestoneCard.css";
 
 interface MilestoneCardProps {
   milestone: Milestone;
@@ -13,67 +14,68 @@ export const MilestoneCard: React.FC<MilestoneCardProps> = ({ milestone }) => {
 
   const isInProgress = !milestone.completed && progressPercent > 0;
 
+  let statusClass = "is-locked";
+  if (milestone.completed) {
+    statusClass = "is-completed";
+  } else if (isInProgress) {
+    statusClass = "is-in-progress";
+  }
+  
   return (
-    <div
-      className={`p-6 rounded-2xl border-2 mb-8 bg-[#C2C6D6] transition-all ${
-        milestone.completed
-          ? "border-emerald-500"
-          : isInProgress
-            ? "border-amber-400 shadow-xl"
-            : "border-slate-100 opacity-60 grayscale-[0.3]"
-      }`}
-    >
+    <div className={`milestone-card ${statusClass}`}>
       {/* Milestone Header */}
-      <div className="flex justify-between items-start mb-6">
-        <div className="flex items-center gap-4">
-          <div className={`p-3 rounded-xl text-white ${milestone.completed}`}>
+      <div className="milestone-header">
+        <div className="milestone-info">
+          <div className="milestone-icon">
             {milestone.completed ? (
-              <img src="/learning-path/completed_milestone.svg"></img>
+              <img
+                src="src/assets/learning-path/completed_milestone.svg"
+                alt="Completed"
+              />
             ) : isInProgress ? (
-              <img src="/learning-path/InProgress_milestone.svg"></img>
+              <img
+                src="src/assets/learning-path/InProgress_milestone.svg"
+                alt="In Progress"
+              />
             ) : (
-              <img src="/learning-path/Locked_milestone.svg"></img>
+              <img
+                src="src/assets/learning-path/Locked_milestone.svg"
+                alt="Locked"
+              />
             )}
           </div>
           <div>
-            <div className="flex items-center gap-2 mb-1">
-
-              {/* Chưa chỉnh lại màu cho từng milestone, 
-              hiện tại nó vẫn đang còn màu đen đồng bộ: 
-              hoàn thành (xanh) - đang làm (cam) - khóa(xám)*/}
-              <span className="text-[10px] font-black uppercase text-slate-400 tracking-widest">
+            <div className="milestone-meta">
+              <span className="milestone-order">
                 Milestone {milestone.order}
               </span>
 
-              {/*Chưa chỉnh lại căn phải cho mấy cái label + fix nhỏ cái box lại cho đẹp :v */}
               {milestone.completed && (
-                <span className="bg-emerald-500 text-white text-[9px] font-bold px-2 py-0.5 rounded-full uppercase">
+                <span className="milestone-badge badge-completed">
                   Completed
                 </span>
               )}
               {isInProgress && (
-                <span className="bg-amber-500 text-white text-[9px] font-bold px-2 py-0.5 rounded-full uppercase">
+                <span className="milestone-badge badge-progress">
                   In Progress
                 </span>
               )}
             </div>
-            <h3 className="text-2xl font-black text-slate-800 tracking-tight">
-              {milestone.title}
-            </h3>
+            <h3 className="milestone-title">{milestone.title}</h3>
           </div>
         </div>
       </div>
 
       {/* Thanh tiến độ */}
       {isInProgress && (
-        <div className="mt-8 pt-5 border-t border-slate-50">
-          <div className="flex justify-between text-[10px] font-black text-blue-600 mb-2 uppercase tracking-widest">
+        <div className="milestone-progress-section">
+          <div className="milestone-progress-header">
             <span>Progress to next Milestone</span>
             <span>{progressPercent}%</span>
           </div>
-          <div className="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
+          <div className="milestone-progress-track">
             <div
-              className="bg-blue-600 h-full rounded-full transition-all duration-1000 ease-out"
+              className="milestone-progress-fill"
               style={{ width: `${progressPercent}%` }}
             ></div>
           </div>

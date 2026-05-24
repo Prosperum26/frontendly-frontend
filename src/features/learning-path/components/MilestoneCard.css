@@ -1,0 +1,173 @@
+
+.milestone-card {
+  padding: 24px;
+  border-radius: 12px;
+  background-color: var(--color-main-bg);
+  border: 1px solid #e2e8f0; /* Viền xám nhạt mặc định */
+  margin-bottom: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+  font-family: var(--font-inter);
+}
+
+.milestone-card.is-completed {
+  border-color: #e2e8f0; 
+}
+
+.milestone-card.is-in-progress {
+  border-color: var(--color-warning); /* Viền cam cho phần đang học */
+  box-shadow: 0 10px 15px -3px rgba(245, 158, 11, 0.1);
+}
+
+.milestone-card.is-locked {
+  background-color: var(--color-surface); /* Nền xám nhạt */
+  opacity: 0.7;
+}
+
+.milestone-top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.milestone-header-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.milestone-icon-box {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+}
+
+.is-completed .milestone-icon-box { background-color: rgba(16, 185, 129, 0.15); color: var(--color-success); }
+.is-in-progress .milestone-icon-box { background-color: rgba(245, 158, 11, 0.15); color: var(--color-warning); }
+.is-locked .milestone-icon-box { background-color: #e2e8f0; color: #94a3b8; }
+
+/* Tiêu đề Milestone */
+.milestone-subtitle {
+  display: block;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 4px;
+}
+
+.is-completed .milestone-subtitle { color: var(--color-success); }
+.is-in-progress .milestone-subtitle { color: var(--color-warning); }
+.is-locked .milestone-subtitle { color: #94a3b8; }
+
+.milestone-title {
+  font-family: var(--font-heading);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--color-heading);
+  margin: 0;
+}
+
+.milestone-badge {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 6px 14px;
+  border-radius: 999px;
+  text-align: right;
+}
+
+.badge-completed {
+  background-color: var(--color-success);
+  color: #ffffff;
+}
+
+.badge-progress {
+  background-color: rgba(245, 158, 11, 0.15);
+  color: #b45309;
+}
+
+/* lesson grid */
+.lessons-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.lesson-card {
+  padding: 16px;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+  background-color: var(--color-main-bg);
+}
+
+.lesson-card.is-active {
+  border: 2px solid var(--color-primary);
+}
+
+.lesson-type {
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: #64748b;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.lesson-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-heading);
+}
+
+/* --- THANH TIẾN ĐỘ --- */
+.milestone-progress-section {
+  margin-top: 24px;
+  padding-top: 24px;
+}
+
+.milestone-progress-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--color-heading);
+  margin-bottom: 12px;
+}
+
+.milestone-progress-percent {
+  color: var(--color-primary);
+}
+
+.milestone-progress-track {
+  width: 100%;
+  background-color: #e2e8f0;
+  border-radius: 999px;
+  height: 6px;
+  overflow: hidden;
+}
+
+.milestone-progress-fill {
+  background-color: var(--color-primary);
+  height: 100%;
+  border-radius: 999px;
+  transition: width 1s ease-out;
+}
+
+/* Responsive cho màn hình nhỏ */
+@media (max-width: 1024px) {
+  .lessons-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 640px) {
+  .lessons-grid {
+    grid-template-columns: 1fr;
+  }
+}

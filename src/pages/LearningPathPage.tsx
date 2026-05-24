@@ -1,4 +1,5 @@
 import React from "react";
+import "./LearningPathPage.css";
 import { MilestoneCard } from "../features/learning-path/components/MilestoneCard";
 import type { Milestone } from "../features/learning-path/types/learning-path.types";
 
@@ -130,30 +131,36 @@ const DUMMY_MILESTONES: Milestone[] = [
   },
 ];
 
+
 export const LearningPathPage: React.FC = () => {
   return (
-    <div className="flex w-full min-h-screen bg-[#f8fafc]">
-      <div className="flex-1 p-8 lg:p-12">
-        <header className="mb-12 max-w-4xl">
-          <div className="flex items-center gap-2 text-blue-600 font-black text-[10px] mb-3 uppercase tracking-[0.25em]">
-            <img src="/learning-path/certificate_icon.svg"></img>
+    <div className="learning-path-wrapper">
+      <aside></aside>
+      <div className="learning-path-content">
+        <header className="learning-path-header">
+          <div className="learning-path-badge">
+            <img
+              src="src\assets\learning-path\certificate_icon.svg"
+              alt="Certificate Icon"
+            />
             CERTIFICATION PATH
           </div>
-          <h1 className="text-4xl font-[#191B23] text-h mb-4 tracking-tight leading-tight">
-            Frontend Learning Path
-          </h1>
-          <p className="text-slate-500 text-sm font-medium leading-relaxed max-w-2xl">
+
+          <h1 className="learning-path-title">Frontend Learning Path</h1>
+          <p className="learning-path-desc">
             Master the art of building modern interfaces from core fundamentals
             to advanced DOM manipulation and performance debugging.
           </p>
         </header>
 
-        <section className="max-w-5xl">
+        <section className="learning-path-section">
           {DUMMY_MILESTONES.map((m) => (
             <MilestoneCard key={m.id} milestone={m} />
           ))}
         </section>
       </div>
+
+      <aside></aside>
     </div>
   );
 };

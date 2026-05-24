@@ -1,0 +1,54 @@
+.learning-path-wrapper {
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+}
+
+.learning-path-content {
+  flex: 1;
+  padding: 32px;
+  background-color: var(--color-surface);
+
+  @media (min-width: 1024px) {
+    padding: 48px;
+  }
+}
+
+.learning-path-header {
+  margin-bottom: 48px;
+  max-width: 896px;
+}
+
+.learning-path-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--color-primary);
+  font-weight: 900;
+  font-size: 10px;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.25em;
+}
+
+.learning-path-title {
+  font-family: var(--font-heading);
+  font-size: 36px;
+  color: var(--color-heading);
+  margin-bottom: 16px;
+  letter-spacing: -0.025em;
+  line-height: 1.25;
+}
+
+.learning-path-desc {
+  font-family: var(--font-inter);
+  color: var(--color-body);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.625;
+  max-width: 672px;
+}
+
+.learning-path-section {
+  max-width: 1024px;
+}
