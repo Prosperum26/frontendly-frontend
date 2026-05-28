@@ -71,7 +71,7 @@ const DUMMY_MILESTONES: Milestone[] = [
         title: "CSS Positioning",
         description: "",
         type: "theory",
-        completed: false,
+        completed: true,
         xpReward: 100,
       },
       {
@@ -79,7 +79,7 @@ const DUMMY_MILESTONES: Milestone[] = [
         title: "CSS Animation",
         description: "",
         type: "practice",
-        completed: false,
+        completed: true,
         xpReward: 200,
       },
       {

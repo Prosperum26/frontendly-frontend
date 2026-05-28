@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { learningService } from '../services/learning.service';
 import type { Milestone } from '../types/learning-path.types';
+import dummyRoadmap from '../../data/dummy/roadmap.json';
 
 export const useLoadMilestones = () => {
   const [milestones, setMilestones] = useState<Milestone[]>([]);
@@ -12,7 +13,8 @@ export const useLoadMilestones = () => {
         const data = await learningService.fetchRoadmap();
         setMilestones(data);
       } catch (error) {
-        console.error('Failed to load milestones:', error);
+        console.warn('Backend fetch failed, using dummy data');
+        setMilestones(dummyRoadmap as Milestone[]);
       } finally {
         setLoading(false);
       }

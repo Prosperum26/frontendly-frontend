@@ -1,0 +1,23 @@
+[
+  {
+    "id": 1,
+    "title": "Foundation Phase",
+    "description": "Responsive landing page, semantic HTML, CSS Grid/Flexbox layouts",
+    "targetDate": "2024-09-01",
+    "progress": "Completed"
+  },
+  {
+    "id": 2,
+    "title": "JS Logic Gate",
+    "description": "Working To-Do app with CRUD functionality",
+    "targetDate": "2024-10-15",
+    "progress": "In Progress"
+  },
+  {
+    "id": 3,
+    "title": "Framework Integration",
+    "description": "Component library created in React",
+    "targetDate": "2024-12-01",
+    "progress": "Planned"
+  }
+]
