@@ -58,7 +58,17 @@ export const LearningPathPage: React.FC = () => {
     loadRoadmapData();
   }, [skillId]);
 
-  return (
+  useEffect(() => {
+    if (!isLoading && milestones.length) {
+      const timer = setTimeout(() => {
+        const target = document.querySelector('.milestone-card.is-in-progress') as HTMLElement;
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 150);
+      return () => clearTimeout(timer);
+    }
+  }, [isLoading, milestones]);
     <div className="learning-path-wrapper">
       <SideBar onWatchIntro={() => setIsModuleOpen(true)} />
       <div className="learning-path-content">

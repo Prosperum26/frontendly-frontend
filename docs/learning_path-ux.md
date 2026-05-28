@@ -2,7 +2,7 @@
 
 Tài liệu này định nghĩa các tiêu chuẩn trải nghiệm người dùng (UX) và giải pháp kỹ thuật chi tiết phía Client-side (Frontend) áp dụng cho tính năng Bản đồ Lộ trình học tập.
 
-### 1. Tự động cuộn màn hình (Auto-scroll)
+### [x]1. Tự động cuộn màn hình (Auto-scroll)
 * **Trải nghiệm người dùng (UX):** Khi người học truy cập trang Lộ trình, màn hình tự động cuộn mượt mà (Smooth Scroll) tập trung vào chặng/bài học đang học dở, giúp họ tiếp tục ngay mà không cần cuộn chuột tìm kiếm.
 * **Giải pháp kỹ thuật (FE):**
     * Sau khi fetch thành công dữ liệu lộ trình từ API, sử dụng React `useEffect` quét qua danh sách để tìm Node đầu tiên có thuộc tính `status === 'in_progress'`.

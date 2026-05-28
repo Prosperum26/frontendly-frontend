@@ -18,6 +18,7 @@ import type { Milestone } from "../types/learning-path.types";
 
 interface MilestoneCardProps {
   milestone: Milestone;
+  inProgressRef?: React.RefObject<HTMLDivElement>;
 }
 
 const getLessonIcon = (title: string, size: number = 14) => {
@@ -88,6 +89,7 @@ export const MilestoneCard: React.FC<MilestoneCardProps> = ({ milestone }) => {
     <div
       className={`milestone-card ${statusClass}`}
       onClick={handleCardClick}
+      ref={isInProgress ? inProgressRef : undefined}
       style={{
         cursor: isLocked ? "not-allowed" : "pointer",
         opacity: isLocked ? 0.5 : 1,
@@ -168,7 +170,6 @@ export const MilestoneCard: React.FC<MilestoneCardProps> = ({ milestone }) => {
                 {index + 1}. {lesson.title}
               </div>
 
-              {/* Tooltip Popup for locked stages */}
               {activeTooltipLessonId === lesson.id && (
                 <div
                   style={{
