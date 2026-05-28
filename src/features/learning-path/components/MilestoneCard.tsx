@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import {
   LayoutGrid,
   FileCode2,
@@ -47,6 +48,7 @@ const getLessonIcon = (title: string, size: number = 14) => {
 };
 
 export const MilestoneCard: React.FC<MilestoneCardProps> = ({ milestone }) => {
+  const navigate = useNavigate();
   const completedLessons = milestone.lessons.filter((l) => l.completed).length;
   const totalLessons = milestone.lessons.length;
   const progressPercent =
@@ -62,8 +64,12 @@ export const MilestoneCard: React.FC<MilestoneCardProps> = ({ milestone }) => {
     statusClass = "is-in-progress";
   }
 
+  const handleCardClick = () => {
+    navigate(`/learning-path/milestone/${milestone.id}`);
+  };
+
   return (
-    <div className={`milestone-card ${statusClass}`}>
+    <div className={`milestone-card ${statusClass}`} onClick={handleCardClick} style={{ cursor: "pointer" }}>
       {/* Milestone Header */}
       <div className="milestone-top-row">
         <div className="milestone-header-left">

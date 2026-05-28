@@ -6,6 +6,7 @@ import AuthLayout from './layouts/AuthLayout';
 import WorkspaceLayout from './layouts/WorkspaceLayout';
 import HomePage from './pages/HomePage';
 import LearningPathPage from './pages/LearningPathPage';
+import { MilestoneDetailPage, TheoryPage, LessonComplete } from './features/learning-path';
 import WorkspacePage from './pages/WorkspacePage';
 import ChallengeLobbyPage from './pages/ChallengeLobbyPage';
 import ChallengeBattlePage from './pages/ChallengeBattlePage';
@@ -39,6 +40,9 @@ function App() {
             <Route element={<MainLayout />}>
               <Route path={ROUTES.HOME} element={<HomePage />} />
               <Route path={ROUTES.LEARNING_PATH} element={<LearningPathPage />} />
+              <Route path={ROUTES.MILESTONE_DETAIL} element={<MilestoneDetailPage />} />
+              <Route path={ROUTES.LESSON_THEORY} element={<TheoryPage />} />
+              <Route path={ROUTES.LESSON_COMPLETE} element={<LessonComplete />} />
               <Route path={ROUTES.CHALLENGE_LOBBY} element={<ChallengeLobbyPage />} />
               <Route path={ROUTES.PROFILE} element={<ProfilePage />} />
               <Route path={ROUTES.LEADERBOARD} element={<LeaderboardPage />} />
