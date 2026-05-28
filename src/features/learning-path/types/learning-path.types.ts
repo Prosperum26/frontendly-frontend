@@ -15,6 +15,7 @@ export interface Lesson {
   type: "theory" | "practice";
   completed: boolean;
   xpReward: number;
+  isLocked: boolean;
 }
 
 export interface Progress {

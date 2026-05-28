@@ -4,36 +4,7 @@ import api from "../../../services/api";
 import "./SideBar.css";
 import defaultAvatar from "../../../assets/default_avatar.png";
 
-// TypeScript interfaces for API responses
-interface UserResponse {
-  status: string;
-  data: UserData;
-}
-interface UserData {
-  id: string;
-  name: string;
-  avatarUrl: string;
-  totalXp: number;
-  currentLevel: number;
-  // other fields may exist
-}
-interface ProgressResponse {
-  level: number;
-  xp: number;
-  xpToNextLevel: number;
-  progressPercent: number;
-  streak?: number | string;
-  rank?: number | string;
-}
-interface BadgesResponse {
-  badges: Badge[];
-}
-interface Badge {
-  id: string;
-  name: string;
-  icon: string;
-  isUnlocked: boolean;
-}
+import { UserResponse, UserData, ProgressResponse, BadgesResponse, Badge } from "../types/apiResponses";
 
 interface SideBarProps {
   onWatchIntro: () => void;
@@ -54,18 +25,15 @@ export const SideBar: React.FC<SideBarProps> = ({ onWatchIntro }) => {
         const [userRes, progressRes, badgesRes] = await Promise.all([
           api.get("/v1/users/me"),
           api.get("/v1/users/progress"),
-          api.get("/v1/users/badges"), // Correct endpoint
+          api.get("/v1/users/badges"),
         ]);
 
-        // User response has a wrapper under .data.data
         const uData = userRes?.data?.data ?? {};
         setUserData(uData);
 
-        // Progress response is flat
         const pData = progressRes?.data ?? {};
         setProgressData(pData);
 
-        // Badges response may be wrapped or flat (handle both)
         const bData = badgesRes?.data?.badges ?? badgesRes?.data ?? [];
         setBadgesData(Array.isArray(bData) ? bData : []);
       } catch (err: any) {
