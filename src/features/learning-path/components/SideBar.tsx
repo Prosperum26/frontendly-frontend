@@ -1,6 +1,7 @@
 import React from "react";
 import { PlayCircle, Flame, Trophy, Plus, Star, Zap, Sun } from "lucide-react";
 import "./SideBar.css";
+import defaultAvatar from "../../../assets/default_avatar.png";
 interface SideBarProps {
   onWatchIntro: () => void;
 }
@@ -43,7 +44,7 @@ export const SideBar: React.FC<SideBarProps> = ({ onWatchIntro }) => {
           <div className="profile-info">
             <div className="avatar-wrapper">
               <img
-                src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&h=150&q=80"
+                src={defaultAvatar}
                 alt="Alex Rivera"
                 className="avatar"
               />

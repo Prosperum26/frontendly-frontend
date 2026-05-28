@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useParams, useNavigate, Link } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import {
   ArrowLeft,
   Bell,
@@ -7,12 +7,11 @@ import {
   Grid,
   Columns,
   Layers,
-  Headphones,
   CheckCircle,
   Circle,
-  HelpCircle
 } from "lucide-react";
 import { DUMMY_MILESTONE_DETAILS } from "../../../data/dummy/milestoneDetail";
+import defaultAvatar from "../../../assets/default_avatar.png";
 import "./TheoryPage.css";
 
 export const TheoryPage: React.FC = () => {
@@ -65,9 +64,11 @@ export const TheoryPage: React.FC = () => {
         
         <nav className="tp-header-nav">
           <span className={activeTab === "Home" ? "active" : ""} onClick={() => setActiveTab("Home")}>Home</span>
-          <span className={activeTab === "Learn" ? "active" : ""} onClick={() => setActiveTab("Learn")}>Learn</span>
-          <span className={activeTab === "Challenge" ? "active" : ""} onClick={() => setActiveTab("Challenge")}>Challenge</span>
-          <span className={activeTab === "About" ? "active" : ""} onClick={() => setActiveTab("About")}>About</span>
+          <span className={activeTab === "Learn Path" ? "active" : ""} onClick={() => setActiveTab("Learn Path")}>Learn Path</span>
+          <span className={activeTab === "Milestone Roadmap" ? "active" : ""} onClick={() => setActiveTab("Milestone Roadmap")}>Milestone Roadmap</span>
+          <span className={activeTab === "Lesson" ? "active" : ""} onClick={() => setActiveTab("Lesson")}>Lesson</span>
+          <span className={activeTab === "Leaderboard" ? "active" : ""} onClick={() => setActiveTab("Leaderboard")}>Leaderboard</span>
+          <span className={activeTab === "Profile" ? "active" : ""} onClick={() => setActiveTab("Profile")}>Profile</span>
         </nav>
 
         <div className="tp-header-right">
@@ -78,7 +79,7 @@ export const TheoryPage: React.FC = () => {
             <Trophy size={20} />
           </button>
           <img
-            src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=80&h=80&q=80"
+            src={defaultAvatar}
             alt="Alex Rivera"
             className="tp-profile-pic"
           />
