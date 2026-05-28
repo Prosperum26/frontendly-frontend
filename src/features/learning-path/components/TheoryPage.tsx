@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   ArrowLeft,
@@ -10,6 +10,7 @@ import {
   CheckCircle,
   Circle,
 } from "lucide-react";
+import api from "../../../services/api";
 import { DUMMY_MILESTONE_DETAILS } from "../../../data/dummy/milestoneDetail";
 import defaultAvatar from "../../../assets/default_avatar.png";
 import "./TheoryPage.css";
@@ -20,6 +21,32 @@ export const TheoryPage: React.FC = () => {
     lessonId: string;
   }>();
   const navigate = useNavigate();
+
+  const [theoryData, setTheoryData] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const stageId = lessonId || milestoneId;
+
+  useEffect(() => {
+    const fetchTheory = async () => {
+      if (!stageId) return;
+      setIsLoading(true);
+      setError(null);
+      try {
+        const response = await api.get(`/v1/stages/${stageId}/theory`);
+        // Handle nested response format safely
+        setTheoryData(response.data?.data || response.data);
+      } catch (err: any) {
+        console.error("Error fetching stage theory:", err);
+        setError(err?.message || "Failed to load lesson theory content");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchTheory();
+  }, [stageId]);
 
   let milestone = milestoneId
     ? DUMMY_MILESTONE_DETAILS[milestoneId]
@@ -48,10 +75,18 @@ export const TheoryPage: React.FC = () => {
     navigate(`/learning-path/milestone/${milestone.id}`);
   };
 
-  const handleContinue = () => {
-    navigate(
-      `/learning-path/milestone/${milestone.id}/lesson/${lessonId || "dl2"}/complete`
-    );
+  const handleContinue = async () => {
+    if (!stageId) return;
+    try {
+      await api.patch(`/v1/stages/${stageId}/unlock-practice`, {});
+      
+      // Navigate user to practice workspace
+      navigate(`/workspace?stageId=${stageId}`);
+    } catch (err: any) {
+      console.error("Error unlocking practice:", err);
+      // Fallback redirect so user is never stuck
+      navigate(`/workspace?stageId=${stageId}`);
+    }
   };
 
   return (
@@ -121,56 +156,65 @@ export const TheoryPage: React.FC = () => {
               </li>
             </ul>
           </div>
-
         </aside>
 
         <main className="tp-main-body">
           <div className="tp-body-grid">
-            <div className="tp-body-left">
-              <span className="tp-badge">THEORY 01</span>
-              <h1 className="tp-title">Understanding the Container</h1>
-              <p className="tp-description">
-                The journey into CSS Grid begins with the <strong>Grid Container</strong>. By applying <code>display: grid</code> to an element, you initialize a grid formatting context for all its direct children.
-              </p>
-
-              <div className="tp-cards-list">
-                <div className="tp-info-card">
-                  <div className="tp-card-icon-box">
-                    <Grid size={20} />
-                  </div>
-                  <div className="tp-card-content">
-                    <h3 className="tp-card-heading">Grid Tracks</h3>
-                    <p className="tp-card-text">
-                      The columns and rows of the grid. You define these using <code>grid-template-columns</code> and <code>grid-template-rows</code>.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="tp-info-card">
-                  <div className="tp-card-icon-box">
-                    <Columns size={20} />
-                  </div>
-                  <div className="tp-card-content">
-                    <h3 className="tp-card-heading">Grid Gaps</h3>
-                    <p className="tp-card-text">
-                      The space between rows and columns, defined by the <code>gap</code> property (or column-gap and row-gap).
-                    </p>
-                  </div>
-                </div>
-
-                <div className="tp-info-card">
-                  <div className="tp-card-icon-box">
-                    <Layers size={20} />
-                  </div>
-                  <div className="tp-card-content">
-                    <h3 className="tp-card-heading">Grid Cells</h3>
-                    <p className="tp-card-text">
-                      The smallest unit on the grid, formed by the intersection of a row track and a column track.
-                    </p>
-                  </div>
-                </div>
+            {isLoading ? (
+              <div className="tp-body-left" style={{ padding: "40px", color: "#94a3b8" }}>
+                Loading theory content...
               </div>
-            </div>
+            ) : error ? (
+              <div className="tp-body-left" style={{ padding: "40px", color: "#ef4444" }}>
+                {error}
+              </div>
+            ) : (
+              <div className="tp-body-left">
+                <span className="tp-badge">THEORY</span>
+                <h1 className="tp-title">{theoryData?.title || "Theory Lesson"}</h1>
+                
+                {theoryData?.contentHtml ? (
+                  <div 
+                    className="tp-theory-contentHtml" 
+                    dangerouslySetInnerHTML={{ __html: theoryData.contentHtml }} 
+                    style={{ lineHeight: "1.7", color: "var(--color-body)", fontSize: "15px" }}
+                  />
+                ) : (
+                  <p className="tp-description">No theory content available.</p>
+                )}
+
+                {theoryData?.proTips && (
+                  <div className="tp-pro-tips" style={{ marginTop: "24px", padding: "16px", background: "#fef3c7", borderRadius: "8px", borderLeft: "4px solid #d97706" }}>
+                    <h4 style={{ color: "#92400e", fontWeight: "bold", marginBottom: "4px", fontSize: "14px" }}>Pro Tip</h4>
+                    <p style={{ color: "#78350f", margin: 0, fontSize: "13px" }}>{theoryData.proTips}</p>
+                  </div>
+                )}
+
+                {theoryData?.referenceLinks && theoryData.referenceLinks.length > 0 && (
+                  <div className="tp-reference-links" style={{ marginTop: "32px", paddingTop: "20px", borderTop: "1px solid #e2e8f0" }}>
+                    <h3 style={{ fontSize: "16px", fontWeight: "600", marginBottom: "12px", color: "var(--color-heading)" }}>Reference Links</h3>
+                    <ul style={{ listStyleType: "disc", paddingLeft: "20px" }}>
+                      {theoryData.referenceLinks.map((link: any, index: number) => {
+                        const url = typeof link === "string" ? link : (link.url || link.link);
+                        const label = typeof link === "string" ? link : (link.title || link.name || url);
+                        return (
+                          <li key={index} style={{ marginBottom: "8px" }}>
+                            <a 
+                              href={url} 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              style={{ color: "#2563eb", textDecoration: "underline" }}
+                            >
+                              {label}
+                            </a>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            )}
 
             <div className="tp-body-right">
               <div className="tp-demo-container">

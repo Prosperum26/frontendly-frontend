@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { PlayCircle, Flame, Trophy, Plus, Star, Zap, Sun } from "lucide-react";
-import axios from "axios";
+import api from "../../../services/api";
 import "./SideBar.css";
 import defaultAvatar from "../../../assets/default_avatar.png";
 
@@ -20,18 +20,19 @@ export const SideBar: React.FC<SideBarProps> = ({ onWatchIntro }) => {
       setIsLoading(true);
       setError(null);
       try {
-        const token = localStorage.getItem("accessToken");
-        const headers = token ? { Authorization: `Bearer ${token}` } : {};
-
         const [userRes, progressRes, badgesRes] = await Promise.all([
-          axios.get("/api/v1/users/me", { headers }),
-          axios.get("/api/v1/users/progress", { headers }),
-          axios.get("/api/v1/users/badges", { headers }),
+          api.get("/v1/users/me"),
+          api.get("/v1/users/progress"),
+          api.get("/v1/v1/users/badges").catch(() => api.get("/v1/users/badges")), // Fallback just in case
         ]);
 
-        setUserData(userRes.data);
-        setProgressData(progressRes.data);
-        setBadgesData(badgesRes.data);
+        const uData = userRes?.data?.data || userRes?.data || {};
+        const pData = progressRes?.data?.data || progressRes?.data || {};
+        const bData = badgesRes?.data?.data || badgesRes?.data || [];
+
+        setUserData(uData);
+        setProgressData(pData);
+        setBadgesData(Array.isArray(bData) ? bData : []);
       } catch (err: any) {
         console.error("Error fetching sidebar user details:", err);
         setError(err?.message || "Failed to load user info");
