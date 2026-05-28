@@ -4,14 +4,45 @@ import api from "../../../services/api";
 import "./SideBar.css";
 import defaultAvatar from "../../../assets/default_avatar.png";
 
+// TypeScript interfaces for API responses
+interface UserResponse {
+  status: string;
+  data: UserData;
+}
+interface UserData {
+  id: string;
+  name: string;
+  avatarUrl: string;
+  totalXp: number;
+  currentLevel: number;
+  // other fields may exist
+}
+interface ProgressResponse {
+  level: number;
+  xp: number;
+  xpToNextLevel: number;
+  progressPercent: number;
+  streak?: number | string;
+  rank?: number | string;
+}
+interface BadgesResponse {
+  badges: Badge[];
+}
+interface Badge {
+  id: string;
+  name: string;
+  icon: string;
+  isUnlocked: boolean;
+}
+
 interface SideBarProps {
   onWatchIntro: () => void;
 }
 
 export const SideBar: React.FC<SideBarProps> = ({ onWatchIntro }) => {
-  const [userData, setUserData] = useState<any>(null);
-  const [progressData, setProgressData] = useState<any>(null);
-  const [badgesData, setBadgesData] = useState<any[]>([]);
+  const [userData, setUserData] = useState<UserData | null>(null);
+  const [progressData, setProgressData] = useState<ProgressResponse | null>(null);
+  const [badgesData, setBadgesData] = useState<Badge[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -23,19 +54,27 @@ export const SideBar: React.FC<SideBarProps> = ({ onWatchIntro }) => {
         const [userRes, progressRes, badgesRes] = await Promise.all([
           api.get("/v1/users/me"),
           api.get("/v1/users/progress"),
-          api.get("/v1/v1/users/badges").catch(() => api.get("/v1/users/badges")), // Fallback just in case
+          api.get("/v1/users/badges"), // Correct endpoint
         ]);
 
-        const uData = userRes?.data?.data || userRes?.data || {};
-        const pData = progressRes?.data?.data || progressRes?.data || {};
-        const bData = badgesRes?.data?.data || badgesRes?.data || [];
-
+        // User response has a wrapper under .data.data
+        const uData = userRes?.data?.data ?? {};
         setUserData(uData);
+
+        // Progress response is flat
+        const pData = progressRes?.data ?? {};
         setProgressData(pData);
+
+        // Badges response may be wrapped or flat (handle both)
+        const bData = badgesRes?.data?.badges ?? badgesRes?.data ?? [];
         setBadgesData(Array.isArray(bData) ? bData : []);
       } catch (err: any) {
-        console.error("Error fetching sidebar user details:", err);
-        setError(err?.message || "Failed to load user info");
+        if (err?.response?.status === 401) {
+          setError("Unauthenticated – please log in.");
+        } else {
+          console.error("Error fetching sidebar user details:", err);
+          setError(err?.message || "Failed to load user info");
+        }
       } finally {
         setIsLoading(false);
       }
@@ -44,55 +83,40 @@ export const SideBar: React.FC<SideBarProps> = ({ onWatchIntro }) => {
     fetchData();
   }, []);
 
-  const renderBadge = (badge: any, index: number) => {
-    const badgeName = typeof badge === "string" ? badge : (badge?.name || "");
-    const badgeIcon = typeof badge === "object" ? badge?.icon : null;
-
-    if (badgeName === "HTML") {
-      return (
-        <div key={index} className="badge-icon bg-green-light text-green">
-          HTML
-        </div>
-      );
-    }
-
-    if (badgeIcon === "zap" || badgeName.toLowerCase() === "zap" || badgeName.toLowerCase() === "speed") {
-      return (
-        <div key={index} className="badge-icon bg-blue-light text-blue">
-          <Zap size={16} fill="#2563eb" color="#2563eb" />
-        </div>
-      );
-    }
-
-    if (badgeIcon === "sun" || badgeName.toLowerCase() === "sun" || badgeName.toLowerCase() === "streak") {
-      return (
-        <div key={index} className="badge-icon bg-yellow-light text-yellow">
-          <Sun size={16} fill="#d97706" color="#d97706" />
-        </div>
-      );
-    }
-
+  const renderBadge = (badge: Badge, index: number) => {
+    const { name, icon, isUnlocked } = badge;
+    const iconElement = (() => {
+      switch (icon) {
+        case "zap":
+          return <Zap size={16} fill="#2563eb" color="#2563eb" />;
+        case "sun":
+          return <Sun size={16} fill="#d97706" color="#d97706" />;
+        default:
+          return name;
+      }
+    })();
+    const badgeClass = isUnlocked
+      ? "badge-icon bg-blue-light text-blue"
+      : "badge-icon bg-gray-200 text-gray-500 grayscale opacity-50";
     return (
-      <div key={index} className="badge-icon bg-blue-light text-blue">
-        {badgeName}
+      <div key={index} className={badgeClass} title={name}>
+        {iconElement}
       </div>
     );
   };
 
-  // Safe defaults
-  const displayName = userData?.username || userData?.displayName || userData?.name || "Alex Rivera";
-  const userTitle = userData?.title || "Junior Developer";
-  const avatarUrl = userData?.avatar || userData?.avatarUrl || defaultAvatar;
+  const displayName = userData?.name || "Alex Rivera";
+  const userTitle = "Junior Developer";
+  const avatarUrl = userData?.avatarUrl || defaultAvatar;
 
-  const currentXp = typeof progressData?.xp === "number" ? progressData.xp : 2450;
-  const maxXp = typeof progressData?.maxXp === "number" ? progressData.maxXp : 3000;
-  const xpPercentage = Math.min(100, Math.max(0, Math.round((currentXp / maxXp) * 100)));
+  const currentXp = progressData?.xp ?? 0;
+  const maxXp = progressData?.xpToNextLevel ?? 0;
+  const xpPercentage = maxXp ? Math.min(100, Math.max(0, Math.round((currentXp / maxXp) * 100))) : 0;
 
-  const rawStreak = progressData?.streak !== undefined ? progressData.streak : 12;
-  const streakText = typeof rawStreak === "number" ? `${rawStreak} Days` : String(rawStreak);
-
-  const rawRank = progressData?.rank !== undefined ? progressData.rank : "Top 5%";
-  const rankText = typeof rawRank === "number" ? `Top ${rawRank}%` : String(rawRank);
+  const streakText =
+    typeof progressData?.streak === "number" ? `${progressData.streak} Days` : progressData?.streak ?? "-";
+  const rankText =
+    typeof progressData?.rank === "number" ? `Top ${progressData.rank}%` : progressData?.rank ?? "-";
 
   return (
     <aside className="sidebar">
@@ -119,8 +143,7 @@ export const SideBar: React.FC<SideBarProps> = ({ onWatchIntro }) => {
               interactive workspace for maximum learning efficiency.
             </p>
             <button className="watch-btn" onClick={onWatchIntro}>
-              <PlayCircle size={16} />
-              Watch Intro
+              <PlayCircle size={16} /> Watch Intro
             </button>
           </div>
         </div>
@@ -131,7 +154,7 @@ export const SideBar: React.FC<SideBarProps> = ({ onWatchIntro }) => {
         <div className="progress-card">
           {isLoading ? (
             <div style={{ padding: "20px 0", textAlign: "center", color: "#94a3b8" }}>
-              Loading user progress...
+              Loading user progress…
             </div>
           ) : error ? (
             <div style={{ padding: "20px 0", textAlign: "center", color: "#ef4444" }}>
@@ -141,11 +164,7 @@ export const SideBar: React.FC<SideBarProps> = ({ onWatchIntro }) => {
             <>
               <div className="profile-info">
                 <div className="avatar-wrapper">
-                  <img
-                    src={avatarUrl}
-                    alt={displayName}
-                    className="avatar"
-                  />
+                  <img src={avatarUrl} alt={displayName} className="avatar" />
                   <div className="level-badge">
                     <Star size={10} fill="white" stroke="white" />
                   </div>
@@ -164,7 +183,7 @@ export const SideBar: React.FC<SideBarProps> = ({ onWatchIntro }) => {
                   </span>
                 </div>
                 <div className="xp-track">
-                  <div className="xp-fill" style={{ width: `${xpPercentage}%` }}></div>
+                  <div className="xp-fill" style={{ width: `${xpPercentage}%` }} />
                 </div>
               </div>
 
@@ -203,4 +222,3 @@ export const SideBar: React.FC<SideBarProps> = ({ onWatchIntro }) => {
 };
 
 export default SideBar;
-
