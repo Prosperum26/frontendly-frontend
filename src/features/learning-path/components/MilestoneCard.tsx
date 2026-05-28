@@ -1,6 +1,7 @@
 import React from "react";
-import type { Milestone } from "../types/learning-path.types";
+import { LayoutGrid, FileCode2, Palette, Zap } from "lucide-react";
 import "./MilestoneCard.css";
+import type { Milestone } from "../types/learning-path.types";
 
 interface MilestoneCardProps {
   milestone: Milestone;
@@ -66,6 +67,31 @@ export const MilestoneCard: React.FC<MilestoneCardProps> = ({ milestone }) => {
         </div>
       </div>
       
+      {/* Lessons Grid */}
+      {(!milestone.completed || milestone.lessons.length > 0) && (
+        <div className="lessons-grid">
+          {milestone.lessons.map((lesson, index) => {
+            const isLessonActive = isInProgress && !lesson.completed && index === completedLessons;
+            return (
+              <div 
+                key={lesson.id} 
+                className={`lesson-card ${isLessonActive ? 'is-active' : ''} ${lesson.completed ? 'is-completed' : ''}`}
+              >
+                <div className="lesson-type">
+                  {lesson.title.includes('HTML') ? <FileCode2 size={12} /> : 
+                   lesson.title.includes('CSS') ? <Palette size={12} /> : 
+                   lesson.title.includes('Layout') ? <LayoutGrid size={12} /> : <Zap size={12} />}
+                  {lesson.title.split(' ')[0] || "LESSON"}
+                </div>
+                <div className="lesson-title">
+                  {index + 1}. {lesson.title}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
       {/* Thanh tiến độ */}
       {isInProgress && (
         <div className="milestone-progress-section">
