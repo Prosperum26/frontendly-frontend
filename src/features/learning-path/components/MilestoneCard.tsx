@@ -65,6 +65,7 @@ export const MilestoneCard: React.FC<MilestoneCardProps> = ({ milestone }) => {
           </div>
         </div>
       </div>
+      
       {/* Thanh tiến độ */}
       {isInProgress && (
         <div className="milestone-progress-section">

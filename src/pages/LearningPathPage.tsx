@@ -1,7 +1,12 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "./LearningPathPage.css";
+
 import { MilestoneCard } from "../features/learning-path/components/MilestoneCard";
-import type { Milestone } from "../features/learning-path/types/learning-path.types";
+import type {
+  Milestone,
+  ApiMilestone,
+} from "../features/learning-path/types/learning-path.types";
+import { learningService } from "../features/learning-path/services/learning.service";
 
 //dummy data theo mẫu figma
 //tạo tạm 3 milestone dummy để test 3 giai đoạn thôi nha: hoàn thành - đang diễn ra - bị khóa :v
@@ -131,8 +136,53 @@ const DUMMY_MILESTONES: Milestone[] = [
   },
 ];
 
-
 export const LearningPathPage: React.FC = () => {
+  const [milestones, setMilestones] = useState<Milestone[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const skillId = "javascript";
+  useEffect(() => {
+    const loadRoadmapData = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
+
+        const response = await learningService.fetchRoadmap(skillId, 1, 5);
+
+        if (response.success && response.data) {
+          const formattedMilestones: Milestone[] = response.data.milestones.map(
+            (apiMilestone: ApiMilestone, index: number) => ({
+              id: apiMilestone.id,
+              order: index + 1,
+              title: apiMilestone.title,
+              description: "Mô tả nội dung chặng đường...",
+              completed: apiMilestone.status === "completed",
+              lessons: apiMilestone.stages.map((stage) => ({
+                id: stage.id,
+                title: stage.title,
+                description: "",
+                type: "theory",
+                completed: stage.isCompleted,
+                xpReward: stage.earnedStars * 50,
+              })),
+            }),
+          );
+
+          setMilestones(formattedMilestones);
+        } else {
+          setError(response.message || "Có lỗi xảy ra khi lấy dữ liệu.");
+        }
+      } catch (err) {
+        console.error("Lỗi khi fetch lộ trình:", err);
+        setError("Không thể kết nối đến máy chủ. Vui lòng thử lại sau.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadRoadmapData();
+  }, [skillId]);
+
   return (
     <div className="learning-path-wrapper">
       <aside></aside>
@@ -157,6 +207,28 @@ export const LearningPathPage: React.FC = () => {
           {DUMMY_MILESTONES.map((m) => (
             <MilestoneCard key={m.id} milestone={m} />
           ))}
+          {isLoading && (
+            <div style={{ textAlign: "center", padding: "40px" }}>
+              Đang tải lộ trình học...
+            </div>
+          )}
+
+          {error && (
+            <div
+              style={{
+                color: "red",
+                padding: "20px",
+                background: "#fee2e2",
+                borderRadius: "8px",
+              }}
+            >
+              {error}
+            </div>
+          )}
+
+          {!isLoading &&
+            !error &&
+            milestones.map((m) => <MilestoneCard key={m.id} milestone={m} />)}
         </section>
       </div>
 
