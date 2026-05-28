@@ -58,7 +58,6 @@
   color: #94a3b8;
 }
 
-/* Tiêu đề Milestone */
 .milestone-subtitle {
   display: block;
   font-size: 11px;
@@ -103,7 +102,6 @@
   color: #2a1700;
 }
 
-/* lesson grid */
 .lessons-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -139,7 +137,6 @@
   color: var(--color-heading);
 }
 
-/* --- THANH TIẾN ĐỘ --- */
 .milestone-progress-section {
   margin-top: 24px;
   padding-top: 24px;
@@ -173,7 +170,6 @@
   transition: width 1s ease-out;
 }
 
-/* Responsive cho màn hình nhỏ */
 @media (max-width: 1024px) {
   .lessons-grid {
     grid-template-columns: repeat(2, 1fr);
