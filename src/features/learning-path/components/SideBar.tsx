@@ -11,8 +11,12 @@ export const SideBar: React.FC<SideBarProps> = ({ onWatchIntro }) => {
       <div className="sidebar-section">
         <h4 className="sidebar-section-title">INTRODUCTION</h4>
         <div className="sidebar-intro-card">
-          <div className="sidebar-intro-thumbnail">
-            <img src="" alt="" />
+          
+          <div className="sidebar-intro-thumbnail" onClick={onWatchIntro} style={{ cursor: 'pointer' }}>
+            <img 
+              src="https://img.youtube.com/vi/SqcY0GlETPk/maxresdefault.jpg" 
+              alt="Frontendly Getting Started Tutorial Thumbnail" 
+            />
             <div className="play-overlay">
               <PlayCircle className="play-icon" />
             </div>

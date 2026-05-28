@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import "./LearningPathPage.css";
-
+import { SideBar } from "../features/learning-path/components/SideBar";
+import { VideoModule } from "../features/learning-path/components/VideoModule";
 import { MilestoneCard } from "../features/learning-path/components/MilestoneCard";
 import type {
   Milestone,
@@ -141,6 +142,8 @@ export const LearningPathPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const skillId = "javascript";
+  const [isModuleOpen, setIsModuleOpen] = useState(false);
+  const [selectedVideo, setSelectedVideo] = useState<{ title: string; duration: string; url: string } | null>(null);
   useEffect(() => {
     const loadRoadmapData = async () => {
       try {
@@ -185,7 +188,7 @@ export const LearningPathPage: React.FC = () => {
 
   return (
     <div className="learning-path-wrapper">
-      <aside></aside>
+      <SideBar onWatchIntro={() => setIsModuleOpen(true)} />
       <div className="learning-path-content">
         <header className="learning-path-header">
           <div className="learning-path-badge">
@@ -231,8 +234,7 @@ export const LearningPathPage: React.FC = () => {
             milestones.map((m) => <MilestoneCard key={m.id} milestone={m} />)}
         </section>
       </div>
-
-      <aside></aside>
+      <VideoModule isOpen={isModuleOpen} onClose={() => setIsModuleOpen(false)} />
     </div>
   );
 };
