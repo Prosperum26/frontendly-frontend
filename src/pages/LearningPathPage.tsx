@@ -8,133 +8,6 @@ import type {
   ApiMilestone,
 } from "../features/learning-path/types/learning-path.types";
 import { learningService } from "../features/learning-path/services/learning.service";
-
-const DUMMY_MILESTONES: Milestone[] = [
-  {
-    id: "m1",
-    order: 1,
-    title: "Front-end Fundamentals",
-    description: "The core fundamentals every web developer needs.",
-    completed: true,
-    lessons: [
-      {
-        id: "l1",
-        title: "HTML Structure",
-        description: "",
-        type: "theory",
-        completed: true,
-        xpReward: 100,
-      },
-      {
-        id: "l2",
-        title: "CSS Selectors",
-        description: "",
-        type: "practice",
-        completed: true,
-        xpReward: 150,
-      },
-      {
-        id: "l3",
-        title: "CSS Box Model",
-        description: "",
-        type: "theory",
-        completed: true,
-        xpReward: 100,
-      },
-      {
-        id: "l4",
-        title: "Flexbox",
-        description: "",
-        type: "practice",
-        completed: true,
-        xpReward: 200,
-      },
-    ],
-  },
-  {
-    id: "m2",
-    order: 2,
-    title: "Advanced CSS & Layout",
-    description: "Advanced layout and design system patterns.",
-    completed: false,
-    lessons: [
-      {
-        id: "l5",
-        title: "CSS Grid",
-        description: "",
-        type: "practice",
-        completed: true,
-        xpReward: 250,
-      },
-      {
-        id: "l6",
-        title: "CSS Positioning",
-        description: "",
-        type: "theory",
-        completed: true,
-        xpReward: 100,
-      },
-      {
-        id: "l7",
-        title: "CSS Animation",
-        description: "",
-        type: "practice",
-        completed: true,
-        xpReward: 200,
-      },
-      {
-        id: "l8",
-        title: "Responsive UI",
-        description: "",
-        type: "theory",
-        completed: false,
-        xpReward: 100,
-      },
-    ],
-  },
-  {
-    id: "m3",
-    order: 3,
-    title: "Interactive DOM",
-    description: "Bringing interfaces to life with JavaScript.",
-    completed: false,
-    lessons: [
-      {
-        id: "l9",
-        title: "JS DOM Access",
-        description: "",
-        type: "theory",
-        completed: false,
-        xpReward: 100,
-      },
-      {
-        id: "l10",
-        title: "DOM Events",
-        description: "",
-        type: "practice",
-        completed: false,
-        xpReward: 200,
-      },
-      {
-        id: "l11",
-        title: "DOM Manipulation",
-        description: "",
-        type: "theory",
-        completed: false,
-        xpReward: 100,
-      },
-      {
-        id: "l12",
-        title: "JS DOM Errors",
-        description: "",
-        type: "practice",
-        completed: false,
-        xpReward: 300,
-      },
-    ],
-  },
-];
-
 export const LearningPathPage: React.FC = () => {
   const [milestones, setMilestones] = useState<Milestone[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -158,6 +31,7 @@ export const LearningPathPage: React.FC = () => {
               title: apiMilestone.title,
               description: "Mô tả nội dung chặng đường...",
               completed: apiMilestone.status === "completed",
+              status: apiMilestone.status,
               lessons: apiMilestone.stages.map((stage) => ({
                 id: stage.id,
                 title: stage.title,
@@ -205,13 +79,68 @@ export const LearningPathPage: React.FC = () => {
         </header>
 
         <section className="learning-path-section">
-          {DUMMY_MILESTONES.map((m) => (
-            <MilestoneCard key={m.id} milestone={m} />
-          ))}
-
           {isLoading && (
-            <div style={{ textAlign: "center", padding: "40px" }}>
-              Đang tải lộ trình học...
+            <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+              {[1, 2, 3].map((key) => (
+                <div
+                  key={key}
+                  style={{
+                    padding: "24px",
+                    borderRadius: "12px",
+                    backgroundColor: "#f8fafc",
+                    border: "1px solid #f1f5f9",
+                    opacity: 0.7,
+                    pointerEvents: "none",
+                  }}
+                >
+                  <div style={{ display: "flex", gap: "16px", alignItems: "center", marginBottom: "20px" }}>
+                    <div
+                      style={{
+                        width: "36px",
+                        height: "36px",
+                        borderRadius: "12px",
+                        backgroundColor: "#cbd5e1",
+                      }}
+                    ></div>
+                    <div style={{ display: "flex", flexDirection: "column", gap: "8px", flex: 1 }}>
+                      <div
+                        style={{
+                          width: "80px",
+                          height: "10px",
+                          backgroundColor: "#cbd5e1",
+                          borderRadius: "4px",
+                        }}
+                      ></div>
+                      <div
+                        style={{
+                          width: "200px",
+                          height: "16px",
+                          backgroundColor: "#cbd5e1",
+                          borderRadius: "4px",
+                        }}
+                      ></div>
+                    </div>
+                  </div>
+                  <div
+                    style={{
+                      display: "grid",
+                      gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))",
+                      gap: "12px",
+                    }}
+                  >
+                    {[1, 2, 3, 4].map((i) => (
+                      <div
+                        key={i}
+                        style={{
+                          height: "56px",
+                          borderRadius: "8px",
+                          backgroundColor: "#e2e8f0",
+                        }}
+                      ></div>
+                    ))}
+                  </div>
+                </div>
+              ))}
             </div>
           )}
 

@@ -5,6 +5,7 @@ export interface Milestone {
   order: number;
   completed: boolean;
   lessons: Lesson[];
+  status?: "completed" | "in_progress" | "locked";
 }
 
 export interface Lesson {

@@ -54,26 +54,42 @@ export const MilestoneCard: React.FC<MilestoneCardProps> = ({ milestone }) => {
   const progressPercent =
     totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0;
 
-  const isInProgress = !milestone.completed && progressPercent > 0;
-  const isLocked = !milestone.completed && progressPercent === 0;
+  const completed = milestone.status === "completed" || milestone.completed;
+  const isInProgress = milestone.status === "in_progress";
+  const isLocked = milestone.status === "locked";
 
   let statusClass = "is-locked";
-  if (milestone.completed) {
+  if (completed) {
     statusClass = "is-completed";
-  } else if (isInProgress) {
+  } 
+  else if (isInProgress) {
     statusClass = "is-in-progress";
   }
 
-  const handleCardClick = () => {
+  const handleCardClick = (e: React.MouseEvent) => {
+    if (isLocked) {
+      e.preventDefault();
+      e.stopPropagation();
+      return;
+    }
     navigate(`/learning-path/milestone/${milestone.id}`);
   };
 
   return (
-    <div className={`milestone-card ${statusClass}`} onClick={handleCardClick} style={{ cursor: "pointer" }}>
+    <div
+      className={`milestone-card ${statusClass}`}
+      onClick={handleCardClick}
+      style={{
+        cursor: isLocked ? "not-allowed" : "pointer",
+        opacity: isLocked ? 0.5 : 1,
+        borderColor: isInProgress ? "var(--color-primary, #2563eb)" : undefined,
+        boxShadow: isInProgress ? "0 10px 15px -3px rgba(37, 99, 235, 0.15)" : undefined,
+      }}
+    >
       <div className="milestone-top-row">
         <div className="milestone-header-left">
           <div className="milestone-icon-box">
-            {milestone.completed ? (
+            {completed ? (
               <img
                 src="src/assets/learning-path/completed_milestone.svg"
                 alt="Completed"
@@ -95,13 +111,15 @@ export const MilestoneCard: React.FC<MilestoneCardProps> = ({ milestone }) => {
           </div>
         </div>
 
-        {milestone.completed && (
+        {completed && (
           <span className="milestone-badge badge-completed">
             100% Completed
           </span>
         )}
         {isInProgress && (
-          <span className="milestone-badge badge-progress">In Progress</span>
+          <span className="milestone-badge badge-progress" style={{ backgroundColor: "#dbeafe", color: "#1e40af" }}>
+            In Progress
+          </span>
         )}
         {isLocked && (
           <span className="milestone-badge badge-locked">
@@ -118,6 +136,9 @@ export const MilestoneCard: React.FC<MilestoneCardProps> = ({ milestone }) => {
             <div
               key={lesson.id}
               className={`lesson-card ${isLessonActive ? "is-active" : ""} ${lesson.completed ? "is-completed" : ""}`}
+              style={{
+                pointerEvents: isLocked ? "none" : "auto",
+              }}
             >
               <div className="lesson-type">
                 {getLessonIcon(lesson.title, 14)}
@@ -135,14 +156,17 @@ export const MilestoneCard: React.FC<MilestoneCardProps> = ({ milestone }) => {
         <div className="milestone-progress-section">
           <div className="milestone-progress-header">
             <span>Progress to next Milestone</span>
-            <span className="milestone-progress-percent">
+            <span className="milestone-progress-percent" style={{ color: "#2563eb" }}>
               {progressPercent}%
             </span>
           </div>
           <div className="milestone-progress-track">
             <div
               className="milestone-progress-fill"
-              style={{ width: `${progressPercent}%` }}
+              style={{
+                width: `${progressPercent}%`,
+                background: "linear-gradient(90deg, #2563eb, #60a5fa)",
+              }}
             ></div>
           </div>
         </div>
