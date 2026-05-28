@@ -10,7 +10,7 @@ import {
   Calendar,
   Star,
 } from "lucide-react";
-import { DUMMY_MILESTONE_DETAILS } from "../../../data/dummy/milestoneDetail";
+import { MILESTONE_DETAILS_DATA } from "../../../data/learning-path/milestoneDetail.data";
 import type { DetailLesson } from "../types/learning-path.types";
 import "./MilestoneDetail.css";
 
@@ -145,13 +145,13 @@ export const MilestoneDetailPage: React.FC = () => {
   const navigate = useNavigate();
   
   let milestone = milestoneId
-    ? DUMMY_MILESTONE_DETAILS[milestoneId]
+    ? MILESTONE_DETAILS_DATA[milestoneId]
     : undefined;
 
   if (!milestone && milestoneId) {
     const cleanId = milestoneId.replace(/\D/g, "");
     const fallbackKey = `m${cleanId || "2"}`;
-    milestone = DUMMY_MILESTONE_DETAILS[fallbackKey] || DUMMY_MILESTONE_DETAILS["m2"];
+    milestone = MILESTONE_DETAILS_DATA[fallbackKey] || MILESTONE_DETAILS_DATA["m2"];
   }
 
   if (!milestone) {
@@ -221,16 +221,6 @@ export const MilestoneDetailPage: React.FC = () => {
             ))}
           </ul>
         </div>
-        
-        {milestone.proTip && (
-          <div className="md-protip-card">
-            <img src={milestone.proTip.imageUrl} alt="Pro Tip" />
-            <div className="md-protip-overlay">
-              <span className="md-protip-badge">PRO TIP</span>
-              <p className="md-protip-text">{milestone.proTip.text}</p>
-            </div>
-          </div>
-        )}
       </aside>
       <main className="md-main">
         <button className="md-back-btn" onClick={() => navigate("/learning-path")}>

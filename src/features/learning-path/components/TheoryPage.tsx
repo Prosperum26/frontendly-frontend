@@ -121,13 +121,6 @@ export const TheoryPage: React.FC = () => {
             </ul>
           </div>
 
-          <div className="tp-sidebar-help-card">
-            <span className="tp-help-label">Need help?</span>
-            <button className="tp-help-btn">
-              <Headphones size={16} />
-              <span>Ask Mentor</span>
-            </button>
-          </div>
         </aside>
 
         <main className="tp-main-body">
