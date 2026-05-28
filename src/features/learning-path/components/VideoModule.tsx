@@ -1,13 +1,16 @@
-import React, { useState } from 'react';
-import { Share2, Bookmark, Clock, Star, Play, X } from 'lucide-react';
-import './VideoModule.css';
+import React, { useState } from "react";
+import { Share2, Bookmark, Clock, Star, Play, X } from "lucide-react";
+import "./VideoModule.css";
 
 interface VideoModuleProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-export const VideoModule: React.FC<VideoModuleProps> = ({ isOpen, onClose }) => {
+export const VideoModule: React.FC<VideoModuleProps> = ({
+  isOpen,
+  onClose,
+}) => {
   const [isPlaying, setIsPlaying] = useState(false);
 
   if (!isOpen) return null;
@@ -29,13 +32,16 @@ export const VideoModule: React.FC<VideoModuleProps> = ({ isOpen, onClose }) => 
         <div className="vm-video-container">
           {!isPlaying ? (
             <>
-              <img 
-                src="https://img.youtube.com/vi/SqcY0GlETPk/maxresdefault.jpg" 
-                alt="Frontendly Getting Started Tutorial Thumbnail" 
+              <img
+                src="https://img.youtube.com/vi/SqcY0GlETPk/maxresdefault.jpg"
+                alt="Frontendly Getting Started Tutorial Thumbnail"
                 className="vm-video-poster"
               />
               <div className="vm-video-overlay">
-                <button className="vm-play-btn-large" onClick={() => setIsPlaying(true)}>
+                <button
+                  className="vm-play-btn-large"
+                  onClick={() => setIsPlaying(true)}
+                >
                   <Play fill="white" size={32} />
                 </button>
               </div>
@@ -50,7 +56,7 @@ export const VideoModule: React.FC<VideoModuleProps> = ({ isOpen, onClose }) => 
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
               referrerPolicy="strict-origin-when-cross-origin"
               allowFullScreen
-              style={{ borderRadius: '12px 12px 0 0' }}
+              style={{ borderRadius: "12px 12px 0 0" }}
             ></iframe>
           )}
         </div>
@@ -61,7 +67,10 @@ export const VideoModule: React.FC<VideoModuleProps> = ({ isOpen, onClose }) => 
             <div>
               <h2 className="vm-title">Getting Started with FrontEndly</h2>
               <p className="vm-desc">
-                Welcome to your new learning environment. This quick tutorial will walk you through setting up your workspace, navigating the curriculum modules, and utilizing the built-in interactive coding playground.
+                Welcome to your new learning environment. This quick tutorial
+                will walk you through setting up your workspace, navigating the
+                curriculum modules, and utilizing the built-in interactive
+                coding playground.
               </p>
             </div>
             <div className="vm-meta">
@@ -76,8 +85,12 @@ export const VideoModule: React.FC<VideoModuleProps> = ({ isOpen, onClose }) => 
 
           <div className="vm-footer">
             <div className="vm-actions-left">
-              <button className="vm-action-btn"><Share2 size={16} /> Share Path</button>
-              <button className="vm-action-btn"><Bookmark size={16} /> Save for Later</button>
+              <button className="vm-action-btn">
+                <Share2 size={16} /> Share Path
+              </button>
+              <button className="vm-action-btn">
+                <Bookmark size={16} /> Save for Later
+              </button>
             </div>
             <button className="vm-close-btn" onClick={handleCloseModal}>
               Close

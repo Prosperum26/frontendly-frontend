@@ -11,8 +11,12 @@
 }
 
 @keyframes vm-fade-in {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .vm-modal-content {
@@ -27,8 +31,14 @@
 }
 
 @keyframes vm-slide-up {
-  from { opacity: 0; transform: translateY(24px) scale(0.97); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 .vm-close-x {
@@ -90,7 +100,9 @@
   justify-content: center;
   cursor: pointer;
   box-shadow: 0 8px 24px rgba(37, 99, 235, 0.4);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 .vm-play-btn-large:hover {
   transform: scale(1.08);

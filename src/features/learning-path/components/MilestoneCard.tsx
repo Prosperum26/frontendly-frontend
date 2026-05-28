@@ -1,7 +1,16 @@
 import React from "react";
 import {
-  LayoutGrid, FileCode2, Palette, Zap, Lock,
-  Code2, Globe, Sparkles, Settings2, Bug, AlertTriangle
+  LayoutGrid,
+  FileCode2,
+  Palette,
+  Zap,
+  Lock,
+  Code2,
+  Globe,
+  Sparkles,
+  Settings2,
+  Bug,
+  AlertTriangle,
 } from "lucide-react";
 import "./MilestoneCard.css";
 import type { Milestone } from "../types/learning-path.types";
@@ -12,22 +21,28 @@ interface MilestoneCardProps {
 
 const getLessonIcon = (title: string, size: number = 14) => {
   const t = title.toLowerCase();
-  if (t.includes('html')) return <FileCode2 size={size} />;
-  if (t.includes('css')) return <Palette size={size} />;
-  if (t.includes('layout') || t.includes('flexbox') || t.includes('grid')) return <LayoutGrid size={size} />;
-  if (t.includes('box')) return <LayoutGrid size={size} />;
-  if (t.includes('position')) return <Globe size={size} />;
-  if (t.includes('animation') || t.includes('motion')) return <Sparkles size={size} />;
-  if (t.includes('responsive')) return <Settings2 size={size} />;
-  if (t.includes('dom') || t.includes('js')) return <Code2 size={size} />;
-  if (t.includes('event')) return <Globe size={size} />;
-  if (t.includes('element') || t.includes('manipulation')) return <Sparkles size={size} />;
-  if (t.includes('async') || t.includes('data')) return <Settings2 size={size} />;
-  if (t.includes('bug') || t.includes('error')) return <Bug size={size} />;
-  if (t.includes('z-index') || t.includes('fix')) return <Settings2 size={size} />;
-  if (t.includes('render') || t.includes('performance')) return <Zap size={size} />;
-  if (t.includes('logic')) return <AlertTriangle size={size} />;
-  if (t.includes('interaction')) return <Bug size={size} />;
+  if (t.includes("html")) return <FileCode2 size={size} />;
+  if (t.includes("css")) return <Palette size={size} />;
+  if (t.includes("layout") || t.includes("flexbox") || t.includes("grid"))
+    return <LayoutGrid size={size} />;
+  if (t.includes("box")) return <LayoutGrid size={size} />;
+  if (t.includes("position")) return <Globe size={size} />;
+  if (t.includes("animation") || t.includes("motion"))
+    return <Sparkles size={size} />;
+  if (t.includes("responsive")) return <Settings2 size={size} />;
+  if (t.includes("dom") || t.includes("js")) return <Code2 size={size} />;
+  if (t.includes("event")) return <Globe size={size} />;
+  if (t.includes("element") || t.includes("manipulation"))
+    return <Sparkles size={size} />;
+  if (t.includes("async") || t.includes("data"))
+    return <Settings2 size={size} />;
+  if (t.includes("bug") || t.includes("error")) return <Bug size={size} />;
+  if (t.includes("z-index") || t.includes("fix"))
+    return <Settings2 size={size} />;
+  if (t.includes("render") || t.includes("performance"))
+    return <Zap size={size} />;
+  if (t.includes("logic")) return <AlertTriangle size={size} />;
+  if (t.includes("interaction")) return <Bug size={size} />;
   return <Zap size={size} />;
 };
 
@@ -81,9 +96,7 @@ export const MilestoneCard: React.FC<MilestoneCardProps> = ({ milestone }) => {
           </span>
         )}
         {isInProgress && (
-          <span className="milestone-badge badge-progress">
-            In Progress
-          </span>
+          <span className="milestone-badge badge-progress">In Progress</span>
         )}
         {isLocked && (
           <span className="milestone-badge badge-locked">
@@ -95,15 +108,16 @@ export const MilestoneCard: React.FC<MilestoneCardProps> = ({ milestone }) => {
       {/* Lessons Grid */}
       <div className="lessons-grid">
         {milestone.lessons.map((lesson, index) => {
-          const isLessonActive = isInProgress && !lesson.completed && index === completedLessons;
+          const isLessonActive =
+            isInProgress && !lesson.completed && index === completedLessons;
           return (
             <div
               key={lesson.id}
-              className={`lesson-card ${isLessonActive ? 'is-active' : ''} ${lesson.completed ? 'is-completed' : ''}`}
+              className={`lesson-card ${isLessonActive ? "is-active" : ""} ${lesson.completed ? "is-completed" : ""}`}
             >
               <div className="lesson-type">
                 {getLessonIcon(lesson.title, 14)}
-                {lesson.title.split(' ')[0] || "LESSON"}
+                {lesson.title.split(" ")[0] || "LESSON"}
               </div>
               <div className="lesson-title">
                 {index + 1}. {lesson.title}
@@ -118,7 +132,9 @@ export const MilestoneCard: React.FC<MilestoneCardProps> = ({ milestone }) => {
         <div className="milestone-progress-section">
           <div className="milestone-progress-header">
             <span>Progress to next Milestone</span>
-            <span className="milestone-progress-percent">{progressPercent}%</span>
+            <span className="milestone-progress-percent">
+              {progressPercent}%
+            </span>
           </div>
           <div className="milestone-progress-track">
             <div

@@ -8,7 +8,7 @@ import type {
   ApiMilestone,
 } from "../features/learning-path/types/learning-path.types";
 import { learningService } from "../features/learning-path/services/learning.service";
- /*sửa lại dummy data 1 tý */
+/*sửa lại dummy data 1 tý */
 const DUMMY_MILESTONES: Milestone[] = [
   {
     id: "m1",
@@ -17,10 +17,38 @@ const DUMMY_MILESTONES: Milestone[] = [
     description: "The core fundamentals every web developer needs.",
     completed: true,
     lessons: [
-      { id: "l1", title: "HTML Structure", description: "", type: "theory", completed: true, xpReward: 100 },
-      { id: "l2", title: "CSS Selectors", description: "", type: "practice", completed: true, xpReward: 150 },
-      { id: "l3", title: "CSS Box Model", description: "", type: "theory", completed: true, xpReward: 100 },
-      { id: "l4", title: "Flexbox", description: "", type: "practice", completed: true, xpReward: 200 },
+      {
+        id: "l1",
+        title: "HTML Structure",
+        description: "",
+        type: "theory",
+        completed: true,
+        xpReward: 100,
+      },
+      {
+        id: "l2",
+        title: "CSS Selectors",
+        description: "",
+        type: "practice",
+        completed: true,
+        xpReward: 150,
+      },
+      {
+        id: "l3",
+        title: "CSS Box Model",
+        description: "",
+        type: "theory",
+        completed: true,
+        xpReward: 100,
+      },
+      {
+        id: "l4",
+        title: "Flexbox",
+        description: "",
+        type: "practice",
+        completed: true,
+        xpReward: 200,
+      },
     ],
   },
   {
@@ -30,10 +58,38 @@ const DUMMY_MILESTONES: Milestone[] = [
     description: "Advanced layout and design system patterns.",
     completed: false,
     lessons: [
-      { id: "l5", title: "CSS Grid", description: "", type: "practice", completed: true, xpReward: 250 },
-      { id: "l6", title: "CSS Positioning", description: "", type: "theory", completed: false, xpReward: 100 },
-      { id: "l7", title: "CSS Animation", description: "", type: "practice", completed: false, xpReward: 200 },
-      { id: "l8", title: "Responsive UI", description: "", type: "theory", completed: false, xpReward: 100 },
+      {
+        id: "l5",
+        title: "CSS Grid",
+        description: "",
+        type: "practice",
+        completed: true,
+        xpReward: 250,
+      },
+      {
+        id: "l6",
+        title: "CSS Positioning",
+        description: "",
+        type: "theory",
+        completed: false,
+        xpReward: 100,
+      },
+      {
+        id: "l7",
+        title: "CSS Animation",
+        description: "",
+        type: "practice",
+        completed: false,
+        xpReward: 200,
+      },
+      {
+        id: "l8",
+        title: "Responsive UI",
+        description: "",
+        type: "theory",
+        completed: false,
+        xpReward: 100,
+      },
     ],
   },
   {
@@ -43,10 +99,38 @@ const DUMMY_MILESTONES: Milestone[] = [
     description: "Bringing interfaces to life with JavaScript.",
     completed: false,
     lessons: [
-      { id: "l9", title: "JS DOM Access", description: "", type: "theory", completed: false, xpReward: 100 },
-      { id: "l10", title: "DOM Events", description: "", type: "practice", completed: false, xpReward: 200 },
-      { id: "l11", title: "DOM Manipulation", description: "", type: "theory", completed: false, xpReward: 100 },
-      { id: "l12", title: "JS DOM Errors", description: "", type: "practice", completed: false, xpReward: 300 },
+      {
+        id: "l9",
+        title: "JS DOM Access",
+        description: "",
+        type: "theory",
+        completed: false,
+        xpReward: 100,
+      },
+      {
+        id: "l10",
+        title: "DOM Events",
+        description: "",
+        type: "practice",
+        completed: false,
+        xpReward: 200,
+      },
+      {
+        id: "l11",
+        title: "DOM Manipulation",
+        description: "",
+        type: "theory",
+        completed: false,
+        xpReward: 100,
+      },
+      {
+        id: "l12",
+        title: "JS DOM Errors",
+        description: "",
+        type: "practice",
+        completed: false,
+        xpReward: 300,
+      },
     ],
   },
 ];
@@ -151,7 +235,10 @@ export const LearningPathPage: React.FC = () => {
             milestones.map((m) => <MilestoneCard key={m.id} milestone={m} />)}
         </section>
       </div>
-      <VideoModule isOpen={isModuleOpen} onClose={() => setIsModuleOpen(false)} />
+      <VideoModule
+        isOpen={isModuleOpen}
+        onClose={() => setIsModuleOpen(false)}
+      />
     </div>
   );
 };

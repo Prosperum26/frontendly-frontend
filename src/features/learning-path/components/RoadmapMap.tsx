@@ -1,5 +1,5 @@
-import React from 'react';
-import { useLoadMilestones } from '../hooks/useLoadMilestones';
+import React from "react";
+import { useLoadMilestones } from "../hooks/useLoadMilestones";
 
 export const RoadmapMap: React.FC = () => {
   const { milestones, loading } = useLoadMilestones();
