@@ -7,7 +7,6 @@ interface SideBarProps {
 export const SideBar: React.FC<SideBarProps> = ({ onWatchIntro }) => {
   return (
     <aside className="sidebar">
-      {/* Introduction Section */}
       <div className="sidebar-section">
         <h4 className="sidebar-section-title">INTRODUCTION</h4>
         <div className="sidebar-intro-card">
@@ -33,11 +32,10 @@ export const SideBar: React.FC<SideBarProps> = ({ onWatchIntro }) => {
           </div>
         </div>
       </div>
-      {/* Your Progress Section */}
+      
       <div className="progress-section">
         <h4 className="progress-section-title">YOUR PROGRESS</h4>
         <div className="progress-card">
-          {/* Profile info */}
           <div className="profile-info">
             <div className="avatar-wrapper">
               <img src="src/assets/default_avatar.png" alt="USERNAME" className="avatar" />
@@ -50,7 +48,7 @@ export const SideBar: React.FC<SideBarProps> = ({ onWatchIntro }) => {
               <p className="user-title">trình độ</p>
             </div>
           </div>
-          {/* XP Bar */}
+          
           <div className="xp-container">
             <div className="xp-header">
               <span className="xp-label">EXPERIENCE POINTS</span>
@@ -61,24 +59,24 @@ export const SideBar: React.FC<SideBarProps> = ({ onWatchIntro }) => {
               <div className="xp-fill" style={{ width: '81%' }}></div>
             </div>
           </div>
-          {/* Stats Grid */}
+          
           <div className="stats-grid">
             <div className="stat-box">
               <span className="stat-label">STREAK</span>
               <div className="stat-value text-blue">
-                <Flame size={16} />
+                <Flame size={20} />
                 <span>12 Days</span>
               </div>
             </div>
             <div className="stat-box">
               <span className="stat-label">RANK</span>
               <div className="stat-value text-blue">
-                <Trophy size={16} />
+                <Trophy size={20} />
                 <span>Top 5%</span>
               </div>
             </div>
           </div>
-          {/* Badges Earned */}
+          
           <div className="badges-section">
             <span className="stat-label">Badges Earned</span>
             <div className="badges-list">

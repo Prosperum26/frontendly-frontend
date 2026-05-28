@@ -1,5 +1,5 @@
 .sidebar {
-  width: 280px;
+  width: 400px;
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
@@ -12,11 +12,11 @@
   gap: 16px;
 }
 .sidebar-section-title {
-  font-size: 11px;
-  font-weight: 800;
+  font-size: 12px;
+  font-weight: 600;
   color: #64748b;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
+  letter-spacing: 1.5px;
   margin: 0;
 }
 .sidebar-intro-card {
@@ -67,7 +67,8 @@
 }
 .intro-heading {
   font-size: 16px;
-  font-weight: 700;
+  font-weight: 600;
+  font-family: var(--font-inter);
   color: var(--color-heading);
   margin: 0;
 }
@@ -98,7 +99,19 @@
   background: #f8fafc;
   border-color: #cbd5e1;
 }
-/* Progress Card */
+.progress-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.progress-section-title {
+  font-size: 11px;
+  font-weight: 800;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin: 0;
+}
 .progress-card {
   background: #f8fafc;
   border-radius: 16px;
@@ -148,7 +161,6 @@
   color: var(--color-body);
   margin: 0;
 }
-/* XP Bar */
 .xp-container {
   display: flex;
   flex-direction: column;
@@ -183,14 +195,15 @@
   background: var(--color-primary);
   border-radius: 999px;
 }
-/* Stats Grid */
 .stats-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 105px 0;
   gap: 12px;
+  width: 271px;
 }
 .stat-box {
   background: var(--color-main-bg);
+  width: 108px;
   border: 1px solid #e2e8f0;
   border-radius: 12px;
   padding: 12px;
@@ -214,8 +227,9 @@
 }
 .text-blue {
   color: var(--color-primary);
+  font-family: var(--font-inter);
+  font-size: 16px;
 }
-/* Badges */
 .badges-section {
   display: flex;
   flex-direction: column;

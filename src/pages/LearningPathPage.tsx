@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./LearningPathPage.css";
 import { SideBar } from "../features/learning-path/components/SideBar";
 import { VideoModule } from "../features/learning-path/components/VideoModule";
@@ -8,131 +8,45 @@ import type {
   ApiMilestone,
 } from "../features/learning-path/types/learning-path.types";
 import { learningService } from "../features/learning-path/services/learning.service";
-
-//dummy data theo mẫu figma
-//tạo tạm 3 milestone dummy để test 3 giai đoạn thôi nha: hoàn thành - đang diễn ra - bị khóa :v
+ /*sửa lại dummy data 1 tý */
 const DUMMY_MILESTONES: Milestone[] = [
   {
     id: "m1",
     order: 1,
-    title: "Frontend Mastery Foundations",
+    title: "Front-end Fundamentals",
     description: "The core fundamentals every web developer needs.",
     completed: true,
     lessons: [
-      {
-        id: "l1",
-        title: "Semantic HTML",
-        description: "desc",
-        type: "theory",
-        completed: true,
-        xpReward: 100,
-      },
-      {
-        id: "l2",
-        title: "CSS Selectors",
-        description: "desc",
-        type: "practice",
-        completed: true,
-        xpReward: 150,
-      },
-      {
-        id: "l3",
-        title: "The Box Model",
-        description: "desc",
-        type: "theory",
-        completed: true,
-        xpReward: 100,
-      },
-      {
-        id: "l4",
-        title: "Layout Flexbox",
-        description: "desc",
-        type: "practice",
-        completed: true,
-        xpReward: 200,
-      },
+      { id: "l1", title: "HTML Structure", description: "", type: "theory", completed: true, xpReward: 100 },
+      { id: "l2", title: "CSS Selectors", description: "", type: "practice", completed: true, xpReward: 150 },
+      { id: "l3", title: "CSS Box Model", description: "", type: "theory", completed: true, xpReward: 100 },
+      { id: "l4", title: "Flexbox", description: "", type: "practice", completed: true, xpReward: 200 },
     ],
   },
   {
     id: "m2",
     order: 2,
-    title: "Modern UI Architecture",
+    title: "Advanced CSS & Layout",
     description: "Advanced layout and design system patterns.",
     completed: false,
     lessons: [
-      {
-        id: "l5",
-        title: "Advanced CSS Grid",
-        description: "desc",
-        type: "practice",
-        completed: true,
-        xpReward: 250,
-      },
-      {
-        id: "l6",
-        title: "Relative Layouts",
-        description: "desc",
-        type: "theory",
-        completed: false,
-        xpReward: 100,
-      },
-      {
-        id: "l7",
-        title: "Interaction Motion",
-        description: "desc",
-        type: "practice",
-        completed: false,
-        xpReward: 200,
-      },
-      {
-        id: "l8",
-        title: "Responsive Design",
-        description: "desc",
-        type: "theory",
-        completed: false,
-        xpReward: 100,
-      },
+      { id: "l5", title: "CSS Grid", description: "", type: "practice", completed: true, xpReward: 250 },
+      { id: "l6", title: "CSS Positioning", description: "", type: "theory", completed: false, xpReward: 100 },
+      { id: "l7", title: "CSS Animation", description: "", type: "practice", completed: false, xpReward: 200 },
+      { id: "l8", title: "Responsive UI", description: "", type: "theory", completed: false, xpReward: 100 },
     ],
   },
   {
     id: "m3",
     order: 3,
-    title: "Dynamic DOM Manipulation",
+    title: "Interactive DOM",
     description: "Bringing interfaces to life with JavaScript.",
     completed: false,
     lessons: [
-      {
-        id: "l9",
-        title: "DOM Tree Access",
-        description: "desc",
-        type: "theory",
-        completed: false,
-        xpReward: 100,
-      },
-      {
-        id: "l10",
-        title: "Event Handling",
-        description: "desc",
-        type: "practice",
-        completed: false,
-        xpReward: 200,
-      },
-      {
-        id: "l11",
-        title: "Element Creation",
-        description: "desc",
-        type: "theory",
-        completed: false,
-        xpReward: 100,
-      },
-      {
-        id: "l12",
-        title: "Async Data Logic",
-        description: "desc",
-        type: "practice",
-        completed: false,
-        xpReward: 300,
-      },
+      { id: "l9", title: "JS DOM Access", description: "", type: "theory", completed: false, xpReward: 100 },
+      { id: "l10", title: "DOM Events", description: "", type: "practice", completed: false, xpReward: 200 },
+      { id: "l11", title: "DOM Manipulation", description: "", type: "theory", completed: false, xpReward: 100 },
+      { id: "l12", title: "JS DOM Errors", description: "", type: "practice", completed: false, xpReward: 300 },
     ],
   },
 ];
@@ -143,7 +57,7 @@ export const LearningPathPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const skillId = "javascript";
   const [isModuleOpen, setIsModuleOpen] = useState(false);
-  const [selectedVideo, setSelectedVideo] = useState<{ title: string; duration: string; url: string } | null>(null);
+
   useEffect(() => {
     const loadRoadmapData = async () => {
       try {
@@ -193,7 +107,7 @@ export const LearningPathPage: React.FC = () => {
         <header className="learning-path-header">
           <div className="learning-path-badge">
             <img
-              src="src\assets\learning-path\certificate_icon.svg"
+              src="src/assets/learning-path/certificate_icon.svg"
               alt="Certificate Icon"
             />
             CERTIFICATION PATH
@@ -207,9 +121,12 @@ export const LearningPathPage: React.FC = () => {
         </header>
 
         <section className="learning-path-section">
+          {/* Dummy milestones hiển thị trước */}
           {DUMMY_MILESTONES.map((m) => (
             <MilestoneCard key={m.id} milestone={m} />
           ))}
+
+          {/* API milestones nếu có */}
           {isLoading && (
             <div style={{ textAlign: "center", padding: "40px" }}>
               Đang tải lộ trình học...
