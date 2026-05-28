@@ -135,13 +135,6 @@ VITE_SOCKET_URL=http://localhost:3000
 - **Folders**: `kebab-case` (e.g., `learning-path/`)
 - **Exports**: Each feature exports via `index.ts`
 
-## Learning Path UX
-1. Tự động cuộn màn hình đến bài học hiện tại (Auto-scroll)
-2. Thêm hiệu ứng Hover và làm đẹp đường nối bài học
-3. Xử lý trải nghiệm khi click vào Bài học bị Khóa (Locked State)
-4. Ghim cố định thanh Tiến độ trong bảng chi tiết Milestone (Sticky Progress)
-5. Tạo hiệu ứng tải trang mờ (Skeleton Loading Shimmer)
-
 ## License
 
 MIT

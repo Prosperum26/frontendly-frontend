@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   LayoutGrid,
@@ -58,6 +58,8 @@ export const MilestoneCard: React.FC<MilestoneCardProps> = ({ milestone }) => {
   const isInProgress = milestone.status === "in_progress";
   const isLocked = milestone.status === "locked";
 
+  const [activeTooltipLessonId, setActiveTooltipLessonId] = useState<string | null>(null);
+
   let statusClass = "is-locked";
   if (completed) {
     statusClass = "is-completed";
@@ -65,6 +67,13 @@ export const MilestoneCard: React.FC<MilestoneCardProps> = ({ milestone }) => {
   else if (isInProgress) {
     statusClass = "is-in-progress";
   }
+
+  const handleScrollToActiveStage = () => {
+    const activeElement = document.querySelector(".lesson-card.is-active") || document.querySelector(".milestone-card.is-in-progress");
+    if (activeElement) {
+      activeElement.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  };
 
   const handleCardClick = (e: React.MouseEvent) => {
     if (isLocked) {
@@ -132,12 +141,23 @@ export const MilestoneCard: React.FC<MilestoneCardProps> = ({ milestone }) => {
         {milestone.lessons.map((lesson, index) => {
           const isLessonActive =
             isInProgress && !lesson.completed && index === completedLessons;
+          const isLessonLocked = isLocked || (!lesson.completed && !isLessonActive);
+
           return (
             <div
               key={lesson.id}
-              className={`lesson-card ${isLessonActive ? "is-active" : ""} ${lesson.completed ? "is-completed" : ""}`}
+              className={`lesson-card ${isLessonActive ? "is-active" : ""} ${lesson.completed ? "is-completed" : ""} ${isLessonLocked ? "is-locked-stage" : ""}`}
+              onClick={(e) => {
+                if (isLessonLocked) {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setActiveTooltipLessonId(activeTooltipLessonId === lesson.id ? null : lesson.id);
+                }
+              }}
               style={{
-                pointerEvents: isLocked ? "none" : "auto",
+                position: "relative",
+                cursor: isLessonLocked ? "not-allowed" : "pointer",
+                opacity: isLessonLocked ? 0.6 : 1,
               }}
             >
               <div className="lesson-type">
@@ -147,6 +167,71 @@ export const MilestoneCard: React.FC<MilestoneCardProps> = ({ milestone }) => {
               <div className="lesson-title">
                 {index + 1}. {lesson.title}
               </div>
+
+              {/* Tooltip Popup for locked stages */}
+              {activeTooltipLessonId === lesson.id && (
+                <div
+                  style={{
+                    position: "absolute",
+                    bottom: "125%",
+                    left: "50%",
+                    transform: "translateX(-50%)",
+                    width: "240px",
+                    backgroundColor: "#1e293b",
+                    color: "#ffffff",
+                    padding: "12px",
+                    borderRadius: "8px",
+                    boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.3)",
+                    fontSize: "12px",
+                    zIndex: 100,
+                    textAlign: "center",
+                    border: "1px solid #334155",
+                    cursor: "default"
+                  }}
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <div style={{ fontWeight: "600", marginBottom: "8px", lineHeight: "1.4" }}>
+                    🔒 Chặng này đang khóa! Hãy hoàn thành các bài học trước để mở khóa nhé.
+                  </div>
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setActiveTooltipLessonId(null);
+                      handleScrollToActiveStage();
+                    }}
+                    style={{
+                      backgroundColor: "#0284c7",
+                      color: "#ffffff",
+                      border: "none",
+                      padding: "6px 12px",
+                      borderRadius: "6px",
+                      fontSize: "11px",
+                      fontWeight: "700",
+                      cursor: "pointer",
+                      marginTop: "6px",
+                      width: "100%",
+                      transition: "background-color 0.2s"
+                    }}
+                  >
+                    Học tiếp bài hiện tại
+                  </button>
+                  {/* Arrow element */}
+                  <div
+                    style={{
+                      position: "absolute",
+                      top: "100%",
+                      left: "50%",
+                      transform: "translateX(-50%)",
+                      width: "0",
+                      height: "0",
+                      borderLeft: "6px solid transparent",
+                      borderRight: "6px solid transparent",
+                      borderTop: "6px solid #1e293b",
+                    }}
+                  ></div>
+                </div>
+              )}
             </div>
           );
         })}
