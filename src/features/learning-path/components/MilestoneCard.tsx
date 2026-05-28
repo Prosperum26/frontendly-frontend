@@ -70,7 +70,6 @@ export const MilestoneCard: React.FC<MilestoneCardProps> = ({ milestone }) => {
 
   return (
     <div className={`milestone-card ${statusClass}`} onClick={handleCardClick} style={{ cursor: "pointer" }}>
-      {/* Milestone Header */}
       <div className="milestone-top-row">
         <div className="milestone-header-left">
           <div className="milestone-icon-box">
@@ -111,7 +110,6 @@ export const MilestoneCard: React.FC<MilestoneCardProps> = ({ milestone }) => {
         )}
       </div>
 
-      {/* Lessons Grid */}
       <div className="lessons-grid">
         {milestone.lessons.map((lesson, index) => {
           const isLessonActive =
@@ -133,7 +131,6 @@ export const MilestoneCard: React.FC<MilestoneCardProps> = ({ milestone }) => {
         })}
       </div>
 
-      {/* Progress bar - only for in-progress milestones */}
       {isInProgress && (
         <div className="milestone-progress-section">
           <div className="milestone-progress-header">

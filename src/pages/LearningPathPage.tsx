@@ -8,7 +8,7 @@ import type {
   ApiMilestone,
 } from "../features/learning-path/types/learning-path.types";
 import { learningService } from "../features/learning-path/services/learning.service";
-/*sửa lại dummy data 1 tý */
+
 const DUMMY_MILESTONES: Milestone[] = [
   {
     id: "m1",
@@ -205,12 +205,10 @@ export const LearningPathPage: React.FC = () => {
         </header>
 
         <section className="learning-path-section">
-          {/* Dummy milestones hiển thị trước */}
           {DUMMY_MILESTONES.map((m) => (
             <MilestoneCard key={m.id} milestone={m} />
           ))}
 
-          {/* API milestones nếu có */}
           {isLoading && (
             <div style={{ textAlign: "center", padding: "40px" }}>
               Đang tải lộ trình học...

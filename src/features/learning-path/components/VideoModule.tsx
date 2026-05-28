@@ -23,12 +23,10 @@ export const VideoModule: React.FC<VideoModuleProps> = ({
   return (
     <div className="vm-overlay" onClick={handleCloseModal}>
       <div className="vm-modal-content" onClick={(e) => e.stopPropagation()}>
-        {/* Close button */}
         <button className="vm-close-x" onClick={handleCloseModal}>
           <X size={20} />
         </button>
 
-        {/* Video Area */}
         <div className="vm-video-container">
           {!isPlaying ? (
             <>
@@ -61,7 +59,6 @@ export const VideoModule: React.FC<VideoModuleProps> = ({
           )}
         </div>
 
-        {/* Modal Body */}
         <div className="vm-body">
           <div className="vm-header">
             <div>

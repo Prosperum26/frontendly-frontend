@@ -58,4 +58,40 @@ export interface RoadmapResponse {
     milestones: ApiMilestone[];
     pagination: Pagination;
   };
+}                       
+export interface DetailLesson {
+  id: string;
+  title: string;
+  description: string;
+  type: "theory" | "liveClass" | "finalProject";
+  status: "completed" | "in_progress" | "locked";
+  duration: string;
+  tags: string[];
+  codePreview?: string;
+  order: number;
 }
+export interface MilestoneDetail {
+  id: string;
+  milestoneNumber: number;
+  title: string;
+  description: string;
+  totalLessons: number;
+  completedLessons: number;
+  progressPercent: number;
+  lessons: DetailLesson[];
+  proTip: {
+    text: string;
+    imageUrl: string;
+  };
+}
+
+export interface TheorySection {
+  heading: string;
+  content: string;
+}
+export interface TheoryContent {
+  lessonId: string;
+  title: string;
+  sections: TheorySection[];
+}
+export type LessonTheoryData = Record<string, TheoryContent>;

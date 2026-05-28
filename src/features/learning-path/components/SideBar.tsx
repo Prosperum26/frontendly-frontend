@@ -1,5 +1,5 @@
 import React from "react";
-import { PlayCircle, Flame, Trophy, Plus } from "lucide-react";
+import { PlayCircle, Flame, Trophy, Plus, Star, Zap, Sun } from "lucide-react";
 import "./SideBar.css";
 interface SideBarProps {
   onWatchIntro: () => void;
@@ -30,7 +30,7 @@ export const SideBar: React.FC<SideBarProps> = ({ onWatchIntro }) => {
               interactive workspace for maximum learning efficiency.
             </p>
             <button className="watch-btn" onClick={onWatchIntro}>
-              <img src="src/assets/learning-path/sidebar/continue2_icon.svg" />
+              <PlayCircle size={16} />
               Watch Intro
             </button>
           </div>
@@ -43,24 +43,23 @@ export const SideBar: React.FC<SideBarProps> = ({ onWatchIntro }) => {
           <div className="profile-info">
             <div className="avatar-wrapper">
               <img
-                src="src/assets/default_avatar.png"
-                alt="USERNAME"
+                src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&h=150&q=80"
+                alt="Alex Rivera"
                 className="avatar"
               />
               <div className="level-badge">
-                <img src="src/assets/learning-path/sidebar/star_icon.svg" />
+                <Star size={10} fill="white" stroke="white" />
               </div>
             </div>
             <div>
-              <h3 className="user-name">USERNAME</h3>
-              <p className="user-title">trình độ</p>
+              <h3 className="user-name">Alex Rivera</h3>
+              <p className="user-title">Junior Developer</p>
             </div>
           </div>
 
           <div className="xp-container">
             <div className="xp-header">
               <span className="xp-label">EXPERIENCE POINTS</span>
-              {/*Dummy data */}
               <span className="xp-value">
                 <strong>2,450</strong> / 3,000
               </span>
@@ -74,14 +73,14 @@ export const SideBar: React.FC<SideBarProps> = ({ onWatchIntro }) => {
             <div className="stat-box">
               <span className="stat-label">STREAK</span>
               <div className="stat-value text-blue">
-                <Flame size={20} />
+                <Flame size={20} fill="#2563eb" color="#2563eb" />
                 <span>12 Days</span>
               </div>
             </div>
             <div className="stat-box">
               <span className="stat-label">RANK</span>
               <div className="stat-value text-blue">
-                <Trophy size={20} />
+                <Trophy size={20} fill="#2563eb" color="#2563eb" />
                 <span>Top 5%</span>
               </div>
             </div>
@@ -92,10 +91,10 @@ export const SideBar: React.FC<SideBarProps> = ({ onWatchIntro }) => {
             <div className="badges-list">
               <div className="badge-icon bg-green-light text-green">HTML</div>
               <div className="badge-icon bg-blue-light text-blue">
-                <Flame size={16} />
+                <Zap size={16} fill="#2563eb" color="#2563eb" />
               </div>
               <div className="badge-icon bg-yellow-light text-yellow">
-                <Trophy size={16} />
+                <Sun size={16} fill="#d97706" color="#d97706" />
               </div>
               <div className="badge-empty">
                 <Plus size={16} color="#94a3b8" />

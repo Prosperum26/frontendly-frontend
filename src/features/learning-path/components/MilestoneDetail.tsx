@@ -13,7 +13,7 @@ import {
 import { DUMMY_MILESTONE_DETAILS } from "../../../data/dummy/milestoneDetail";
 import type { DetailLesson } from "../types/learning-path.types";
 import "./MilestoneDetail.css";
-/* ── Lesson Card sub-components ── */
+
 const CompletedCard: React.FC<{ lesson: DetailLesson }> = ({ lesson }) => (
   <div className="md-lesson-card card-completed">
     <div className="md-card-info">
@@ -143,9 +143,17 @@ const TimelineDot: React.FC<{ lesson: DetailLesson }> = ({ lesson }) => {
 export const MilestoneDetailPage: React.FC = () => {
   const { milestoneId } = useParams<{ milestoneId: string }>();
   const navigate = useNavigate();
-  const milestone = milestoneId
+  
+  let milestone = milestoneId
     ? DUMMY_MILESTONE_DETAILS[milestoneId]
     : undefined;
+
+  if (!milestone && milestoneId) {
+    const cleanId = milestoneId.replace(/\D/g, "");
+    const fallbackKey = `m${cleanId || "2"}`;
+    milestone = DUMMY_MILESTONE_DETAILS[fallbackKey] || DUMMY_MILESTONE_DETAILS["m2"];
+  }
+
   if (!milestone) {
     return (
       <div style={{ padding: 48, textAlign: "center" }}>
@@ -178,7 +186,6 @@ export const MilestoneDetailPage: React.FC = () => {
             />
           </div>
         </div>
-        {/* Lesson Nav */}
         <div className="md-lesson-nav">
           <div className="md-lesson-nav-title">Lessons</div>
           <ul className="md-lesson-nav-list">
@@ -225,7 +232,6 @@ export const MilestoneDetailPage: React.FC = () => {
           </div>
         )}
       </aside>
-      {/* ── Main Content ── */}
       <main className="md-main">
         <button className="md-back-btn" onClick={() => navigate("/learning-path")}>
           <ArrowLeft size={16} />
@@ -237,7 +243,6 @@ export const MilestoneDetailPage: React.FC = () => {
         </div>
         <h1 className="md-milestone-title">{milestone.title}</h1>
         <p className="md-milestone-desc">{milestone.description}</p>
-        {/* Timeline */}
         <div className="md-timeline">
           {milestone.lessons.map((lesson) => (
             <div key={lesson.id} className="md-timeline-item">
