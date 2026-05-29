@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import './workspace.css';
 import { WorkspaceExerciseSection } from './WorkspaceExerciseSection';
 import { WorkspaceFooter } from './WorkspaceFooter';
-import { WorkspaceToast, type WorkspaceToastState } from './WorkspaceToast';
+import { Toast, type ToastType } from '../../components/Toast';
 import { Toolbar } from '../../features/editor/components/Toolbar';
 import { WorkspacePanels } from '../../features/editor/components/WorkspacePanels';
 import type {
@@ -29,6 +29,13 @@ export const WorkspacePage: React.FC = () => {
 
 interface WorkspacePageContentProps {
   exercise: ExerciseDefinition;
+}
+
+interface WorkspaceToastState {
+  id: number;
+  type: ToastType;
+  title: string;
+  message: string;
 }
 
 const WorkspacePageContent: React.FC<WorkspacePageContentProps> = ({ exercise }) => {
@@ -191,7 +198,14 @@ const WorkspacePageContent: React.FC<WorkspacePageContentProps> = ({ exercise })
 
   return (
     <>
-      {toast && <WorkspaceToast toast={toast} onClose={() => setToast(null)} />}
+      {toast && (
+        <Toast
+          type={toast.type}
+          title={toast.title}
+          message={toast.message}
+          onClose={() => setToast(null)}
+        />
+      )}
       <div className="workspace-main">
         <WorkspaceExerciseSection exercise={exercise} criteria={criteria} />
         <section className="workspace-coding workspace-coding--editor" aria-label="Coding workspace">

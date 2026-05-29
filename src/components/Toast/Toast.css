@@ -1,55 +1,108 @@
 .toast {
-  display: flex;
+  position: fixed;
+  top: 86px;
+  right: clamp(16px, 3vw, 48px);
+  z-index: 100;
+  display: grid;
+  grid-template-columns: 36px minmax(0, 1fr) 24px;
   align-items: center;
-  justify-content: space-between;
-  padding: 0.75rem 1rem;
-  border-radius: 0.5rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  animation: slideInRight 0.3s ease-out;
+  gap: 16px;
+  width: min(448px, calc(100vw - 32px));
+  min-height: 94px;
+  padding: 18px 22px 18px 16px;
+  border-radius: 6px;
+  color: #fff;
+  box-shadow: 0 20px 32px rgba(0, 0, 0, 0.32);
+  animation: toast-slide-in 0.18s ease-out;
 }
 
 .toast--success {
-  background-color: #d1fae5;
-  color: #065f46;
-}
-
-.toast--error {
-  background-color: #fee2e2;
-  color: #991b1b;
+  background: #10b981;
 }
 
 .toast--warning {
-  background-color: #fef3c7;
-  color: #92400e;
+  background: #f97316;
+}
+
+.toast--error {
+  background: #c5161d;
 }
 
 .toast--info {
-  background-color: #dbeafe;
-  color: #1e40af;
+  background: #2563eb;
+}
+
+.toast-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  background: #fff;
+  font-size: 20px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.toast--success .toast-icon {
+  color: #0f766e;
+}
+
+.toast--warning .toast-icon {
+  color: #f97316;
+}
+
+.toast--error .toast-icon {
+  color: #c5161d;
+}
+
+.toast--info .toast-icon {
+  color: #2563eb;
+}
+
+.toast-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.toast-title {
+  font-size: 18px;
+  line-height: 22px;
+  color: #fff;
 }
 
 .toast-message {
-  font-size: 0.875rem;
-  font-weight: 500;
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 21px;
+  color: #fff;
 }
 
 .toast-close {
-  background: none;
-  border: none;
-  font-size: 1.25rem;
-  cursor: pointer;
-  color: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
   padding: 0;
-  margin-left: 0.5rem;
+  border: none;
+  background: transparent;
+  color: #fff;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
 }
 
-@keyframes slideInRight {
+@keyframes toast-slide-in {
   from {
-    transform: translateX(100%);
     opacity: 0;
+    transform: translateX(24px);
   }
   to {
-    transform: translateX(0);
     opacity: 1;
+    transform: translateX(0);
   }
 }
