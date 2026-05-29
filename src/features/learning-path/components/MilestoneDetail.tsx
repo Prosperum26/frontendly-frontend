@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 import {
   CheckCircle,
   Loader,
@@ -10,8 +11,10 @@ import {
   Calendar,
   Star,
 } from "lucide-react";
-import { MILESTONE_DETAILS_DATA } from "../../../data/learning-path/milestoneDetail.data";
 import type { DetailLesson } from "../types/learning-path.types";
+import { useRoadmapStore } from "../stores/roadmapStore";
+import { useRoadmap } from "../hooks/useRoadmap";
+import { DEFAULT_SKILL_ID } from "../utils/roadmapMappers";
 import "./MilestoneDetail.css";
 
 const CompletedCard: React.FC<{ lesson: DetailLesson }> = ({ lesson }) => (
@@ -28,6 +31,7 @@ const CompletedCard: React.FC<{ lesson: DetailLesson }> = ({ lesson }) => (
     </div>
   </div>
 );
+
 const InProgressCard: React.FC<{
   lesson: DetailLesson;
   milestoneId: string;
@@ -40,10 +44,7 @@ const InProgressCard: React.FC<{
           <span className="md-card-type-badge">IN PROGRESS</span>
           <div className="md-card-type-info">
             <Calendar size={14} />
-            <span>
-              {lesson.type === "liveClass" ? "Live Class" : "Theory"} •{" "}
-              {lesson.duration}
-            </span>
+            <span>Theory • {lesson.duration || "—"}</span>
           </div>
         </div>
         <h3>{lesson.title}</h3>
@@ -60,10 +61,11 @@ const InProgressCard: React.FC<{
               </div>
             )}
             <button
+              type="button"
               className="md-continue-btn"
               onClick={() =>
                 navigate(
-                  `/learning-path/milestone/${milestoneId}/lesson/${lesson.id}`
+                  `/learning-path/milestone/${milestoneId}/lesson/${lesson.id}`,
                 )
               }
             >
@@ -78,11 +80,6 @@ const InProgressCard: React.FC<{
                 <span className="md-code-dot green" />
               </div>
               <div className="md-code-content">{lesson.codePreview}</div>
-              <div className="md-code-grid-demo">
-                <div className="md-code-grid-cell" />
-                <div className="md-code-grid-cell" />
-                <div className="md-code-grid-cell" />
-              </div>
             </div>
           )}
         </div>
@@ -90,6 +87,7 @@ const InProgressCard: React.FC<{
     </div>
   );
 };
+
 const LockedCard: React.FC<{ lesson: DetailLesson }> = ({ lesson }) => (
   <div className="md-lesson-card card-locked">
     <div className="md-card-info">
@@ -103,14 +101,18 @@ const LockedCard: React.FC<{ lesson: DetailLesson }> = ({ lesson }) => (
     )}
   </div>
 );
+
 const FinalProjectCard: React.FC<{ lesson: DetailLesson }> = ({ lesson }) => (
   <div className="md-lesson-card card-final-project">
     <span className="md-card-final-label">FINAL PROJECT</span>
     <h3>{lesson.title}</h3>
     <p>{lesson.description}</p>
-    <button className="md-view-btn">View Requirements</button>
+    <button type="button" className="md-view-btn" disabled>
+      View Requirements
+    </button>
   </div>
 );
+
 const TimelineDot: React.FC<{ lesson: DetailLesson }> = ({ lesson }) => {
   if (lesson.type === "finalProject") {
     return (
@@ -143,24 +145,47 @@ const TimelineDot: React.FC<{ lesson: DetailLesson }> = ({ lesson }) => {
 export const MilestoneDetailPage: React.FC = () => {
   const { milestoneId } = useParams<{ milestoneId: string }>();
   const navigate = useNavigate();
-  
-  let milestone = milestoneId
-    ? MILESTONE_DETAILS_DATA[milestoneId]
-    : undefined;
+  const queryClient = useQueryClient();
+  const getMilestoneDetailById = useRoadmapStore((s) => s.getMilestoneDetailById);
+  const milestones = useRoadmapStore((s) => s.milestones);
 
-  if (!milestone && milestoneId) {
-    const cleanId = milestoneId.replace(/\D/g, "");
-    const fallbackKey = `m${cleanId || "2"}`;
-    milestone = MILESTONE_DETAILS_DATA[fallbackKey] || MILESTONE_DETAILS_DATA["m2"];
+  const { isLoading, isError, refetch } = useRoadmap(DEFAULT_SKILL_ID);
+
+  useEffect(() => {
+    if (milestones.length === 0) {
+      void refetch();
+    }
+  }, [milestones.length, refetch]);
+
+  const milestone = milestoneId ? getMilestoneDetailById(milestoneId) : undefined;
+
+  if (isLoading && !milestone) {
+    return (
+      <div style={{ padding: 48, textAlign: "center", color: "#64748b" }}>
+        Đang tải chi tiết milestone...
+      </div>
+    );
   }
 
   if (!milestone) {
     return (
       <div style={{ padding: 48, textAlign: "center" }}>
-        <h2>Milestone not found</h2>
-        <button className="md-back-btn" onClick={() => navigate(-1)}>
+        <h2>Không tìm thấy milestone</h2>
+        <p style={{ color: "#64748b", marginBottom: 16 }}>
+          {isError
+            ? "Không thể tải dữ liệu lộ trình."
+            : "Milestone này không có trong lộ trình hiện tại."}
+        </p>
+        <button
+          type="button"
+          className="md-back-btn"
+          onClick={() => {
+            void queryClient.invalidateQueries({ queryKey: ["roadmap"] });
+            navigate("/learning-path");
+          }}
+        >
           <ArrowLeft size={16} />
-          Back to Learning Path
+          Về Learning Path
         </button>
       </div>
     );
@@ -169,7 +194,7 @@ export const MilestoneDetailPage: React.FC = () => {
   return (
     <div className="milestone-detail-wrapper">
       <aside className="md-sidebar">
-        <div className="md-progress-card">
+        <div className="md-progress-card md-progress-card-sticky">
           <div className="md-progress-label">Current Progress</div>
           <div className="md-progress-stats">
             <span className="md-progress-percent">
@@ -198,9 +223,12 @@ export const MilestoneDetailPage: React.FC = () => {
                   lesson.status === "locked" ? "is-locked" : ""
                 }`}
                 onClick={() => {
-                  if (lesson.status !== "locked" && lesson.type !== "finalProject") {
+                  if (
+                    lesson.status !== "locked" &&
+                    lesson.type !== "finalProject"
+                  ) {
                     navigate(
-                      `/learning-path/milestone/${milestone.id}/lesson/${lesson.id}`
+                      `/learning-path/milestone/${milestone.id}/lesson/${lesson.id}`,
                     );
                   }
                 }}
@@ -223,7 +251,11 @@ export const MilestoneDetailPage: React.FC = () => {
         </div>
       </aside>
       <main className="md-main">
-        <button className="md-back-btn" onClick={() => navigate("/learning-path")}>
+        <button
+          type="button"
+          className="md-back-btn"
+          onClick={() => navigate("/learning-path")}
+        >
           <ArrowLeft size={16} />
           Back to Learning Path
         </button>
@@ -253,4 +285,5 @@ export const MilestoneDetailPage: React.FC = () => {
     </div>
   );
 };
+
 export default MilestoneDetailPage;

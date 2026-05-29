@@ -1,19 +1,19 @@
-import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import {
-  ArrowLeft,
-  Bell,
-  Trophy,
-  Grid,
-  Columns,
-  Layers,
-  CheckCircle,
-  Circle,
-} from "lucide-react";
+import React, { useState, useEffect, useMemo } from "react";
+import { useParams, useNavigate, Link } from "react-router-dom";
+import { ArrowLeft, CheckCircle, Circle } from "lucide-react";
 import api from "../../../services/api";
-import { DUMMY_MILESTONE_DETAILS } from "../../../data/dummy/milestoneDetail";
-import defaultAvatar from "../../../assets/default_avatar.png";
+import { useRoadmapStore } from "../stores/roadmapStore";
+import { useRoadmap } from "../hooks/useRoadmap";
+import { DEFAULT_SKILL_ID } from "../utils/roadmapMappers";
+import { ROUTES } from "../../../constants/routes";
 import "./TheoryPage.css";
+
+interface TheoryApiData {
+  title?: string;
+  contentHtml?: string;
+  proTips?: string;
+  referenceLinks?: Array<string | { url?: string; link?: string; title?: string; name?: string }>;
+}
 
 export const TheoryPage: React.FC = () => {
   const { milestoneId, lessonId } = useParams<{
@@ -21,12 +21,25 @@ export const TheoryPage: React.FC = () => {
     lessonId: string;
   }>();
   const navigate = useNavigate();
+  const getMilestoneDetailById = useRoadmapStore((s) => s.getMilestoneDetailById);
+  const milestones = useRoadmapStore((s) => s.milestones);
+  const { refetch, isLoading: roadmapLoading } = useRoadmap(DEFAULT_SKILL_ID);
 
-  const [theoryData, setTheoryData] = useState<any>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [theoryData, setTheoryData] = useState<TheoryApiData | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const stageId = lessonId || milestoneId;
+  const stageId = lessonId ?? "";
+
+  useEffect(() => {
+    if (milestones.length === 0) {
+      void refetch();
+    }
+  }, [milestones.length, refetch]);
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [lessonId]);
 
   useEffect(() => {
     const fetchTheory = async () => {
@@ -35,90 +48,119 @@ export const TheoryPage: React.FC = () => {
       setError(null);
       try {
         const response = await api.get(`/v1/stages/${stageId}/theory`);
-        // Handle nested response format safely
         setTheoryData(response.data?.data || response.data);
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error("Error fetching stage theory:", err);
-        setError(err?.message || "Failed to load lesson theory content");
+        const message =
+          err instanceof Error
+            ? err.message
+            : "Không thể tải nội dung lý thuyết.";
+        setError(message);
+        setTheoryData(null);
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchTheory();
+    void fetchTheory();
   }, [stageId]);
 
-  let milestone = milestoneId
-    ? DUMMY_MILESTONE_DETAILS[milestoneId]
+  const milestone = milestoneId
+    ? getMilestoneDetailById(milestoneId)
     : undefined;
 
-  if (!milestone && milestoneId) {
-    const cleanId = milestoneId.replace(/\D/g, "");
-    const fallbackKey = `m${cleanId || "2"}`;
-    milestone = DUMMY_MILESTONE_DETAILS[fallbackKey] || DUMMY_MILESTONE_DETAILS["m2"];
-  }
+  const currentLesson = useMemo(
+    () => milestone?.lessons.find((l) => l.id === lessonId),
+    [milestone, lessonId],
+  );
 
-  const [activeTab, setActiveTab] = useState("Learn");
+  const completedCount =
+    milestone?.lessons.filter((l) => l.status === "completed").length ?? 0;
+  const totalCount = milestone?.lessons.length ?? 0;
+  const progressPercent = milestone?.progressPercent ?? 0;
 
-  if (!milestone) {
+  if (!milestoneId || !lessonId) {
     return (
       <div className="tp-error-container">
-        <h2>Milestone not found</h2>
-        <button className="tp-back-btn" onClick={() => navigate("/learning-path")}>
-          <ArrowLeft size={16} /> Back to Learning Path
+        <h2>Thiếu thông tin bài học</h2>
+        <button
+          type="button"
+          className="tp-back-btn"
+          onClick={() => navigate(ROUTES.LEARNING_PATH)}
+        >
+          <ArrowLeft size={16} /> Về Learning Path
         </button>
       </div>
     );
   }
 
+  if (!milestone && !roadmapLoading) {
+    return (
+      <div className="tp-error-container">
+        <h2>Không tìm thấy milestone</h2>
+        <button
+          type="button"
+          className="tp-back-btn"
+          onClick={() => navigate(ROUTES.LEARNING_PATH)}
+        >
+          <ArrowLeft size={16} /> Về Learning Path
+        </button>
+      </div>
+    );
+  }
+
+  const headerTitle =
+    theoryData?.title || currentLesson?.title || "Theory Lesson";
+
   const handleBackToOverview = () => {
-    navigate(`/learning-path/milestone/${milestone.id}`);
+    navigate(`/learning-path/milestone/${milestoneId}`);
+  };
+
+  const handleLessonSelect = (id: string, status: string) => {
+    if (status === "locked") return;
+    if (id === lessonId) return;
+    navigate(`/learning-path/milestone/${milestoneId}/lesson/${id}`);
   };
 
   const handleContinue = async () => {
     if (!stageId) return;
     try {
       await api.patch(`/v1/stages/${stageId}/unlock-practice`, {});
-      
-      // Navigate user to practice workspace
-      navigate(`/workspace?stageId=${stageId}`);
-    } catch (err: any) {
+    } catch (err) {
       console.error("Error unlocking practice:", err);
-      // Fallback redirect so user is never stuck
-      navigate(`/workspace?stageId=${stageId}`);
     }
+    navigate(`/workspace?stageId=${stageId}`);
   };
 
   return (
     <div className="tp-page-container">
       <header className="tp-top-header">
-        <div className="tp-header-left" onClick={handleBackToOverview}>
+        <button
+          type="button"
+          className="tp-header-left"
+          onClick={handleBackToOverview}
+          style={{
+            background: "none",
+            border: "none",
+            cursor: "pointer",
+            display: "flex",
+            alignItems: "center",
+            gap: 8,
+          }}
+        >
           <ArrowLeft size={20} className="tp-arrow-icon" />
-          <h2 className="tp-header-title">CSS Grid: The Grid Container</h2>
-        </div>
-        
-        <nav className="tp-header-nav">
-          <span className={activeTab === "Home" ? "active" : ""} onClick={() => setActiveTab("Home")}>Home</span>
-          <span className={activeTab === "Learn Path" ? "active" : ""} onClick={() => setActiveTab("Learn Path")}>Learn Path</span>
-          <span className={activeTab === "Milestone Roadmap" ? "active" : ""} onClick={() => setActiveTab("Milestone Roadmap")}>Milestone Roadmap</span>
-          <span className={activeTab === "Lesson" ? "active" : ""} onClick={() => setActiveTab("Lesson")}>Lesson</span>
-          <span className={activeTab === "Leaderboard" ? "active" : ""} onClick={() => setActiveTab("Leaderboard")}>Leaderboard</span>
-          <span className={activeTab === "Profile" ? "active" : ""} onClick={() => setActiveTab("Profile")}>Profile</span>
-        </nav>
+          <h2 className="tp-header-title">{headerTitle}</h2>
+        </button>
 
-        <div className="tp-header-right">
-          <button className="tp-icon-btn">
-            <Bell size={20} />
-          </button>
-          <button className="tp-icon-btn">
-            <Trophy size={20} />
-          </button>
-          <img
-            src={defaultAvatar}
-            alt="Alex Rivera"
-            className="tp-profile-pic"
-          />
-        </div>
+        <nav className="tp-header-nav">
+          <Link to={ROUTES.HOME}>Home</Link>
+          <Link to={ROUTES.LEARNING_PATH}>Learn Path</Link>
+          <Link to={`/learning-path/milestone/${milestoneId}`}>
+            Milestone
+          </Link>
+          <Link to={ROUTES.LEADERBOARD}>Leaderboard</Link>
+          <Link to={ROUTES.PROFILE}>Profile</Link>
+        </nav>
       </header>
 
       <div className="tp-content-layout">
@@ -127,33 +169,53 @@ export const TheoryPage: React.FC = () => {
             <span className="tp-sidebar-subtitle">COURSE PROGRESS</span>
             <div className="tp-sidebar-progress-stats">
               <div className="tp-sidebar-progress-bar-track">
-                <div className="tp-sidebar-progress-bar-fill" style={{ width: "25%" }}></div>
+                <div
+                  className="tp-sidebar-progress-bar-fill"
+                  style={{ width: `${progressPercent}%` }}
+                />
               </div>
-              <span className="tp-sidebar-progress-text">25% Complete</span>
+              <span className="tp-sidebar-progress-text">
+                {progressPercent}% Complete
+              </span>
             </div>
           </div>
 
           <div className="tp-sidebar-lessons">
             <span className="tp-sidebar-subtitle">LESSONS</span>
             <ul className="tp-lessons-list">
-              <li className="tp-lesson-item completed">
-                <CheckCircle size={18} className="tp-lesson-icon completed" />
-                <span>1. CSS Positioning Deep Dive</span>
-              </li>
-              <li className="tp-lesson-item active">
-                <div className="tp-active-dot-container">
-                  <div className="tp-active-dot"></div>
-                </div>
-                <span>2. The Grid Container</span>
-              </li>
-              <li className="tp-lesson-item">
-                <Circle size={18} className="tp-lesson-icon" />
-                <span>3. Grid Tracks & Gaps</span>
-              </li>
-              <li className="tp-lesson-item">
-                <Circle size={18} className="tp-lesson-icon" />
-                <span>4. Grid Area Naming</span>
-              </li>
+              {milestone?.lessons.map((lesson) => {
+                const isActive = lesson.id === lessonId;
+                const isCompleted = lesson.status === "completed";
+                const isLocked = lesson.status === "locked";
+
+                return (
+                  <li
+                    key={lesson.id}
+                    className={`tp-lesson-item ${isActive ? "active" : ""} ${isCompleted ? "completed" : ""} ${isLocked ? "locked" : ""}`}
+                    onClick={() => handleLessonSelect(lesson.id, lesson.status)}
+                    style={{
+                      cursor: isLocked ? "not-allowed" : "pointer",
+                      opacity: isLocked ? 0.5 : 1,
+                    }}
+                  >
+                    {isCompleted ? (
+                      <CheckCircle
+                        size={18}
+                        className="tp-lesson-icon completed"
+                      />
+                    ) : isActive ? (
+                      <div className="tp-active-dot-container">
+                        <div className="tp-active-dot" />
+                      </div>
+                    ) : (
+                      <Circle size={18} className="tp-lesson-icon" />
+                    )}
+                    <span>
+                      {lesson.order}. {lesson.title}
+                    </span>
+                  </li>
+                );
+              })}
             </ul>
           </div>
         </aside>
@@ -161,105 +223,147 @@ export const TheoryPage: React.FC = () => {
         <main className="tp-main-body">
           <div className="tp-body-grid">
             {isLoading ? (
-              <div className="tp-body-left" style={{ padding: "40px", color: "#94a3b8" }}>
-                Loading theory content...
+              <div
+                className="tp-body-left"
+                style={{ padding: "40px", color: "#94a3b8" }}
+              >
+                Đang tải nội dung lý thuyết...
               </div>
             ) : error ? (
-              <div className="tp-body-left" style={{ padding: "40px", color: "#ef4444" }}>
-                {error}
+              <div
+                className="tp-body-left"
+                style={{ padding: "40px", color: "#ef4444" }}
+              >
+                <p>{error}</p>
+                <button
+                  type="button"
+                  onClick={() => window.location.reload()}
+                  style={{ marginTop: 12 }}
+                >
+                  Thử lại
+                </button>
               </div>
             ) : (
               <div className="tp-body-left">
                 <span className="tp-badge">THEORY</span>
-                <h1 className="tp-title">{theoryData?.title || "Theory Lesson"}</h1>
-                
+                <h1 className="tp-title">{headerTitle}</h1>
+
                 {theoryData?.contentHtml ? (
-                  <div 
-                    className="tp-theory-contentHtml" 
-                    dangerouslySetInnerHTML={{ __html: theoryData.contentHtml }} 
-                    style={{ lineHeight: "1.7", color: "var(--color-body)", fontSize: "15px" }}
+                  <div
+                    className="tp-theory-contentHtml"
+                    dangerouslySetInnerHTML={{
+                      __html: theoryData.contentHtml,
+                    }}
+                    style={{
+                      lineHeight: "1.7",
+                      color: "var(--color-body)",
+                      fontSize: "15px",
+                    }}
                   />
                 ) : (
-                  <p className="tp-description">No theory content available.</p>
+                  <p className="tp-description">
+                    Chưa có nội dung lý thuyết cho bài học này.
+                  </p>
                 )}
 
                 {theoryData?.proTips && (
-                  <div className="tp-pro-tips" style={{ marginTop: "24px", padding: "16px", background: "#fef3c7", borderRadius: "8px", borderLeft: "4px solid #d97706" }}>
-                    <h4 style={{ color: "#92400e", fontWeight: "bold", marginBottom: "4px", fontSize: "14px" }}>Pro Tip</h4>
-                    <p style={{ color: "#78350f", margin: 0, fontSize: "13px" }}>{theoryData.proTips}</p>
+                  <div
+                    className="tp-pro-tips"
+                    style={{
+                      marginTop: "24px",
+                      padding: "16px",
+                      background: "#fef3c7",
+                      borderRadius: "8px",
+                      borderLeft: "4px solid #d97706",
+                    }}
+                  >
+                    <h4
+                      style={{
+                        color: "#92400e",
+                        fontWeight: "bold",
+                        marginBottom: "4px",
+                        fontSize: "14px",
+                      }}
+                    >
+                      Pro Tip
+                    </h4>
+                    <p
+                      style={{
+                        color: "#78350f",
+                        margin: 0,
+                        fontSize: "13px",
+                      }}
+                    >
+                      {theoryData.proTips}
+                    </p>
                   </div>
                 )}
 
-                {theoryData?.referenceLinks && theoryData.referenceLinks.length > 0 && (
-                  <div className="tp-reference-links" style={{ marginTop: "32px", paddingTop: "20px", borderTop: "1px solid #e2e8f0" }}>
-                    <h3 style={{ fontSize: "16px", fontWeight: "600", marginBottom: "12px", color: "var(--color-heading)" }}>Reference Links</h3>
-                    <ul style={{ listStyleType: "disc", paddingLeft: "20px" }}>
-                      {theoryData.referenceLinks.map((link: any, index: number) => {
-                        const url = typeof link === "string" ? link : (link.url || link.link);
-                        const label = typeof link === "string" ? link : (link.title || link.name || url);
-                        return (
-                          <li key={index} style={{ marginBottom: "8px" }}>
-                            <a 
-                              href={url} 
-                              target="_blank" 
-                              rel="noopener noreferrer"
-                              style={{ color: "#2563eb", textDecoration: "underline" }}
-                            >
-                              {label}
-                            </a>
-                          </li>
-                        );
-                      })}
-                    </ul>
-                  </div>
-                )}
+                {theoryData?.referenceLinks &&
+                  theoryData.referenceLinks.length > 0 && (
+                    <div
+                      className="tp-reference-links"
+                      style={{
+                        marginTop: "32px",
+                        paddingTop: "20px",
+                        borderTop: "1px solid #e2e8f0",
+                      }}
+                    >
+                      <h3
+                        style={{
+                          fontSize: "16px",
+                          fontWeight: "600",
+                          marginBottom: "12px",
+                        }}
+                      >
+                        Reference Links
+                      </h3>
+                      <ul
+                        style={{
+                          listStyleType: "disc",
+                          paddingLeft: "20px",
+                        }}
+                      >
+                        {theoryData.referenceLinks.map((link, index) => {
+                          const url =
+                            typeof link === "string"
+                              ? link
+                              : link.url || link.link;
+                          const label =
+                            typeof link === "string"
+                              ? link
+                              : link.title || link.name || url;
+                          return (
+                            <li key={index} style={{ marginBottom: "8px" }}>
+                              <a
+                                href={url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                style={{
+                                  color: "#2563eb",
+                                  textDecoration: "underline",
+                                }}
+                              >
+                                {label}
+                              </a>
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    </div>
+                  )}
               </div>
             )}
-
-            <div className="tp-body-right">
-              <div className="tp-demo-container">
-                <div className="tp-demo-grid">
-                  <div className="tp-demo-cell">1</div>
-                  <div className="tp-demo-cell">2</div>
-                  <div className="tp-demo-cell">3</div>
-                  <div className="tp-demo-cell">4</div>
-                  <div className="tp-demo-cell">5</div>
-                  <div className="tp-demo-cell">6</div>
-                </div>
-              </div>
-
-              <div className="tp-code-editor">
-                <div className="tp-code-editor-header">
-                  <div className="tp-editor-dots">
-                    <span className="tp-dot red"></span>
-                    <span className="tp-dot yellow"></span>
-                    <span className="tp-dot green"></span>
-                  </div>
-                  <span className="tp-editor-filename">STYLES.CSS</span>
-                </div>
-                <pre className="tp-editor-content">
-                  <code>
-{`.container {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: 100px 100px;
-  gap: 16px;
-}
-
-.item {
-  background-color: #2563eb33;
-  border: 2px dashed #2563eb;
-}`}
-                  </code>
-                </pre>
-              </div>
-            </div>
           </div>
         </main>
       </div>
 
       <footer className="tp-fixed-footer">
-        <button className="tp-footer-back-link" onClick={handleBackToOverview}>
+        <button
+          type="button"
+          className="tp-footer-back-link"
+          onClick={handleBackToOverview}
+        >
           <ArrowLeft size={16} />
           <span>BACK TO OVERVIEW</span>
         </button>
@@ -267,13 +371,24 @@ export const TheoryPage: React.FC = () => {
         <div className="tp-footer-progress-pill">
           <span className="tp-progress-pill-label">PROGRESS</span>
           <div className="tp-progress-pill-track">
-            <div className="tp-progress-pill-fill" style={{ width: "25%" }}></div>
+            <div
+              className="tp-progress-pill-fill"
+              style={{
+                width: `${totalCount > 0 ? (completedCount / totalCount) * 100 : 0}%`,
+              }}
+            />
           </div>
-          <span className="tp-progress-pill-count">1/4 Lessons</span>
+          <span className="tp-progress-pill-count">
+            {completedCount}/{totalCount} Lessons
+          </span>
         </div>
 
-        <button className="tp-footer-continue-btn" onClick={handleContinue}>
-          <span>CONTINUE</span>
+        <button
+          type="button"
+          className="tp-footer-continue-btn"
+          onClick={handleContinue}
+        >
+          <span>CONTINUE TO PRACTICE</span>
           <ArrowLeft size={16} className="tp-arrow-right-icon" />
         </button>
       </footer>

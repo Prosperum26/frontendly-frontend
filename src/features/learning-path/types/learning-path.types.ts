@@ -18,12 +18,6 @@ export interface Lesson {
   isLocked: boolean;
 }
 
-export interface Progress {
-  milestoneId: string;
-  lessonId: string;
-  completedAt: number;
-}
-
 export interface ApiStage {
   id: string;
   title: string;
@@ -34,6 +28,7 @@ export interface ApiStage {
 export interface ApiMilestone {
   id: string;
   title: string;
+  description?: string;
   status: "completed" | "in_progress" | "locked";
   stages: ApiStage[];
 }
@@ -86,14 +81,3 @@ export interface MilestoneDetail {
     imageUrl: string;
   };
 }
-
-export interface TheorySection {
-  heading: string;
-  content: string;
-}
-export interface TheoryContent {
-  lessonId: string;
-  title: string;
-  sections: TheorySection[];
-}
-export type LessonTheoryData = Record<string, TheoryContent>;

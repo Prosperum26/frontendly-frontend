@@ -52,7 +52,8 @@
   gap: 24px;
 }
 
-.tp-header-nav span {
+.tp-header-nav span,
+.tp-header-nav a {
   font-size: 14px;
   font-weight: 600;
   color: #475569;
@@ -60,9 +61,11 @@
   padding: 6px 4px;
   position: relative;
   transition: color 0.2s ease;
+  text-decoration: none;
 }
 
-.tp-header-nav span:hover {
+.tp-header-nav span:hover,
+.tp-header-nav a:hover {
   color: #2563eb;
 }
 

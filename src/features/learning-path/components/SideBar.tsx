@@ -4,7 +4,7 @@ import api from "../../../services/api";
 import "./SideBar.css";
 import defaultAvatar from "../../../assets/default_avatar.png";
 
-import { UserResponse, UserData, ProgressResponse, BadgesResponse, Badge } from "../types/apiResponses";
+import type { UserData, ProgressResponse, Badge } from "../types/apiResponses";
 
 interface SideBarProps {
   onWatchIntro: () => void;

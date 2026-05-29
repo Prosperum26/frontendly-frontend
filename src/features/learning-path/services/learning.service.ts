@@ -1,15 +1,15 @@
 import api from "../../../services/api";
-import type {
-  Milestone,
-  Progress,
-  RoadmapResponse,
-} from "../types/learning-path.types";
+import type { RoadmapResponse } from "../types/learning-path.types";
+import {
+  applyMilestoneUnlockRules,
+  mapApiMilestonesToMilestones,
+} from "../utils/roadmapMappers";
 
 export const learningService = {
   async fetchRoadmap(
     skillId: string,
     page: number = 1,
-    limit: number = 5,
+    limit: number = 20,
   ): Promise<RoadmapResponse> {
     const response = await api.get<RoadmapResponse>(`/roadmaps/${skillId}`, {
       params: {
@@ -20,13 +20,50 @@ export const learningService = {
     return response.data;
   },
 
-  async updateProgress(progress: Progress): Promise<void> {
-    await api.post("/learning/progress", progress);
+  async fetchFullRoadmap(skillId: string): Promise<RoadmapResponse> {
+    const first = await this.fetchRoadmap(skillId, 1, 20);
+    if (!first.success || !first.data) {
+      return first;
+    }
+
+    const { pagination, milestones } = first.data;
+    if (!pagination || pagination.totalPages <= 1) {
+      return first;
+    }
+
+    const extraPages = await Promise.all(
+      Array.from({ length: pagination.totalPages - 1 }, (_, i) =>
+        this.fetchRoadmap(skillId, i + 2, pagination.limit || 20),
+      ),
+    );
+
+    const allMilestones = [
+      ...milestones,
+      ...extraPages.flatMap((page) => page.data?.milestones ?? []),
+    ];
+
+    return {
+      ...first,
+      data: {
+        ...first.data,
+        milestones: allMilestones,
+      },
+    };
   },
 
-  async fetchProgress(): Promise<Progress[]> {
-    const response = await api.get<Progress[]>("/learning/progress");
-    return response.data;
+  mapRoadmapResponse(response: RoadmapResponse) {
+    if (!response.success || !response.data?.milestones) {
+      return null;
+    }
+    const milestones = applyMilestoneUnlockRules(
+      mapApiMilestonesToMilestones(response.data.milestones),
+    );
+    return {
+      skillId: response.data.skillId,
+      skillTitle: response.data.skillTitle,
+      milestones,
+      userProgress: response.data.userProgress,
+    };
   },
 };
 
