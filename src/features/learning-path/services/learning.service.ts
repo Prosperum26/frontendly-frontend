@@ -8,7 +8,7 @@ export const learningService = {
     page: number = 1,
     limit: number = 20,
   ): Promise<RoadmapResponse> {
-    const response = await api.get<RoadmapResponse>(`${ENV.API_URL}/v1/roadmaps/${skillId}`, {
+    const response = await api.get<RoadmapResponse>(`/v1/roadmaps/${skillId}`, {
       params: {
         page,
         limit,
