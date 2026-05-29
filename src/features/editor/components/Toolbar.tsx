@@ -14,6 +14,7 @@ export interface ToolbarProps {
   level: ExerciseDefinition['level'];
   isDirty?: boolean;
   isConsoleOpen?: boolean;
+  isSubmitting?: boolean;
   onReset?: () => void;
   onRun?: () => void;
   onSubmit?: () => void;
@@ -25,6 +26,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
   level,
   isDirty = false,
   isConsoleOpen = false,
+  isSubmitting = false,
   onReset,
   onRun,
   onSubmit,
@@ -53,8 +55,8 @@ export const Toolbar: React.FC<ToolbarProps> = ({
         >
           Console
         </Button>
-        <Button variant="primary" type="button" onClick={onSubmit}>
-          Submit
+        <Button variant="primary" type="button" onClick={onSubmit} disabled={isSubmitting}>
+          {isSubmitting ? 'Submitting...' : 'Submit'}
         </Button>
       </div>
     </div>

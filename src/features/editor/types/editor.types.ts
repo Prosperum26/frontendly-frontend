@@ -30,8 +30,19 @@ export interface ExerciseDefinition {
   title: string;
   level: 'easy' | 'medium' | 'hard';
   description: string;
+  objective?: string;
+  estimatedTime?: string;
+  topicTags?: string[];
+  targetImageUrl?: string;
   requirements: ExerciseRequirement[];
   starterFiles: WorkspaceFiles;
+}
+
+export interface EvaluationCriterion {
+  id: string;
+  label: string;
+  passed: boolean;
+  message?: string;
 }
 
 export interface EvaluationResult {
@@ -39,6 +50,12 @@ export interface EvaluationResult {
   output: string;
   error?: string;
   executionTime: number;
+  criteria?: EvaluationCriterion[];
+}
+
+export interface WorkspaceSubmitRequest {
+  exerciseId: string;
+  files: WorkspaceFiles;
 }
 
 export interface TestCase {

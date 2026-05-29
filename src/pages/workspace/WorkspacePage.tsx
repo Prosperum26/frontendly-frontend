@@ -1,15 +1,22 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import './workspace.css';
 import { WorkspaceExerciseSection } from './WorkspaceExerciseSection';
 import { WorkspaceFooter } from './WorkspaceFooter';
+import { WorkspaceToast, type WorkspaceToastState } from './WorkspaceToast';
 import { Toolbar } from '../../features/editor/components/Toolbar';
 import { WorkspacePanels } from '../../features/editor/components/WorkspacePanels';
-import type { EditorTab, ExerciseDefinition, WorkspaceFiles } from '../../features/editor/types/editor.types';
+import type {
+  EditorTab,
+  EvaluationCriterion,
+  ExerciseDefinition,
+  WorkspaceFiles,
+} from '../../features/editor/types/editor.types';
 import { useDebounce } from '../../hooks/useDebounce';
 import { useDraftPersistence } from '../../features/editor/hooks/useDraftPersistence';
 import { useWorkspaceEditor } from '../../features/editor/hooks/useWorkspaceEditor';
 import { getMockExercise } from '../../features/editor/mocks/exercises.mock';
+import { editorService } from '../../features/editor/services/editor.service';
 import { validatePreviewFiles } from '../../features/editor/utils/previewDocument';
 import '../../features/editor/components/editor-ui.css';
 
@@ -32,8 +39,12 @@ const WorkspacePageContent: React.FC<WorkspacePageContentProps> = ({ exercise })
     'Run or submit your code to see results here.'
   );
   const [isConsoleOpen, setIsConsoleOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [criteria, setCriteria] = useState<EvaluationCriterion[] | undefined>();
+  const [toast, setToast] = useState<WorkspaceToastState | null>(null);
   const [editVersion, setEditVersion] = useState(0);
   const [previewRefreshKey, setPreviewRefreshKey] = useState(0);
+  const lastSubmitAtRef = useRef(0);
   const [forcedPreview, setForcedPreview] = useState<{
     files: WorkspaceFiles;
     editVersion: number;
@@ -55,9 +66,26 @@ const WorkspacePageContent: React.FC<WorkspacePageContentProps> = ({ exercise })
     (tab: EditorTab, value: string) => {
       setFile(tab, value);
       setEditVersion((version) => version + 1);
+      setCriteria(undefined);
     },
     [setFile]
   );
+
+  const showToast = useCallback((nextToast: Omit<WorkspaceToastState, 'id'>) => {
+    setToast({ ...nextToast, id: Date.now() });
+  }, []);
+
+  useEffect(() => {
+    if (!toast) return;
+
+    const closeTimer = window.setTimeout(() => {
+      setToast(null);
+    }, 4200);
+
+    return () => {
+      window.clearTimeout(closeTimer);
+    };
+  }, [toast]);
 
   const handleRun = useCallback(() => {
     const validationErrors = validatePreviewFiles(files);
@@ -71,18 +99,75 @@ const WorkspacePageContent: React.FC<WorkspacePageContentProps> = ({ exercise })
         ? validationErrors.join('\n')
         : 'Preview refreshed with your latest HTML and CSS.'
     );
-  }, [editVersion, files]);
+    if (validationErrors.length > 0) {
+      showToast({
+        type: 'error',
+        title: 'Validation Error',
+        message: 'Your code cannot be empty. Please complete the task before running.',
+      });
+    }
+  }, [editVersion, files, showToast]);
 
-  const handleSubmit = useCallback(() => {
+  const handleSubmit = useCallback(async () => {
+    const now = Date.now();
+    if (now - lastSubmitAtRef.current < 2500) {
+      showToast({
+        type: 'warning',
+        title: 'Slow down!',
+        message: 'You are submitting too fast. Please wait a moment before trying again.',
+      });
+      return;
+    }
+
+    const validationErrors = validatePreviewFiles(files);
+    if (validationErrors.length > 0) {
+      setIsConsoleOpen(true);
+      setConsoleMessage(validationErrors.join('\n'));
+      showToast({
+        type: 'error',
+        title: 'Validation Error',
+        message: 'Your code cannot be empty. Please complete the task before submitting.',
+      });
+      return;
+    }
+
+    lastSubmitAtRef.current = now;
     setIsConsoleOpen(true);
-    setConsoleMessage('Submit will connect to the evaluation API in a later phase.');
-  }, []);
+    setIsSubmitting(true);
+    setConsoleMessage('Submitting your solution...');
+
+    try {
+      const result = await editorService.submitWorkspace({
+        exerciseId: exercise.id,
+        files,
+      });
+
+      setCriteria(result.criteria);
+      setConsoleMessage(result.output);
+      showToast(
+        result.passed
+          ? {
+              type: 'success',
+              title: 'Submission passed!',
+              message: 'Your solution meets all requirements.',
+            }
+          : {
+              type: 'error',
+              title: 'Validation Error',
+              message: 'Some requirements are still failing. Review the checklist and try again.',
+            }
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
+  }, [exercise.id, files, showToast]);
 
   const handleReset = useCallback(() => {
     reset();
     clearDraft();
     setEditVersion((version) => version + 1);
     setForcedPreview(null);
+    setCriteria(undefined);
     setPreviewRefreshKey((key) => key + 1);
     setConsoleMessage('Editor reset to starter code.');
   }, [clearDraft, reset]);
@@ -94,6 +179,7 @@ const WorkspacePageContent: React.FC<WorkspacePageContentProps> = ({ exercise })
     replaceFiles(draft.files, true);
     setEditVersion((version) => version + 1);
     setForcedPreview({ files: draft.files, editVersion: editVersion + 1 });
+    setCriteria(undefined);
     setPreviewRefreshKey((key) => key + 1);
     setConsoleMessage('Draft restored from this browser.');
   }, [editVersion, replaceFiles, restoreDraft]);
@@ -105,8 +191,9 @@ const WorkspacePageContent: React.FC<WorkspacePageContentProps> = ({ exercise })
 
   return (
     <>
+      {toast && <WorkspaceToast toast={toast} onClose={() => setToast(null)} />}
       <div className="workspace-main">
-        <WorkspaceExerciseSection exercise={exercise} />
+        <WorkspaceExerciseSection exercise={exercise} criteria={criteria} />
         <section className="workspace-coding workspace-coding--editor" aria-label="Coding workspace">
           {hasPendingDraft && pendingDraft && (
             <div className="editor-draft-banner" role="status">
@@ -144,6 +231,7 @@ const WorkspacePageContent: React.FC<WorkspacePageContentProps> = ({ exercise })
             onRun={handleRun}
             onSubmit={handleSubmit}
             onToggleConsole={() => setIsConsoleOpen((open) => !open)}
+            isSubmitting={isSubmitting}
           />
           <WorkspacePanels
             files={files}
