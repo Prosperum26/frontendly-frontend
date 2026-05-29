@@ -13,6 +13,9 @@ import ProfilePage from './pages/ProfilePage';
 import LeaderboardPage from './pages/LeaderboardPage';
 import LoginPage from './pages/LoginPage';
 import NotFoundPage from './pages/NotFoundPage';
+import BannedPage from './pages/BannedPage';
+import { ProtectedRoute } from './components/ProtectedRoute/ProtectedRoute';
+import { useSessionVerification } from './features/auth/hooks/useSessionVerification';
 import { ROUTES } from './constants/routes';
 
 const queryClient = new QueryClient({
@@ -25,11 +28,17 @@ const queryClient = new QueryClient({
 });
 
 function App() {
+  // Verify session on app load
+  useSessionVerification();
+
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
         <Router>
           <Routes>
+            {/* Banned route */}
+            <Route path={ROUTES.BANNED} element={<BannedPage />} />
+
             {/* Auth routes */}
             <Route element={<AuthLayout />}>
               <Route path={ROUTES.LOGIN} element={<LoginPage />} />
@@ -40,14 +49,35 @@ function App() {
               <Route path={ROUTES.HOME} element={<HomePage />} />
               <Route path={ROUTES.LEARNING_PATH} element={<LearningPathPage />} />
               <Route path={ROUTES.CHALLENGE_LOBBY} element={<ChallengeLobbyPage />} />
-              <Route path={ROUTES.PROFILE} element={<ProfilePage />} />
+              <Route
+                path={ROUTES.PROFILE}
+                element={
+                  <ProtectedRoute>
+                    <ProfilePage />
+                  </ProtectedRoute>
+                }
+              />
               <Route path={ROUTES.LEADERBOARD} element={<LeaderboardPage />} />
             </Route>
 
             {/* Workspace routes */}
             <Route element={<WorkspaceLayout />}>
-              <Route path={ROUTES.WORKSPACE} element={<WorkspacePage />} />
-              <Route path={ROUTES.CHALLENGE_BATTLE} element={<ChallengeBattlePage />} />
+              <Route
+                path={ROUTES.WORKSPACE}
+                element={
+                  <ProtectedRoute>
+                    <WorkspacePage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path={ROUTES.CHALLENGE_BATTLE}
+                element={
+                  <ProtectedRoute>
+                    <ChallengeBattlePage />
+                  </ProtectedRoute>
+                }
+              />
             </Route>
 
             {/* Default redirect */}

@@ -1,5 +1,5 @@
 import api from '../../../services/api';
-import { LoginCredentials, RegisterCredentials, LoginResponse } from '../types/auth.types';
+import type { LoginCredentials, RegisterCredentials, LoginResponse, User } from '../types/auth.types';
 
 export const authService = {
   async login(credentials: LoginCredentials): Promise<LoginResponse> {
@@ -18,6 +18,11 @@ export const authService = {
 
   async refreshToken(): Promise<LoginResponse> {
     const response = await api.post<LoginResponse>('/auth/refresh');
+    return response.data;
+  },
+
+  async getProfile(): Promise<User> {
+    const response = await api.get<User>('/api/v1/users/profile');
     return response.data;
   },
 };

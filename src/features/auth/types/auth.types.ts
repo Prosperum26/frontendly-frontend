@@ -5,6 +5,7 @@ export interface User {
   avatar?: string;
   level: number;
   xp: number;
+  stage_progress?: string;
 }
 
 export interface AuthState {
