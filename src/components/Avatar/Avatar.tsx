@@ -2,7 +2,7 @@ import React from 'react';
 import { cn } from '../../utils/cn';
 import './Avatar.css';
 
-interface AvatarProps {
+export interface AvatarProps {
   src?: string;
   alt?: string;
   size?: 'sm' | 'md' | 'lg';

@@ -1,0 +1,357 @@
+
+.lcp-page-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100%;
+  background-color: #f8fafc;
+  font-family: var(--font-inter, 'Inter', sans-serif);
+}
+
+.lcp-top-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 64px;
+  padding: 0 24px;
+  background-color: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.lcp-header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  color: #1e293b;
+}
+
+.lcp-back-icon {
+  color: #475569;
+  transition: transform 0.2s ease;
+}
+
+.lcp-header-left:hover .lcp-back-icon {
+  transform: translateX(-3px);
+}
+
+.lcp-header-title {
+  font-family: var(--font-heading, 'Outfit', 'Inter', sans-serif);
+  font-size: 16px;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0;
+}
+
+.lcp-more-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: none;
+  color: #475569;
+  cursor: pointer;
+  border-radius: 50%;
+  transition: background-color 0.2s ease;
+}
+
+.lcp-more-btn:hover {
+  background-color: #f1f5f9;
+  color: #1e293b;
+}
+
+.lcp-main-content {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+}
+
+.lcp-celebration-card {
+  width: 100%;
+  max-width: 640px;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 24px;
+  padding: 48px;
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.lcp-hexagon-outer {
+  width: 200px;
+  height: 200px;
+  border-radius: 20px;
+  background-color: #0b1329;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 20px 40px -15px rgba(6, 182, 212, 0.35);
+  margin-bottom: 32px;
+  position: relative;
+  overflow: hidden;
+}
+
+.lcp-hexagon-outer::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, rgba(6, 182, 212, 0.15) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.lcp-hexagon-inner {
+  width: 160px;
+  height: 160px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lcp-hexagon-svg {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 0 8px rgba(6, 182, 212, 0.5));
+}
+
+.lcp-pulse-circle {
+  transform-origin: center;
+  animation: pulseScale 3s ease-in-out infinite;
+}
+
+@keyframes pulseScale {
+  0%, 100% {
+    transform: scale(0.9);
+    opacity: 0.5;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 1;
+  }
+}
+
+.animate-pulse-slow {
+  animation: pulseShadow 4s ease-in-out infinite;
+}
+
+@keyframes pulseShadow {
+  0%, 100% {
+    box-shadow: 0 20px 40px -15px rgba(6, 182, 212, 0.3);
+  }
+  50% {
+    box-shadow: 0 20px 50px -10px rgba(6, 182, 212, 0.5);
+  }
+}
+
+.lcp-title {
+  font-family: var(--font-heading, 'Outfit', 'Inter', sans-serif);
+  font-size: 28px;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 12px 0;
+  letter-spacing: -0.02em;
+}
+
+.lcp-subtitle {
+  font-size: 15px;
+  line-height: 1.6;
+  color: #475569;
+  margin: 0 0 32px 0;
+  max-width: 440px;
+}
+
+.lcp-badges-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  width: 100%;
+  margin-bottom: 32px;
+}
+
+.lcp-badge-box {
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  text-align: left;
+  transition: all 0.2s ease;
+}
+
+.lcp-badge-box:hover {
+  border-color: #cbd5e1;
+  transform: translateY(-1px);
+}
+
+.lcp-badge-icon-container {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.lcp-badge-icon-container.blue {
+  background-color: #eff6ff;
+}
+
+.lcp-badge-icon-container.cyan {
+  background-color: #ecfeff;
+}
+
+.lcp-badge-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.lcp-badge-label {
+  font-size: 9px;
+  font-weight: 800;
+  color: #64748b;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.lcp-badge-value {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.lcp-badge-value.blue {
+  color: #2563eb;
+}
+
+.lcp-badge-value.dark {
+  color: #0f172a;
+}
+
+.lcp-progress-card {
+  width: 100%;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  text-align: left;
+}
+
+.lcp-progress-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.lcp-progress-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.lcp-progress-percent-badge {
+  font-size: 11px;
+  font-weight: 700;
+  background-color: #eff6ff;
+  color: #2563eb;
+  padding: 4px 10px;
+  border-radius: 6px;
+}
+
+.lcp-progress-track-bar {
+  width: 100%;
+  height: 8px;
+  background-color: #e2e8f0;
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.lcp-progress-track-fill {
+  height: 100%;
+  background-color: #2563eb;
+  border-radius: 99px;
+}
+
+.lcp-progress-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: #64748b;
+}
+
+.lcp-lessons-ratio {
+  color: #475569;
+}
+
+.lcp-actions-row {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+}
+
+.lcp-btn-next {
+  flex: 1;
+  background-color: #2563eb;
+  color: #ffffff;
+  border: none;
+  border-radius: 12px;
+  padding: 14px 24px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.lcp-btn-next:hover {
+  background-color: #1d4ed8;
+  transform: translateY(-1px);
+}
+
+.lcp-btn-roadmap {
+  flex: 1;
+  background-color: #ffffff;
+  border: 1px solid #cbd5e1;
+  color: #475569;
+  border-radius: 12px;
+  padding: 14px 24px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.lcp-btn-roadmap:hover {
+  background-color: #f8fafc;
+  color: #1e293b;
+  border-color: #94a3b8;
+  transform: translateY(-1px);
+}
+
+@media (max-width: 640px) {
+  .lcp-celebration-card {
+    padding: 24px;
+  }
+  .lcp-badges-row {
+    grid-template-columns: 1fr;
+  }
+  .lcp-actions-row {
+    flex-direction: column;
+  }
+}
