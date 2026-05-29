@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { Outlet } from 'react-router-dom';
-import api from '../../services/api';
-import defaultAvatar from '../../assets/default_avatar.png';
+import React, { useState, useEffect } from "react";
+import { Outlet } from "react-router-dom";
+import api from "../../services/api";
+import defaultAvatar from "../../assets/default_avatar.png";
 
 export const MainLayout: React.FC = () => {
   const [user, setUser] = useState<any>(null);
@@ -11,14 +11,14 @@ export const MainLayout: React.FC = () => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await api.get('/v1/users/me');
+        const res = await api.get("/v1/users/me");
         const data = res?.data?.data || {};
         setUser(data);
       } catch (err: any) {
         if (err?.response?.status === 401) {
-          setError('Unauthenticated – please log in.');
+          setError("Unauthenticated – please log in.");
         } else {
-          setError(err?.message || 'Failed to load user info');
+          setError(err?.message || "Failed to load user info");
         }
       } finally {
         setIsLoading(false);
@@ -28,7 +28,7 @@ export const MainLayout: React.FC = () => {
   }, []);
 
   const avatarUrl = user?.avatarUrl || defaultAvatar;
-  const userName = user?.name || 'Guest';
+  const userName = user?.name || "Guest";
 
   return (
     <div className="main-layout">

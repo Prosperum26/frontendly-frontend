@@ -1,11 +1,10 @@
-
 .tp-page-container {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
   width: 100%;
   background-color: #f8fafc;
-  font-family: var(--font-inter, 'Inter', sans-serif);
+  font-family: var(--font-inter, "Inter", sans-serif);
 }
 
 .tp-top-header {
@@ -39,7 +38,7 @@
 }
 
 .tp-header-title {
-  font-family: var(--font-heading, 'Outfit', 'Inter', sans-serif);
+  font-family: var(--font-heading, "Outfit", "Inter", sans-serif);
   font-size: 16px;
   font-weight: 700;
   color: #1e293b;
@@ -314,7 +313,7 @@
 }
 
 .tp-title {
-  font-family: var(--font-heading, 'Outfit', 'Inter', sans-serif);
+  font-family: var(--font-heading, "Outfit", "Inter", sans-serif);
   font-size: 32px;
   font-weight: 800;
   color: #0f172a;
@@ -433,7 +432,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: var(--font-heading, 'Outfit', 'Inter', sans-serif);
+  font-family: var(--font-heading, "Outfit", "Inter", sans-serif);
   font-size: 16px;
   font-weight: 700;
   color: #2563eb;
@@ -466,9 +465,15 @@
   border-radius: 50%;
 }
 
-.tp-dot.red { background-color: #ef4444; }
-.tp-dot.yellow { background-color: #f59e0b; }
-.tp-dot.green { background-color: #10b981; }
+.tp-dot.red {
+  background-color: #ef4444;
+}
+.tp-dot.yellow {
+  background-color: #f59e0b;
+}
+.tp-dot.green {
+  background-color: #10b981;
+}
 
 .tp-editor-filename {
   font-family: var(--font-jetbrains, monospace);

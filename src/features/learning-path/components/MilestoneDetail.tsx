@@ -146,7 +146,9 @@ export const MilestoneDetailPage: React.FC = () => {
   const { milestoneId } = useParams<{ milestoneId: string }>();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const getMilestoneDetailById = useRoadmapStore((s) => s.getMilestoneDetailById);
+  const getMilestoneDetailById = useRoadmapStore(
+    (s) => s.getMilestoneDetailById,
+  );
   const milestones = useRoadmapStore((s) => s.milestones);
 
   const { isLoading, isError, refetch } = useRoadmap(DEFAULT_SKILL_ID);
@@ -157,7 +159,9 @@ export const MilestoneDetailPage: React.FC = () => {
     }
   }, [milestones.length, refetch]);
 
-  const milestone = milestoneId ? getMilestoneDetailById(milestoneId) : undefined;
+  const milestone = milestoneId
+    ? getMilestoneDetailById(milestoneId)
+    : undefined;
 
   if (isLoading && !milestone) {
     return (

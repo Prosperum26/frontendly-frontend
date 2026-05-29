@@ -51,7 +51,7 @@ export const learningService = {
     };
   },
 
-  mapRoadmapResponse(response: RoadmapResponse) {
+  mapRoadmapResponse(response: RoadmapResponse): RoadmapDto | null {
     if (!response.success || !response.data?.milestones) {
       return null;
     }

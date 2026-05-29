@@ -15,7 +15,9 @@ export const LessonComplete: React.FC = () => {
   }>();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const getMilestoneDetailById = useRoadmapStore((s) => s.getMilestoneDetailById);
+  const getMilestoneDetailById = useRoadmapStore(
+    (s) => s.getMilestoneDetailById,
+  );
   const getNextLessonId = useRoadmapStore((s) => s.getNextLessonId);
   const { refetch } = useRoadmap(DEFAULT_SKILL_ID);
 
@@ -29,9 +31,8 @@ export const LessonComplete: React.FC = () => {
     ? getMilestoneDetailById(milestoneId)
     : undefined;
   const currentLesson = milestone?.lessons.find((l) => l.id === lessonId);
-  const next = milestoneId && lessonId
-    ? getNextLessonId(milestoneId, lessonId)
-    : null;
+  const next =
+    milestoneId && lessonId ? getNextLessonId(milestoneId, lessonId) : null;
 
   const handleReturn = () => {
     navigate(ROUTES.LEARNING_PATH);

@@ -55,7 +55,15 @@ export interface RoadmapResponse {
     milestones: ApiMilestone[];
     pagination: Pagination;
   };
-}                       
+}
+
+export interface RoadmapDto {
+  skillId: string;
+  skillTitle: string;
+  milestones: Milestone[];
+  userProgress: UserProgress;
+}
+
 export interface DetailLesson {
   id: string;
   title: string;

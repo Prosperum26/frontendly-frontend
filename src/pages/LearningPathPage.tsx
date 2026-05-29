@@ -8,7 +8,7 @@ import { DEFAULT_SKILL_ID } from "../features/learning-path/utils/roadmapMappers
 import certificateIcon from "../assets/learning-path/certificate_icon.svg";
 
 export const LearningPathPage: React.FC = () => {
-  const [isModuleOpen, setIsModuleOpen] = React.useState(false);
+  const [isModuleOpen, setIsModuleOpen] = React.useState<boolean>(false);
   const { data, isLoading, error, refetch } = useRoadmap(DEFAULT_SKILL_ID);
   const milestones = data?.milestones ?? [];
   const skillTitle = data?.skillTitle;
@@ -16,9 +16,7 @@ export const LearningPathPage: React.FC = () => {
   useEffect(() => {
     if (!isLoading && milestones.length > 0) {
       const timer = setTimeout(() => {
-        const target = document.querySelector(
-          ".milestone-card.is-in-progress",
-        );
+        const target = document.querySelector(".milestone-card.is-in-progress");
         if (target) {
           target.scrollIntoView({ behavior: "smooth", block: "center" });
         }

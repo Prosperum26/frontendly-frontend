@@ -89,9 +89,7 @@ export const MilestoneCard: React.FC<MilestoneCardProps> = ({ milestone }) => {
   const completedLessons = lessons.filter((l) => l.completed).length;
   const totalLessons = lessons.length;
   const progressPercent =
-    totalLessons > 0
-      ? Math.round((completedLessons / totalLessons) * 100)
-      : 0;
+    totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0;
 
   const completed = milestone.status === "completed" || milestone.completed;
   const isInProgress = milestone.status === "in_progress";
@@ -139,9 +137,7 @@ export const MilestoneCard: React.FC<MilestoneCardProps> = ({ milestone }) => {
     if (isLessonLocked) {
       e.preventDefault();
       e.stopPropagation();
-      setActiveTooltipLessonId((prev) =>
-        prev === lessonId ? null : lessonId,
-      );
+      setActiveTooltipLessonId((prev) => (prev === lessonId ? null : lessonId));
       return;
     }
     e.stopPropagation();
@@ -156,9 +152,7 @@ export const MilestoneCard: React.FC<MilestoneCardProps> = ({ milestone }) => {
       style={{
         cursor: isLocked ? "not-allowed" : "pointer",
         opacity: isLocked ? 0.6 : 1,
-        borderColor: isInProgress
-          ? "var(--color-primary, #2563eb)"
-          : undefined,
+        borderColor: isInProgress ? "var(--color-primary, #2563eb)" : undefined,
         boxShadow: isInProgress
           ? "0 10px 15px -3px rgba(37, 99, 235, 0.15)"
           : undefined,
@@ -262,8 +256,8 @@ export const MilestoneCard: React.FC<MilestoneCardProps> = ({ milestone }) => {
                         lineHeight: "1.4",
                       }}
                     >
-                      🔒 Bài học này đang khóa! Hãy hoàn thành các bài trước
-                      để mở khóa nhé.
+                      🔒 Bài học này đang khóa! Hãy hoàn thành các bài trước để
+                      mở khóa nhé.
                     </div>
                     <button
                       type="button"

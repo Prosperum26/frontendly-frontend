@@ -3,7 +3,9 @@ import { learningService } from "../services/learning.service";
 import { useRoadmapStore } from "../stores/roadmapStore";
 import { DEFAULT_SKILL_ID } from "../utils/roadmapMappers";
 
-export function useRoadmap(skillId: string = DEFAULT_SKILL_ID) {
+import { RoadmapDto } from "../types/learning-path.types";
+
+export function useRoadmap(skillId: string = DEFAULT_SKILL_ID): ReturnType<typeof useQuery<RoadmapDto>> {
   const setRoadmap = useRoadmapStore((s) => s.setRoadmap);
 
   return useQuery({

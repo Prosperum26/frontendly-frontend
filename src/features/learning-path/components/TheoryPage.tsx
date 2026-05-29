@@ -12,7 +12,9 @@ interface TheoryApiData {
   title?: string;
   contentHtml?: string;
   proTips?: string;
-  referenceLinks?: Array<string | { url?: string; link?: string; title?: string; name?: string }>;
+  referenceLinks?: Array<
+    string | { url?: string; link?: string; title?: string; name?: string }
+  >;
 }
 
 export const TheoryPage: React.FC = () => {
@@ -21,7 +23,9 @@ export const TheoryPage: React.FC = () => {
     lessonId: string;
   }>();
   const navigate = useNavigate();
-  const getMilestoneDetailById = useRoadmapStore((s) => s.getMilestoneDetailById);
+  const getMilestoneDetailById = useRoadmapStore(
+    (s) => s.getMilestoneDetailById,
+  );
   const milestones = useRoadmapStore((s) => s.milestones);
   const { refetch, isLoading: roadmapLoading } = useRoadmap(DEFAULT_SKILL_ID);
 
@@ -155,9 +159,7 @@ export const TheoryPage: React.FC = () => {
         <nav className="tp-header-nav">
           <Link to={ROUTES.HOME}>Home</Link>
           <Link to={ROUTES.LEARNING_PATH}>Learn Path</Link>
-          <Link to={`/learning-path/milestone/${milestoneId}`}>
-            Milestone
-          </Link>
+          <Link to={`/learning-path/milestone/${milestoneId}`}>Milestone</Link>
           <Link to={ROUTES.LEADERBOARD}>Leaderboard</Link>
           <Link to={ROUTES.PROFILE}>Profile</Link>
         </nav>

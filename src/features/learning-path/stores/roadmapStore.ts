@@ -1,5 +1,9 @@
 import { create } from "zustand";
-import type { Milestone, MilestoneDetail, UserProgress } from "../types/learning-path.types";
+import type {
+  Milestone,
+  MilestoneDetail,
+  UserProgress,
+} from "../types/learning-path.types";
 import { milestoneToDetail } from "../utils/roadmapMappers";
 
 interface RoadmapState {
@@ -28,7 +32,12 @@ export const useRoadmapStore = create<RoadmapState>((set, get) => ({
   userProgress: null,
 
   setRoadmap: ({ skillId, skillTitle, milestones, userProgress }) =>
-    set({ skillId, skillTitle, milestones, userProgress: userProgress ?? null }),
+    set({
+      skillId,
+      skillTitle,
+      milestones,
+      userProgress: userProgress ?? null,
+    }),
 
   getMilestoneById: (id) => get().milestones.find((m) => m.id === id),
 
@@ -51,7 +60,9 @@ export const useRoadmapStore = create<RoadmapState>((set, get) => ({
       };
     }
 
-    const milestoneIndex = get().milestones.findIndex((m) => m.id === milestoneId);
+    const milestoneIndex = get().milestones.findIndex(
+      (m) => m.id === milestoneId,
+    );
     const nextMilestone = get().milestones[milestoneIndex + 1];
     if (
       nextMilestone &&

@@ -12,7 +12,9 @@ interface SideBarProps {
 
 export const SideBar: React.FC<SideBarProps> = ({ onWatchIntro }) => {
   const [userData, setUserData] = useState<UserData | null>(null);
-  const [progressData, setProgressData] = useState<ProgressResponse | null>(null);
+  const [progressData, setProgressData] = useState<ProgressResponse | null>(
+    null,
+  );
   const [badgesData, setBadgesData] = useState<Badge[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -79,12 +81,18 @@ export const SideBar: React.FC<SideBarProps> = ({ onWatchIntro }) => {
 
   const currentXp = progressData?.xp ?? 0;
   const maxXp = progressData?.xpToNextLevel ?? 0;
-  const xpPercentage = maxXp ? Math.min(100, Math.max(0, Math.round((currentXp / maxXp) * 100))) : 0;
+  const xpPercentage = maxXp
+    ? Math.min(100, Math.max(0, Math.round((currentXp / maxXp) * 100)))
+    : 0;
 
   const streakText =
-    typeof progressData?.streak === "number" ? `${progressData.streak} Days` : progressData?.streak ?? "-";
+    typeof progressData?.streak === "number"
+      ? `${progressData.streak} Days`
+      : (progressData?.streak ?? "-");
   const rankText =
-    typeof progressData?.rank === "number" ? `Top ${progressData.rank}%` : progressData?.rank ?? "-";
+    typeof progressData?.rank === "number"
+      ? `Top ${progressData.rank}%`
+      : (progressData?.rank ?? "-");
 
   return (
     <aside className="sidebar">
@@ -121,11 +129,23 @@ export const SideBar: React.FC<SideBarProps> = ({ onWatchIntro }) => {
         <h4 className="progress-section-title">YOUR PROGRESS</h4>
         <div className="progress-card">
           {isLoading ? (
-            <div style={{ padding: "20px 0", textAlign: "center", color: "#94a3b8" }}>
+            <div
+              style={{
+                padding: "20px 0",
+                textAlign: "center",
+                color: "#94a3b8",
+              }}
+            >
               Loading user progress…
             </div>
           ) : error ? (
-            <div style={{ padding: "20px 0", textAlign: "center", color: "#ef4444" }}>
+            <div
+              style={{
+                padding: "20px 0",
+                textAlign: "center",
+                color: "#ef4444",
+              }}
+            >
               {error}
             </div>
           ) : (
@@ -147,11 +167,15 @@ export const SideBar: React.FC<SideBarProps> = ({ onWatchIntro }) => {
                 <div className="xp-header">
                   <span className="xp-label">EXPERIENCE POINTS</span>
                   <span className="xp-value">
-                    <strong>{currentXp.toLocaleString()}</strong> / {maxXp.toLocaleString()}
+                    <strong>{currentXp.toLocaleString()}</strong> /{" "}
+                    {maxXp.toLocaleString()}
                   </span>
                 </div>
                 <div className="xp-track">
-                  <div className="xp-fill" style={{ width: `${xpPercentage}%` }} />
+                  <div
+                    className="xp-fill"
+                    style={{ width: `${xpPercentage}%` }}
+                  />
                 </div>
               </div>
 
