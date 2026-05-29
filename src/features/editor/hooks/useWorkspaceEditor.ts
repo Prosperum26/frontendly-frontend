@@ -1,16 +1,10 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import type { EditorTab, WorkspaceEditorState, WorkspaceFiles } from '../types/editor.types';
 
-export function useWorkspaceEditor(initialFiles: WorkspaceFiles, exerciseId?: string) {
+export function useWorkspaceEditor(initialFiles: WorkspaceFiles) {
   const [files, setFiles] = useState<WorkspaceFiles>(initialFiles);
   const [activeTab, setActiveTab] = useState<EditorTab>('html');
   const [isDirty, setIsDirty] = useState(false);
-
-  useEffect(() => {
-    setFiles(initialFiles);
-    setActiveTab('html');
-    setIsDirty(false);
-  }, [exerciseId, initialFiles.html, initialFiles.css]);
 
   const setFile = useCallback((tab: EditorTab, value: string) => {
     setFiles((prev) => {
@@ -26,6 +20,12 @@ export function useWorkspaceEditor(initialFiles: WorkspaceFiles, exerciseId?: st
     setIsDirty(false);
   }, [initialFiles]);
 
+  const replaceFiles = useCallback((nextFiles: WorkspaceFiles, dirty = true) => {
+    setFiles(nextFiles);
+    setActiveTab('html');
+    setIsDirty(dirty);
+  }, []);
+
   const state: WorkspaceEditorState = { files, activeTab, isDirty };
 
   return {
@@ -35,6 +35,7 @@ export function useWorkspaceEditor(initialFiles: WorkspaceFiles, exerciseId?: st
     isDirty,
     setActiveTab,
     setFile,
+    replaceFiles,
     reset,
   };
 }

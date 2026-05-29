@@ -48,6 +48,61 @@
   flex-shrink: 0;
 }
 
+.editor-toolbar__console-toggle--active {
+  border-color: #2563eb;
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+
+.editor-draft-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 20px;
+  background: #eff6ff;
+  border-bottom: 1px solid #bfdbfe;
+  color: #1e3a8a;
+  flex-shrink: 0;
+}
+
+.editor-draft-banner__copy {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  font-size: 13px;
+  line-height: 18px;
+}
+
+.editor-draft-banner__copy strong {
+  color: #172554;
+  font-size: 14px;
+}
+
+.editor-draft-banner__actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.editor-draft-banner__button {
+  min-height: 34px;
+  padding: 0 14px;
+  border: 1px solid #2563eb;
+  border-radius: 8px;
+  background: #2563eb;
+  color: #fff;
+  font: 700 13px/1 'Inter', sans-serif;
+  cursor: pointer;
+}
+
+.editor-draft-banner__button--ghost {
+  background: #fff;
+  color: #1d4ed8;
+}
+
 .editor-panels {
   flex: 1 1 auto;
   min-height: 640px;
@@ -62,6 +117,19 @@
   min-height: 640px;
   height: 100%;
   width: 100%;
+}
+
+.editor-panels--with-console {
+  gap: 0;
+  overflow: visible;
+}
+
+.editor-panels__main-wrap {
+  flex: 1 1 auto;
+  min-height: 520px;
+  min-width: 0;
+  display: flex;
+  overflow: hidden;
 }
 
 .editor-panels__main {
@@ -107,6 +175,55 @@
 .editor-panel--console {
   background: #0f172a;
   min-height: 120px;
+}
+
+.editor-console-drawer {
+  flex: 0 0 auto;
+  height: 220px;
+  min-height: 160px;
+  max-height: 420px;
+  overflow: visible;
+  position: relative;
+  border-top: 1px solid #334155;
+  background: #0f172a;
+}
+
+.editor-console-drawer__resize {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 12px;
+  border: none;
+  background: #cbd5e1;
+  cursor: row-resize;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  touch-action: none;
+  transition: background 0.15s ease, box-shadow 0.15s ease;
+}
+
+.editor-console-drawer__resize span {
+  width: 48px;
+  height: 4px;
+  border-radius: 999px;
+  background: #64748b;
+  pointer-events: none;
+}
+
+.editor-console-drawer__resize:hover,
+.editor-console-drawer__resize:focus-visible,
+.editor-console-drawer__resize:active {
+  background: #2563eb;
+  box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.35);
+  outline: none;
+}
+
+.editor-console-drawer__resize:hover span,
+.editor-console-drawer__resize:focus-visible span,
+.editor-console-drawer__resize:active span {
+  background: #fff;
 }
 
 /* Drag handles between editor / preview / console */

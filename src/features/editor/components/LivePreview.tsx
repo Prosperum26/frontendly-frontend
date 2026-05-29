@@ -5,9 +5,10 @@ import './editor-ui.css';
 
 export interface LivePreviewProps {
   files: WorkspaceFiles;
+  refreshKey?: number;
 }
 
-export const LivePreview: React.FC<LivePreviewProps> = ({ files }) => {
+export const LivePreview: React.FC<LivePreviewProps> = ({ files, refreshKey = 0 }) => {
   const srcDoc = useMemo(() => buildPreviewDocument(files), [files]);
 
   return (
@@ -17,6 +18,7 @@ export const LivePreview: React.FC<LivePreviewProps> = ({ files }) => {
       </div>
       <div className="live-preview__frame-wrap">
         <iframe
+          key={refreshKey}
           className="live-preview__frame"
           title="Live preview"
           srcDoc={srcDoc}

@@ -13,18 +13,22 @@ export interface ToolbarProps {
   title: string;
   level: ExerciseDefinition['level'];
   isDirty?: boolean;
+  isConsoleOpen?: boolean;
   onReset?: () => void;
   onRun?: () => void;
   onSubmit?: () => void;
+  onToggleConsole?: () => void;
 }
 
 export const Toolbar: React.FC<ToolbarProps> = ({
   title,
   level,
   isDirty = false,
+  isConsoleOpen = false,
   onReset,
   onRun,
   onSubmit,
+  onToggleConsole,
 }) => {
   return (
     <div className="editor-toolbar">
@@ -39,6 +43,15 @@ export const Toolbar: React.FC<ToolbarProps> = ({
         </Button>
         <Button variant="outline" type="button" onClick={onRun}>
           Run
+        </Button>
+        <Button
+          variant="outline"
+          type="button"
+          className={isConsoleOpen ? 'editor-toolbar__console-toggle--active' : undefined}
+          aria-pressed={isConsoleOpen}
+          onClick={onToggleConsole}
+        >
+          Console
         </Button>
         <Button variant="primary" type="button" onClick={onSubmit}>
           Submit

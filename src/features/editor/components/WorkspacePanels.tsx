@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Group, Panel, useDefaultLayout } from 'react-resizable-panels';
 import { CodeEditor } from './CodeEditor';
 import { LivePreview } from './LivePreview';
@@ -9,7 +9,10 @@ import './editor-ui.css';
 
 export interface WorkspacePanelsProps {
   files: WorkspaceFiles;
+  previewFiles: WorkspaceFiles;
   activeTab: EditorTab;
+  isConsoleOpen?: boolean;
+  previewRefreshKey?: number;
   consoleMessage?: string;
   onTabChange: (tab: EditorTab) => void;
   onFileChange: (tab: EditorTab, value: string) => void;
@@ -17,16 +20,16 @@ export interface WorkspacePanelsProps {
 
 export const WorkspacePanels: React.FC<WorkspacePanelsProps> = ({
   files,
+  previewFiles,
   activeTab,
+  isConsoleOpen = false,
+  previewRefreshKey = 0,
   consoleMessage,
   onTabChange,
   onFileChange,
 }) => {
-  const verticalLayout = useDefaultLayout({
-    id: 'frontendly-workspace-vertical',
-    panelIds: ['main', 'console'],
-    storage: localStorage,
-  });
+  const [consoleHeight, setConsoleHeight] = useState(220);
+  const dragStateRef = useRef<{ startY: number; startHeight: number } | null>(null);
 
   const horizontalLayout = useDefaultLayout({
     id: 'frontendly-workspace-horizontal',
@@ -34,48 +37,86 @@ export const WorkspacePanels: React.FC<WorkspacePanelsProps> = ({
     storage: localStorage,
   });
 
+  const stopConsoleResize = useCallback(() => {
+    dragStateRef.current = null;
+    document.body.style.cursor = '';
+    document.body.style.userSelect = '';
+  }, []);
+
+  const startConsoleResize = useCallback((event: React.PointerEvent<HTMLButtonElement>) => {
+    dragStateRef.current = {
+      startY: event.clientY,
+      startHeight: consoleHeight,
+    };
+    document.body.style.cursor = 'row-resize';
+    document.body.style.userSelect = 'none';
+    event.currentTarget.setPointerCapture(event.pointerId);
+  }, [consoleHeight]);
+
+  const updateConsoleResize = useCallback((event: React.PointerEvent<HTMLButtonElement>) => {
+    if (!dragStateRef.current) return;
+
+    const nextHeight = dragStateRef.current.startHeight + event.clientY - dragStateRef.current.startY;
+    setConsoleHeight(Math.min(420, Math.max(160, nextHeight)));
+  }, []);
+
+  useEffect(() => stopConsoleResize, [stopConsoleResize]);
+
+  const mainRow = (
+    <Group
+      id="workspace-main-row"
+      orientation="horizontal"
+      className="editor-panels__main"
+      defaultLayout={horizontalLayout.defaultLayout ?? { editor: 50, preview: 50 }}
+      onLayoutChanged={horizontalLayout.onLayoutChanged}
+    >
+      <Panel id="editor" defaultSize={50} minSize={20}>
+        <div className="editor-panel editor-panel--editor">
+          <CodeEditor
+            activeTab={activeTab}
+            files={files}
+            onTabChange={onTabChange}
+            onChange={onFileChange}
+          />
+        </div>
+      </Panel>
+      <PanelResizeHandle direction="horizontal" id="split-editor-preview" />
+      <Panel id="preview" defaultSize={50} minSize={20}>
+        <div className="editor-panel editor-panel--preview">
+          <LivePreview files={previewFiles} refreshKey={previewRefreshKey} />
+        </div>
+      </Panel>
+    </Group>
+  );
+
+  if (!isConsoleOpen) {
+    return <div className="editor-panels">{mainRow}</div>;
+  }
+
   return (
-    <div className="editor-panels">
-      <Group
-        id="workspace-layout"
-        orientation="vertical"
-        className="editor-panels__root"
-        defaultLayout={verticalLayout.defaultLayout ?? { main: 75, console: 25 }}
-        onLayoutChanged={verticalLayout.onLayoutChanged}
+    <div className="editor-panels editor-panels--with-console">
+      <div className="editor-panels__main-wrap">{mainRow}</div>
+      <div
+        className="editor-console-drawer"
+        aria-label="Console output"
+        style={{ height: `${consoleHeight}px` }}
       >
-        <Panel id="main" defaultSize={75} minSize={35}>
-          <Group
-            id="workspace-main-row"
-            orientation="horizontal"
-            className="editor-panels__main"
-            defaultLayout={horizontalLayout.defaultLayout ?? { editor: 50, preview: 50 }}
-            onLayoutChanged={horizontalLayout.onLayoutChanged}
-          >
-            <Panel id="editor" defaultSize={50} minSize={20}>
-              <div className="editor-panel editor-panel--editor">
-                <CodeEditor
-                  activeTab={activeTab}
-                  files={files}
-                  onTabChange={onTabChange}
-                  onChange={onFileChange}
-                />
-              </div>
-            </Panel>
-            <PanelResizeHandle direction="horizontal" id="split-editor-preview" />
-            <Panel id="preview" defaultSize={50} minSize={20}>
-              <div className="editor-panel editor-panel--preview">
-                <LivePreview files={files} />
-              </div>
-            </Panel>
-          </Group>
-        </Panel>
-        <PanelResizeHandle direction="vertical" id="split-code-console" />
-        <Panel id="console" defaultSize={25} minSize={15} maxSize={45}>
-          <div className="editor-panel editor-panel--console">
-            <ResultConsole message={consoleMessage} />
-          </div>
-        </Panel>
-      </Group>
+        <div className="editor-panel editor-panel--console">
+          <ResultConsole message={consoleMessage} />
+        </div>
+        <button
+          type="button"
+          className="editor-console-drawer__resize"
+          aria-label="Resize console output"
+          onPointerDown={startConsoleResize}
+          onPointerMove={updateConsoleResize}
+          onPointerUp={stopConsoleResize}
+          onPointerCancel={stopConsoleResize}
+          style={{ top: `${consoleHeight - 12}px` }}
+        >
+          <span aria-hidden />
+        </button>
+      </div>
     </div>
   );
 };

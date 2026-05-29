@@ -5,55 +5,155 @@ import { WorkspaceExerciseSection } from './WorkspaceExerciseSection';
 import { WorkspaceFooter } from './WorkspaceFooter';
 import { Toolbar } from '../../features/editor/components/Toolbar';
 import { WorkspacePanels } from '../../features/editor/components/WorkspacePanels';
+import type { EditorTab, ExerciseDefinition, WorkspaceFiles } from '../../features/editor/types/editor.types';
+import { useDebounce } from '../../hooks/useDebounce';
+import { useDraftPersistence } from '../../features/editor/hooks/useDraftPersistence';
 import { useWorkspaceEditor } from '../../features/editor/hooks/useWorkspaceEditor';
 import { getMockExercise } from '../../features/editor/mocks/exercises.mock';
+import { validatePreviewFiles } from '../../features/editor/utils/previewDocument';
 import '../../features/editor/components/editor-ui.css';
 
 export const WorkspacePage: React.FC = () => {
   const { exerciseId } = useParams<{ exerciseId: string }>();
   const exercise = useMemo(() => getMockExercise(exerciseId), [exerciseId]);
 
-  const { files, activeTab, isDirty, setActiveTab, setFile, reset } = useWorkspaceEditor(
-    exercise.starterFiles,
-    exercise.id
-  );
+  return <WorkspacePageContent key={exercise.id} exercise={exercise} />;
+};
+
+interface WorkspacePageContentProps {
+  exercise: ExerciseDefinition;
+}
+
+const WorkspacePageContent: React.FC<WorkspacePageContentProps> = ({ exercise }) => {
+  const { files, activeTab, isDirty, setActiveTab, setFile, replaceFiles, reset } =
+    useWorkspaceEditor(exercise.starterFiles);
 
   const [consoleMessage, setConsoleMessage] = useState(
     'Run or submit your code to see results here.'
   );
+  const [isConsoleOpen, setIsConsoleOpen] = useState(false);
+  const [editVersion, setEditVersion] = useState(0);
+  const [previewRefreshKey, setPreviewRefreshKey] = useState(0);
+  const [forcedPreview, setForcedPreview] = useState<{
+    files: WorkspaceFiles;
+    editVersion: number;
+  } | null>(null);
+  const debouncedFiles = useDebounce(files, 350);
+  const previewFiles =
+    forcedPreview?.editVersion === editVersion ? forcedPreview.files : debouncedFiles;
+
+  const {
+    pendingDraft,
+    hasPendingDraft,
+    draftUpdatedAt,
+    clearDraft,
+    discardDraft,
+    restoreDraft,
+  } = useDraftPersistence(exercise.id, files, { isDirty });
+
+  const updateFile = useCallback(
+    (tab: EditorTab, value: string) => {
+      setFile(tab, value);
+      setEditVersion((version) => version + 1);
+    },
+    [setFile]
+  );
 
   const handleRun = useCallback(() => {
-    setConsoleMessage('Preview updated with your latest HTML and CSS.');
-  }, []);
+    const validationErrors = validatePreviewFiles(files);
+    setForcedPreview({ files, editVersion });
+    setPreviewRefreshKey((key) => key + 1);
+    if (validationErrors.length > 0) {
+      setIsConsoleOpen(true);
+    }
+    setConsoleMessage(
+      validationErrors.length > 0
+        ? validationErrors.join('\n')
+        : 'Preview refreshed with your latest HTML and CSS.'
+    );
+  }, [editVersion, files]);
 
   const handleSubmit = useCallback(() => {
+    setIsConsoleOpen(true);
     setConsoleMessage('Submit will connect to the evaluation API in a later phase.');
   }, []);
 
   const handleReset = useCallback(() => {
     reset();
+    clearDraft();
+    setEditVersion((version) => version + 1);
+    setForcedPreview(null);
+    setPreviewRefreshKey((key) => key + 1);
     setConsoleMessage('Editor reset to starter code.');
-  }, [reset]);
+  }, [clearDraft, reset]);
+
+  const handleRestoreDraft = useCallback(() => {
+    const draft = restoreDraft();
+    if (!draft) return;
+
+    replaceFiles(draft.files, true);
+    setEditVersion((version) => version + 1);
+    setForcedPreview({ files: draft.files, editVersion: editVersion + 1 });
+    setPreviewRefreshKey((key) => key + 1);
+    setConsoleMessage('Draft restored from this browser.');
+  }, [editVersion, replaceFiles, restoreDraft]);
+
+  const handleDiscardDraft = useCallback(() => {
+    discardDraft();
+    setConsoleMessage('Saved draft discarded. Starter code remains active.');
+  }, [discardDraft]);
 
   return (
     <>
       <div className="workspace-main">
         <WorkspaceExerciseSection exercise={exercise} />
         <section className="workspace-coding workspace-coding--editor" aria-label="Coding workspace">
+          {hasPendingDraft && pendingDraft && (
+            <div className="editor-draft-banner" role="status">
+              <div className="editor-draft-banner__copy">
+                <strong>Saved draft found</strong>
+                <span>
+                  This browser has a draft from {draftUpdatedAt}. Restore it or keep the starter
+                  code.
+                </span>
+              </div>
+              <div className="editor-draft-banner__actions">
+                <button
+                  type="button"
+                  className="editor-draft-banner__button editor-draft-banner__button--ghost"
+                  onClick={handleDiscardDraft}
+                >
+                  Discard
+                </button>
+                <button
+                  type="button"
+                  className="editor-draft-banner__button"
+                  onClick={handleRestoreDraft}
+                >
+                  Restore
+                </button>
+              </div>
+            </div>
+          )}
           <Toolbar
             title={exercise.title}
             level={exercise.level}
             isDirty={isDirty}
+            isConsoleOpen={isConsoleOpen}
             onReset={handleReset}
             onRun={handleRun}
             onSubmit={handleSubmit}
+            onToggleConsole={() => setIsConsoleOpen((open) => !open)}
           />
           <WorkspacePanels
             files={files}
+            previewFiles={previewFiles}
             activeTab={activeTab}
+            isConsoleOpen={isConsoleOpen}
+            previewRefreshKey={previewRefreshKey}
             consoleMessage={consoleMessage}
             onTabChange={setActiveTab}
-            onFileChange={setFile}
+            onFileChange={updateFile}
           />
         </section>
       </div>
