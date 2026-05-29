@@ -1,9 +1,6 @@
 import api from "../../../services/api";
-import type { RoadmapResponse } from "../types/learning-path.types";
-import {
-  applyMilestoneUnlockRules,
-  mapApiMilestonesToMilestones,
-} from "../utils/roadmapMappers";
+import type { RoadmapResponse, RoadmapDto } from "../types/learning-path.types";
+import { applyMilestoneUnlockRules, mapApiMilestonesToMilestones } from "../utils/roadmapMappers";
 
 export const learningService = {
   async fetchRoadmap(
