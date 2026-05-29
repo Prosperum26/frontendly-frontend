@@ -1,5 +1,6 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import './workspace.css';
 import { WorkspaceExerciseSection } from './WorkspaceExerciseSection';
 import { WorkspaceFooter } from './WorkspaceFooter';
@@ -15,14 +16,49 @@ import type {
 import { useDebounce } from '../../hooks/useDebounce';
 import { useDraftPersistence } from '../../features/editor/hooks/useDraftPersistence';
 import { useWorkspaceEditor } from '../../features/editor/hooks/useWorkspaceEditor';
-import { getMockExercise } from '../../features/editor/mocks/exercises.mock';
 import { editorService } from '../../features/editor/services/editor.service';
 import { validatePreviewFiles } from '../../features/editor/utils/previewDocument';
 import '../../features/editor/components/editor-ui.css';
 
 export const WorkspacePage: React.FC = () => {
   const { exerciseId } = useParams<{ exerciseId: string }>();
-  const exercise = useMemo(() => getMockExercise(exerciseId), [exerciseId]);
+  const userId = 'user_01'; // Default dev user as specified in brainstorm_analysis
+
+  const { data: exercise, isLoading, error } = useQuery<ExerciseDefinition>({
+    queryKey: ['exercise', exerciseId, userId],
+    queryFn: () => editorService.getExercise(exerciseId!, userId),
+    enabled: !!exerciseId,
+  });
+
+  if (isLoading) {
+    return (
+      <div className="workspace-main-loading" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh', background: '#f8fafc', fontFamily: 'Inter, sans-serif' }}>
+        <div className="workspace-main-loading__spinner" style={{ width: '40px', height: '40px', border: '4px solid #cbd5e1', borderTopColor: '#2563eb', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>
+        <p style={{ marginTop: '16px', color: '#475569', fontWeight: 500 }}>Loading exercise workspace...</p>
+        <style>{`
+          @keyframes spin {
+            to { transform: rotate(360deg); }
+          }
+        `}</style>
+      </div>
+    );
+  }
+
+  if (error || !exercise) {
+    return (
+      <div className="workspace-main-error" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh', background: '#f8fafc', fontFamily: 'Inter, sans-serif', padding: '24px', textAlign: 'center' }}>
+        <div style={{ fontSize: '48px', marginBottom: '16px' }}>⚠️</div>
+        <h3 style={{ margin: '0 0 8px', color: '#0f172a', fontSize: '20px', fontWeight: 700 }}>Failed to load exercise</h3>
+        <p style={{ margin: '0 0 24px', color: '#64748b', maxWidth: '400px' }}>Could not retrieve this exercise from the backend server. Please verify your connection.</p>
+        <button 
+          onClick={() => window.location.reload()} 
+          style={{ padding: '10px 20px', background: '#2563eb', color: '#fff', border: 'none', borderRadius: '8px', fontWeight: 600, cursor: 'pointer' }}
+        >
+          Try Again
+        </button>
+      </div>
+    );
+  }
 
   return <WorkspacePageContent key={exercise.id} exercise={exercise} />;
 };
@@ -104,7 +140,7 @@ const WorkspacePageContent: React.FC<WorkspacePageContentProps> = ({ exercise })
     setConsoleMessage(
       validationErrors.length > 0
         ? validationErrors.join('\n')
-        : 'Preview refreshed with your latest HTML and CSS.'
+        : 'Preview refreshed with your latest code.'
     );
     if (validationErrors.length > 0) {
       showToast({
@@ -144,10 +180,12 @@ const WorkspacePageContent: React.FC<WorkspacePageContentProps> = ({ exercise })
     setConsoleMessage('Submitting your solution...');
 
     try {
-      const result = await editorService.submitWorkspace({
-        exerciseId: exercise.id,
+      const result = await editorService.submitWorkspace(
+        exercise.id,
+        'user_01',
         files,
-      });
+        exercise.requirements
+      );
 
       setCriteria(result.criteria);
       setConsoleMessage(result.output);
@@ -164,10 +202,17 @@ const WorkspacePageContent: React.FC<WorkspacePageContentProps> = ({ exercise })
               message: 'Some requirements are still failing. Review the checklist and try again.',
             }
       );
+    } catch (err: any) {
+      setConsoleMessage(`Submission Error: ${err.message || 'Unknown backend error'}`);
+      showToast({
+        type: 'error',
+        title: 'Submission Failed',
+        message: 'Could not complete evaluation on backend. Verify your code and NestJS server.',
+      });
     } finally {
       setIsSubmitting(false);
     }
-  }, [exercise.id, files, showToast]);
+  }, [exercise.id, exercise.requirements, files, showToast]);
 
   const handleReset = useCallback(() => {
     reset();

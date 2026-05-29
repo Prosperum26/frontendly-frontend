@@ -31,6 +31,7 @@ export const MOCK_EXERCISES: Record<string, ExerciseDefinition> = {
   display: block;
 }
 `,
+      js: '',
     },
   },
 };

@@ -1,56 +1,101 @@
 import api from '../../../services/api';
-import type { EvaluationResult, WorkspaceSubmitRequest } from '../types/editor.types';
-
-function includesAny(value: string, patterns: string[]): boolean {
-  const normalized = value.toLowerCase();
-  return patterns.some((pattern) => normalized.includes(pattern));
-}
-
-function createMockEvaluation(request: WorkspaceSubmitRequest): EvaluationResult {
-  const css = request.files.css.toLowerCase();
-  const html = request.files.html.toLowerCase();
-  const criteria = [
-    {
-      id: 'grid-layout',
-      label: 'Use CSS Grid with a 2-column asymmetric layout',
-      passed: includesAny(css, ['display: grid', 'display:grid']) && includesAny(css, ['1fr', 'grid-template-columns']),
-    },
-    {
-      id: 'hero-span',
-      label: 'Hero cell spans 2 rows on the left column',
-      passed:
-        html.includes('hero-cell') &&
-        includesAny(css, ['grid-row', 'span 2', '1 / 3', '1/3']),
-    },
-    {
-      id: '3',
-      label: 'Maintain 16px gap between all grid items',
-      passed: includesAny(css, ['gap: 16px', 'gap:16px']),
-    },
-    {
-      id: 'responsive',
-      label: 'Layout remains fluid on viewports under 768px',
-      passed: includesAny(css, ['@media', 'max-width: 768px', 'max-width:768px']),
-    },
-  ];
-
-  const passedCount = criteria.filter((criterion) => criterion.passed).length;
-
-  return {
-    passed: passedCount === criteria.length,
-    output: `Checked ${criteria.length} requirements. ${passedCount}/${criteria.length} passed.`,
-    executionTime: 180,
-    criteria,
-  };
-}
+import type {
+  EvaluationResult,
+  WorkspaceFiles,
+  ExerciseDefinition,
+  ExerciseRequirement,
+} from '../types/editor.types';
 
 export const editorService = {
-  async submitWorkspace(request: WorkspaceSubmitRequest): Promise<EvaluationResult> {
-    await new Promise((resolve) => {
-      window.setTimeout(resolve, 450);
+  async getExercise(exerciseId: string, userId: string): Promise<ExerciseDefinition> {
+    const response = await api.get<any>(`/exercises/${exerciseId}/${userId}`);
+    const data = response.data;
+
+    return {
+      id: data.id,
+      practiceLabel: data.module,
+      title: data.title,
+      level: data.id.includes('span') || data.id.includes('wrap') || data.id.includes('classlist') || data.id.includes('3') ? 'hard' : (data.id.includes('2') || data.id.includes('med') || data.id.includes('event') ? 'medium' : 'easy'),
+      description: data.description,
+      objective: data.title,
+      estimatedTime: '20 min',
+      topicTags: [data.module.split(':')[0]],
+      targetImageUrl: data.target_design_url || '',
+      requirements: (data.requirements || []).map((req: any) => ({
+        id: req.id,
+        label: req.text,
+        done: false,
+      })),
+      starterFiles: {
+        html: data.html_content || '',
+        css: data.css_content || '',
+        js: data.js_content || '',
+      },
+    };
+  },
+
+  async submitWorkspace(
+    exerciseId: string,
+    userId: string,
+    files: WorkspaceFiles,
+    requirements: ExerciseRequirement[]
+  ): Promise<EvaluationResult> {
+    const response = await api.post<any>(`/exercises/${exerciseId}/${userId}/submit`, {
+      editorContent: {
+        html: files.html,
+        css: files.css,
+        js: files.js,
+      },
+    });
+    const data = response.data; // SubmitResponse
+
+    // Check lint errors
+    const lint = data.lint_errors;
+    const hasLintErrors =
+      (lint?.html_err?.length ?? 0) > 0 ||
+      (lint?.css_err?.length ?? 0) > 0 ||
+      (lint?.js_err?.length ?? 0) > 0;
+
+    let output = '';
+    if (hasLintErrors) {
+      output += '⚠️ LỖI CÚ PHÁP (LINT ERRORS):\n';
+      lint.html_err?.forEach((err: any) => {
+        output += `[HTML] Dòng ${err.line}: ${err.message}\n`;
+      });
+      lint.css_err?.forEach((err: any) => {
+        output += `[CSS] Dòng ${err.line}: ${err.message}\n`;
+      });
+      lint.js_err?.forEach((err: any) => {
+        output += `[JS] Dòng ${err.line}: ${err.message}\n`;
+      });
+      output += '\nVui lòng sửa tất cả lỗi cú pháp trước khi tiếp tục.';
+    } else {
+      const passedCount = (data.evaluationResults || []).filter((r: any) => r.passed).length;
+      const totalCount = (data.evaluationResults || []).length;
+      output = `Kết quả chấm điểm: Đạt ${passedCount}/${totalCount} yêu cầu (${data.match_percentage}%).\n`;
+      if (data.isCompleted) {
+        output += '🎉 Chúc mừng! Bạn đã hoàn thành xuất sắc tất cả yêu cầu bài tập!';
+      } else {
+        output += '❌ Một số yêu cầu chưa đạt. Hãy kiểm tra danh sách yêu cầu bên trái và thử lại.';
+      }
+    }
+
+    // Map evaluationResults to criteria
+    const criteria = requirements.map((req) => {
+      const res = (data.evaluationResults || []).find((r: any) => r.requirementId === req.id);
+      return {
+        id: req.id,
+        label: req.label,
+        passed: res ? res.passed : false,
+      };
     });
 
-    return createMockEvaluation(request);
+    return {
+      passed: data.isCompleted,
+      output,
+      executionTime: 180,
+      criteria,
+    };
   },
 
   async submitCode(code: string, language: string): Promise<EvaluationResult> {

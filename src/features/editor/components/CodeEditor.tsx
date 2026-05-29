@@ -6,11 +6,13 @@ import './editor-ui.css';
 const TAB_CONFIG: { id: EditorTab; label: string; dotClass: string; dot: string }[] = [
   { id: 'html', label: 'index.html', dotClass: 'code-editor__tab-dot--html', dot: '◆' },
   { id: 'css', label: 'style.css', dotClass: 'code-editor__tab-dot--css', dot: '#' },
+  { id: 'js', label: 'script.js', dotClass: 'code-editor__tab-dot--js', dot: '⚡' },
 ];
 
 const MONACO_LANGUAGE: Record<EditorTab, string> = {
   html: 'html',
   css: 'css',
+  js: 'javascript',
 };
 
 export interface CodeEditorProps {

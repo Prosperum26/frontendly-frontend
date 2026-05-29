@@ -1,6 +1,6 @@
 import type { WorkspaceFiles } from '../types/editor.types';
 
-export function buildPreviewHtml(html: string, css: string): string {
+export function buildPreviewHtml(html: string, css: string, js: string): string {
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,25 +12,29 @@ ${css}
 </head>
 <body>
 ${html}
+  <script>
+${js}
+  </script>
 </body>
 </html>`;
 }
 
 export function buildPreviewDocument(files: WorkspaceFiles): string {
-  return buildPreviewHtml(files.html, files.css);
+  return buildPreviewHtml(files.html, files.css, files.js);
 }
 
 export function validatePreviewFiles(files: WorkspaceFiles): string[] {
   const errors: string[] = [];
   const hasHtml = files.html.trim().length > 0;
   const hasCss = files.css.trim().length > 0;
+  const hasJs = files.js.trim().length > 0;
 
-  if (!hasHtml && !hasCss) {
-    errors.push('Document is empty. Add HTML or CSS before running the preview.');
+  if (!hasHtml && !hasCss && !hasJs) {
+    errors.push('Document is empty. Add HTML, CSS, or JS before running the preview.');
   }
 
-  if (hasCss && !hasHtml) {
-    errors.push('CSS is present, but the HTML document is empty.');
+  if ((hasCss || hasJs) && !hasHtml) {
+    errors.push('CSS or JS is present, but the HTML document is empty.');
   }
 
   return errors;
