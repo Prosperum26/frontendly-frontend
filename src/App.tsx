@@ -17,6 +17,10 @@ import BannedPage from './pages/BannedPage';
 import { ProtectedRoute } from './components/ProtectedRoute/ProtectedRoute';
 import { useSessionVerification } from './features/auth/hooks/useSessionVerification';
 import { ROUTES } from './constants/routes';
+import ForgotPasswordPage from './pages/ForgotPasswordPage';
+import RegisterPage from './pages/RegisterPage';
+
+
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -42,6 +46,9 @@ function App() {
             {/* Auth routes */}
             <Route element={<AuthLayout />}>
               <Route path={ROUTES.LOGIN} element={<LoginPage />} />
+              <Route path="/register" element={<RegisterPage />} />
+              {/* ĐÃ CHUYỂN: Đưa trang quên mật khẩu vào đây để dùng chung layout auth sạch sẽ */}
+              <Route path="/forgot-password" element={<ForgotPasswordPage />} />
             </Route>
 
             {/* Main app routes */}

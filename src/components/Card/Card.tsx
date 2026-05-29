@@ -14,7 +14,7 @@ export const Card: React.FC<CardProps> = ({
   hoverable = false,
 }) => {
   return (
-    <div className={cn('card', hoverable && 'card--hoverable', className)}>
+    <div className={cn('card', hoverable && 'card--hoverable', 'bg-white p-12 rounded-3xl border border-gray-100 shadow-sm', className)}>
       {children}
     </div>
   );
