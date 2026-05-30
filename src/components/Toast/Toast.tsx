@@ -2,7 +2,7 @@ import React from 'react';
 import { cn } from '../../utils/cn';
 import './Toast.css';
 
-export interface ToastProps {
+interface ToastProps {
   message: string;
   type?: 'success' | 'error' | 'warning' | 'info';
   onClose?: () => void;

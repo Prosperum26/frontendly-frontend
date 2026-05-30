@@ -2,7 +2,7 @@ import React from 'react';
 import { cn } from '../../utils/cn';
 import './Loader.css';
 
-export interface LoaderProps {
+interface LoaderProps {
   size?: 'sm' | 'md' | 'lg';
   className?: string;
 }
