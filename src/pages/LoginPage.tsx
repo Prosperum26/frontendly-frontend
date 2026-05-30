@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuthStore } from '../store/auth.store';
+import { authService } from '../features/auth/services/auth.service';
 import NetworkErrorCard from '../components/NetworkErrorCard';
 
 export const LoginPage: React.FC = () => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [isError, setIsError] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
   const setAuth = useAuthStore((state) => state.setAuth);
   const navigate = useNavigate();
 
@@ -25,21 +28,35 @@ export const LoginPage: React.FC = () => {
     };
   }, []);
 
-  const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
-    if (email !== 'developer@devedu.com' || password !== '12345678') {
-      setIsError(true);
-      return;
-    }
-    
+    setIsLoading(true);
     setIsError(false);
-    setAuth(true, {
-      id: crypto.randomUUID(),
-      username: email.split('@')[0],
-      email: email,
-    });
-    navigate('/profile', { replace: true });
+    setErrorMessage('');
+
+    try {
+      const response = await authService.login({ email, password });
+      
+      // Store tokens
+      localStorage.setItem('accessToken', response.token);
+      localStorage.setItem('refreshToken', response.token); // Using same token for now
+      
+      // Set auth state
+      setAuth(true, {
+        id: crypto.randomUUID(),
+        username: email.split('@')[0],
+        email: email,
+      });
+      
+      navigate('/profile', { replace: true });
+    } catch (error: unknown) {
+      setIsError(true);
+      const err = error as { response?: { data?: { message?: string } } };
+      setErrorMessage(err.response?.data?.message || 'Login failed. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -47,10 +64,10 @@ export const LoginPage: React.FC = () => {
       
       {isError && !isOffline && (
         <div className="absolute top-20 right-8 bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-md shadow-md max-w-sm flex items-start z-50">
-          {/* CHÈN SVG BÁO LỖI Ở ĐÂY */}
+          {/* INSERT ERROR SVG HERE */}
           <div>
-            <h3 className="font-bold text-sm">Lỗi xác thực</h3>
-            <p className="text-xs mt-1">Thông tin đăng nhập không chính xác. Vui lòng kiểm tra lại email hoặc mật khẩu.</p>
+            <h3 className="font-bold text-sm">Authentication Error</h3>
+            <p className="text-xs mt-1">{errorMessage || 'Incorrect login information. Please check your email or password.'}</p>
           </div>
         </div>
       )}
@@ -69,8 +86,8 @@ export const LoginPage: React.FC = () => {
           </div>
         </div>
         <div className="flex space-x-4">
-          <Link to="/register" className="px-4 py-2 text-blue-600 border border-slate-300 rounded-md text-sm font-semibold hover:bg-slate-50">Đăng ký</Link>
-          <button className="px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-semibold hover:bg-blue-700">Bắt đầu học</button>
+          <Link to="/register" className="px-4 py-2 text-blue-600 border border-slate-300 rounded-md text-sm font-semibold hover:bg-slate-50">Sign Up</Link>
+          <button className="px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-semibold hover:bg-blue-700">Start Learning</button>
         </div>
       </nav>
 
@@ -136,13 +153,13 @@ export const LoginPage: React.FC = () => {
               <div className="flex items-start">
                 <input type="checkbox" id="remember" className="mt-1 h-4 w-4 text-blue-600 border-slate-300 rounded" />
                 <label htmlFor="remember" className="ml-2 block text-sm text-slate-900 font-semibold">
-                  Ghi nhớ đăng nhập
-                  <span className="block text-xs font-normal text-slate-500 italic">Trình duyệt có thể lưu mật khẩu để đăng nhập nhanh</span>
+                  Remember me
+                  <span className="block text-xs font-normal text-slate-500 italic">Browser can save password for quick login</span>
                 </label>
               </div>
 
-              <button type="submit" className="w-full bg-blue-600 text-white font-semibold py-3 rounded-lg hover:bg-blue-700 transition-colors mt-2">
-                Sign In →
+              <button type="submit" disabled={isLoading} className="w-full bg-blue-600 text-white font-semibold py-3 rounded-lg hover:bg-blue-700 transition-colors mt-2 disabled:opacity-50 disabled:cursor-not-allowed">
+                {isLoading ? 'Signing in...' : 'Sign In →'}
               </button>
             </form>
 

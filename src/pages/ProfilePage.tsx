@@ -1,7 +1,7 @@
 import React from 'react';
 
 export const ProfilePage: React.FC = () => {
-  // Tạo data giả lập cho biểu đồ Heatmap (Coding Activity)
+  // Create mock data for Heatmap chart (Coding Activity)
   const heatmapCells = Array.from({ length: 84 }).map((_, i) => {
     // Thuật toán tạo pattern màu ngẫu nhiên nhưng cố định
     const level = i % 7 === 0 ? 4 : i % 5 === 0 ? 3 : i % 3 === 0 ? 2 : i % 2 === 0 ? 1 : 0;

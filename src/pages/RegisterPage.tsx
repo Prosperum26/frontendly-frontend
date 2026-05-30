@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { authService } from '../features/auth/services/auth.service';
 import NetworkErrorCard from '../components/NetworkErrorCard';
 
 export const RegisterPage: React.FC = () => {
-  // --- 1. STATES QUẢN LÝ FORM & UI ---
+  // --- 1. FORM & UI STATE MANAGEMENT ---
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -14,22 +15,22 @@ export const RegisterPage: React.FC = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isPasswordFocused, setIsPasswordFocused] = useState(false);
   
-  // Các states chuyển đổi màn hình quy trình
+  // Screen transition states
   const [showCaptcha, setShowCaptcha] = useState(false);
   const [isVerified, setIsVerified] = useState(false);
   const [backendError, setBackendError] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   
-  // Trạng thái phần trăm thanh bar chạy thành công
+  // Progress bar percentage state for success
   const [progress, setProgress] = useState(0);
   const [isProgressComplete, setIsProgressComplete] = useState(false);
 
-  // Trạng thái kết nối mạng
+  // Network connection state
   const [isOffline, setIsOffline] = useState(!navigator.onLine);
   const navigate = useNavigate();
 
-  // --- 2. EFFECTS THEO DÕI HỆ THỐNG ---
-  // Lắng nghe sự kiện mất mạng
+  // --- 2. SYSTEM MONITORING EFFECTS ---
+  // Listen for network loss events
   useEffect(() => {
     const handleOnline = () => setIsOffline(false);
     const handleOffline = () => setIsOffline(true);
@@ -41,7 +42,7 @@ export const RegisterPage: React.FC = () => {
     };
   }, []);
 
-  // Điều khiển thanh chạy Progress 0% -> 100% khi xác minh thành công
+  // Control progress bar 0% -> 100% when verification succeeds
   useEffect(() => {
     if (isVerified) {
       let currentProgress = 0;
@@ -62,7 +63,7 @@ export const RegisterPage: React.FC = () => {
   }, [isVerified, navigate]);
 
 
-  // --- 3. LOGIC KIỂM TRA ĐỊNH DẠNG (VALIDATION) ---
+  // --- 3. FORMAT VALIDATION LOGIC ---
   const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   const isLengthValid = password.length >= 8 && password.length <= 32;
   const hasUppercase = /[A-Z]/.test(password);
@@ -70,7 +71,7 @@ export const RegisterPage: React.FC = () => {
   const hasNumber = /[0-9]/.test(password);
   const isPasswordValid = isLengthValid && hasUppercase && hasLowercase && hasNumber;
 
-  // --- 4. HÀM XỬ LÝ SỰ KIỆN (HANDLERS) ---
+  // --- 4. EVENT HANDLERS ---
   const handleRegisterSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!name || !isEmailValid || !isPasswordValid || password !== confirmPassword || !agreeTerms) {
@@ -79,27 +80,18 @@ export const RegisterPage: React.FC = () => {
     setShowCaptcha(true);
   };
 
-  // Hàm gọi API Backend (Tích hợp Try/Catch kiểm tra lỗi lưu thông tin)
+  // Backend API call function (Integrated Try/Catch for data save error checking)
   const handleVerifyAndSave = async () => {
     setIsLoading(true);
     setBackendError(false);
     try {
-      // TODO: Sau này bạn thay thế đoạn này bằng lệnh gọi Axios/Fetch tới Backend của bạn
-      // ví dụ: await axios.post('/api/auth/register', { name, email, password });
-      
-      // Giả lập thời gian phản hồi từ server 1.2 giây
-      await new Promise((resolve, reject) => {
-        setTimeout(() => {
-          const isServerOk = true; // Đổi thành 'false' nếu bạn muốn test giao diện Lỗi xác minh
-          if (isServerOk) resolve(true);
-          else reject(new Error("Lỗi lưu dữ liệu người dùng"));
-        }, 1200);
-      });
+      // Call real backend API
+      await authService.register({ name, email, password });
 
-      // Nếu không có lỗi -> Chuyển sang màn hình thành công
+      // If no error -> Switch to success screen
       setIsVerified(true);
-    } catch (error) {
-      // Nếu gặp lỗi kết nối API/Trùng email -> Chuyển sang màn hình thất bại
+    } catch (error: unknown) {
+      // If API connection error/Duplicate email -> Switch to failure screen
       console.error(error);
       setBackendError(true);
     } finally {
@@ -121,8 +113,8 @@ export const RegisterPage: React.FC = () => {
           </div>
         </div>
         <div className="flex space-x-4">
-          <Link to="/login" className="px-4 py-2 text-blue-600 border border-slate-300 rounded-md text-sm font-semibold hover:bg-slate-50">Đăng nhập</Link>
-          <button className="px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-semibold hover:bg-blue-700">Bắt đầu học</button>
+          <Link to="/login" className="px-4 py-2 text-blue-600 border border-slate-300 rounded-md text-sm font-semibold hover:bg-slate-50">Log In</Link>
+          <button className="px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-semibold hover:bg-blue-700">Start Learning</button>
         </div>
       </nav>
 
@@ -130,13 +122,13 @@ export const RegisterPage: React.FC = () => {
       <main className="flex-grow flex flex-col items-center justify-center p-6 my-8">
         
         {isOffline ? (
-          /* MÀN HÌNH 0: Báo mất mạng Internet */
+          /* SCREEN 0: Network loss notification */
           <NetworkErrorCard 
             onRetry={() => window.location.reload()} 
             onBack={() => navigate('/')} 
           />
         ) : !showCaptcha ? (
-          /* MÀN HÌNH 1: Form điền thông tin đăng ký */
+          /* SCREEN 1: Registration form */
           <>
             <div className="text-center mb-10">
               <h2 className="text-3xl font-black !text-blue-600 tracking-tight">FrontEndly</h2>
@@ -177,7 +169,7 @@ export const RegisterPage: React.FC = () => {
                       className={`w-full px-4 py-2.5 border rounded-lg text-sm bg-slate-50/50 focus:outline-none focus:border-blue-500 focus:bg-white ${email && !isEmailValid ? 'border-red-400 text-red-500 bg-red-50/20' : 'border-slate-200'}`}
                     />
                     {email && !isEmailValid && (
-                      <p className="text-xs text-red-500 mt-1.5">Định dạng email không hợp lệ</p>
+                      <p className="text-xs text-red-500 mt-1.5">Invalid email format</p>
                     )}
                   </div>
 
@@ -208,7 +200,7 @@ export const RegisterPage: React.FC = () => {
                         </button>
                       </div>
                       {password && !isPasswordValid && (
-                        <p className="text-xs text-red-500 mt-1.5">Mật khẩu không hợp lệ</p>
+                        <p className="text-xs text-red-500 mt-1.5">Invalid password</p>
                       )}
                     </div>
 
@@ -236,7 +228,7 @@ export const RegisterPage: React.FC = () => {
                         </button>
                       </div>
                       {confirmPassword && password !== confirmPassword && (
-                        <p className="text-xs text-red-500 mt-1.5">Mật khẩu xác nhận không khớp</p>
+                        <p className="text-xs text-red-500 mt-1.5">Password confirmation does not match</p>
                       )}
                     </div>
                   </div>
@@ -251,7 +243,7 @@ export const RegisterPage: React.FC = () => {
                       className="mt-1 h-4 w-4 text-blue-600 border-slate-300 rounded focus:ring-blue-500"
                     />
                     <label htmlFor="terms" className="ml-2 block text-xs text-slate-500 leading-normal font-medium">
-                      Tôi đồng ý với các <a href="#" className="!text-blue-600 font-bold hover:underline">Điều khoản dịch vụ</a> và <a href="#" className="!text-blue-600 font-bold hover:underline">Chính sách bảo mật</a> của FrontEndly.
+                      I agree to FrontEndly's <a href="#" className="!text-blue-600 font-bold hover:underline">Terms of Service</a> and <a href="#" className="!text-blue-600 font-bold hover:underline">Privacy Policy</a>.
                     </label>
                   </div>
 
@@ -271,7 +263,7 @@ export const RegisterPage: React.FC = () => {
                 </div>
 
                 <div className="mt-6 grid grid-cols-2 gap-4">
-                  {/* NÚT ĐĂNG KÝ GOOGLE */}
+                  {/* GOOGLE SIGN UP BUTTON */}
                   <button className="flex items-center justify-center gap-2 py-2.5 border border-slate-200 rounded-lg text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors shadow-sm">
                     {<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink">
 <rect width="20" height="20" fill="url(#pattern0_191_2412)"/>
@@ -287,7 +279,7 @@ export const RegisterPage: React.FC = () => {
                     <span>Google</span>
                   </button>
                   
-                  {/* NÚT ĐĂNG KÝ GITHUB */}
+                  {/* GITHUB SIGN UP BUTTON */}
                   <button className="flex items-center justify-center gap-2 py-2.5 border border-slate-200 rounded-lg text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors shadow-sm">
                     {<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M10 0C4.47833 0 0 4.4775 0 10C0 14.4183 2.865 18.1667 6.83917 19.4892C7.33833 19.5817 7.5 19.2717 7.5 19.0083V17.1467C4.71833 17.7517 4.1325 15.97 4.1325 15.97C3.6775 14.8142 3.02167 14.5067 3.02167 14.5067C2.11417 13.8858 3.09083 13.8992 3.09083 13.8992C4.095 13.9692 4.62333 14.93 4.62333 14.93C5.515 16.4583 6.9625 16.0167 7.53333 15.7608C7.6225 15.115 7.88167 14.6733 8.16833 14.4242C5.9475 14.17 3.6125 13.3125 3.6125 9.48167C3.6125 8.38917 4.00333 7.4975 4.6425 6.7975C4.53917 6.545 4.19667 5.5275 4.74 4.15083C4.74 4.15083 5.58 3.8825 7.49083 5.17583C8.28833 4.95417 9.14333 4.84333 9.99333 4.83917C10.8433 4.84333 11.6992 4.95417 12.4983 5.17583C14.4075 3.8825 15.2458 4.15083 15.2458 4.15083C15.79 5.52833 15.4475 6.54583 15.3442 6.7975C15.9858 7.4975 16.3733 8.39 16.3733 9.48167C16.3733 13.3225 14.0342 14.1683 11.8075 14.4158C12.1658 14.7258 12.4933 15.3342 12.4933 16.2675V19.0117C12.4933 19.2775 12.6533 19.59 13.1608 19.4917C17.1317 18.1675 19.9933 14.42 19.9933 10.0033C19.9933 4.48083 15.5158 0.00333333 9.99333 0.00333333L10 0Z" fill="#191B23"/>
@@ -300,19 +292,19 @@ export const RegisterPage: React.FC = () => {
 
               {(isPasswordFocused || password) && (
                 <div className="w-full md:w-[280px] bg-red-50/60 border border-red-200 rounded-xl p-5 md:absolute md:-right-[300px] md:top-[180px] transition-all duration-200 shadow-lg shadow-red-100/50">
-                  <h3 className="text-xs font-bold !text-slate-800 uppercase tracking-wider mb-4">YÊU CẦU MẬT KHẨU:</h3>
+                  <h3 className="text-xs font-bold !text-slate-800 uppercase tracking-wider mb-4">PASSWORD REQUIREMENTS:</h3>
                   <ul className="space-y-2.5 text-xs font-semibold">
                     <li className={`flex items-center gap-2.5 ${isLengthValid ? 'text-emerald-600' : 'text-rose-500'}`}>
-                      <span className="text-sm">{isLengthValid ? '●' : '○'}</span> Từ 8 đến 32 ký tự
+                      <span className="text-sm">{isLengthValid ? '●' : '○'}</span> 8 to 32 characters
                     </li>
                     <li className={`flex items-center gap-2.5 ${hasUppercase ? 'text-emerald-600' : 'text-rose-500'}`}>
-                      <span className="text-sm">{hasUppercase ? '●' : '○'}</span> Chứa ít nhất một chữ hoa
+                      <span className="text-sm">{hasUppercase ? '●' : '○'}</span> At least one uppercase letter
                     </li>
                     <li className={`flex items-center gap-2.5 ${hasLowercase ? 'text-emerald-600' : 'text-rose-500'}`}>
-                      <span className="text-sm">{hasLowercase ? '●' : '○'}</span> Chứa ít nhất một chữ thường
+                      <span className="text-sm">{hasLowercase ? '●' : '○'}</span> At least one lowercase letter
                     </li>
                     <li className={`flex items-center gap-2.5 ${hasNumber ? 'text-emerald-600' : 'text-rose-500'}`}>
-                      <span className="text-sm">{hasNumber ? '●' : '○'}</span> Chứa ít nhất một con số
+                      <span className="text-sm">{hasNumber ? '●' : '○'}</span> At least one number
                     </li>
                   </ul>
                 </div>
@@ -320,58 +312,58 @@ export const RegisterPage: React.FC = () => {
             </div>
           </>
         ) : backendError ? (
-          /* MÀN HÌNH 4: Xác minh THẤT BẠI (Nếu backend trả ra lỗi) */
+          /* SCREEN 4: Verification FAILED (If backend returns error) */
           <div className="w-full flex flex-col items-center justify-center animate-in fade-in duration-200">
             <div className="w-full max-w-md bg-white rounded-xl shadow-lg shadow-slate-200/50 border border-slate-200 p-8 md:p-10 text-center">
               <div className="mx-auto w-16 h-16 bg-red-100 rounded-2xl flex items-center justify-center text-red-600 mb-6">
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
               </div>
-              <h2 className="text-2xl md:text-3xl font-bold !text-slate-900 mb-3">Xác minh thất bại</h2>
+              <h2 className="text-2xl md:text-3xl font-bold !text-slate-900 mb-3">Verification Failed</h2>
               <p className="text-sm text-slate-500 mb-8 leading-relaxed font-medium">
-                Vui lòng thử lại. Đã xảy ra lỗi trong quá trình xác thực thông tin kỹ thuật của bạn.
+                Please try again. An error occurred during your technical information verification.
               </p>
               <div className="space-y-3">
                 <button 
                   onClick={handleVerifyAndSave}
                   className="w-full bg-blue-600 text-white font-bold py-3.5 rounded-lg hover:bg-blue-700 transition-colors shadow-md shadow-blue-600/20"
                 >
-                  Thử lại
+                  Try Again
                 </button>
                 <button 
                   onClick={() => setShowCaptcha(false)}
                   className="w-full bg-white border border-slate-300 text-slate-700 font-bold py-3.5 rounded-lg hover:bg-slate-50 transition-colors"
                 >
-                  Quay lại
+                  Go Back
                 </button>
               </div>
             </div>
           </div>
         ) : !isVerified ? (
-          /* MÀN HÌNH 2: Hiện hộp reCAPTCHA xác minh người máy */
+          /* SCREEN 2: Show reCAPTCHA box for bot verification */
           <div className="w-full flex flex-col items-center justify-center animate-in fade-in duration-200">
-            <h2 className="text-2xl md:text-3xl font-bold !text-slate-900 mb-3">Xác minh bạn không phải là robot 🤖</h2>
-            <p className="text-sm text-slate-500 mb-8 text-center px-4 font-medium">Chúng tôi cần đảm bảo bạn là người thật để bảo mật tài khoản</p>
+            <h2 className="text-2xl md:text-3xl font-bold !text-slate-900 mb-3">Verify you're not a robot 🤖</h2>
+            <p className="text-sm text-slate-500 mb-8 text-center px-4 font-medium">We need to ensure you're a real person to protect your account</p>
             
             <div className="w-full max-w-md bg-white rounded-xl shadow-lg shadow-slate-200/50 border border-slate-200 p-6 md:p-8">
               <div className="border border-slate-300 bg-slate-50 rounded-lg p-5 flex items-center justify-between mb-8">
                 <div className="flex items-center gap-4">
                   <input type="checkbox" className="w-6 h-6 border-2 border-slate-300 rounded-md cursor-pointer" />
-                  <span className="text-sm font-semibold !text-slate-800">Tôi không phải là người máy</span>
+                  <span className="text-sm font-semibold !text-slate-800">I'm not a robot</span>
                 </div>
                 <div className="flex flex-col items-center">
                   <svg className="w-8 h-8 text-blue-500" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M21.5 12a9.5 9.5 0 10-19 0 9.5 9.5 0 0019 0zM12 4.5A7.5 7.5 0 114.5 12 7.5 7.5 0 0112 4.5m-3.5 6a1 1 0 100 2 1 1 0 000-2m7 0a1 1 0 100 2 1 1 0 000-2m-3.5 3.5a3 3 0 01-2.5-1.5l1.5-1a1.5 1.5 0 002 0l1.5 1a3 3 0 01-2.5 1.5z" />
                   </svg>
                   <span className="text-[9px] text-slate-400 font-bold mt-1">reCAPTCHA</span>
-                  <div className="text-[8px] text-slate-400 mt-0.5 font-medium"><a href="#" className="hover:underline">Bảo mật</a> - <a href="#" className="hover:underline">Điều khoản</a></div>
+                  <div className="text-[8px] text-slate-400 mt-0.5 font-medium"><a href="#" className="hover:underline">Privacy</a> - <a href="#" className="hover:underline">Terms</a></div>
                 </div>
               </div>
 
               <div className="bg-blue-50/50 border border-blue-100 rounded-lg p-5 mb-8 flex items-start gap-4">
                 <svg className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
                 <div>
-                  <h4 className="text-sm font-bold !text-slate-900">Vì sao tôi thấy thông báo này?</h4>
-                  <p className="text-xs text-slate-500 mt-1.5 leading-relaxed font-medium">Chúng tôi phát hiện thấy các hoạt động truy cập không bình thường từ mạng của bạn. Vui lòng xác nhận để tiếp tục.</p>
+                  <h4 className="text-sm font-bold !text-slate-900">Why am I seeing this?</h4>
+                  <p className="text-xs text-slate-500 mt-1.5 leading-relaxed font-medium">We detected unusual access activity from your network. Please confirm to continue.</p>
                 </div>
               </div>
 
@@ -381,20 +373,20 @@ export const RegisterPage: React.FC = () => {
                   disabled={isLoading}
                   className="w-full bg-blue-600 text-white font-bold py-3.5 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2 shadow-md shadow-blue-600/20 disabled:opacity-50"
                 >
-                  {isLoading ? 'Đang kiểm tra...' : 'Tiếp tục →'}
+                  {isLoading ? 'Checking...' : 'Continue →'}
                 </button>
                 <button 
                   onClick={() => setShowCaptcha(false)}
                   disabled={isLoading}
                   className="w-full bg-white border border-slate-300 text-slate-700 font-bold py-3.5 rounded-lg hover:bg-slate-50 transition-colors disabled:opacity-50"
                 >
-                  Quay lại trang chủ
+                  Back to Home
                 </button>
               </div>
             </div>
           </div>
         ) : (
-          /* MÀN HÌNH 3: Xác minh THÀNH CÔNG (Thanh progress bar chạy từ 0% -> 100%) */
+          /* SCREEN 3: Verification SUCCESS (Progress bar runs from 0% -> 100%) */
           <div className="w-full flex flex-col items-center justify-center animate-in fade-in duration-200">
             <div className="w-full max-w-md bg-white rounded-xl shadow-lg shadow-slate-200/50 border border-slate-200 p-8 md:p-10 text-center">
               <div className="mx-auto w-16 h-16 bg-[#fed7aa] rounded-2xl flex items-center justify-center text-[#9a3412] mb-6">
@@ -403,9 +395,9 @@ export const RegisterPage: React.FC = () => {
                 </svg>
               </div>
               
-              <h2 className="text-2xl font-bold !text-slate-900 mb-8">Xác minh thành công</h2>
+              <h2 className="text-2xl font-bold !text-slate-900 mb-8">Verification Successful</h2>
 
-              {/* Thanh Progress chạy mượt theo thời gian thực */}
+              {/* Progress bar runs smoothly in real-time */}
               <div className="w-full h-1.5 bg-slate-100 rounded-full mb-8 overflow-hidden relative">
                 <div 
                   className="absolute top-0 left-0 h-full bg-blue-600 rounded-full transition-all duration-75 ease-linear"
@@ -413,17 +405,17 @@ export const RegisterPage: React.FC = () => {
                 ></div>
               </div>
 
-              {/* Chỉ hiện nút và dòng nhắc khi thanh progress đã nạp đủ 100% */}
+              {/* Only show button and reminder when progress bar reaches 100% */}
               {isProgressComplete && (
                 <div className="animate-in fade-in duration-300">
                   <button 
                     onClick={() => navigate('/login')}
                     className="w-full bg-blue-600 text-white font-bold py-3.5 rounded-lg hover:bg-blue-700 transition-colors mb-3 shadow-md shadow-blue-600/20"
                   >
-                    Tiếp tục
+                    Continue
                   </button>
                   <p className="text-[11px] text-slate-400 font-medium">
-                    Nếu bạn không được chuyển hướng tự động, vui lòng nhấn nút ở trên.
+                    If you are not redirected automatically, please click the button above.
                   </p>
                 </div>
               )}
