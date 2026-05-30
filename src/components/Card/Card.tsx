@@ -2,7 +2,7 @@ import React from 'react';
 import { cn } from '../../utils/cn';
 import './Card.css';
 
-export interface CardProps {
+interface CardProps {
   children: React.ReactNode;
   className?: string;
   hoverable?: boolean;
