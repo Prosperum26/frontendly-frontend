@@ -75,8 +75,8 @@ export const SideBar: React.FC<SideBarProps> = ({ onWatchIntro }) => {
     );
   };
 
-  const displayName = userData?.name || "Alex Rivera";
-  const userTitle = "Junior Developer";
+  const displayName = userData?.name;
+  const userTitle = userData?.userTitle;
   const avatarUrl = userData?.avatarUrl || defaultAvatar;
 
   const currentXp = progressData?.xp ?? 0;

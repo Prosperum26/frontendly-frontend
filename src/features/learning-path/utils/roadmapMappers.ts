@@ -17,6 +17,7 @@ export function mapApiMilestonesToMilestones(
     description: apiMilestone.description || "Chinh phục kỹ năng này...",
     completed: apiMilestone.status === "completed",
     status: apiMilestone.status,
+    icon: apiMilestone.icon || "",
     lessons: (apiMilestone.stages || []).map((stage) => ({
       id: stage.id,
       title: stage.title,
@@ -81,9 +82,7 @@ export function milestoneToDetail(milestone: Milestone): MilestoneDetail {
   const completedLessons = milestone.lessons.filter((l) => l.completed).length;
   const totalLessons = milestone.lessons.length;
   const progressPercent =
-    totalLessons > 0
-      ? Math.round((completedLessons / totalLessons) * 100)
-      : 0;
+    totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0;
 
   const lessons: DetailLesson[] = milestone.lessons.map((lesson, index) => ({
     id: lesson.id,

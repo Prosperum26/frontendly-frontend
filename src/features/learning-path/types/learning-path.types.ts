@@ -6,6 +6,7 @@ export interface Milestone {
   completed: boolean;
   lessons: Lesson[];
   status?: "completed" | "in_progress" | "locked";
+  icon: string;
 }
 
 export interface Lesson {
@@ -21,6 +22,7 @@ export interface Lesson {
 export interface ApiStage {
   id: string;
   title: string;
+  icon: string;
   isCompleted: boolean;
   earnedStars: number;
 }
@@ -30,6 +32,7 @@ export interface ApiMilestone {
   title: string;
   description?: string;
   status: "completed" | "in_progress" | "locked";
+  icon: string;
   stages: ApiStage[];
 }
 
@@ -53,7 +56,7 @@ export interface RoadmapResponse {
     skillTitle: string;
     userProgress: UserProgress;
     milestones: ApiMilestone[];
-    pagination: Pagination;
+    pagination?: Pagination;
   };
 }
 

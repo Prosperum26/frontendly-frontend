@@ -1,5 +1,6 @@
 export interface UserResponse {
-  status: string;
+  success: boolean;
+  message: string;
   data: UserData;
 }
 
@@ -9,6 +10,7 @@ export interface UserData {
   avatarUrl: string;
   totalXp: number;
   currentLevel: number;
+  userTitle?: string;
 }
 
 export interface ProgressResponse {
