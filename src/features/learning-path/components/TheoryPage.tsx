@@ -127,13 +127,13 @@ export const TheoryPage: React.FC = () => {
   };
 
   const handleContinue = async () => {
-    if (!stageId) return;
+    if (!stageId || !milestoneId) return;
     try {
       await api.patch(`/v1/stages/${stageId}/unlock-practice`, {});
+      navigate(`/workspace?stageId=${stageId}&milestoneId=${milestoneId}`);
     } catch (err) {
       console.error("Error unlocking practice:", err);
     }
-    navigate(`/workspace?stageId=${stageId}`);
   };
 
   return (

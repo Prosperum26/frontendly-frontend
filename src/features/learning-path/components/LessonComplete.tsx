@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { ArrowLeft, MoreVertical, Award, Star } from "lucide-react";
+import api from "../../../services/api";
 import { useRoadmapStore } from "../stores/roadmapStore";
 import { useRoadmap } from "../hooks/useRoadmap";
 import { DEFAULT_SKILL_ID } from "../utils/roadmapMappers";
@@ -35,21 +36,26 @@ export const LessonComplete: React.FC = () => {
     milestoneId && lessonId ? getNextLessonId(milestoneId, lessonId) : null;
 
   const handleReturn = () => {
-    navigate(ROUTES.LEARNING_PATH);
+    navigate(ROUTES.HOME);
   };
 
-  const handleNextLesson = () => {
+  const handleNextLesson = async () => {
+    if (lessonId) {
+      try {
+        await api.patch(`/v1/stages/${lessonId}/complete`, {});
+      } catch (err) {
+        console.error("Error marking lesson complete before navigating:", err);
+      }
+    }
+
     if (next) {
       navigate(
         `/learning-path/milestone/${next.milestoneId}/lesson/${next.lessonId}`,
       );
       return;
     }
-    if (milestoneId) {
-      navigate(`/learning-path/milestone/${milestoneId}`);
-      return;
-    }
-    navigate(ROUTES.LEARNING_PATH);
+
+    navigate(ROUTES.HOME);
   };
 
   const progressPercent = milestone?.progressPercent ?? 0;
