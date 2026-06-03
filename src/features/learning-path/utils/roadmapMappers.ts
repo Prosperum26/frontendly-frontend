@@ -7,6 +7,11 @@ import type {
 
 export const DEFAULT_SKILL_ID = "javascript";
 
+export const AVAILABLE_SKILLS = [
+  { id: "javascript", title: "Frontend Learning Path" },
+  { id: "backend", title: "Backend Learning Path" },
+] as const;
+
 export function mapApiMilestonesToMilestones(
   apiMilestones: ApiMilestone[],
 ): Milestone[] {
@@ -30,7 +35,6 @@ export function mapApiMilestonesToMilestones(
   }));
 }
 
-/** When BE still marks a milestone locked but the previous one is fully done. */
 export function applyMilestoneUnlockRules(
   milestones: Milestone[],
 ): Milestone[] {
