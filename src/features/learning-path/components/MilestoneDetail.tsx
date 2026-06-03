@@ -30,16 +30,16 @@ const CompletedCard: React.FC<{
         navigate(`/learning-path/milestone/${milestoneId}/lesson/${lesson.id}`)
       }
     >
-    <div className="md-card-info">
-      <h3>{lesson.title}</h3>
-      <p>{lesson.description}</p>
-    </div>
-    <div className="md-card-meta">
-      {lesson.duration && (
-        <span className="md-card-duration">{lesson.duration}</span>
-      )}
-      <span className="md-card-status-badge completed">Completed</span>
-    </div>
+      <div className="md-card-info">
+        <h3>{lesson.title}</h3>
+        <p>{lesson.description}</p>
+      </div>
+      <div className="md-card-meta">
+        {lesson.duration && (
+          <span className="md-card-duration">{lesson.duration}</span>
+        )}
+        <span className="md-card-status-badge completed">Completed</span>
+      </div>
     </button>
   );
 };
