@@ -17,8 +17,19 @@ import { useRoadmap } from "../hooks/useRoadmap";
 import { DEFAULT_SKILL_ID } from "../utils/roadmapMappers";
 import "./MilestoneDetail.css";
 
-const CompletedCard: React.FC<{ lesson: DetailLesson }> = ({ lesson }) => (
-  <div className="md-lesson-card card-completed">
+const CompletedCard: React.FC<{
+  lesson: DetailLesson;
+  milestoneId: string;
+}> = ({ lesson, milestoneId }) => {
+  const navigate = useNavigate();
+  return (
+    <button
+      type="button"
+      className="md-lesson-card card-completed card-clickable"
+      onClick={() =>
+        navigate(`/learning-path/milestone/${milestoneId}/lesson/${lesson.id}`)
+      }
+    >
     <div className="md-card-info">
       <h3>{lesson.title}</h3>
       <p>{lesson.description}</p>
@@ -29,8 +40,9 @@ const CompletedCard: React.FC<{ lesson: DetailLesson }> = ({ lesson }) => (
       )}
       <span className="md-card-status-badge completed">Completed</span>
     </div>
-  </div>
-);
+    </button>
+  );
+};
 
 const InProgressCard: React.FC<{
   lesson: DetailLesson;
@@ -276,7 +288,7 @@ export const MilestoneDetailPage: React.FC = () => {
               {lesson.type === "finalProject" ? (
                 <FinalProjectCard lesson={lesson} />
               ) : lesson.status === "completed" ? (
-                <CompletedCard lesson={lesson} />
+                <CompletedCard lesson={lesson} milestoneId={milestone.id} />
               ) : lesson.status === "in_progress" ? (
                 <InProgressCard lesson={lesson} milestoneId={milestone.id} />
               ) : (

@@ -48,6 +48,13 @@ export const LessonComplete: React.FC = () => {
       }
     }
 
+    try {
+      await queryClient.invalidateQueries({ queryKey: ["roadmap"] });
+      await refetch();
+    } catch (err) {
+      console.error("Error refreshing roadmap after completion:", err);
+    }
+
     if (next) {
       navigate(
         `/learning-path/milestone/${next.milestoneId}/lesson/${next.lessonId}`,

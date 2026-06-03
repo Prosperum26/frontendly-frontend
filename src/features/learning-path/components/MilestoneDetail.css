@@ -307,6 +307,19 @@
   overflow: hidden;
 }
 
+.card-clickable {
+  width: 100%;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+}
+
+.card-clickable:focus-visible {
+  outline: 3px solid #bfdbfe;
+  outline-offset: 2px;
+}
+
 .card-completed {
   display: flex;
   align-items: center;

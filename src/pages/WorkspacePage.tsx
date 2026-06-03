@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 import api from "../services/api";
 import { useRoadmapStore } from "../features/learning-path/stores/roadmapStore";
 import { useRoadmap } from "../features/learning-path/hooks/useRoadmap";
@@ -19,6 +20,7 @@ export const WorkspacePage: React.FC = () => {
   const stageId = searchParams.get("stageId") ?? "";
   const milestoneId = searchParams.get("milestoneId") ?? "";
 
+  const queryClient = useQueryClient();
   const milestones = useRoadmapStore((s) => s.milestones);
   const getMilestoneDetailById = useRoadmapStore(
     (s) => s.getMilestoneDetailById,
@@ -58,6 +60,8 @@ export const WorkspacePage: React.FC = () => {
 
     try {
       await api.patch(`/v1/stages/${stageId}/complete`, {});
+      await queryClient.invalidateQueries({ queryKey: ["roadmap"] });
+      await refetch();
       navigate(
         `/learning-path/milestone/${milestone.id}/lesson/${stageId}/complete`,
       );
