@@ -63,9 +63,7 @@ export const LearningPathPage: React.FC = () => {
           </div>
 
           <p className="learning-path-desc">
-            {selectedSkillId === "backend"
-              ? "Master server-side development from Node.js fundamentals to advanced authentication and security practices."
-              : "Master the art of building modern interfaces from core fundamentals to advanced DOM manipulation and performance debugging."}
+            Master the art of building modern interfaces from core fundamentals to advanced DOM manipulation and performance debugging.
           </p>
         </header>
 
