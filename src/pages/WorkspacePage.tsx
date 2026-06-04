@@ -12,6 +12,11 @@ export const WorkspacePage: React.FC = () => {
   const navigate = useNavigate();
   const [isCompleting, setIsCompleting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isLoadingRoadmap, setIsLoadingRoadmap] = useState(true);
+  const [nextStage, setNextStage] = useState<{
+    id: string;
+    title: string;
+  } | null>(null);
 
   const searchParams = useMemo(
     () => new URLSearchParams(location.search),
@@ -28,9 +33,13 @@ export const WorkspacePage: React.FC = () => {
   const { refetch } = useRoadmap(DEFAULT_SKILL_ID);
 
   useEffect(() => {
-    if (milestones.length === 0) {
-      void refetch();
-    }
+    const loadData = async () => {
+      if (milestones.length === 0) {
+        await refetch();
+      }
+      setIsLoadingRoadmap(false);
+    };
+    void loadData();
   }, [milestones.length, refetch]);
 
   const milestone = useMemo(() => {
@@ -49,6 +58,18 @@ export const WorkspacePage: React.FC = () => {
     (lesson) => lesson.id === stageId,
   );
 
+  // Find next stage when milestone loads
+  useEffect(() => {
+    if (milestone && stageId) {
+      const currentIndex = milestone.lessons.findIndex((l) => l.id === stageId);
+      if (currentIndex >= 0 && currentIndex < milestone.lessons.length - 1) {
+        setNextStage(milestone.lessons[currentIndex + 1]);
+      } else {
+        setNextStage(null); // No more stages in this milestone
+      }
+    }
+  }, [milestone, stageId]);
+
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [stageId]);
@@ -62,9 +83,16 @@ export const WorkspacePage: React.FC = () => {
       await api.patch(`/v1/stages/${stageId}/complete`, {});
       await queryClient.invalidateQueries({ queryKey: ["roadmap"] });
       await refetch();
-      navigate(
-        `/learning-path/milestone/${milestone.id}/lesson/${stageId}/complete`,
-      );
+
+      // Auto-navigate to next theory or milestone complete
+      if (nextStage) {
+        navigate(
+          `/learning-path/milestone/${milestone.id}/lesson/${nextStage.id}`,
+        );
+      } else {
+        // No more stages - navigate to milestone complete page
+        navigate(`/learning-path/milestone/${milestone.id}/complete`);
+      }
     } catch (err: unknown) {
       console.error("Error completing practice stage:", err);
       setError(
@@ -86,6 +114,14 @@ export const WorkspacePage: React.FC = () => {
     }
     navigate(ROUTES.LEARNING_PATH);
   };
+
+  if (isLoadingRoadmap) {
+    return (
+      <div className="workspace-page" style={{ padding: 24 }}>
+        <h1>Đang tải bài học...</h1>
+      </div>
+    );
+  }
 
   if (!stageId || !milestone || !currentLesson) {
     return (
@@ -148,12 +184,16 @@ export const WorkspacePage: React.FC = () => {
               padding: "12px 18px",
               borderRadius: 12,
               border: "none",
-              background: "#0ea5e9",
+              background: "#10b981",
               color: "#ffffff",
               cursor: "pointer",
             }}
           >
-            {isCompleting ? "Hoàn thành..." : "Hoàn thành Practice"}
+            {isCompleting
+              ? "Đang hoàn thành..."
+              : nextStage
+                ? "Hoàn thành và tiếp tục bài tiếp theo"
+                : "Hoàn thành Milestone"}
           </button>
         </div>
 

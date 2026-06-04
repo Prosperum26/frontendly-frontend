@@ -62,12 +62,14 @@ export const LessonComplete: React.FC = () => {
       return;
     }
 
+    // No next lesson - check if milestone is complete
+    if (milestone && milestone.completedLessons === milestone.totalLessons) {
+      navigate(`/learning-path/milestone/${milestoneId}/complete`);
+      return;
+    }
+
     navigate(ROUTES.HOME);
   };
-
-  const progressPercent = milestone?.progressPercent ?? 0;
-  const completedCount = milestone?.completedLessons ?? 0;
-  const totalCount = milestone?.totalLessons ?? 0;
 
   return (
     <div className="lcp-page-container">
@@ -140,31 +142,6 @@ export const LessonComplete: React.FC = () => {
                   {milestone?.title || "In progress"}
                 </span>
               </div>
-            </div>
-          </div>
-
-          <div className="lcp-progress-card">
-            <div className="lcp-progress-card-header">
-              <span className="lcp-progress-title">Module Progress</span>
-              <span className="lcp-progress-percent-badge">
-                {progressPercent}% Completed
-              </span>
-            </div>
-
-            <div className="lcp-progress-track-bar">
-              <div
-                className="lcp-progress-track-fill"
-                style={{ width: `${progressPercent}%` }}
-              />
-            </div>
-
-            <div className="lcp-progress-card-footer">
-              <span className="lcp-module-name">
-                {milestone?.title || "Learning module"}
-              </span>
-              <span className="lcp-lessons-ratio">
-                {completedCount} of {totalCount} Lessons
-              </span>
             </div>
           </div>
 

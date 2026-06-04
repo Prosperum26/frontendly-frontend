@@ -32,6 +32,8 @@ export const TheoryPage: React.FC = () => {
   const [theoryData, setTheoryData] = useState<TheoryApiData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isUnlocking, setIsUnlocking] = useState(false);
+  const [unlockMessage, setUnlockMessage] = useState<string | null>(null);
 
   const stageId = lessonId ?? "";
 
@@ -78,11 +80,6 @@ export const TheoryPage: React.FC = () => {
     [milestone, lessonId],
   );
 
-  const completedCount =
-    milestone?.lessons.filter((l) => l.status === "completed").length ?? 0;
-  const totalCount = milestone?.lessons.length ?? 0;
-  const progressPercent = milestone?.progressPercent ?? 0;
-
   if (!milestoneId || !lessonId) {
     return (
       <div className="tp-error-container">
@@ -128,11 +125,34 @@ export const TheoryPage: React.FC = () => {
 
   const handleContinue = async () => {
     if (!stageId || !milestoneId) return;
+    setIsUnlocking(true);
+    setUnlockMessage(null);
+    setError(null);
+
     try {
-      await api.patch(`/v1/stages/${stageId}/unlock-practice`, {});
-      navigate(`/workspace?stageId=${stageId}&milestoneId=${milestoneId}`);
+      const response = await api.patch(
+        `/v1/stages/${stageId}/unlock-practice`,
+        {},
+      );
+      const xpAwarded = response.data?.data?.xpAwarded || 0;
+
+      if (xpAwarded > 0) {
+        setUnlockMessage(`+${xpAwarded} XP được cộng cho lý thuyết!`);
+        setTimeout(() => {
+          navigate(`/workspace?stageId=${stageId}&milestoneId=${milestoneId}`, {
+            state: { fromTheory: true },
+          });
+        }, 1500);
+      } else {
+        navigate(`/workspace?stageId=${stageId}&milestoneId=${milestoneId}`, {
+          state: { fromTheory: true },
+        });
+      }
     } catch (err) {
       console.error("Error unlocking practice:", err);
+      setError("Không thể mở khóa bài tập. Vui lòng thử lại.");
+    } finally {
+      setIsUnlocking(false);
     }
   };
 
@@ -167,21 +187,6 @@ export const TheoryPage: React.FC = () => {
 
       <div className="tp-content-layout">
         <aside className="tp-left-sidebar">
-          <div className="tp-sidebar-progress-box">
-            <span className="tp-sidebar-subtitle">COURSE PROGRESS</span>
-            <div className="tp-sidebar-progress-stats">
-              <div className="tp-sidebar-progress-bar-track">
-                <div
-                  className="tp-sidebar-progress-bar-fill"
-                  style={{ width: `${progressPercent}%` }}
-                />
-              </div>
-              <span className="tp-sidebar-progress-text">
-                {progressPercent}% Complete
-              </span>
-            </div>
-          </div>
-
           <div className="tp-sidebar-lessons">
             <span className="tp-sidebar-subtitle">LESSONS</span>
             <ul className="tp-lessons-list">
@@ -370,29 +375,49 @@ export const TheoryPage: React.FC = () => {
           <span>BACK TO OVERVIEW</span>
         </button>
 
-        <div className="tp-footer-progress-pill">
-          <span className="tp-progress-pill-label">PROGRESS</span>
-          <div className="tp-progress-pill-track">
-            <div
-              className="tp-progress-pill-fill"
-              style={{
-                width: `${totalCount > 0 ? (completedCount / totalCount) * 100 : 0}%`,
-              }}
-            />
-          </div>
-          <span className="tp-progress-pill-count">
-            {completedCount}/{totalCount} Lessons
-          </span>
-        </div>
-
         <button
           type="button"
           className="tp-footer-continue-btn"
           onClick={handleContinue}
+          disabled={isUnlocking}
+          style={{ opacity: isUnlocking ? 0.6 : 1 }}
         >
-          <span>CONTINUE TO PRACTICE</span>
+          <span>
+            {isUnlocking ? "Đang mở khóa..." : "CONTINUE TO PRACTICE"}
+          </span>
           <ArrowLeft size={16} className="tp-arrow-right-icon" />
         </button>
+        {unlockMessage && (
+          <div
+            style={{
+              marginTop: "12px",
+              padding: "12px",
+              backgroundColor: "#d4edda",
+              color: "#155724",
+              borderRadius: "4px",
+              textAlign: "center",
+              fontSize: "14px",
+              fontWeight: "500",
+            }}
+          >
+            {unlockMessage}
+          </div>
+        )}
+        {error && (
+          <div
+            style={{
+              marginTop: "12px",
+              padding: "12px",
+              backgroundColor: "#f8d7da",
+              color: "#721c24",
+              borderRadius: "4px",
+              textAlign: "center",
+              fontSize: "14px",
+            }}
+          >
+            {error}
+          </div>
+        )}
       </footer>
     </div>
   );
