@@ -4,23 +4,14 @@ import { SideBar } from "../features/learning-path/components/SideBar";
 import { VideoModule } from "../features/learning-path/components/VideoModule";
 import { MilestoneCard } from "../features/learning-path/components/MilestoneCard";
 import { useRoadmap } from "../features/learning-path/hooks/useRoadmap";
-import {
-  DEFAULT_SKILL_ID,
-  AVAILABLE_SKILLS,
-} from "../features/learning-path/utils/roadmapMappers";
+import { DEFAULT_SKILL_ID } from "../features/learning-path/utils/roadmapMappers";
 import certificateIcon from "../assets/learning-path/certificate_icon.svg";
 
 export const LearningPathPage: React.FC = () => {
   const [isModuleOpen, setIsModuleOpen] = React.useState<boolean>(false);
-  const [selectedSkillId, setSelectedSkillId] =
-    React.useState<string>(DEFAULT_SKILL_ID);
-  const { data, isLoading, error, refetch } = useRoadmap(selectedSkillId);
+  const { data, isLoading, error, refetch } = useRoadmap(DEFAULT_SKILL_ID);
   const milestones = data?.milestones ?? [];
   const skillTitle = data?.skillTitle;
-
-  useEffect(() => {
-    refetch();
-  }, [selectedSkillId, refetch]);
 
   useEffect(() => {
     if (!isLoading && milestones.length > 0) {
@@ -46,20 +37,8 @@ export const LearningPathPage: React.FC = () => {
 
           <div className="learning-path-header-controls">
             <h1 className="learning-path-title">
-              {skillTitle || "Frontend Learning Path"}
+              {skillTitle || "React.js Learning Path"}
             </h1>
-            <div className="skill-selector">
-              {AVAILABLE_SKILLS.map((skill) => (
-                <button
-                  key={skill.id}
-                  className={`skill-button ${selectedSkillId === skill.id ? "active" : ""}`}
-                  onClick={() => setSelectedSkillId(skill.id)}
-                  type="button"
-                >
-                  {skill.title}
-                </button>
-              ))}
-            </div>
           </div>
 
           <p className="learning-path-desc">

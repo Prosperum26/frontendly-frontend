@@ -63,36 +63,6 @@
   line-height: 1.2;
 }
 
-.skill-selector {
-  display: flex;
-  gap: 12px;
-}
-
-.skill-button {
-  padding: 8px 16px;
-  border: 1px solid #e2e8f0;
-  background: white;
-  color: #64748b;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  font-family: var(--font-inter);
-}
-
-.skill-button:hover {
-  border-color: var(--color-primary);
-  color: var(--color-primary);
-  background: #f0f9ff;
-}
-
-.skill-button.active {
-  background: var(--color-primary);
-  color: white;
-  border-color: var(--color-primary);
-}
-
 .learning-path-desc {
   font-family: var(--font-inter);
   color: var(--color-body);

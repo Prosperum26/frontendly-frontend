@@ -26,7 +26,7 @@ interface RoadmapState {
 }
 
 export const useRoadmapStore = create<RoadmapState>((set, get) => ({
-  skillId: "javascript",
+  skillId: "react",
   skillTitle: "",
   milestones: [],
   userProgress: null,
