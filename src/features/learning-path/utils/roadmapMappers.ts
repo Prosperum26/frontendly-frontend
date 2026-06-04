@@ -7,6 +7,10 @@ import type {
 
 export const DEFAULT_SKILL_ID = "javascript";
 
+export const AVAILABLE_SKILLS = [
+  { id: "javascript", title: "JavaScript" },
+  { id: "html-css", title: "HTML & CSS" },
+] as const;
 
 export function mapApiMilestonesToMilestones(
   apiMilestones: ApiMilestone[],
