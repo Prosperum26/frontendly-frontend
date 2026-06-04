@@ -1,0 +1,140 @@
+.milestone-complete-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 24px;
+}
+
+.milestone-complete-content {
+  max-width: 600px;
+  background: white;
+  border-radius: 16px;
+  padding: 48px 32px;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: slideUp 0.5s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.milestone-complete-icon {
+  color: #10b981;
+  margin-bottom: 24px;
+  animation: bounce 0.6s ease-in-out;
+}
+
+@keyframes bounce {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+.milestone-complete-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 24px 0 8px;
+}
+
+.milestone-complete-milestone-name {
+  font-size: 24px;
+  font-weight: 600;
+  color: #667eea;
+  margin-bottom: 16px;
+}
+
+.milestone-complete-description {
+  font-size: 16px;
+  color: #64748b;
+  line-height: 1.6;
+  margin-bottom: 32px;
+}
+
+.milestone-complete-stats {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 32px;
+  padding: 24px;
+  background: #f8fafc;
+  border-radius: 12px;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.stat-value {
+  font-size: 28px;
+  font-weight: 700;
+  color: #667eea;
+  margin-bottom: 8px;
+}
+
+.stat-label {
+  font-size: 14px;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.milestone-complete-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.milestone-complete-btn {
+  padding: 14px 32px;
+  border-radius: 12px;
+  border: none;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.milestone-complete-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+}
+
+.milestone-complete-btn:active {
+  transform: translateY(0);
+}
+
+@media (max-width: 768px) {
+  .milestone-complete-content {
+    padding: 32px 24px;
+  }
+
+  .milestone-complete-title {
+    font-size: 24px;
+  }
+
+  .milestone-complete-milestone-name {
+    font-size: 20px;
+  }
+
+  .milestone-complete-stats {
+    flex-direction: column;
+    gap: 16px;
+  }
+}
