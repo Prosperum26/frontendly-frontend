@@ -62,7 +62,6 @@ export const LessonComplete: React.FC = () => {
       return;
     }
 
-    // No next lesson - check if milestone is complete
     if (milestone && milestone.completedLessons === milestone.totalLessons) {
       navigate(`/learning-path/milestone/${milestoneId}/complete`);
       return;
@@ -117,7 +116,7 @@ export const LessonComplete: React.FC = () => {
           <h1 className="lcp-title">Lesson Complete!</h1>
           <p className="lcp-subtitle">
             {currentLesson
-              ? `Bạn đã hoàn thành "${currentLesson.title}".`
+              ? `You have completed "${currentLesson.title}".`
               : "Great job! Keep going on your learning path."}
           </p>
 

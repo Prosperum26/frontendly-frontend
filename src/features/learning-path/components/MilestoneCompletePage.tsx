@@ -73,7 +73,7 @@ export const MilestoneCompletePage: React.FC = () => {
 
           <h1 className="lcp-title">Milestone Complete!</h1>
           <p className="lcp-subtitle">
-            🎉 Chúc mừng! Bạn đã hoàn thành tất cả các bài học và bài tập trong milestone này. Tiếp tục học hỏi để nâng cao kỹ năng của mình!
+            {milestone ? `You have completed the "${milestone.title}" milestone.` : "Great job! Keep going on your learning path."}
           </p>
 
           <div className="lcp-badges-row">
@@ -83,7 +83,7 @@ export const MilestoneCompletePage: React.FC = () => {
               </div>
               <div className="lcp-badge-text">
                 <span className="lcp-badge-label">MILESTONE</span>
-                <span className="lcp-badge-value blue">{milestone?.title || "Hoàn thành"}</span>
+                <span className="lcp-badge-value blue">{milestone?.title || "Completed"}</span>
               </div>
             </div>
 
@@ -106,7 +106,7 @@ export const MilestoneCompletePage: React.FC = () => {
               className="lcp-btn-next"
               onClick={handleGoToNextMilestone}
             >
-              Tiếp tục học
+              Continue Learning
             </button>
             <button
               type="button"

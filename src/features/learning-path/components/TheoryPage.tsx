@@ -60,7 +60,7 @@ export const TheoryPage: React.FC = () => {
         const message =
           err instanceof Error
             ? err.message
-            : "Không thể tải nội dung lý thuyết.";
+            : "Failed to load theory content.";
         setError(message);
         setTheoryData(null);
       } finally {
@@ -83,13 +83,13 @@ export const TheoryPage: React.FC = () => {
   if (!milestoneId || !lessonId) {
     return (
       <div className="tp-error-container">
-        <h2>Thiếu thông tin bài học</h2>
+        <h2>Missing Lesson Information</h2>
         <button
           type="button"
           className="tp-back-btn"
           onClick={() => navigate(ROUTES.LEARNING_PATH)}
         >
-          <ArrowLeft size={16} /> Về Learning Path
+          <ArrowLeft size={16} /> Back to Learning Path
         </button>
       </div>
     );
@@ -98,13 +98,13 @@ export const TheoryPage: React.FC = () => {
   if (!milestone && !roadmapLoading) {
     return (
       <div className="tp-error-container">
-        <h2>Không tìm thấy milestone</h2>
+        <h2>Milestone Not Found</h2>
         <button
           type="button"
           className="tp-back-btn"
           onClick={() => navigate(ROUTES.LEARNING_PATH)}
         >
-          <ArrowLeft size={16} /> Về Learning Path
+          <ArrowLeft size={16} /> Back to Learning Path
         </button>
       </div>
     );
@@ -137,7 +137,7 @@ export const TheoryPage: React.FC = () => {
       const xpAwarded = response.data?.data?.xpAwarded || 0;
 
       if (xpAwarded > 0) {
-        setUnlockMessage(`+${xpAwarded} XP được cộng cho lý thuyết!`);
+        setUnlockMessage(`+${xpAwarded} XP awarded for theory!`);
         setTimeout(() => {
           navigate(`/workspace?stageId=${stageId}&milestoneId=${milestoneId}`, {
             state: { fromTheory: true },
@@ -150,7 +150,7 @@ export const TheoryPage: React.FC = () => {
       }
     } catch (err) {
       console.error("Error unlocking practice:", err);
-      setError("Không thể mở khóa bài tập. Vui lòng thử lại.");
+      setError("Cannot unlock practice. Please try again.");
     } finally {
       setIsUnlocking(false);
     }
@@ -234,7 +234,7 @@ export const TheoryPage: React.FC = () => {
                 className="tp-body-left"
                 style={{ padding: "40px", color: "#94a3b8" }}
               >
-                Đang tải nội dung lý thuyết...
+                Loading theory content...
               </div>
             ) : error ? (
               <div
@@ -247,7 +247,7 @@ export const TheoryPage: React.FC = () => {
                   onClick={() => window.location.reload()}
                   style={{ marginTop: 12 }}
                 >
-                  Thử lại
+                  Retry
                 </button>
               </div>
             ) : (
@@ -269,7 +269,7 @@ export const TheoryPage: React.FC = () => {
                   />
                 ) : (
                   <p className="tp-description">
-                    Chưa có nội dung lý thuyết cho bài học này.
+                    No theory content available for this lesson.
                   </p>
                 )}
 
@@ -383,7 +383,7 @@ export const TheoryPage: React.FC = () => {
           style={{ opacity: isUnlocking ? 0.6 : 1 }}
         >
           <span>
-            {isUnlocking ? "Đang mở khóa..." : "CONTINUE TO PRACTICE"}
+            {isUnlocking ? "Unlocking..." : "CONTINUE TO PRACTICE"}
           </span>
           <ArrowLeft size={16} className="tp-arrow-right-icon" />
         </button>
