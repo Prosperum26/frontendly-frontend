@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import "./LearningPathPage.css";
 import { SideBar } from "../features/learning-path/components/SideBar";
 import { VideoModule } from "../features/learning-path/components/VideoModule";
@@ -10,7 +10,7 @@ import certificateIcon from "../assets/learning-path/certificate_icon.svg";
 export const LearningPathPage: React.FC = () => {
   const [isModuleOpen, setIsModuleOpen] = React.useState<boolean>(false);
   const { data, isLoading, error, refetch } = useRoadmap(DEFAULT_SKILL_ID);
-  const milestones = data?.milestones ?? [];
+  const milestones = useMemo(() => data?.milestones ?? [], [data?.milestones]);
   const skillTitle = data?.skillTitle;
 
   useEffect(() => {
