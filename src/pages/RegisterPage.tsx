@@ -1,453 +1,860 @@
 import React, { useState, useEffect } from 'react';
+
 import { Link, useNavigate } from 'react-router-dom';
+
 import NetworkErrorCard from '../components/NetworkErrorCard';
+import { GoogleButton } from '../features/auth/components/GoogleButton';
+
+
 
 export const RegisterPage: React.FC = () => {
+
   // --- 1. STATES QUẢN LÝ FORM & UI ---
+
   const [name, setName] = useState('');
+
   const [email, setEmail] = useState('');
+
   const [password, setPassword] = useState('');
+
   const [confirmPassword, setConfirmPassword] = useState('');
+
   const [agreeTerms, setAgreeTerms] = useState(false);
-  
+
+
+
   const [showPassword, setShowPassword] = useState(false);
+
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
   const [isPasswordFocused, setIsPasswordFocused] = useState(false);
-  
+
+
+
   // Các states chuyển đổi màn hình quy trình
+
   const [showCaptcha, setShowCaptcha] = useState(false);
+
   const [isVerified, setIsVerified] = useState(false);
+
   const [backendError, setBackendError] = useState(false);
+
   const [isLoading, setIsLoading] = useState(false);
-  
+
+
+
   // Trạng thái phần trăm thanh bar chạy thành công
+
   const [progress, setProgress] = useState(0);
+
   const [isProgressComplete, setIsProgressComplete] = useState(false);
 
+
+
   // Trạng thái kết nối mạng
+
   const [isOffline, setIsOffline] = useState(!navigator.onLine);
+
   const navigate = useNavigate();
 
+
+
   // --- 2. EFFECTS THEO DÕI HỆ THỐNG ---
+
   // Lắng nghe sự kiện mất mạng
+
   useEffect(() => {
+
     const handleOnline = () => setIsOffline(false);
+
     const handleOffline = () => setIsOffline(true);
+
     window.addEventListener('online', handleOnline);
+
     window.addEventListener('offline', handleOffline);
+
     return () => {
+
       window.removeEventListener('online', handleOnline);
+
       window.removeEventListener('offline', handleOffline);
+
     };
+
   }, []);
 
+
+
   // Điều khiển thanh chạy Progress 0% -> 100% khi xác minh thành công
+
   useEffect(() => {
+
     if (isVerified) {
+
       let currentProgress = 0;
+
       const interval = setInterval(() => {
+
         currentProgress += 4;
+
         if (currentProgress >= 100) {
+
           currentProgress = 100;
+
           clearInterval(interval);
+
           setIsProgressComplete(true);
+
           setTimeout(() => {
+
             navigate('/login');
+
           }, 1500);
+
         }
+
         setProgress(currentProgress);
+
       }, 40);
+
       return () => clearInterval(interval);
+
     }
+
   }, [isVerified, navigate]);
 
 
+
+
+
   // --- 3. LOGIC KIỂM TRA ĐỊNH DẠNG (VALIDATION) ---
+
   const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
   const isLengthValid = password.length >= 8 && password.length <= 32;
+
   const hasUppercase = /[A-Z]/.test(password);
+
   const hasLowercase = /[a-z]/.test(password);
+
   const hasNumber = /[0-9]/.test(password);
+
   const isPasswordValid = isLengthValid && hasUppercase && hasLowercase && hasNumber;
 
+
+
   // --- 4. HÀM XỬ LÝ SỰ KIỆN (HANDLERS) ---
+
   const handleRegisterSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+
     e.preventDefault();
+
     if (!name || !isEmailValid || !isPasswordValid || password !== confirmPassword || !agreeTerms) {
+
       return;
+
     }
+
     setShowCaptcha(true);
+
   };
+
+
 
   // Hàm gọi API Backend (Tích hợp Try/Catch kiểm tra lỗi lưu thông tin)
+
   const handleVerifyAndSave = async () => {
+
     setIsLoading(true);
+
     setBackendError(false);
+
     try {
+
       // TODO: Sau này bạn thay thế đoạn này bằng lệnh gọi Axios/Fetch tới Backend của bạn
+
       // ví dụ: await axios.post('/api/auth/register', { name, email, password });
-      
+
+
+
       // Giả lập thời gian phản hồi từ server 1.2 giây
+
       await new Promise((resolve, reject) => {
+
         setTimeout(() => {
+
           const isServerOk = true; // Đổi thành 'false' nếu bạn muốn test giao diện Lỗi xác minh
+
           if (isServerOk) resolve(true);
+
           else reject(new Error("Lỗi lưu dữ liệu người dùng"));
+
         }, 1200);
+
       });
 
+
+
       // Nếu không có lỗi -> Chuyển sang màn hình thành công
+
       setIsVerified(true);
+
     } catch (error) {
+
       // Nếu gặp lỗi kết nối API/Trùng email -> Chuyển sang màn hình thất bại
+
       console.error(error);
+
       setBackendError(true);
+
     } finally {
+
       setIsLoading(false);
+
     }
+
   };
 
+
+
   return (
+
     <div className="min-h-screen flex flex-col bg-slate-50 font-sans relative">
+
       {/* Navbar */}
+
       <nav className="bg-white border-b border-slate-200 px-8 py-4 flex justify-between items-center">
+
         <div className="flex items-center space-x-8">
+
           <Link to="/" className="text-2xl font-black !text-blue-600 tracking-tight">FrontEndly</Link>
+
           <div className="hidden md:flex space-x-6">
+
             <Link to="#" className="px-3 py-2 bg-blue-600 text-white rounded-md text-sm font-medium">Home</Link>
+
             <Link to="#" className="px-3 py-2 text-slate-600 hover:text-slate-900 text-sm font-medium">Learn</Link>
+
             <Link to="#" className="px-3 py-2 text-slate-600 hover:text-slate-900 text-sm font-medium">Challenge</Link>
+
             <Link to="#" className="px-3 py-2 text-slate-600 hover:text-slate-900 text-sm font-medium">About</Link>
+
           </div>
+
         </div>
+
         <div className="flex space-x-4">
+
           <Link to="/login" className="px-4 py-2 text-blue-600 border border-slate-300 rounded-md text-sm font-semibold hover:bg-slate-50">Đăng nhập</Link>
+
           <button className="px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-semibold hover:bg-blue-700">Bắt đầu học</button>
+
         </div>
+
       </nav>
 
+
+
       {/* Main Content */}
+
       <main className="flex-grow flex flex-col items-center justify-center p-6 my-8">
-        
+
+
+
         {isOffline ? (
+
           /* MÀN HÌNH 0: Báo mất mạng Internet */
-          <NetworkErrorCard 
-            onRetry={() => window.location.reload()} 
-            onBack={() => navigate('/')} 
+
+          <NetworkErrorCard
+
+            onRetry={() => window.location.reload()}
+
+            onBack={() => navigate('/')}
+
           />
+
         ) : !showCaptcha ? (
+
           /* MÀN HÌNH 1: Form điền thông tin đăng ký */
+
           <>
+
             <div className="text-center mb-10">
+
               <h2 className="text-3xl font-black !text-blue-600 tracking-tight">FrontEndly</h2>
+
               <p className="text-sm text-slate-500 font-medium mt-2">Technical Excellence Through Precision</p>
+
             </div>
+
+
 
             <div className="relative w-full max-w-2xl flex flex-col md:flex-row items-start gap-6 justify-center">
+
               <div className="w-full max-w-xl bg-white rounded-2xl shadow-xl shadow-slate-200/40 border border-slate-200 p-8 md:p-10">
+
                 <div className="text-center mb-8">
+
                   <p className="text-sm text-slate-600 font-medium mb-4">
+
                     Already have an account? <Link to="/login" className="!text-blue-600 font-bold hover:underline">Log in</Link>
+
                   </p>
+
                   <h1 className="text-2xl md:text-3xl font-bold !text-slate-900 text-center">Create Account</h1>
+
                   <p className="text-sm text-slate-500 mt-2 text-center">Enter your details to join the community.</p>
+
                 </div>
+
+
 
                 <form onSubmit={handleRegisterSubmit} className="space-y-5">
-                  <div>
-                    <label className="block text-xs font-bold uppercase tracking-wider mb-2 text-slate-700">Full Name</label>
-                    <input
-                      type="text"
-                      required
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      placeholder="John Doe"
-                      className="w-full px-4 py-2.5 border border-slate-200 rounded-lg text-sm bg-slate-50/50 focus:outline-none focus:border-blue-500 focus:bg-white"
-                    />
-                  </div>
 
                   <div>
-                    <label className="block text-xs font-bold uppercase tracking-wider mb-2 text-slate-700">Email Address</label>
+
+                    <label className="block text-xs font-bold uppercase tracking-wider mb-2 text-slate-700">Full Name</label>
+
                     <input
-                      type="email"
+
+                      type="text"
+
                       required
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      placeholder="john@example.com"
-                      className={`w-full px-4 py-2.5 border rounded-lg text-sm bg-slate-50/50 focus:outline-none focus:border-blue-500 focus:bg-white ${email && !isEmailValid ? 'border-red-400 text-red-500 bg-red-50/20' : 'border-slate-200'}`}
+
+                      value={name}
+
+                      onChange={(e) => setName(e.target.value)}
+
+                      placeholder="John Doe"
+
+                      className="w-full px-4 py-2.5 border border-slate-200 rounded-lg text-sm bg-slate-50/50 focus:outline-none focus:border-blue-500 focus:bg-white"
+
                     />
-                    {email && !isEmailValid && (
-                      <p className="text-xs text-red-500 mt-1.5">Định dạng email không hợp lệ</p>
-                    )}
+
                   </div>
+
+
+
+                  <div>
+
+                    <label className="block text-xs font-bold uppercase tracking-wider mb-2 text-slate-700">Email Address</label>
+
+                    <input
+
+                      type="email"
+
+                      required
+
+                      value={email}
+
+                      onChange={(e) => setEmail(e.target.value)}
+
+                      placeholder="john@example.com"
+
+                      className={`w-full px-4 py-2.5 border rounded-lg text-sm bg-slate-50/50 focus:outline-none focus:border-blue-500 focus:bg-white ${email && !isEmailValid ? 'border-red-400 text-red-500 bg-red-50/20' : 'border-slate-200'}`}
+
+                    />
+
+                    {email && !isEmailValid && (
+
+                      <p className="text-xs text-red-500 mt-1.5">Định dạng email không hợp lệ</p>
+
+                    )}
+
+                  </div>
+
+
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                    <div>
-                      <label className="block text-xs font-bold uppercase tracking-wider mb-2 text-slate-700">Password</label>
-                      <div className="relative">
-                        <input
-                          type={showPassword ? 'text' : 'password'}
-                          required
-                          value={password}
-                          onChange={(e) => setPassword(e.target.value)}
-                          onFocus={() => setIsPasswordFocused(true)}
-                          onBlur={() => setIsPasswordFocused(false)}
-                          placeholder="••••••••"
-                          className={`w-full pl-4 pr-10 py-2.5 border rounded-lg text-sm bg-slate-50/50 focus:outline-none focus:border-blue-500 focus:bg-white ${password && !isPasswordValid ? 'border-red-400 text-red-500 bg-red-50/20' : 'border-slate-200'}`}
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setShowPassword(!showPassword)}
-                          className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600"
-                        >
-                          {showPassword ? (
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" /></svg>
-                          ) : (
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542 7z" /></svg>
-                          )}
-                        </button>
-                      </div>
-                      {password && !isPasswordValid && (
-                        <p className="text-xs text-red-500 mt-1.5">Mật khẩu không hợp lệ</p>
-                      )}
-                    </div>
 
                     <div>
-                      <label className="block text-xs font-bold uppercase tracking-wider mb-2 text-slate-700">Confirm Password</label>
+
+                      <label className="block text-xs font-bold uppercase tracking-wider mb-2 text-slate-700">Password</label>
+
                       <div className="relative">
+
                         <input
-                          type={showConfirmPassword ? 'text' : 'password'}
+
+                          type={showPassword ? 'text' : 'password'}
+
                           required
-                          value={confirmPassword}
-                          onChange={(e) => setConfirmPassword(e.target.value)}
+
+                          value={password}
+
+                          onChange={(e) => setPassword(e.target.value)}
+
+                          onFocus={() => setIsPasswordFocused(true)}
+
+                          onBlur={() => setIsPasswordFocused(false)}
+
                           placeholder="••••••••"
-                          className={`w-full pl-4 pr-10 py-2.5 border rounded-lg text-sm bg-slate-50/50 focus:outline-none focus:border-blue-500 focus:bg-white ${confirmPassword && password !== confirmPassword ? 'border-red-400 text-red-500 bg-red-50/20' : 'border-slate-200'}`}
+
+                          className={`w-full pl-4 pr-10 py-2.5 border rounded-lg text-sm bg-slate-50/50 focus:outline-none focus:border-blue-500 focus:bg-white ${password && !isPasswordValid ? 'border-red-400 text-red-500 bg-red-50/20' : 'border-slate-200'}`}
+
                         />
+
                         <button
+
                           type="button"
-                          onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+
+                          onClick={() => setShowPassword(!showPassword)}
+
                           className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600"
+
                         >
-                          {showConfirmPassword ? (
+
+                          {showPassword ? (
+
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" /></svg>
+
                           ) : (
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542 7z" /></svg>
+
                           )}
+
                         </button>
+
                       </div>
-                      {confirmPassword && password !== confirmPassword && (
-                        <p className="text-xs text-red-500 mt-1.5">Mật khẩu xác nhận không khớp</p>
+
+                      {password && !isPasswordValid && (
+
+                        <p className="text-xs text-red-500 mt-1.5">Mật khẩu không hợp lệ</p>
+
                       )}
+
                     </div>
+
+
+
+                    <div>
+
+                      <label className="block text-xs font-bold uppercase tracking-wider mb-2 text-slate-700">Confirm Password</label>
+
+                      <div className="relative">
+
+                        <input
+
+                          type={showConfirmPassword ? 'text' : 'password'}
+
+                          required
+
+                          value={confirmPassword}
+
+                          onChange={(e) => setConfirmPassword(e.target.value)}
+
+                          placeholder="••••••••"
+
+                          className={`w-full pl-4 pr-10 py-2.5 border rounded-lg text-sm bg-slate-50/50 focus:outline-none focus:border-blue-500 focus:bg-white ${confirmPassword && password !== confirmPassword ? 'border-red-400 text-red-500 bg-red-50/20' : 'border-slate-200'}`}
+
+                        />
+
+                        <button
+
+                          type="button"
+
+                          onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+
+                          className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600"
+
+                        >
+
+                          {showConfirmPassword ? (
+
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" /></svg>
+
+                          ) : (
+
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+
+                          )}
+
+                        </button>
+
+                      </div>
+
+                      {confirmPassword && password !== confirmPassword && (
+
+                        <p className="text-xs text-red-500 mt-1.5">Mật khẩu xác nhận không khớp</p>
+
+                      )}
+
+                    </div>
+
                   </div>
+
+
 
                   <div className="flex items-start pt-2">
+
                     <input
+
                       type="checkbox"
+
                       id="terms"
+
                       required
+
                       checked={agreeTerms}
+
                       onChange={(e) => setAgreeTerms(e.target.checked)}
+
                       className="mt-1 h-4 w-4 text-blue-600 border-slate-300 rounded focus:ring-blue-500"
+
                     />
+
                     <label htmlFor="terms" className="ml-2 block text-xs text-slate-500 leading-normal font-medium">
+
                       Tôi đồng ý với các <a href="#" className="!text-blue-600 font-bold hover:underline">Điều khoản dịch vụ</a> và <a href="#" className="!text-blue-600 font-bold hover:underline">Chính sách bảo mật</a> của FrontEndly.
+
                     </label>
+
                   </div>
 
+
+
                   <button
+
                     type="submit"
+
                     disabled={!name || !isEmailValid || !isPasswordValid || password !== confirmPassword || !agreeTerms}
+
                     className="w-full bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700 transition-colors mt-4 flex items-center justify-center gap-1 text-sm disabled:opacity-50 disabled:cursor-not-allowed shadow-md shadow-blue-600/20"
+
                   >
+
                     Create Account <span className="text-base">→</span>
+
                   </button>
+
                 </form>
 
+
+
                 <div className="mt-8 flex items-center justify-between">
+
                   <hr className="w-full border-slate-200" />
+
                   <span className="px-3 text-[10px] text-slate-400 font-bold uppercase tracking-widest whitespace-nowrap">Or register with</span>
+
                   <hr className="w-full border-slate-200" />
+
                 </div>
 
-                <div className="mt-6 grid grid-cols-2 gap-4">
-                  {/* NÚT ĐĂNG KÝ GOOGLE */}
-                  <button className="flex items-center justify-center gap-2 py-2.5 border border-slate-200 rounded-lg text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors shadow-sm">
-                    {<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink">
-<rect width="20" height="20" fill="url(#pattern0_191_2412)"/>
-<defs>
-<pattern id="pattern0_191_2412" patternContentUnits="objectBoundingBox" width="1" height="1">
-<use xlinkHref="#image0_191_2412" transform="scale(0.00444444)"/>
-</pattern>
-<image id="image0_191_2412" width="225" height="225" preserveAspectRatio="none" xlinkHref="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAIAAACx0UUtAAAQAElEQVR4Aey9B6BtV1Uu/I05V9v17FNuy00jQIAUQlUUUAnSi0gReAiCT1QQQUWeivgAEZQm5RcRFLGh8BBFaYICUkQ60gLEkJ7cetpuq83yf3Pvey8R7g25cM495yRn8Z25xxyzj/mtMctKgvLbz7YFNrcFFLafbQtsbgtsc3Rzz89274Btjm6zYLNbYJujm32Gtvu3zdFtDmx2C9xUjm72cWz37+ZrgW2O3nzn9uYysm2O3lxm8uY7jm2O3nzn9uYysm2O3lxm8uY7jm2O3nzn9uYysrXm6M3FLtvj2DwW2Obo5pmL7Z4c3wLbHD2+Xba1m8cC2xzdPHOx3ZPjW2Cbo8e3y7Z281hgm6ObZy62e3J8C2wUR4/fm23ttgW+0wLbHP1Om2xrNpcFtjm6ueZjuzffaYFtjn6nTbY1m8sC2xzdXPOx3ZvvtMA2R7/TJtuazWWBzc7RzWWt7d5shAW2OboRVt9u82QssM3Rk7HWdt6NsMA2RzfC6tttnowFtjl6MtbazrsRFtjm6EZYfbvNk7HAzYWjJzPm7bxbywLbHN1a83VL7O0tjqPWWuec9/7bZnsVZhnVGK4CmGZqeAM4lDBEFfSOCouQygxwfbhhgB3B5qjHqPIA1JjCs1AJWxDe5FMdWAXBWgjjzHiMIVCADXmwfuOZz+Wo+vwFu0KwPhZxcA61+7Ze3yKitziOishxJ3YmN7OFb1ZIKotxqSKUEQYKGlFCOJVQN4IeQIaQAWC7cG2g7VWrUI1R3FyJG0tJo0R8BMISaakzooqYAYMYy2IXfb0MO9TII2WazcW2W8l8rmChBJFlcdUYJ93r1WiQYJygiuEjGFMrZ+Pjdv3mrrwlclREOK3f7kp1Bq+8OJ9oNFPlkVXoHB5GY0gJCEyKcQsrHbe/nV/bGZIvNoJVcIJYTIa6I+UMytRWAa5OvbkhHHLSsqXNfIxZSLtGo0SWI4FrwDc8ohq6CqG34Gsyo1MNY924qge1HUexhTZwI9zynlsiR4/NMml6DGEVVvE4jg4B+2APlSPUJRptNBwSLrF15POmH/bsyu7R4V0rB8fv+dv87/88f+Oryhc9r376M8yj/pe9z8PdPR5Q/vhPVvd7pLn/o+z9H+Uf+Bg8+LF4yOPw0Me7F71S/r8/i9/+TnzsY/jml93gKpcsm8YwBn3o2PM9iB2dNvhu1OhVaA1ds1Ydn7V1K1GJM45J0Mmxzt9yhFsaR8PMyuShNCWomzyjZljcG2PsHPnTCr+j0Ri11IFW4eqryuu/MPrI+wavff3wqb9V/NjP2gseF9/m0Z3n/1n7pX/VftM7m+//9+ySL6T9K1RySGb7sT4YqQOEVgdEHcBRzLz7Q423/LO8+s/9/3lZ+aTfrB72TNzvGdFDfjl7+T/Gb/mgfP6Lq8PrDurxwcSMMlSpRzOBJnMx9G7sIxc3ISn8LXG1vyVylOw8BvKTTGXYGhapdkWzHrfGYdd5+eWtN73D/NSvqXs+NXnEr2fPeWXz7/6pfelXs2au7ziHHzvjytOTa0/LDu5p9GdbpjOLZCHSOyPZoeKeSmYR9xDNQHehOkcw49Bz6DqZdWrW+F4xbq2MkqXhh99VvfEv8Ysvm3n4C3b+4st2vuWfouu/nqtVo0a5Go91XmnrFejJgx+1xzp+CxJu0RwlOznVJCiFfnsVg8uaH/zX5nNeOrj4Cf1HP2X0N29srX7dzhqZE70j0QsZugqqsuOVaunQaSbeZeKFKu5WcVQo5BIwVihjFBHC5lNjJOHYPvDou6tb2NfwKw1lGkncbDZ02i58q1+03Thp13ZXXTYXq8v+C695c3rfX5k5+6eW//jPGh/40Oz1++eKvGXzuK7YVegQ3NL+btEc5WSTndOw++xX9X/q1w/+1ovwhU90unV3R91KlnvRSokyR5H7sqCgUWRp1W3b2V5SLsfVsjIrUKs2GZWtYtQtBjNV3QqommXZKIpGkWc5MU7HZxYLewat7rL45boeVwa+ziRvKZuWNsqdGkONXWNc7jT1Obo+P93xdx/BC99w8Om/s/TKN+DzXxJfQ5m+L9nbWxpuhhwl7YhDWDRcIS2sg/FhnQRWHK5FjZUch5E7WdWLl8ZvfHXywIelZ1/kvvq5ts8X5touEmfhpONkwdn5TLVTaaU+TUyclpLkNh2ZdFT7qBmgGx4N5UJqs4rblY5tTCQuYZEMWUMaRFM1vSp86qUZRY04UpoLeGQks1pMk4hsK3HN1Ie2YmnGklVdh/n2zrxuvutD1z7tOfue+LN442u7X/7EEsDuYeSr2i7B9mHAK9jl/jLcEKbmDW/Od8qgchxzcbOg882No2TndF52FPPgwqxrjTwqV5cJdD1OL2W1h/7CZy6tn/XSyx/y1INv/YdRzyzea8e01OYJfaQcPySIy2ZnTz/t9NlKXffej1/yf18192uvkE9+rGitIi7mhmV3BKOzpdnubK7aLrJJNm6kPlNhV1CZqKo3z4i+557crDh6jKDBHMM6GpKgZp8yo0zPca5XJD+cpx949/7/8+xv/OLPxf/xsXN6MzsbaVUMSmVCkRv8bbiYpilibYVLgIVxmdF7TeM809l39b+Pn//S7Bd/L/noJ9F2pqXoVhvsrgY/A2ReKW4+gCVVuxiRaKZsddx8OHqMoBQIzFa2DecbuwfNFpqukRcf/3/Rzz/VvOy1vf/6wm1meApPoEdFVcyY7DQzt9km0vZ5/lK600IrNWLB/bD1iBt7+nXSkvE3v1E//0/Nc15tPvuZROeNur46sTYGP6tmFb8LKCspy8PcHFb7mwlHAyknLDsmHNSNqvax9ZKW7oMfLJ7ynPxlrxz6b9Rtne2a0+22G+Y+d9nMDtWYXTw8mJTeRIFGhNraqsy9KTI9bkVFZKqyj7m98SiNo6bd1awv+Zr8n1fZ3/1Df/V/7kLludduYFxXrqhngQZUncomGtL32pUtz1GSkpgOfyowJOJV72JV7f/c8PnPtr/17OaVX5rd3euaZp1k+1dXhlWpdu+WhblRf9AfDOZ37p7WsInCRgatTFXXZWWtdWmEmaZa6C5ft1r2ZuPejqxvo9gNzkr6X/yCe9TvpG96Z/S1SwbIR60kgYpWjK7hFF3rJhrT99aVLc/RY8MmLylPQwqzM/vT17+mfvyz2p//THz+TL9nqwMrSdntSnt3OmOdOzw4sFovxx3VzYA+v4Cy0CZCYcc+lrTV7jbaMz6K+kW92B8tr87u3ZHmNQaD8WxUNxoL19ezS1rvPfvQ697Uf8PbOh/73I6qTrRGK3Le1nbT7bO/BxPfTDjqvf/2wd/3PsP3/2X/TJ/PzmKp0y0Xkk6rbKzC1jBuxqsFJDOQRKpSD0ZJ/9uLb3S8bES5t2Y8xiBH4TKknbg1k7R9/wBaFpk0D+XN/SWSHhZ2V2lnx60WWv/5lfx5b3av/H/1dQcOx1hK4sbN4vv+1uFofz9sXgElz68kpIP1WKkhspq7w2MUVamUV7rI9Ztfon/gdD+3sxd1dxfSqArIEPEIYlOH2uU2tiYVq8TUylVJXM80uX8TywzHwY2T9Sanei9TALS5EtFHQZmYRMONUQzRRGesMqO0jn0SIY0RCSCwFmnD144u0jc1ehpRDjtMkC+VWp+9t9Hx+XvfaX73lQvv/ejCgOaSxZIZUObVQV/QbBiBJrgODlvnob22SGfbO61KvbcJoGnsstC26sX1YcRN7GjXTdUox1e8f/y0R9k3vfXSu94eICUgIuAzCaCmP9+aHpGphjm2EG7Y529NX7s3U/F7qUJrtje85rqvvPlv+299d+NgPq9Tr91YV/OSwJk6KRFjr91C48W3BrnJe13RS4pKoMTmwAipga5c3l8oWyOPIh25d7y++YxnNd2VK3dMz1x0IpzLQFMvJKVjOdB5KD8Z5jTVQSaCuJA0SdgygT82cRPBK+N4UTHOiwJxtGNh4Vyr7Qc+vvpbL8Z/XCLO2iRVcNXyqo9jy0GOp3agtAUwGeEW6Cc/7IWFULxAR15FRqUV0kp1+S2wpfct/+Ev6797o9vdGg6j+RWVzRwO1AyO05OdPlDTsShAz0qQvhN2krUIggg12BqPVyBCXzl3BKZRlde9TjfttOpijPEw0TI7HupLvnHtK/4Ml1zdscPF/sG01028239wv+1obJ1nMsit0F0u8VJb1NyFxgOk11Vm7OIsirH6z/VTn7Tn81/o7270+T0wXRjZMZzygaAOgZ2e43NCLpKvQYZ4CeN2Eh5qHEAw11YBez8F4CnwBZMsypThuqFUp1nGMsxXvbbtMxdmxF3znD9I3/YfC0m30EW/GO3aufsA8q0yVPaTI2S4BSAYTwinixoWmEsavWIFX/xc8ezHVGeNDlYyf2Xc3dla6i21ej1Yfn93E/eJiUMNvpM0dQIJrA2MnNKUIxfxTKawRTCdskl4hKCTjte5m9yk6rSVzi6kvdlRJIPxIO/ZM0aCv/pI/oa3V/2BNJpFVcy5dFJmawSToW6Frua2BiL21Dk04Dq4Fp9+6+KfPyc7bU/y9X2zZ8zmt07VoX1ztR26nBuw6cpOmgo5KGSqp4CJv/wfggS+Yhqy9vXC2tarQnXfIiijqiiHaqaZdGaKfr503SEzNK2402502/CYyzBYdh+7ZP8b39Wp0I6zeExjhjq2xB+HtyX6CdHNvKicQTNBhtGBD799+d2vm7/iw4cXz1C7dkt+qep/zbUiyEJbdYvGEpnpJQyNvnNKTUZFqAqkFKEAbDEPismjJuG3B74T5+WwGPRjr+eyXgMNyb0UaC4X/Wy8b7dvxQ399k/gPy9D7nR7249+uwFPJu7zwpllgF/QK5Zz8AbeInWxb8lqC6Phsv271+x6y+/PrnyzvNvd51srii4Es3FyGiS2GFjbT22iIqu0hbaiCI+wxHtWxiOXi5RjmmaojFJWgTmUAkFmCx9oeAXPUDN2XLBr6wphd0RDIijtQ2+11dpF0XTHwheP3a61rxVq7WqNCo00amUccTmAH3nNrVEFrS5vm253z55D8XBldM4rfuXgj952qWmx7LB1nuO/lBvZf9PIJOoCDfjY51C5RKayzhZjg7hjF9OPvLL45F+NpGfmL4zqMVfzo711RxhGTinSERBqcMOHKceiMvGkR6Lijghb9qeNqBqOAUFvBo3ENFJiZMpzOmce+tSXBwvt9m8+QX7owp2IuBn1s5tv3nHCZ/P11QJ0BtZFZiiuAGqPupZx1Gy2Vq+xH/4T+cSfN1b+u9Xjh/e50ciSl6Qpw4nv80HgmBR4NmIkjFv5SQYJl1BCnQcQsmH6OJEbsnWq3HqhrnyKGK0mIr2S55Wxkqa1jnB5X515VvbEB+BHLyyiCHl4Gw9M9uXYIo/abP00GXtk4YakFHSzQrukW4i59a/lo38sH/zDqK7U2RciLfToaolaXMSVdtCOK/WEpmQt4UnDQFNFUoLyhKaUAx2PEtSRnCLUUPDY6k9RSrtJHUB/RwAAEABJREFUghZ5mVidlGJWKlf6MmvMP/tJ6id/rECUlN5kaqDQ8Ztu3m/E/Juur1yucj2yvgR0CX5NUjGQGDv+2Ovrr/1LUqxgZsE3Z6u6hul3GrloAQcRnKUlTSWSCVM9F3rSl/BKSNaJMHGoKiRRIyIhD7ywODbL8z33o1LC97A/HsK4ZnshLqPRyjjtzqpnPRL3uqhA7MdG0RSCKh+3vudmNqLgppufHJWWWCfJiD4AiAA9PISvv9/++0uqqsT8echXx8vfXG710J3H4JtQlvybMJUUnHhQDaV9IK6Eh6leTUwbZshTohZc7MRREFIWkGkGbOFHJXElwi8ciu/o2KzmY3PWrtbjHrR6v7vymNga1WjEJoauMC9xKWYLDXXTTU7DJwliuCRScQQkdgVXvgOff1nDHuBHJaObsCbxSzPZ0McaZRPiA5Qnz4SrOAVqQkj3CRKUSs6HJ2vJSyWAnwDMC2owFbDVn0iUWJdlmXXoD1ftbfbMPv5+eMTdEr6stUEWG8EKP5O6CjFqcJnaMiPedBztOKCM6EzTOE7JodWv4Kr34IqPYM/tGm41ImXnzoy7nWxwiQyvvXruriDtSErmFJkw0gfKTtmH6eOYRyYP1fyldhpSOAq2elTcor+1M+OCx82KHzA6jbn73yt+wN2+LKq74n0SLWu+7VhIm0WmhrpuYys9m46jKxrQsKsJBHr5ivE7XoIr3o3GHdV4jCT23Pa7RY+WT85B2jkzvhyRR6LCniAiF0GaTmAlrp2ueTtAeFU6VRpVWF17XfCWJqx52kAbofMRFy4du6VLC1GVwIloJbGqTD0cjWf8oO36mR3q4ILEN8V0pO6tyPVFctg3hoiHvJH1FW8hnMRJaU1ljLWW+0IYP/23jHh7WcuAMGrsZAwpYQtUYxR5XTdLNMdRPI6iQpkaY6eGSHIPF+D5Dd56/y0gnlzbDgxWSqm105nxMXx0SWe1edp8Y//I2bT1rP+1/zH3OeTjC5cb6HHDjlkg1YDw80fURhNoYes8m46jXZSDEm6XQQ339Tem/n2wdykb19IXkkkT/uHoMk1SCvVe+GkeoDdVPoTiQg7lRYXf/+k73dSDOsH08SwVSCnqmlJGOs+ah9vRdXFx2I+RxmlvIbnCdPfLTD/qGJ363PtDlb8m95e1y13xaMEut8cH0sGBZHg4MatNDDtqtouZdt1IR4kaeLNa50uj/tJgJV2MkrxBcgxUtuhkxQKSIe5gjm2apnf8jp4VUCbxVcP3IwDee4bEDQXSflyXaKfRzhmXcORVzG2MKc/rnnXtpy5ZnO/M/p8nJPe6aKdTO3yCHm4Gj9psY9BGmRZ3+FF12d+Ul75OO/jkKpvEopxoeOXBI7wOMkLUQtkjXORQlKUSdBzMTCIrz6SQ/6gQZLJTBe4ynT+BstwtwOHMs12rKzl6I+yRtNfIVlV5fXEgOi3FrEZkkY/rleG4b0qX2MasOecHo3s9JH7aM1t/8trZf31L97NvLz/514c/9Kfx374jeds/Zv/wrtY739d577/NfOAjc//60bl/+9jyX//f6refllz8gF7vdgv5QrPsHI4b1802k30HsbKIeuCVRRLpuK1VV3xnOi/H2DmNMjQucknmZ1KX+v542VVFpFXM/l/ej848o/HE+9v7XDSOYpU7brz3i2eRrQ612QZgB8MmWrJ86eH/el5jPEK2ZyVapMZHzpOakUfkJvDQVoLsqZ9oqKfSgZOtQ0gWktMqUNZCQxQoS+Crh4JXQpmsFQGUjGJjI5/ZKhr01dJKNB7NZHrnrt6wusIMr8HiYYwEu27nfuKxeMUr5J/efv3rf2X/C/53/6ceUNz5DnbnXuiFVtVdKFolCsKgtNxgRBWSOvwXTFt+du+dkh/70fLXfqb6q9/Bu1+avPhZC/e+z97o9JFJVmsZ1UpcAh68i7Lyw4Odsfd+OjVTgSFBTVrrZtoo6mowWG1o3YqUH+f98WjcaO7+tackP3lxCZ3kzk7uQduGJbY8Nh1H0YjTEvjG780tX4XGrmHDiZwFXCekHWkaOdEemry0nnylQE3kQJlgngDy2IuCaGZ2N6BpkBn1Eh6yk3KYQCVQaB0+mIyXkRSYd5glayssjqLLl9LLU7/rDvUznjh+64uLd74i/s1ndi66R6ucu7Ve2O2bXa9TOqyK+0+LWJCyqgQqcSq2KnYSGdFGaUs0u07PiGtEaKG1gHvdBb/xBP8Xz8abXymPeWzcPBvDFFqZnpdGvdOMMVnrp7ychlNNVIuqpVwdqsq2Zubgov3jvNwxr5/5SPzIHXPEGBl6VqVgxkUbwlJbHWqzDUDH8fiS39WXfThbmOdZYlDM9Jpngdf5gYKetHN0nxrQQfZBJmUdtIOyiASRQ+ygLWlH0JWKDtQkZUlKpRzIT+4WFIkKyhOaOmazDYuGR8xTjslH+YqPV3fvHV94p/Lv3+Ze/qr4sU9t3uYeTZlLwBpKxFVV5c7V4N5XQRLhuWVkR0vlSlorIqkVEdVqCl2rGuFJjFYjhYG3JYfUHKiZ1p67dJ/21OHf/t+Vl/xseftz5OphvD9HZybknvxNCcqQCAor7HYaZ1kUYzW/Zrk/Pmvvjic9vv/jd4fSHTrkLLEJeCqbVakN29pQaEv/qU3X+8UP59e+KrEDnt2dMrt9C/5rSNtkGFd2r51oTKhJ5jkJLtAj0Je8RKCp8oE3mrJnkSM0Fe+VF45ViZCgAInqhD+sISR5JUvKuYhVJ3WpD+vOyvl3bvzSM5qve1XnnDukO89A0nU+NlA5ZECOxTZRDeViGCX0kwaRRUvSubhdxctVvFLHqybuE1Xcn6IECLIHPGCrVJc6zaNuGa+0Udd+Ts327n0v/8pfHv3Rs/v3uPv486tkJIHJ8z+EhHS30kwrJwcGQ3WrM/c86mF4wA+TlqgcstRorPISyoU+1aHNSRVbOeC8ba7u51f9Ya+Yw2mry4MlX58jvauxcqju7CTJ2FFya0I1HximZMJCDz4iQRYPMi/oEZhKJQF4cfSUBJiBKaRp0Agfz6iwDHbYTn4ov2Y07F90+zOe/YyzX/A7+t4XH4zbtpH7JIeqlDFprVt13KnTTt0YxWoUyyiScaSKKCq1IgotiZtNXC/2M5Hvat+NGaKr0Z3JfbPiIHwRYdCSQTceN1CmaFe1JFJm2pU2G/e6d7hX9zlPv/7tv4vJc4ydk1gITBat1PmgLnh4i3rdvQ96UPM+97pM1MwKeORa1fx87ObSrGqqInGZd9j6z4ZxtPSw/nMYgXMzdAhvfL2Ir78+2/cJlR7weafX6Oj0Km8q7OpE1WEVOYkNAYaJV5mThvOZ87rycU1AGx85BABKfGZ9agIShxj0vtAgxhgiG0u1KuPKFHOq2iX9od+1dN3+/Yd375l/8i/Ov/hV5v6PGHXmx3a0E7VGQ9Dgcg5+9orBqqbgBWMLQjSBDEihiIwNKIAQQCATaFALsJpE+DBzByBYMAWihPWyuFZpE80YrRi7d9/mwrvkf/OnKz9y/zKPvSuHM8ViNIRFonderq7dsWN2x37X8jtmfvVnDz72noez/DYrBr0EUDNgNxXbS6AyJJAGtv6jNmoIIge1uSunV2KtVB37FEsr9eC9CF5QACcCLsFHlmblIQ7iEQShQNfIkD7Vax8cJIfBgiwTELIFJTPTZU4zUGA58c2ZWSzrctdpmJ1VuO5K+8Xlu+zU/1ksPO4JZz3z15sPfQyiTmHJm6itW750rHhD0Gl0F571GPOsR6K3Z3Z/Y4+ZWVHm0ODac2fO2v+pr67Mt7u/+YTonhcteFlwDd/bsHk8BcbZsLElWEEFo8elgsCgABbfawf/Qh/AFTG4PeWh4BUQIVBTh+hEsNQfyaAdhUBT7aC90IlSYEHtPAXNIp6kZSnWI9QwaWV19awd6eHIxKOit9I6K3KfOYDn/k76lF/AXe6B9nwdZVoitjl5KTQ26Fnx/TLLeg99SPybvzy63W2LRbNTdxpnzOLyoT7r7MaTHoQfu1MRJSpn/9R+eP7cXKE2bmA7ucJVaFqUsc2w2Ef55szyWOIC7ej2IlCYQDwP7GRLoKAnF8GTe+R95KGY2UsMTw0pqD1iAgipAE/31LBU5IWsVY5F+juTmesPLnX3R8Vy3Jrdce38/CtfYR76k6P2wrIkh8eVAJnAG1fVI2R2o+wzjF1qE9iGueN5rZf8avn4+183XFVXHsgb7R2/9uTokT8+RhTlvm4kfQVegW1UP09Bu+oUtHH8JqperZeYpFFGuZRLr/HlF4LLJBfDracI6UViRYCyZCpIuMA2B4aTJHrNQM3IQzthNtI0yH6Sgdx1Ez3DiSbyzC/adV2yMrc8a/YvdhCPb4M/+evxOfcqNdd9dLReaCaRg9gakktqK/Aszj5uAE6POv0y56oS1Rj3eu5pPzH7zMePXKzCPeidC8QY24jfkwR1XrT8BvTwlDW5cRw1yEujMMzoTseHquoPfFi2tI9ARhJc8X1EpoLzRLYh8JJsIxzIXe0mThTBcYYkcpeyYxIYjVmQOelrSV8qKQcnGjYAy/t7zU4/bs7P3XXwhtftnzlXZ63WwPJ6NLIOjiBBXaSVgK+FYIOew6vL3WaDa7gZGR58urrXvOc9dvz57w3u/4NQUXNokGX8LKXDPw+acr+0Qd08Fc2qU9HIcdtIbKRbEf1B7bH6mrgae0dO9MBVXnnyUuhQgwxo4QY0eEfqA6ixIVXDK/IPISnk8SCvIqY6cFnX1ofMzitLsnlFzxrYPzyjMbqsnLnzk0e/8ypbzSUR8wKpA+DqqshHnpXoFGgo12p4nr+ZsgFIebYra9ja9VRhaz0GunuWb327iEfFygkJqrBSFHB8/bzh1v776+NmLq02rHNRlcbQJkU+GI3+KK0UEpu7WREfqEbbK6FMeEHgjVDvOUEIzBMyigJTJ4JAT5J4zGHqVFYQ5UWEtbG4yJEi7X19efJPLz/sZ1qDXT2J58oyVsMyyWvvfJapdqdS0YCHuQrKYOOWenRGpU1hUpOgTHgt35RV62YPobfMNypejpBaLCRZkfGO1vI7B26+j9q4odV9pCQevv7zreEq2qiaaKuRhGdCR2V95FxsfFITiASxotsNSDwyF2Ypcy51NqkdkRmfVS4tfFL4RiGllDPqUHvVx/tVt72ceGndVVb/+xsPfWHzro+fnd2Bth3a2qQp0ExdFkdKgzeKYLyTIEomEV5mYoOeVlsjjcB1vqERz0BmMoUdwGwiULMAP1dBIQNaiBnDzffZOI7aNndbZnQtkq/B7IRyin4jGoK0Fc+Lz28TIHLEZYoPAmMU1JTNEhwmh8IoXasSYWq2kqGTilTN01BfNheffWD1/+HiX7/dD/4IZndBYuNUksbM6J2zVXXzneItPzJO7AaNwfFTUZwP/9LjAITfhXhIsYjLwEUhc/grfNg5hgTIv28B0JhquDFV5Ld2CPtOkcgRnsv9TIryim5ybtCEnnYAABAASURBVK76iOZQfrB7m1vj3r+N3mlQTY/YCltl9RCldEpXFOTtv01ogY3jqAdy1MVrXJUh24/ynEibwLNvEXHqI4+EgXYRoG2gZiCoA/tOhIsqj8mFqJCp2kuAc80YqkC9Out71o2WZ9G439uHvYbl91Np1BIJyyLUAWc34cRsd+mYBSYTdSx2CoXwiX709WR4yPtRRc6BizRACooEkbH/CSELSV8NHwHRhKkUePCPnIo9GDIanChlzx3ayC9i/gKUX0fVWZJlf++X4PSLmlVVWJ7woQQKEKCubVUbeIrYfr67BTYiB2dqI5oFDAYYv6E9hNID4+ZscgXqnZbdUcFxivIExDGcgu5TIiYBvBxVHmQkCR0hKOk4I5CmYAbyNXbMY12FNEfvLJRfmD//51sX/Nb1OKBcO015+Ars5JckBSSxTpLEedkYK2y3ehMswGm6CbnWIYvXS2b0FtRz5JvRlZcaNrPuaEsTb4pJ6IEAukxmPQKQsn6qCet7iEJ7aAqEkKxN3bLVf2Nm7/6zF9RdX0gOt00HCSltNZxyRrtS4ECIFr29Hz1q+c33u2EcdXqxHB+CFlQ7bTr0vCjVpSNnpiwURyc6xdSPkqa0HnkpIuSunxzlmUHClsCRsgHiJyGjkkQJ2bs//8Tue70VM1YXdbdqr+gSpoLnecmqWFGwxpSVcax6G5vVAuvO0ZWaXvAQ7GDyKcTl1k6OKHX2mYc3seAb3qdVr+hGUeTjfqoa1qkAz89E5FjkcAQq0JmM1iSoMIgEkRe6vzoWq52vrIxqNaq1KSXKXQI1v8rrw9s/BnP3dPXekYlNA02sIG6AxSRFQKyjJE0ije1n81pg3TkaKcj0fCLgwhoprSiYQ5ACUkEMxIL+j4khG+gXjwsmhCz8E5bnD6Yap2tEEB1DxXGchv+lVkc5cE3avV135gFQmVdQqRFhA7uw/Ww1C6j17jB9lCc3oBF2f47uDzB5/4tQ5RHw+BQw7Ug0/Tl+SJZNEySQ2gNexMSVT7xEsVINJE2kCVKj1LAfl9nOx6n5x7Bxq4dRvCgofDUtvx2utwXWsv715yiZRIISmkw0gVzoF6ufFFWJom9zwrsg5SU8msF3GZwccaIiRwTwUM5rqUhByG8VTk4IG8x84UwsPAxx14hRCM175Pq71L6dvBktwOlb324J6MgSuNjzGMRDtKMbXa7H/3miVuUED5QECEKoxAumglKKJZw4y+9M3qCuuOMlK5u7HoveebxMrTEWNJWf9XxBYmw/W84C685RTV6C5x5uPMkchNh4vzZfgk/hSRkNT0y7Qf5+NwOKTHOIHBEi34B14ivh0R1Faa1RnaQ515l/LBppoWC81tyQOi3IEN6TaQXb4ZaxwJQc69pdCx85D4s6cJB/o0OK3+h9hinCKTsGORdg5QQPvSZ9Z4ASJyD8RIBJxQh8pZPax3XJM3+2M9lxHtK7QoZsVFetMDyVa5VanILxhta2/9bQAus/Z45fGhG4BRLVkaqo+mFfGAiakL4TPzp1iuTvjQ2N7J0m/w/BRr72Cg6R4wW9UypKZjBzNhUeI+VjbgGAMWQRatrKtI7tcMtYYN05alREXsYeDdeJaJbErIx+o1ukUDkUj/Y1ZHr3xJ4wPQId4fEQWE6OkWcTiFZTFO39PHVBnz/UaazneiYv5fDotL9GAsGepkLWBIR/pwPUMVhfjPmiDS5dZSPjEraANRgyUhtgSwOrHMbSIQ6l+hpGGHM4I45tkYrvBzelLJlxU7J973mEVGFpAX8V6O9Wgz8VxrEmj+axSPNKKdfegZAqS394zWo/+S5GfPc6g+t5MdbEotYjjZWEt8HDyLrNBWOjk0HVbo8wd5jjSrrQwS686o6QBmmd/9adoxwOXSBHRf8i/KmvFPrVtSNRpOZ4ZwAZaWsBbkmhWo8WrvTYmCeyDVOc/Zfv83/6AfXaD6s3fTT6i3/F33xYXv6v9abCy/61Pin8xQfxlo/lb/2grzDDaSRXg3158A0/6/u37hyFV/SeVoVP8bARyq9GJBPX65Mcl5zoQdfFcKofOY6lzrM2Wj/hvTnJ6tcsu6oxLObf8TH524/Hf/tR/dZ/xz9+PHrnJ3tv/GK6yZC98Ysng/et/OUHrn37hy5fQYscpcdBsLdeM8OduCK2c+LENUnhaBRq1Ia+08Qoviy+hjCyJrUj3LxG4O5W2cx5Y9t3RaIUj2drVP1JV6NgW+46d7jfRtVD2cJK5g/ovG2wpVHN9gbJGYfymTGE//PcXZOfav35g/AunPQsnFwBp8hScpQhLGx5ifYWJ+9HQVofF7Z2wViA7Vjv4t6DkSAK24uT6+aa5Y4WS1mto5JbtSxBrMZRUpnMtv14k2HU9ieBqAOVZnG6sLIChJXeh8tmWTOz3UhF6/8e+DAiA+O4R+RPfYVy3xNHTzQIM/JCz0mOdq33WechRYKIq9GJ8q+3XuZtPRvJThlCLxN1VqSxbY/S5iZDa5SeBFYHxXi8FAkOXDMMM0ozyilarQJH2dw6woe6PSb7UQ9vl4RkDbq1+XOugGSejpkXrqwyPn+MJfD2ivKGwKMs6yyK+eWg60zbVk0gUZxW67GpYDxOAjNd02nJTAMrh/twYUWEeL/+9OEcrnsj48RFppozcx0OSH0lMYMI6WRPE0FOBvxwejyM0kZW9IXf5NNL/cLjYKsZzBk15tg2BIXC7iTOy9XDESoV5Y3WYgNR6SKrNxViF50U6mHk7WwWmbfvPw2oZy0PFa46JSZed46KTPYskwCeTpVYy5HJ1GW6lJVr6WISFa/Xso3tuoApUXioMAYQCQC04BQ806bXsSGB3KB243lgAlVr1q6Ih4uAhhGro92YcDR8YsX2s5YWEAnz6EWNSlYrkDWbQVZ34zhVLQlITPjKw0LCgzV6NDka9gAtI0ZHZ0JARy3cV6xR/dvVTC2gFRcqeKhB7gCNiS84NexZ91ZkOkSAl5dw9RE/Ohnh0ZTv61eJCV7TN4zyiM9gXR5GkaqUtrF2FtDiyU2iPy4tf44s/mvXwIlrUidO+o6U70lxlKPOc5WnH6WXYz1r5+eUKhDslVoOJTmNokcFCVZkO9tYKwsopcJpQjAkR0GHqr0PX/bWqv4bqYcTeyOpa5XkSRrna3o4P6lSRCa/axBI+AdKyMiIzhNxj5vTwFFwY78GlW9XccwCXOopO8G4MLxCo8W9W7tZZNUnxqnhKN875z2v2KcUZXfWsN2jdCTtJXPcU/DLK99zNrKNtbOACO0Lfr+rrXNhGulWw8/atXDCmtaQK8dvgy8cnSi4WeQ+W2zIxO9M/GTPw9Nx4bm/PB6OmxlWu8TwpNk4rPQCoqtKj8jtgArNhrZO+R9n0lqvNZfCcMigYC0dDtUn1xV3gufkalm73DaP47iEh9YzElWA066BMI9r18YJalp3jh5tlw0pER2ikzcyCGvxxzeb9oK3Quo7HpzcWtS6XccmsgCpc8p6wy2NnvJT5KT9yol66b3XvKvzFt6gLpVQAaxZ9dh+phYQ+ZZNRSbyJJimrmu4Hhz9jg5zSCQSIhBH9jAn7+14qjweuMkVbiRcpbjuVLmWk6/5O/q7rTiuBSQ8YPCtVDkVPFXfam99JTrRwNEwKBE6vrVqzXGLpAS2VrZENdJwR96CtWpgu56JBeQGbBSZRCbBJHF9g1PDURIUws2oJ02nLZ60t+MSfiJAKbgK3rt6hHC0Wl+T3WJrl/CAwSm2wJQx69yoTN44+rdAU8VRrmF74czEz6HO8ihvwwn/pNm/hp25GVc1ncMNGaA6ta0qIU0BkQlrsQaP5yaVtXlLosLyrnSbo2tg1RuvQmTNpu/GG5qmrjtHEyzCxbUKH9ERnyc1d43DSlrwPImfDMRAjAc/VgU4X01R5+1wS+faaYmRfy6q8B+G9vwkOh3fKQ+5m8liUc7GgpitWzAmNnSdvb/pcKzjeDhRDXxXj4HNTrGGXKJvGUdqboSzldOyUtDCNDgnd9rSeobrzlHHwQB0cgKAfzphKCQogJN8OAfTEjcUtLZhM6ocjeishcknQ9LTnKc+5JGNt+/WO/p350DZIYRaYV1xzCY3HDL7cMPo9yNbePHKAs3MO4hmXcKZnBib8nriFLSh4I9+94m8is/lcDTvMmm/44G2PhFYkGAqQ2IqRNpYY9gAzebKGsXXJkOiO2OWDYCXMFzvhB+1LUCBo3TUhk8MFusXsi1ahI1NhDUfOUeg+MoBu3ocYBJ50PkoJGve0HdWOJnQ71SvpSbhmDg8YZ2Rl/QipyLNYzijJw/OwrTQMSHStgr28o6vdlXV40/DGfrTabZTH3KYwj+t+M7wvgEUFEQL1o+d05qPDnVqmWl4VLcGv9Z7ZYTbrNN30JvGEVdCjuvmwVE3vbenV6GhIkFyN6didWKO0rg3AtYxTT0m0Es7Qa24uPJLvS3zj6Ne9d4xw4aA70twMCoiQUVBJgJlKL2u8JNnOmSKFBgSFNYEPJPS0ZTenr0DFilczmEC8ZpUfuOVqBtP/v5TPTT9aABg+JPc2XJgvqT5josbb5FFphmOCeLEa3ALX/FtcL4u/xPlYaXqabZTH3rAEV7sZGXk2mtc+PdBofX6YjJUmoWgOA0prBXoRyOLGm7vgnAPA1dM/unRU7GnUms1hhPV4/m6OU5aGJdhpvjWEA1HFSMnh2N2v6HgrUiU1qJqi1RgqstRLYoKTZ1c7WuUm92oa1Sm5ia5ro4KNUq7vqBNiBsOglHihprvR+Z+lC+f87KrR38K+CLM6PdT400uu+4cDT2hbyHANcJD73ByY43SrN+Oo/FQFY1D1zSRqOavd1qpxHhNcigJN1qmHio2xbSNgDHO1M4Zw/NboGldVyYwdVjYdcUNxzq1zA0137/M457yNKtvNzCdTM9t9/df702o4cbochOKf/csmYVvXoe2crWJqzZi47p3sjrxwnfyOFAKBGgPbjGVMxPU2lHDIvyaRNRiCzGlsrkyKzb8R0qa0YArUIEzyhjXrv48qgEdaW4Kj7qq+s6NwUupvJxa97t3+vvI4VNVZOrLv97828cefv1jDr768eYtT6ze/pT4755YrCve8JPRX/306I+efMkjz9fVWA9a/01f3hqpcPl1Mn8nGnoK1BqXjao7zy+2QLKelZTcvJ2KPdW6c5R3aIKMI9cq4iIP5dLojuWNnpnchErHXlNG6RgsGQrSdkJtYbcVCQ5PRvuyrmpDqxGezZX1kjn8SYHzxjsbJUkXXrMDjQbtzN/1BedvZwPn7snudNuFu99h511v37vwVsntz8BFt26tL+6A25w9c+7eCw8vodtCqrpJkvAyeq1GG2nN6TtnbwsS9qCaFuUkrFXtN1rP+rcTWmh7C624ER3yBBWl9889/ImeyQpylJc8n/tp/6mZwsLzfjyAwmRtH1eloRbd0jqStjCDK69/p8Y4UuIMuQpI6lgTjOFWEev76Go1NoPEF01dtyLX1MhRpQ2NAAAQAElEQVQEKdAQt65IFU3L4xm+9vWDvIyyZWa9qdZurLw2rBzuwdttiTR3XJwmcY6edO2aOFFN6kQJa6X3KOBTa4WrN7CCWCO9t4k6OMFD6pKLDHmQpCsNQiCipx/lDBgI3af1PGDCgsu7WLGlg1X83Noc1blltQrLxUfq8vIkMZqm9KDb9YGjXoRx5lhHaC0iHs7A1LAVbAFXEq4eryvM6GquxlctYrUMzEz8rKZXyNZspFLbUZXf4yzSM45BgwMK2us1a+DEFa07R0k4tq65BoPnQgOVIGlF2UX+BA/zMyUQlD+e/jf8OE+O8q0NoZGgdN5b52o/gYKLG5VSYzcKJycNnV1z1TXvBvapCJwyxx4oz/a1jiiuK7xuT9D0EZH5iEh9lLKH64oojQ3iT3xh0NgxH95UA+tKq9durJUZ2/EF84CP6R4MK9auMVn3Ka4r1LrWzsolfIowIiA8Mo+I/2u17sek44LsJEhMktWCv2Fl54+DGIid3Dvya4dFiNKnViSrglHKaFerqrLKmzRKsO/gu6z5ItTQ+cn2lq8+/bA7bptrqTTgvVeAZYs3gAPPfesI6Lk+on//3CHbjgfV2NF322INhyvWxc34Nm2uDHQJcMKlzIlXa2m7E9S17m0It0lSgEMyvCKcIWMgi1nn/qTdjUH4rk7SEXga+Oo9Q4LEdZQJTDRejKB0RSW5T2FNoxi2uMaOq0/+9zffW5XXJ83ppskq3hes4aTh+I/UgaTaBkpGHkQgpkeM9YX36Ze+WV65nBSJi1plGiNN4OX4nfwetJGX+V3dM9o5eHfv+QfOBfz3UNNJF1EnXeJkC4RhFCxkXeFtgzEj+5BdQM2JQMt6z4zBAhQYZU6yizpLdYjLNDrVUOZFgZOa+wjrk3yoC3530rjqms8UVfg/ZzHcFAKitC+x3k+koIUXEPTzFjVRizViK/FmXcG15fLrBrXu5b5KWzQTqrpcXTVYoydSuseFXsbkJifGgQcz+o81qv1Gq1l3jkp4lRe4vmfpTEuDX+yj5ALE7XjPz4z82WWutKIXrFZNVYv1rjLQ1muGlVcVVCEq9zSMcOtZOWt4+vCemgBEvCYoORdWxjWGNl8Zy4qs1guHBxFcBJn/ymcv/X341YaOlgZ9i2iU9G/UGmuRqAEiAhI9QYw4Ajcf3LqtCeyhgYu4rIMvnFvNJSokcosrX9Z453/sb7Xbeb89RjpsXG/y6swsMvHQRCOnR56GVCWEqBUIq8LJ59vDAqvGjhIPGdmkQjNCWS9WcuCycfqb90bYQ+QGwiWpSDFAhVPwrDtHTzgG/cNVdLWKe0VV8WQTRbB1m9sbekkHz5AFp8s65SBMlDbckoYl3kNRySRmdlDcHjnwDQ+bV8ezP5RKonEuB1Y+e8WhvyrNeKF9mjemnXZZ7ZaGR9TW6DqAV+qa91puPKrVzMJ7PpUfyq3TPovRjCVNoihrhP9DMwC8ZwBoK9BC4ONoronMWr4diaRKRRZOJ8LaSuuitAXdmU1dN0UzSpEId24eyiOGYm3rjlPSyHFHkT0QjaxW47wGqakiXdvECpwP20eDEB6TKdSeR3gY8QZi4GvwdofOFYzWnrf1Uz2TAmqPOpLVQSOeOfShzz1Pomu4vY34KpyS9/64w10rZR71xHH0zseZpQWRz7TilQjv/vQVq9IwymtVxb7U3qusOYT3k4YdGQVHMbzj/JnI4fc7/hRJrhJOgsqciUzpHeKsrJrn7sx3hJssh6gmRwFFCdF3lF8HxQZydHe79VOr6Kuo5bwyXktkKys0f6Cgd1ZIO1qI/HNTalZwlQdDUpBko8CclRfK1EygGIaTPnBoWM/s3rE4MNLtf/gLL0a0RF5jMmPrYMZTV2WDVz9V38fjoYLmy73IPQxe8/FrLh9GfnZHKbk1fV8OyrygcQrlIc5LYKdTfiowpE91Qm96HHB50sIC1irjlCHlycj+oL7nucmsngyTZ0BFnXgkZqqZqNcvUOtX9XepOXXN9nPHgjSbL63n6QLZalWnBmL4FiP4yJoLmqcHDK7xCBFJU5CmqINb9RW4KaOMGroKemrIcpTAyCDHonFtLnn/vfh3X9z/J3VSI/kundr8yXwjudpwW12wrzmQ7vrGEv7qa1fo9nzSbuZmYN24dtY4Z7yTdMJCgLxkdi7xFEhQcLkSKo8Dmps5vejaOBEdaeUKqDq/93lxkwmgL+UU0YHyZEG2BtV6/6n1buBE9Veqj+SsRrZgY2+ctx612IoLCT0oPyx5Rzdg4Sce1E8ZWcuUnQzdRHb0miR0LSS0N14xSlSeGVTawBX7htnMrkPLEs3jvZ97+SH/2bHsO1F/tpBepdyOprzMCn1O1Wve89lFPd/QsGZU+YFkCnEjSjuibJKU4COOjpTshJC2jE89K3XHg6qMMUpiU2txUeSclCvn7E7POx0RJ8VFXmlWETnRp2Y3yl0F29sQlBxhhDO6rxrX13iOWvkx7alJ1+A1+ao6OtSjoFF5CUr+GXAD6hnW3IMKXSapTD9KEoNO10AsjhTn7paH6aXxVc2F7vWHYVr9933phZfZD27IYNewUZuOLOJZG/fquq/9n19h3n3FsKd2ZWbgikNK1y6NCx9HjQ7ERmpMano2/+00PY4H9RKUEldFPdJKYFPtlKqKxCze605pqrhZUKJmJErhLDe02kNzNlj5OkOtc/0nrN6gMcRXVfunRzUkCihzhrUTDp87J1g/eXAk6jxCEsOgoSyO6eDSxI2RCval3pOj/FLK7ZS3dSPWjc4OszjYr/WZPF3817Xv//Sl7zlhh7ZIQj9sZABe+xamH5vnvuufl2dOz1bQsCNl8ziBUzIyzilev1ntx2FY4r4VUjrqTWmw74SO6EYrpSBA5LiXKmOfX3QHFqtpaBsMrrhTAKt0cI5+hUnrC7W+1Z+49hZMlpyJJmT25/o4e2QkSSCukStXKl8AucIYMnYBvN8r+YIjLiWhUCMuXFQgzl1SwORicliiEBQelZfSYRj3q6Ra5IlXJ8gO8VKvNdv9xuL73nLp4w7gs6yf9/zWVJxti3pUBYdgAP5WKA3qytThP3rCOTnxENY3hb2x8AaGvXGwE06QGR3SarCIWVzdaTzhTf+5KN2Z+eRQMlyJojppeBWZcthMRqPxdbWqV+uoVmYCXj+bWupalZOwsromnLIExJORU9Rx4xAy5+C6l+t86NCwuy547O79kJSLfAL6ThVufCdSrFpY/0etfxPHb4ENR+hAH77VrqeWri4r5VRaen5e947rE7x3QsdJ43koy2h4g8WBqWCUSdNsEwFBnpRy4LdysSwGNVFyWulcGU6i8J9f/sSfffhVNfJMQxcaPmP/JIEpnastMykItx5xpKMEdc3EjQG7YwU2AjdCoqAVIAAHulrpzvwlDs//5//68uqg211Iy6pd5bQWTcEcIQ/txJ9Jfv4SwR5ME+9D6BhMEWw2kbyEFIpi/M5GfFjRAfR8Vl7bV4+6E6D5iQkb9XDoG9O0oAEPF3OV+oFu6z5DU1qV5Y5kEiN0HyF0nu5tIiBcHJGadC48SxnQktyAOuakpwtRakQMQI1DWO4NNYD12nkSj6HmzFivLh0fONS85FXvenIRX4dUI2/RX3osZbFKtI6EH4WUM9z9Os+Zjs3GWIc9T1QutXEmEn4ymwzaBS8fN3Z/s8IrPvnVv7nsSrNweiNu6/G4m01GKc6JZ7ePgq85QSWH7hBSGTKDn8qOA5wMbyr4CU1lXPWypB+N02quyMSleOIP0ozxJOPGBBvGUeVhHJScjWTljB3PRbJz7MeFw2Q2yDbyDDwk2XCWpJJXLjzF+9oz5IpMTeBx5UMew4uqcH4ia3XlVS2qEnBja/hZdeJWjde19wyp2dE975r+l/f13vP7//azB+KlKkOs4pYdBvN78LWBU662VcntgBWeC0LCBvxF4HbQaVMJDyjWoyi5fCBOVhK8/L3/8fZLLrc7btVu7i6XxlEso6wgzxyvM5WxKvDSUxbjlJsMaaKhUXGErz4sLWFQTiavIkCBcdI0LupxpJqwNsJy2bjPHYtdySG3cesJe6X4tyGQaas+8uir1h1O2/2UVVtb6ZJwxpOIviY7Jw7VCmWSEhVcxS2jMCRCtCZHJzejBggyeQ8E4oq2IC85LQxV7acCZ0bZQ6utZvdwVn6p+V/P/KefvFR9xcV8M84sbVFxW+staRqnTaV0YarSl9NunvowcdyFxLFX4H0H3+asVSTJQaee++Evv/fq62yj11GN8rrDMi5UJ74WfdKLsEIWmqMC5UBBLw5i3cTFgp4h5KF+4lAn7AwZJoITlyU45N1OI0M9LOvGz/0o39WGrzfMDrT8hnEUXMI0alU5nMYPv2fs+VWdxV521z7clToEN2npIMlUkGGe7OTLXHtXedQB5DGL+4ouE6oC3aeuKQsz87qUnKYnIUFh/GSHGhyqrp1KZF+sdo3Lc/fVZnn3p5//z/f/9ODfDpYwsfUpDPlsakBFUUMj0tyo0kgbAge+LewIdGzT9JDgoyvVi//lI3/x9UuGM72WTtTSYktXrflk6EqvI8vhivNC5jnKTgXBy3T01DuIc8p6rl9wwEQDMD8H5+RIlLLppM5WjVoPsHz7Xe4+e6tRmUQxizBxY7BxHDWW7suE70FRLn3EO2+187cLDBw895SGFp1Qk4KBp4XITgpk7VRDHlnQv3pqQhGWAnkpIVXoL7mF0g60vXJeO8/J0SGJt1t72ovD3I9ac2qXsqrsDX/jHb/6T9W7r/fXFyit+CHvwCaLvlZpBB5fN2ZioARKIYqKRnol8N7D/dd86rN//NWv593ZpNk2g6VIDbDDFDN2MFjdbbtegtecsM17IfmcU57AETpOWehCVPkJU0MegCFHy18KjpVcn6hd+aDvY6oee296gGaDPjhpMLpR2DCOeseboys0ZmghJ02j9u3d+fyx3cfDaTAV6E09jU1zO08zU2RI8pGU3iFs7y2oYTTw0gl3Xjzyh1Ut5Bf6imlUWUyV4rwAcvkgsqlpRotzVdzs37oszmjftfPKLz39H97/j9fX+wyrJDmYEfDsGW7Ksy55gh0E5MgS8O7Pf+Elb/27937tq+b2t0fcFOMaYnS7umZ01f5q0VX1zEroKxnGsbIgOHoOhCM+0rXJ0IMSx1KnKaHIRHI00kS43le7y/FKWEfaDz3fmWpO6bycJG1UsGEcRYSmum3ExdeZhrfiZmzUv9+9Vg7U3quL+rUfiOvXWK2dbu8aOG9sZBAZH1lElZcCOkdUqLh09KbCC9HSq9J7CoVjNBDXSgidiBVFJ8poLXwbssilpVZL2gwzz8+F+WGzS3b/XvKWp3zol/78Ky+X9lVQi7BVxbtZB4yA4QRjbnXB92UF9bUoeECDAUNT+bJy4V+epj8HcrgpCvgpSoCAdQFVDZ5+pigrMFoX8KzIlK4YFMNRNbYh6lTleN377kHxv97/kV/53Ff+SLqw4gAAEABJREFUe25ne++e5PD17XIpNyuDVpwjmdHzMy5NO+n13bGFseBFB5upKRvhHpbnxpp3egFieQVfh5AC4fNED0xOw2RR2YxrbfPxeJg0W+dU1ZcX9i5d94k/e1xvV1FHiTF6rlEc3iiCst2N4ygbB0QweaY/7Izcfs8DDw++kERzkYbTtt2cWx3ti+I22WI9PWjwrw6KPjEg+DohNyYQ0tEJqHeejlboQSlbhCIUHNiKglcutMoFzwMh6qEc5O7pzgMuf8Hl//aIj77uL67591W90myyfexrVYfbdrWNogmTsArVc/HpNhvEbhC5UeyqxIN6vm3cVvB9q11jgqy2U6S1IaxWAUlss3QKkyYmiU2cFM7meZ1K1knaraipfQSnvpL6P/iPD//OX/3p5664tNXrJlr5qpxrtTiQicXct0KhzBGHEPAI0UliCJwPISD8ZQYAR0KBUdoPxoPDK8v98Ug1Gp352dLbqrUjHu176J32nLVTkM44WpY50yZLbhTURjV8rF0RTTmEPMP66Ha7XpSmjcKMBAsqpqtapX/wUFOCGm5SxVvxFEg+A2YQuklHnvnp8ibOixPm570R3aeyiJzQB1MjBkwKGVihF+08uR4ISrJevbK4c2bm1nv2fKm89mlf+ItHfOwV/+/6f7P+wB7vF+AymBpmla7O8hQCCDrGdmrTKqtmUSRVGVkj3nED6WN/Q/DSgLCxXQZW4FdhBr6qbM22I8d1IQwgk7SRNBz9MfMofHL14J9+4eOP/vvX//Gln/tmA7LQU7GyZVHn47qiR/YcH8fhwjgc4BwbFgoI+kn0mMAk5jwS5VvJbML8AQplnHgV+6iV2ESX4upIL48GBwo5Qx/6hXvv2ZWhFFROhEOWDBv3bBhH6cuI6cCFH9ggIpGIbqR3O/+sF1a+LuvKOyyObJqents+V2ozISgpWHue1p3xZCpB5mlLEgsZGWQDCqAmCF47rylYCqKNp68jdyeURWTJ3YnGQN91x61Q1tev7Nex2dHWVxdXvuDrb737Z37vC/u+eOXwSotRE3ZeRR12knzwqKF9lCDOoJviGzAJBsBi7Y26IWA0oWy8UGPeyJyJej5p6NgqMQpVhMORGnMSPA9Ics3q4EUff8/D//XPfv7yd38j7y92mn6mm5eFGY1nWo32TGtoCy8GsP+DdnSN4r0yEHdUfyQDQI2ZhI6hCzT1zBagSmijM92anZFGNqyK0lVO++XVpR+5TeveZ4uqioLvbqQjHcyLjXtong1qXACBCAD+8ZwSwyuQSdafe9pz9s4/bJD3ByPh7XFlKhrYwE+oGS6eKFvAINwxWRJ3IjNqaPWJbIOSjKRxtQmU1U4oBNhATe0YBnYqj+DOPPRVy8uDUdHx0Rlxu6ekXy1f6vZ/JTt0l0+/9BFfeOOrvvHurxz6Wt1fRFVwgiuNuFDCHWrBqQevu0cpDnej/fONQmuijHQV6fooKq28K50pfJW7fIy80GUdGZcYt3N5fM149cUHPn32R19923/9vT9c/rxrt/ba+bndZzYkYc62Uu00MpaMqXWvwdZJRC/WK8OxOhXoSA3gp8qJ7IJemYk80Qf6TvIHgUV8zf6wPPygLCtX01XDlcoX583kD/uBc2BXUAwE0+fo7zR2ysON4+jRoR6lqUz8aMRXGR53PPv5WbazMrrTOH95fFBUkwTlEk/rhjUVR5kq9KOcKzETUtLX2iAwSjqKhbZhJrVj6ElZZcGVnbMaNH7CTsu3QhjV1zR8HUdxIaPBaDWRdNfcrbLuedfXd0x7+4b7n/fNf7rTZ39/4XMvfsI33vwvBz9n68WyDdsCUkCDnrnlMAvMAZk9gtQiOYrUwcdWMqmaatjSBxvyBX3wHw987o2X/tt9PvMnD/qnl/7Bh962OF5Nuz1UZjEfjhfa/Wuu13m+0Mp6vVRHrqjGRV057sjFOy7ZwUH6CQUd6UiyUUkEph6hJhd0D7FUEkEvR/OzuJjKWB+ppNkel3zbpN2Ixiv7q5V9T71bdv7pMXQaNzIu8I4lEUXYyEdtZONH2xYKPhgDHjpSVpmZ5p0vPPvXOzxlYj9JYOoGqTklqOWEgCz0DkKNI+04VwFHL5uErIXFlKBkavC4BpxVuk9yNPKgQPfJ1hTlQFPonX2t2p1De7sHW1G8Wu865NKRHFK4rl1GnehWnZlbpzOdOn/3tZ988Kde23zfL9/p4y94+Bf/6IX73/UB8+XrowNQfe36SbnsohFh9YgweljpfqFWxlje1z/46au/8ueffc+z3v/HD3jnCy5+78se+dW//oVD7/3oymXXtiszl1XekBN753bMJ9nq1dc1mko3/HK5dNXBqxbzxdZMq9to2f7Eb4uf0M5NfSpH5jgOrvggLx04rOAsKTAK5iFC/kBN70NIPfcAcW18nGRaxZHAV/TuK3c698ynXqQ0MJQeojTxpSl5HGCVvI/GRj2bgqMcvAiDI7BSeOR3OO05O3oXHBwv9tq7iqKCJ73IQs/DE+GFmzLvEOChnBA0P6MMQz2cDS+KCCTGRBBOo3iwJRWKgA5VPGMAwyKLk77ZcW05v8ptYnxNO9rfjIssTfPKDgcro+XDNak2ylI5rRmf2WxdO77yY9d9+jWfe9tPvfcl5/7Ds6J3/bx84Bfko0+/7cefd+uPPvfsD//G3g/82q73PHPHPz1j/h+eTpz++Zff47I3P33lQ2/x37wsGsCb+YHZeahaaLVazjfqel7FTYdidVhWVaPXsQ1fJjyXiZ7PfCrDYd8Mxx1JA8ngwgjhfPiZyhzCEYG6kIdmIJgnhCBNEYbpIJNCQJJmg2GRl5W1vq6qfHV1rtN40k/tbcXXl7XpKzp0g4r9tA7weZ/FNwqbg6MkikBUQI2rbQkZNpISP36b11zQfcq+Q4ejPYPSzpOnvB5VqY3iNnBaaWdHjvejwiWQ16KVjyoktU+MT2ufGejaiXOR81zKIzpLj9j5mK7XgG44zJ4VEp27Aq6OXK7jOk6KVmqyRHNvYWzDVA3vHFKvGrFqJCqNRFvYAvVQilQkiTVTok6WdRq9rDGvs3lk3EaPymFhcitGJZI04yYd4Exzrq7m6nLO1h34JIJKtG8mppVZBUTaxzpHOTalUSVXdq2suFibKK6ipJTESRSDnx7ybKwVlHZKe688R+a0N9oYZRzHopydgKzi0KhxjMIYIawB2citkbcgZCnu862sRsu3PT12g8W6N/+Q+932p/UK0vNn4ug0IImbSBfaWZoA0pzHxj1q45o+Ucs7sjTVvI8TJNHCRbd/5K333nfpepppP2JrTLMsZgrjayxLNFIIXsGJsC4/eYIAcaJ8SFGcD6ZS9FBO4CdwkzQnLK0cmMhCAQ70r6EqRlgZw/WBu0G1x2QflHIs6jgIHPGXIWXy5ybhJCeThAI1DMHMnlGCegBHBKbChzopeAQBRx+3UM/qWTQS/+UrDg/PmTtDLvudu8zC945m2ES/ahP1ZdIVhUaYG7Xo/ACS7e3e98KzfnouutPQo7B0ezu87KSTqIWKcRynTsR58SQlxIOkFJKPDKN8BC5ogJDNgXdPIeoQMjPnEQHCJAAsyJBKwmNtjeNY81H40OCUT1SxcYbHcCwaBJaaZp6GblLwqMwajuQJej+pgcP1VIqnQFAXonBO/DGBsi1loRUf6q/o3Wf4evGPf/7HWqsFplWwzGbC2k7DGoyM3HGhGq2SeGKyxlndB/zI+c+TAsU4zu3IpUNkXLlgnNYqmxLUeGUlmkBT40BZWc4nGSyBl4YyuO7TcWoP7SgDzElyG4gV+l3vPBi1PrhSTzaHIkEO3fn+/zgwUooggb5Vm2MvJjEXWmMqPBgPeSzgIeydAWwQQtSBeUKqnwjT0IIvF5ViaAaIddP3cdKi5wFyGoVzyk5pCriqVxy+dP/O088ZHPz6mx/6gxfxurRRYMi2Nx02HUeVuJIfBw0Xnax2tXc2wc477HrUXU77zYX07uPx4dVyX+VzL23rZ2pDekXGKyfK0fweDD3pJWFabAi15a5tQsowk8wGscwpZDB5zFkNlLX+yCpPP0qaOtDncPpJhzW1z4Q05McEHmRV4IMP0SAfE1xQBw2FGyjJ1yNkNaHskQzM40IUhsOaghVOaeo5ykBf65VhUtCTphN5bK50M3PLV173yvuc9xNRIS4aJD3wCi20vbn+1nQO1mZoZRpndF/eQ2nLzzG8K0oMz0+/fdHpj+klZxZDjHPyrekly2vnyEsyjzPAUEg1+o0JX8lLr4ODFM4tKRsIx7mlhoS2Psy2R0RGWpA7yoFzTgSDOC9Bz5CdWJtBsRbHvyNgO+zOEb9IHYnI8BgYZWYHdpzZjmU+IvvQU4ShhAxiyTyAZyZPXlL2HKuyEHpTwyiVBMjUCTWBsOgztVWMD9iDT7rrbZ95h3k0x8PctR2qrDzWic0jhCnZPL1hT/hdUWtxqrQouZQrHqsdIKbj2nc74yd+8DY/t6dzJ1u1Sj/2uqKbJeE8AjUdycr5EU4pCUdI0If54RgVOefC3CqPMIGMcqqtF+vJFMUoOHusR+hnKHJKPX+YmeHawYGdgrtBhR7sb4hT6SayCzF2aoqQ6kPXjgmhuD+a00+SGGKiOUJTKicquFCKFZKXDD3z0EJMdcI7jt4jz537jfvNQGrELdVKQ95wGMBmezh/m6xLlv2prfDbUu5pWAtvc+jrzaCcjW51j7N/7ra7Hx7JXG2GXo9EcyYnW0lRU7I6LyzvRXlOhcAHytIZTuzvOVjxPmgdKDOVeRUzk6mUCK71DAlm8JM8lNcI7gb13FC+gXoqTjpLPk1izOkmsptE/SScyhMxBA4cFoVQkBkmNqDM94F6CkyaIBCUUQKujHa84YEX7FKLh5JhgRSmqCKTVJN8mywIU7W5uhS+u8WpnKHRE/YuXCXypH9mPKO1xQ6z5+Gn/crD9jxzdnBufzlHr7RlWrtwZZprPzCVNarhuq1yxoD7VCJ2iL2Lud+Ci8TGtaQ1EutDknfKOwHn1HnuAayCwxHiKg+SnaiF29YAB36aiuADQm040cM6jgMRPYFMHk9/LaoOoYhSKiiV5wslylCvtIlg2d0ILlaO4SRaU4PAMDbtARfkI1HHYVBLBEmcFWcUgX60lMZxt2wXKlruDpbi/Q2Ujahx8BcvWGBuzO/Qs/y+1YyyBBGSoNpsf2TBZuvSCfrjIufA76KdRnKX293vR+74M6e377JyxRALxqVmuDLUo2Rn4zRv1YHRwbKdO3BoBHxY8DyjnrMq8J6/R0K25KmBUODUMgzg+Skogjgl7ERazyDwLPTqO9pw36GhwgVq8hfH/txEYugmSTesyqWYTex40FjS1u7Nb4tx23eGX33KRZMiWyMIs7g1euqhYmfcIQ0/K+fd64wn3/OsJ9y+fa9+uboyWOl2e3PtucFSH6J7u+YOV30vk5OTSBA4dVznJHhNP2EkoByVwVErstYFAQjsFEyeoPHij+RX9wkAAA7dSURBVMQmqvUK3NGKHXt0RD7G2iMCk/wkyR0N3SSzY6ePCkxh1B2JhoIOcHowvD7zyqo2Wtcdvvr+c3s/+4iHpegz91bBluGo1zSpEzRrfh5E3MFpP3zGox55p99I9y/sSW+12h9cvny57JI6rQ9ct9LxO60XJzziChdxL8oRnuGklpAEPg70r55J/PPgWksdXadyCGbxgaBBCNr1/XMQB/hJI0eFb2km6hAwCRBu2D3EADaEQWDUgXrx4AaAoBxCKt24XXXL5kpr5/6lS598dvP9j75wd+yWChbHVnlOzRysgTVqexCINFqxyjgXKeo5nHHH+Yc+7+LX7i0uQNlU8/pac+1Ixrt7ZybLXT+ZNCuRoxPx2kKRrE6mzjWE1gNkLdnhxQc6igdBgrK3irIDZcXIOsOBfApgOw6Bmg5Tvh6R3RElexeyTaN+ovSghjSdknJ6IUUNETSWqb1kz0rq3PJXnv1jd3z9A38AfnWg7Hw8x8a2Ck7BHKyNKTRp4xDmjnySGryZ8iqqcEHzwb90/9+99zkPqw4kumhq3xiO87TRMrwfBQnK6VKO1CThfHCrlLm4Ayo4V4RzL/tnfZh/Kl3woMojlGKUSeuOactsJjCSLVMiOFSCgscR/SQaMlMwEyUF9z+EkJMaG7rPETAqdrUf4fBlb7z4wlfc/TZ5w470TKfSTtOArHxrYOtwFLtoUS+w3JR6B6SM8ggFGy/g3Mee/4tPuPXTT1+8XTJooasu9ZeQYZPpVY4OdXIJ6gJTSUrvoSyDUD5wngSdiMpJ+GWqkyB5Yeopsc8R5oXWMeXWVKR8RJj+uPAj7igvJ+NjH6kJOT2OyUcqdMw/k179xZ944lN3nbNo8y7SzGHJjzJbMmmr4JTMwVoYww45BU70IuJVkRQu5lRVft/IwpXqTDn/Kec981cu/q2zmrfeN77W36bijFl4L8Epgl7Tk6dyNMoOBbK6I+enEHXC+mkNgtENgftWq0doN1VM9EEzjXJkFByHj0BNx0iQv5WBCgdhNscMX3nSA3acniFrzy/1dFGXqj8XedRNZtoq2MApOTkT6Q6g2dt5jXlhUYpQSbTHZwd1OkaBaNz9oe6DX/yjr336nmfv+vBpOlmK4zzhFWGprI2LOKmVQzHIkrZH00rbJwt13B5AhlKUaalcAl4QhrWevFZsIcyycJoprglYlSFp6NaPEQjcQToLXtAi6JTwM4MoTKAh4kVZEUxDpZ2INT5KTDJTxj2jE4iJTRVXJq6q0Ui5OGntdt3dRV21D1/327vag8c9Yi/m9gBh1dkBZHETXeguMkXdVsFW6utxbZphTqEZ2MVkUQ3MPfD8R/7mk150RXF6f3lGVUncUToZJcvLSa7inWcfNKM8qi04qYNGaU5LOgs+8wfopbEpHpn6v0lfjveGNGrbz8y+eb8vM25Uzh6o5lZsWunTopZRRX98VXXg6z/Q6f7p//rfz7rvg/gZflLR1g62PEf9KKIzovurNcYVP8m0F3DmnZMf+cZ93nbxbR/9WRV/fbSSOI9GsuT94HBdmLGzVTuJd7Saqce4P6i9zO7Zu6HTSBfr8T8YOdGEPrmJ3gUHzKi41VnE1i0s1fOFqueay2f07OzMDt+8NulX1dIZo+Hzbnv+Pz/kEY/odT0/unXbLLTVseU5GnvwotBrcI+apJxQH+e6MWwAO195q5//0t1fdp/Z+36qiq+Ksna7a6WYj9uZVeVgNB72S25lG8lKosO/nrJRM0lqEiAL2QOGDsGVTmWOjcIxhGh2aJB6p2bSuBk1cuNW+st2eGVnLJ344l1733T/n3jRD997ly+hTDPRblwcK7x1hS3P0bDT0s4hdxgBuUaViIoUtC2GtblV825vO/+l/3HXV9+peecrh/3Ijw/l1re7erbXB6+yRxLpVtSICtm4KXRHm/YIZJ3ExE9+3ETjAH9MOLs314jVshnsr1cGGLU0FqB31tHrTr/nXz7gsT98+pmH3cF+Oh5LGVX1gssm9WztYOtzVFWIrAYieGuMq6pwMRojUnW72RrzclBF9+jc5cN3esHbzv+FRGZa8a6lJXNwpfDtTmOm54dVu28vSMPF1sbNpDtKQXbBIfhUN9Ew6kM0cNcxQvm/x4tW+fmU5KtMcWhP5F9w7g9c+oCfe9rtL+yOyxxFGneaTpojg1gXJ7XUTxrYhIHahH06qS5ZzSFo+Iay7RQzsW77yPvY2OXaQDGxp7Fi7XLauN9ZD/nSfd/83Ds8+r763JnDKsl12mrbRrpc5Yf6y9iwx92gZT+h5lFNoOYNEifRMxu91cHK/gPX3VG3X37Rg9938ZN+6YK7zGQoVZU1446PO0UUlTy8dwZVuYj6BuW3qsgJ3qpdn/abRLQ8MVUAl/oCUGJFF/DR7FxUI60NZ6zZ4JqnXN0aud7Tuz/05gc8+5WPfdZt506//OqrDxQrKwvZviP/V5jTKk99SFIS39buUc2EmuByP0m/YrTvgh1n/NEPPfZf7v+0X7/wPrfqdY1Uq27Vxl5MmdYxknTcUMNMdZLG3o3cw0y6uxbBludoSmdJQ6RAF+DSprnoo4EYAgaIIyBNEDeARsyP/XDpzrZdeKS69/vv9sJPPeg1z7n1Y8+qdxYr+QG7slgt5y6H1M6XpclLFD6Tdl03TZ05m3qrvfPe195W1lnxRC2+Ur7QPtd+HAU4XxEeNcHryyl4wemU8qIApZ1KrKRWNYxq1ioWxcfGqkpdnXmfiiROacucBmKb2nXSXMb54NAOcfc++wzz6N//zI/+3C/e6s67wjcj57zSPu6qbhNpHDWQsByv4oIlggWyCFv/odW2/iBOZgTLrqz5KdVDG/0DjTN++3YP+8f7POODD3reg+bvfFt1WtX3hwpXdrrN+Z2JT8trl69r4EBTLTf1sBkXDV3FpKYzqFrcyI7qbm5mCjdXYYdRO120i5sMF5kJrI8Jh8RLSrShmuHuwXE1L70Z+mLVFUs+P1Dnw6rShZsZqV7fZau1GtTI67HC0NeDxcX64MqP9279pvs8+RP3fda7b/P4bxuriHyb5uYXvcVxtJGmPhz7gZo3ATJTtC8sT7/YnPuuO/7qhy9+4dsu/o2n7PnR3n518IrDq9CN295q3rTn69ZskcwU0XwZkYu7fbRXpUVb5y2VNyRP/TAyfUV6Fysu7yAj2j5tuaRp44aJslqnlRq5YoRyLPU4dkXDlyw+o4uZpNvsdZozWdKi11y2Zr+YQw0c7sW9awdP3HXROx7yq1959PPfcc+n/PSeu+7Iusj0lIIigZoiIZxqbsbhLY6jTbgYMIJB7Fdj4WVVDV1ZBdXbKbsf1rroj+/0lC8+4hWfeuwfvPRWD7/fwfkDtd1XFNeNxtf0+9cO+8tVnStfx0rSGEmk4ohPqqJMuNDqJnQZ2UKbXNVjqUhK+suBy/t2nHB9N5IZdEv0CrVzLHuG+rShRKt2dVBcP1o5QNcZNR8ye4c/OfsRnz7vF/b979f+5d2e8MjGOeegE1k1MmWp1DjSMnnISP4yJCgQFE4VTnU7tziOouLZorY8gkSpJKmJI5cq3YqXakBBJE2rxmzR+AGz99m3feBfPujX8ge/+or7veiff+gZz73Dw+658wJJ2tcXw6v6+w+Xw8VqfKjMD+TFgbxaHZvR2BUj51Fz96m005GPYsQJG1Fppvf34v2daH8juj5Sh+EXKzcozXBs737Ohb9ywYPee89nLt7vD1bv95J33eMZv3C7H7/jjttVEAupygpWRRK1dEOKOmLHJww5RspjwkR98wzUzXNYNzIqLdA6hbQRTlmdAunA6zHmEnhBmWCYociUiWJfix7UmYnO1jsesnDR8899+Hvu8UuXX/yiww/8owMP+bMP3vaX//7WT3312Y99+un3+9E9d+ktnLXam12aaQ6GJTEa13lhqxrWaY8YkjzN3eXZ6Q///sKD3ny7x7/nB5/5qQe/8GuP+MMrHvVH/3L2z7z09Ac/aP7Cbns+z5JVmNGo0IPym3alD5PEDdRAKdyZVFm8EmuSksDkOSZMYjfb4BbHUa+VE3HOiTUwFtrxVAPlDmpcJ/VBlDU8jRJZiEm0a61E8SBKC51Btxtqtqd2zGP3TrPz4tN/8FFn/sizbv2Q15330x++4zOvu9v/9T/0cn/P1w4e8cbBT7yx/7A3rD7kT5Ye+LpD93vtgfu+ev/Fr3rlDz/19+725F89/yefdMZ9frx34QVyxm7Tm6lb4240TvRAdA6yOWklrVajEzXa5xWzc1XKrixm5lAT/VTFwJz9FhFvIQTlgDkdDG9BqODD0Vph5OqBFOPYDtK6n9U7jTm9lDOG0ezAJzngsdxw+2Z0r5BOiaZBYiEeVlBFUmVRpRMzgdWJ04mPyKeA1HUT14ldO7ItbVpStVC2fNFs5DrjV4MqUnVsbVyLqiNVxoihM4eOUx2j2Erk4BUqjWHTDnVlrJn3yQ4r3RppzQ9qR2bqlkNQDvgWx9EUEoF3qKoVNzq61UTcQdpFiihCGqGt0VFogDlmocI/eZkJExmFBiQECTDFpJ6gUQIhNESDm9oj0GBLOkGUImYlvJ5taCQqsDJCHH5DxTEipSIohCaiUFyARNCWtK2zmOUZ12CpgIQNCR/ckh51Sxrs9lhPqQXWqrFtjq6VJbfrWS8LbHN0vSy7Xe9aWWCbo2tlye161ssC2xxdL8tu17tWFtjm6FpZcrue9bLANkfXy7Lb9d5UC3y3fNsc/W4W2k7faAtsc3SjZ2C7/e9mgW2OfjcLbadvtAW2ObrRM7Dd/nezwDZHv5uFttM32gLbHN3oGdhu/7tZ4ChHv1u+7fRtC2yUBbY5ulGW3273plpgm6M31VLb+TbKAtsc3SjLb7d7Uy2wzdGbaqntfBtlgW2ObpTlt9u9qRY4WY7e1Hq3821bYK0ssM3RtbLkdj3rZYFtjq6XZbfrXSsLbHN0rSy5Xc96WWCbo+tl2e1618oC2xxdK0tu17NeFlgvjq5Xf7frveVZYJujt7w532oj3uboVpuxW15/tzl6y5vzrTbibY5utRm75fV3m6O3vDnfaiPeaI5uNXtt9/fUW+D/BwAA//+aJtKJAAAABklEQVQDAKd0BKSA8SirAAAAAElFTkSuQmCC"/>
-</defs>
-</svg>
 
-}
-                    <span>Google</span>
-                  </button>
-                  
-                  {/* NÚT ĐĂNG KÝ GITHUB */}
-                  <button className="flex items-center justify-center gap-2 py-2.5 border border-slate-200 rounded-lg text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors shadow-sm">
-                    {<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M10 0C4.47833 0 0 4.4775 0 10C0 14.4183 2.865 18.1667 6.83917 19.4892C7.33833 19.5817 7.5 19.2717 7.5 19.0083V17.1467C4.71833 17.7517 4.1325 15.97 4.1325 15.97C3.6775 14.8142 3.02167 14.5067 3.02167 14.5067C2.11417 13.8858 3.09083 13.8992 3.09083 13.8992C4.095 13.9692 4.62333 14.93 4.62333 14.93C5.515 16.4583 6.9625 16.0167 7.53333 15.7608C7.6225 15.115 7.88167 14.6733 8.16833 14.4242C5.9475 14.17 3.6125 13.3125 3.6125 9.48167C3.6125 8.38917 4.00333 7.4975 4.6425 6.7975C4.53917 6.545 4.19667 5.5275 4.74 4.15083C4.74 4.15083 5.58 3.8825 7.49083 5.17583C8.28833 4.95417 9.14333 4.84333 9.99333 4.83917C10.8433 4.84333 11.6992 4.95417 12.4983 5.17583C14.4075 3.8825 15.2458 4.15083 15.2458 4.15083C15.79 5.52833 15.4475 6.54583 15.3442 6.7975C15.9858 7.4975 16.3733 8.39 16.3733 9.48167C16.3733 13.3225 14.0342 14.1683 11.8075 14.4158C12.1658 14.7258 12.4933 15.3342 12.4933 16.2675V19.0117C12.4933 19.2775 12.6533 19.59 13.1608 19.4917C17.1317 18.1675 19.9933 14.42 19.9933 10.0033C19.9933 4.48083 15.5158 0.00333333 9.99333 0.00333333L10 0Z" fill="#191B23"/>
-</svg>
-}
-                    <span>GitHub</span>
-                  </button>
+
+                <div className="mt-6 flex justify-center">
+
+                  <GoogleButton />
+
                 </div>
+
               </div>
+
+
 
               {(isPasswordFocused || password) && (
+
                 <div className="w-full md:w-[280px] bg-red-50/60 border border-red-200 rounded-xl p-5 md:absolute md:-right-[300px] md:top-[180px] transition-all duration-200 shadow-lg shadow-red-100/50">
+
                   <h3 className="text-xs font-bold !text-slate-800 uppercase tracking-wider mb-4">YÊU CẦU MẬT KHẨU:</h3>
+
                   <ul className="space-y-2.5 text-xs font-semibold">
+
                     <li className={`flex items-center gap-2.5 ${isLengthValid ? 'text-emerald-600' : 'text-rose-500'}`}>
+
                       <span className="text-sm">{isLengthValid ? '●' : '○'}</span> Từ 8 đến 32 ký tự
+
                     </li>
+
                     <li className={`flex items-center gap-2.5 ${hasUppercase ? 'text-emerald-600' : 'text-rose-500'}`}>
+
                       <span className="text-sm">{hasUppercase ? '●' : '○'}</span> Chứa ít nhất một chữ hoa
+
                     </li>
+
                     <li className={`flex items-center gap-2.5 ${hasLowercase ? 'text-emerald-600' : 'text-rose-500'}`}>
+
                       <span className="text-sm">{hasLowercase ? '●' : '○'}</span> Chứa ít nhất một chữ thường
+
                     </li>
+
                     <li className={`flex items-center gap-2.5 ${hasNumber ? 'text-emerald-600' : 'text-rose-500'}`}>
+
                       <span className="text-sm">{hasNumber ? '●' : '○'}</span> Chứa ít nhất một con số
+
                     </li>
+
                   </ul>
+
                 </div>
+
               )}
+
             </div>
+
           </>
+
         ) : backendError ? (
+
           /* MÀN HÌNH 4: Xác minh THẤT BẠI (Nếu backend trả ra lỗi) */
+
           <div className="w-full flex flex-col items-center justify-center animate-in fade-in duration-200">
+
             <div className="w-full max-w-md bg-white rounded-xl shadow-lg shadow-slate-200/50 border border-slate-200 p-8 md:p-10 text-center">
+
               <div className="mx-auto w-16 h-16 bg-red-100 rounded-2xl flex items-center justify-center text-red-600 mb-6">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" /></svg>
+
               </div>
+
               <h2 className="text-2xl md:text-3xl font-bold !text-slate-900 mb-3">Xác minh thất bại</h2>
+
               <p className="text-sm text-slate-500 mb-8 leading-relaxed font-medium">
+
                 Vui lòng thử lại. Đã xảy ra lỗi trong quá trình xác thực thông tin kỹ thuật của bạn.
+
               </p>
+
               <div className="space-y-3">
-                <button 
+
+                <button
+
                   onClick={handleVerifyAndSave}
+
                   className="w-full bg-blue-600 text-white font-bold py-3.5 rounded-lg hover:bg-blue-700 transition-colors shadow-md shadow-blue-600/20"
+
                 >
+
                   Thử lại
+
                 </button>
-                <button 
+
+                <button
+
                   onClick={() => setShowCaptcha(false)}
+
                   className="w-full bg-white border border-slate-300 text-slate-700 font-bold py-3.5 rounded-lg hover:bg-slate-50 transition-colors"
+
                 >
+
                   Quay lại
+
                 </button>
+
               </div>
+
             </div>
+
           </div>
+
         ) : !isVerified ? (
+
           /* MÀN HÌNH 2: Hiện hộp reCAPTCHA xác minh người máy */
+
           <div className="w-full flex flex-col items-center justify-center animate-in fade-in duration-200">
+
             <h2 className="text-2xl md:text-3xl font-bold !text-slate-900 mb-3">Xác minh bạn không phải là robot 🤖</h2>
+
             <p className="text-sm text-slate-500 mb-8 text-center px-4 font-medium">Chúng tôi cần đảm bảo bạn là người thật để bảo mật tài khoản</p>
-            
+
+
+
             <div className="w-full max-w-md bg-white rounded-xl shadow-lg shadow-slate-200/50 border border-slate-200 p-6 md:p-8">
+
               <div className="border border-slate-300 bg-slate-50 rounded-lg p-5 flex items-center justify-between mb-8">
+
                 <div className="flex items-center gap-4">
+
                   <input type="checkbox" className="w-6 h-6 border-2 border-slate-300 rounded-md cursor-pointer" />
+
                   <span className="text-sm font-semibold !text-slate-800">Tôi không phải là người máy</span>
+
                 </div>
+
                 <div className="flex flex-col items-center">
+
                   <svg className="w-8 h-8 text-blue-500" viewBox="0 0 24 24" fill="currentColor">
+
                     <path d="M21.5 12a9.5 9.5 0 10-19 0 9.5 9.5 0 0019 0zM12 4.5A7.5 7.5 0 114.5 12 7.5 7.5 0 0112 4.5m-3.5 6a1 1 0 100 2 1 1 0 000-2m7 0a1 1 0 100 2 1 1 0 000-2m-3.5 3.5a3 3 0 01-2.5-1.5l1.5-1a1.5 1.5 0 002 0l1.5 1a3 3 0 01-2.5 1.5z" />
+
                   </svg>
+
                   <span className="text-[9px] text-slate-400 font-bold mt-1">reCAPTCHA</span>
+
                   <div className="text-[8px] text-slate-400 mt-0.5 font-medium"><a href="#" className="hover:underline">Bảo mật</a> - <a href="#" className="hover:underline">Điều khoản</a></div>
+
                 </div>
+
               </div>
+
+
 
               <div className="bg-blue-50/50 border border-blue-100 rounded-lg p-5 mb-8 flex items-start gap-4">
-                <svg className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+
+                <svg className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" /><line x1="12" y1="16" x2="12" y2="12" /><line x1="12" y1="8" x2="12.01" y2="8" /></svg>
+
                 <div>
+
                   <h4 className="text-sm font-bold !text-slate-900">Vì sao tôi thấy thông báo này?</h4>
+
                   <p className="text-xs text-slate-500 mt-1.5 leading-relaxed font-medium">Chúng tôi phát hiện thấy các hoạt động truy cập không bình thường từ mạng của bạn. Vui lòng xác nhận để tiếp tục.</p>
+
                 </div>
+
               </div>
+
+
 
               <div className="space-y-4">
-                <button 
+
+                <button
+
                   onClick={handleVerifyAndSave}
+
                   disabled={isLoading}
+
                   className="w-full bg-blue-600 text-white font-bold py-3.5 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2 shadow-md shadow-blue-600/20 disabled:opacity-50"
+
                 >
+
                   {isLoading ? 'Đang kiểm tra...' : 'Tiếp tục →'}
+
                 </button>
-                <button 
+
+                <button
+
                   onClick={() => setShowCaptcha(false)}
+
                   disabled={isLoading}
+
                   className="w-full bg-white border border-slate-300 text-slate-700 font-bold py-3.5 rounded-lg hover:bg-slate-50 transition-colors disabled:opacity-50"
+
                 >
+
                   Quay lại trang chủ
+
                 </button>
+
               </div>
+
             </div>
+
           </div>
+
         ) : (
+
           /* MÀN HÌNH 3: Xác minh THÀNH CÔNG (Thanh progress bar chạy từ 0% -> 100%) */
+
           <div className="w-full flex flex-col items-center justify-center animate-in fade-in duration-200">
+
             <div className="w-full max-w-md bg-white rounded-xl shadow-lg shadow-slate-200/50 border border-slate-200 p-8 md:p-10 text-center">
+
               <div className="mx-auto w-16 h-16 bg-[#fed7aa] rounded-2xl flex items-center justify-center text-[#9a3412] mb-6">
+
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
+
                   <path fillRule="evenodd" clipRule="evenodd" d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm5.707 7.707l-6 6a1 1 0 01-1.414 0l-3-3a1 1 0 011.414-1.414L11 13.586l5.293-5.293a1 1 0 011.414 1.414z" />
+
                 </svg>
+
               </div>
-              
+
+
+
               <h2 className="text-2xl font-bold !text-slate-900 mb-8">Xác minh thành công</h2>
 
+
+
               {/* Thanh Progress chạy mượt theo thời gian thực */}
+
               <div className="w-full h-1.5 bg-slate-100 rounded-full mb-8 overflow-hidden relative">
-                <div 
+
+                <div
+
                   className="absolute top-0 left-0 h-full bg-blue-600 rounded-full transition-all duration-75 ease-linear"
+
                   style={{ width: `${progress}%` }}
+
                 ></div>
+
               </div>
 
+
+
               {/* Chỉ hiện nút và dòng nhắc khi thanh progress đã nạp đủ 100% */}
+
               {isProgressComplete && (
+
                 <div className="animate-in fade-in duration-300">
-                  <button 
+
+                  <button
+
                     onClick={() => navigate('/login')}
+
                     className="w-full bg-blue-600 text-white font-bold py-3.5 rounded-lg hover:bg-blue-700 transition-colors mb-3 shadow-md shadow-blue-600/20"
+
                   >
+
                     Tiếp tục
+
                   </button>
+
                   <p className="text-[11px] text-slate-400 font-medium">
+
                     Nếu bạn không được chuyển hướng tự động, vui lòng nhấn nút ở trên.
+
                   </p>
+
                 </div>
+
               )}
+
             </div>
+
           </div>
+
         )}
+
+
 
       </main>
 
+
+
       {/* Footer */}
+
       <footer className="bg-slate-100 border-t border-slate-200 py-12 px-8">
+
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between">
+
           <div className="mb-8 md:mb-0 max-w-sm">
+
             <h3 className="text-lg font-black !text-slate-900 mb-2">FrontEndly</h3>
+
             <p className="text-sm font-semibold text-slate-600 mb-4">Keep going, you're doing great!</p>
+
             <p className="text-xs text-slate-500 leading-relaxed font-medium">
-              © 2024 FrontEndly. Built for developers by developers.<br/>
+
+              © 2024 FrontEndly. Built for developers by developers.<br />
+
               Empowering the next generation of engineers with precision-crafted curriculum.
+
             </p>
+
           </div>
+
         </div>
+
       </footer>
+
     </div>
+
   );
+
 };
+
+
 
 export default RegisterPage;
