@@ -6,6 +6,9 @@ import { useRoadmapStore } from "../stores/roadmapStore";
 import { useRoadmap } from "../hooks/useRoadmap";
 import { DEFAULT_SKILL_ID } from "../utils/roadmapMappers";
 import { ROUTES } from "../../../constants/routes";
+import { useAuthStore } from "../../../store/auth.store";
+import { useGuestStore } from "../../../store/guest.store";
+import { GuestModal } from "./GuestModal";
 import "./TheoryPage.css";
 
 interface TheoryApiData {
@@ -29,6 +32,9 @@ export const TheoryPage: React.FC = () => {
   const milestones = useRoadmapStore((s) => s.milestones);
   const { refetch, isLoading: roadmapLoading } = useRoadmap(DEFAULT_SKILL_ID);
 
+  const { isAuthenticated } = useAuthStore();
+  const { canViewTheory, recordTheoryView } = useGuestStore();
+  const [showGuestModal, setShowGuestModal] = useState(false);
   const [theoryData, setTheoryData] = useState<TheoryApiData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -46,6 +52,7 @@ export const TheoryPage: React.FC = () => {
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [lessonId]);
+
 
   useEffect(() => {
     const fetchTheory = async () => {
@@ -120,11 +127,26 @@ export const TheoryPage: React.FC = () => {
   const handleLessonSelect = (id: string, status: string) => {
     if (status === "locked") return;
     if (id === lessonId) return;
+
+    if (!isAuthenticated) {
+      if (!canViewTheory(id)) {
+        setShowGuestModal(true);
+        return;
+      }
+      recordTheoryView(id);
+    }
+
     navigate(`/learning-path/milestone/${milestoneId}/lesson/${id}`);
   };
 
   const handleContinue = async () => {
     if (!stageId || !milestoneId) return;
+
+    if (!isAuthenticated) {
+      setShowGuestModal(true);
+      return;
+    }
+
     setIsUnlocking(true);
     setUnlockMessage(null);
     setError(null);
@@ -419,6 +441,10 @@ export const TheoryPage: React.FC = () => {
           </div>
         )}
       </footer>
+      <GuestModal
+        isOpen={showGuestModal}
+        onClose={() => setShowGuestModal(false)}
+      />
     </div>
   );
 };
