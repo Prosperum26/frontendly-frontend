@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import NetworkErrorCard from '../components/NetworkErrorCard';
+import { useAuthStore } from '../store/auth.store';
 
 export const RegisterPage: React.FC = () => {
+  const register = useAuthStore((state) => state.register);
   // --- 1. STATES QUẢN LÝ FORM & UI ---
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -80,33 +82,19 @@ export const RegisterPage: React.FC = () => {
   };
 
   // Hàm gọi API Backend (Tích hợp Try/Catch kiểm tra lỗi lưu thông tin)
-  const handleVerifyAndSave = async () => {
+ const handleVerifyAndSave = async () => {
     setIsLoading(true);
     setBackendError(false);
     try {
-      // TODO: Sau này bạn thay thế đoạn này bằng lệnh gọi Axios/Fetch tới Backend của bạn
-      // ví dụ: await axios.post('/api/auth/register', { name, email, password });
-      
-      // Giả lập thời gian phản hồi từ server 1.2 giây
-      await new Promise((resolve, reject) => {
-        setTimeout(() => {
-          const isServerOk = true; // Đổi thành 'false' nếu bạn muốn test giao diện Lỗi xác minh
-          if (isServerOk) resolve(true);
-          else reject(new Error("Lỗi lưu dữ liệu người dùng"));
-        }, 1200);
-      });
-
-      // Nếu không có lỗi -> Chuyển sang màn hình thành công
+      await register(email, name, password);
       setIsVerified(true);
     } catch (error) {
-      // Nếu gặp lỗi kết nối API/Trùng email -> Chuyển sang màn hình thất bại
       console.error(error);
       setBackendError(true);
     } finally {
       setIsLoading(false);
     }
   };
-
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 font-sans relative">
       {/* Navbar */}
@@ -270,10 +258,10 @@ export const RegisterPage: React.FC = () => {
                   <hr className="w-full border-slate-200" />
                 </div>
 
-                <div className="mt-6 grid grid-cols-2 gap-4">
-                  {/* NÚT ĐĂNG KÝ GOOGLE */}
-                  <button className="flex items-center justify-center gap-2 py-2.5 border border-slate-200 rounded-lg text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors shadow-sm">
-                    {<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink">
+               <div className="mt-6">
+              {/* NÚT GOOGLE ĐÃ ĐƯỢC CĂN GIỮA VÀ KÉO FULL DÀI */}
+              <button className="w-full flex items-center justify-center gap-2 py-2.5 border border-slate-200 rounded-lg text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors shadow-sm">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink">
 <rect width="20" height="20" fill="url(#pattern0_191_2412)"/>
 <defs>
 <pattern id="pattern0_191_2412" patternContentUnits="objectBoundingBox" width="1" height="1">
@@ -283,18 +271,12 @@ export const RegisterPage: React.FC = () => {
 </defs>
 </svg>
 
-}
+
                     <span>Google</span>
                   </button>
                   
-                  {/* NÚT ĐĂNG KÝ GITHUB */}
-                  <button className="flex items-center justify-center gap-2 py-2.5 border border-slate-200 rounded-lg text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors shadow-sm">
-                    {<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M10 0C4.47833 0 0 4.4775 0 10C0 14.4183 2.865 18.1667 6.83917 19.4892C7.33833 19.5817 7.5 19.2717 7.5 19.0083V17.1467C4.71833 17.7517 4.1325 15.97 4.1325 15.97C3.6775 14.8142 3.02167 14.5067 3.02167 14.5067C2.11417 13.8858 3.09083 13.8992 3.09083 13.8992C4.095 13.9692 4.62333 14.93 4.62333 14.93C5.515 16.4583 6.9625 16.0167 7.53333 15.7608C7.6225 15.115 7.88167 14.6733 8.16833 14.4242C5.9475 14.17 3.6125 13.3125 3.6125 9.48167C3.6125 8.38917 4.00333 7.4975 4.6425 6.7975C4.53917 6.545 4.19667 5.5275 4.74 4.15083C4.74 4.15083 5.58 3.8825 7.49083 5.17583C8.28833 4.95417 9.14333 4.84333 9.99333 4.83917C10.8433 4.84333 11.6992 4.95417 12.4983 5.17583C14.4075 3.8825 15.2458 4.15083 15.2458 4.15083C15.79 5.52833 15.4475 6.54583 15.3442 6.7975C15.9858 7.4975 16.3733 8.39 16.3733 9.48167C16.3733 13.3225 14.0342 14.1683 11.8075 14.4158C12.1658 14.7258 12.4933 15.3342 12.4933 16.2675V19.0117C12.4933 19.2775 12.6533 19.59 13.1608 19.4917C17.1317 18.1675 19.9933 14.42 19.9933 10.0033C19.9933 4.48083 15.5158 0.00333333 9.99333 0.00333333L10 0Z" fill="#191B23"/>
-</svg>
-}
-                    <span>GitHub</span>
-                  </button>
+  
+                  
                 </div>
               </div>
 
