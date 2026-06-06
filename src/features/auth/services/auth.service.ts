@@ -58,28 +58,26 @@ export const authService = {
 
 
   async getProfile(): Promise<User> {
-    const response = await api.get<User>('/auth/me');
-    return response.data;
+    const response = await api.get<{ message: string; user: User }>('/auth/me');
+    return response.data.user;
   },
 
 
 
   async googleLogin(credentials: GoogleLoginCredentials): Promise<LoginResponse> {
-
-
-
     const response = await api.post<LoginResponse>('/auth/google', credentials);
-
-
-
     return response.data;
-
-
-
   },
 
+  async forgotPassword(email: string): Promise<{ message: string }> {
+    const response = await api.post<{ message: string }>('/auth/forgot-password', { email });
+    return response.data;
+  },
 
-
+  async resetPassword(data: any): Promise<{ message: string }> {
+    const response = await api.post<{ message: string }>('/auth/reset-password', data);
+    return response.data;
+  },
 };
 
 

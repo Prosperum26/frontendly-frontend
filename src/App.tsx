@@ -19,6 +19,7 @@ import { useSessionVerification } from './features/auth/hooks/useSessionVerifica
 import { ROUTES } from './constants/routes';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import RegisterPage from './pages/RegisterPage';
+import ResetPasswordPage from './pages/ResetPasswordPage';
 
 
 
@@ -49,6 +50,7 @@ function App() {
               <Route path="/register" element={<RegisterPage />} />
               {/* ĐÃ CHUYỂN: Đưa trang quên mật khẩu vào đây để dùng chung layout auth sạch sẽ */}
               <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+              <Route path="/reset-password" element={<ResetPasswordPage />} />
             </Route>
 
             {/* Main app routes */}

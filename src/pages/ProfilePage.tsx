@@ -195,40 +195,32 @@ export const ProfilePage: React.FC = () => {
 
             <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider mb-6">Proficiency Radar</h3>
 
-            <div className="relative w-full aspect-square flex items-center justify-center">
-
-              <svg viewBox="0 0 100 100" className="w-full h-full max-w-[200px] text-slate-400">
-
-                {/* Lưới Radar */}
-
-                <polygon points="50,10 90,80 10,80" fill="none" stroke="currentColor" strokeWidth="0.5" strokeDasharray="2,2" />
-
-                <polygon points="50,30 78,70 22,70" fill="none" stroke="currentColor" strokeWidth="0.5" strokeDasharray="2,2" />
-
-                <polygon points="50,50 65,60 35,60" fill="none" stroke="currentColor" strokeWidth="0.5" strokeDasharray="2,2" />
-
-                {/* Đường nối */}
-
-                <line x1="50" y1="50" x2="50" y2="10" stroke="currentColor" strokeWidth="0.5" />
-
-                <line x1="50" y1="50" x2="90" y2="80" stroke="currentColor" strokeWidth="0.5" />
-
-                <line x1="50" y1="50" x2="10" y2="80" stroke="currentColor" strokeWidth="0.5" />
-
-                {/* Data Polygon */}
-
-                <polygon points="50,25 80,75 30,65" fill="rgba(37, 99, 235, 0.1)" stroke="#2563eb" strokeWidth="2" strokeLinejoin="round" />
-
-
-
-                <text x="50" y="5" fontSize="6" textAnchor="middle" fill="#64748b" fontWeight="bold">HTML</text>
-
-                <text x="95" y="85" fontSize="6" textAnchor="middle" fill="#64748b" fontWeight="bold">CSS</text>
-
-                <text x="5" y="85" fontSize="6" textAnchor="middle" fill="#64748b" fontWeight="bold">JS</text>
-
-              </svg>
-
+            <div className="relative w-full aspect-square flex flex-col items-center justify-center">
+              {!userData?.skills || userData.skills.length === 0 ? (
+                <div className="text-center px-4">
+                  <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Target className="w-8 h-8 text-slate-300" />
+                  </div>
+                  <p className="text-xs text-slate-500 font-medium">You haven't coded anything yet.</p>
+                  <button className="text-xs text-blue-600 font-bold mt-2 hover:underline">Start coding →</button>
+                </div>
+              ) : (
+                <svg viewBox="0 0 100 100" className="w-full h-full max-w-[200px] text-slate-400">
+                  {/* Lưới Radar */}
+                  <polygon points="50,10 90,80 10,80" fill="none" stroke="currentColor" strokeWidth="0.5" strokeDasharray="2,2" />
+                  <polygon points="50,30 78,70 22,70" fill="none" stroke="currentColor" strokeWidth="0.5" strokeDasharray="2,2" />
+                  <polygon points="50,50 65,60 35,60" fill="none" stroke="currentColor" strokeWidth="0.5" strokeDasharray="2,2" />
+                  {/* Đường nối */}
+                  <line x1="50" y1="50" x2="50" y2="10" stroke="currentColor" strokeWidth="0.5" />
+                  <line x1="50" y1="50" x2="90" y2="80" stroke="currentColor" strokeWidth="0.5" />
+                  <line x1="50" y1="50" x2="10" y2="80" stroke="currentColor" strokeWidth="0.5" />
+                  {/* Data Polygon */}
+                  <polygon points="50,25 80,75 30,65" fill="rgba(37, 99, 235, 0.1)" stroke="#2563eb" strokeWidth="2" strokeLinejoin="round" />
+                  <text x="50" y="5" fontSize="6" textAnchor="middle" fill="#64748b" fontWeight="bold">HTML</text>
+                  <text x="95" y="85" fontSize="6" textAnchor="middle" fill="#64748b" fontWeight="bold">CSS</text>
+                  <text x="5" y="85" fontSize="6" textAnchor="middle" fill="#64748b" fontWeight="bold">JS</text>
+                </svg>
+              )}
             </div>
 
           </div>
@@ -247,44 +239,29 @@ export const ProfilePage: React.FC = () => {
 
             </div>
 
-            <div className="grid grid-cols-3 gap-y-6 gap-x-2">
-
-              {[
-
-                { title: 'Flexbox Fanatic', icon: 'FX', active: true },
-
-                { title: 'Grid God', icon: 'GD', active: true },
-
-                { title: 'Async Ace', icon: 'JS', active: true },
-
-                { title: 'A11y Ally', icon: 'A1', active: false },
-
-                { title: 'Clean Coder', icon: 'CC', active: false },
-
-                { title: 'First Flight', icon: '✈️', active: false },
-
-              ].map((badge, idx) => (
-
-                <div key={idx} className="flex flex-col items-center text-center">
-
-                  <div
-
-                    className={`w-14 h-14 flex items-center justify-center font-black text-lg mb-2 transition-all ${badge.active ? 'bg-blue-50 text-blue-600' : 'bg-slate-50 text-slate-300 grayscale'}`}
-
-                    style={{ clipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)' }}
-
-                  >
-
-                    {badge.icon}
-
+            <div className="flex flex-col items-center justify-center min-h-[180px]">
+              {!userData?.badges || userData.badges.length === 0 ? (
+                <div className="text-center">
+                  <div className="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                    <Trophy className="w-8 h-8 text-slate-300" />
                   </div>
-
-                  <span className={`text-[10px] font-semibold ${badge.active ? 'text-slate-600' : 'text-slate-400'}`}>{badge.title}</span>
-
+                  <p className="text-xs text-slate-500 font-medium px-6">No badges earned yet. Complete challenges to unlock them!</p>
                 </div>
-
-              ))}
-
+              ) : (
+                <div className="grid grid-cols-3 gap-y-6 gap-x-2 w-full">
+                  {userData.badges.slice(0, 6).map((badge: any, idx: number) => (
+                    <div key={idx} className="flex flex-col items-center text-center">
+                      <div
+                        className="w-14 h-14 flex items-center justify-center font-black text-lg mb-2 transition-all bg-blue-50 text-blue-600"
+                        style={{ clipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)' }}
+                      >
+                        {badge.icon || badge.name?.substring(0, 2).toUpperCase() || '??'}
+                      </div>
+                      <span className="text-[10px] font-semibold text-slate-600 line-clamp-1">{badge.name}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
           </div>
@@ -303,44 +280,37 @@ export const ProfilePage: React.FC = () => {
 
             </div>
 
-            <div className="flex items-start gap-2 overflow-x-auto pb-2">
+            <div className="flex flex-col h-full">
+              {!userData?.stats?.lastActiveAt ? (
+                <div className="flex flex-col items-center justify-center py-8">
+                  <div className="w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center mb-3">
+                    <Flame className="w-6 h-6 text-slate-300" />
+                  </div>
+                  <p className="text-xs text-slate-500 font-medium text-center px-4">You haven't coded anything yet. Start a challenge to see your activity!</p>
+                </div>
+              ) : (
+                <div className="flex items-start gap-2 overflow-x-auto pb-2">
+                  <div className="flex flex-col gap-[7px] text-[9px] text-slate-400 font-medium pt-1">
+                    <span>Mon</span>
+                    <span>Wed</span>
+                    <span>Fri</span>
+                    <span>Sun</span>
+                  </div>
+                  <div className="grid grid-rows-7 grid-flow-col gap-1.5">
+                    {heatmapCells}
+                  </div>
+                </div>
+              )}
 
-              <div className="flex flex-col gap-[7px] text-[9px] text-slate-400 font-medium pt-1">
-
-                <span>Mon</span>
-
-                <span>Wed</span>
-
-                <span>Fri</span>
-
-                <span>Sun</span>
-
+              <div className="mt-auto pt-4 flex justify-between items-center border-t border-slate-50">
+                <p className="text-[10px] text-slate-400 font-medium italic">Keep your streak alive!</p>
+                <div className="flex items-center gap-1.5 text-xs text-slate-400">
+                  <span>Less</span>
+                  <div className="w-3 h-3 rounded-sm bg-slate-100"></div>
+                  <div className="w-3 h-3 rounded-sm bg-blue-700"></div>
+                  <span>More</span>
+                </div>
               </div>
-
-              <div className="grid grid-rows-7 grid-flow-col gap-1.5">
-
-                {heatmapCells}
-
-              </div>
-
-            </div>
-
-            <div className="mt-4 flex justify-end items-center gap-1.5 text-xs text-slate-400">
-
-              <span>Less</span>
-
-              <div className="w-3 h-3 rounded-sm bg-slate-100"></div>
-
-              <div className="w-3 h-3 rounded-sm bg-blue-200"></div>
-
-              <div className="w-3 h-3 rounded-sm bg-blue-400"></div>
-
-              <div className="w-3 h-3 rounded-sm bg-blue-500"></div>
-
-              <div className="w-3 h-3 rounded-sm bg-blue-700"></div>
-
-              <span>More</span>
-
             </div>
 
           </div>
@@ -363,66 +333,24 @@ export const ProfilePage: React.FC = () => {
 
               <h3 className="text-sm font-bold text-slate-900">Recent Courses</h3>
 
-              <a href="#" className="text-xs font-semibold text-blue-600 hover:underline">View all</a>
+              <button className="text-xs font-semibold text-blue-600 hover:underline">View all</button>
 
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-
-              {/* Course 1 */}
-
-              <div className="border border-slate-100 p-5 rounded-xl shadow-sm">
-
-                <div className="text-blue-600 font-black text-xl mb-3">CSS</div>
-
-                <h4 className="font-bold text-sm text-slate-900">Advanced CSS</h4>
-
-                <p className="text-xs text-slate-500 mt-1 mb-4">12 / 16 lessons</p>
-
-                <div className="h-1.5 w-full bg-slate-100 rounded-full">
-
-                  <div className="h-full bg-blue-600 rounded-full" style={{ width: '75%' }}></div>
-
+            <div className="min-h-[160px] flex items-center justify-center border-2 border-dashed border-slate-100 rounded-xl">
+              {(!userData as any)?.recent_courses || (userData as any)?.recent_courses?.length === 0 ? (
+                <div className="text-center">
+                  <p className="text-sm text-slate-500 font-medium italic mb-3">"The journey of a thousand miles begins with a single line of code."</p>
+                  <Link to="/learning-path" className="inline-flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg text-xs font-bold hover:bg-blue-700 transition-colors">
+                    <BookOpen className="w-3.5 h-3.5" />
+                    Find your first course
+                  </Link>
                 </div>
-
-              </div>
-
-              {/* Course 2 */}
-
-              <div className="border border-slate-100 p-5 rounded-xl shadow-sm">
-
-                <div className="text-yellow-500 font-black text-xl mb-3">JS</div>
-
-                <h4 className="font-bold text-sm text-slate-900">JavaScript Basics</h4>
-
-                <p className="text-xs text-slate-500 mt-1 mb-4">9 / 15 lessons</p>
-
-                <div className="h-1.5 w-full bg-slate-100 rounded-full">
-
-                  <div className="h-full bg-yellow-500 rounded-full" style={{ width: '60%' }}></div>
-
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full p-2">
+                   {/* Render actual courses here */}
                 </div>
-
-              </div>
-
-              {/* Course 3 */}
-
-              <div className="border border-slate-100 p-5 rounded-xl shadow-sm">
-
-                <div className="text-teal-500 font-black text-xl mb-3">RE</div>
-
-                <h4 className="font-bold text-sm text-slate-900">React Essentials</h4>
-
-                <p className="text-xs text-slate-500 mt-1 mb-4">6 / 20 lessons</p>
-
-                <div className="h-1.5 w-full bg-slate-100 rounded-full">
-
-                  <div className="h-full bg-teal-500 rounded-full" style={{ width: '30%' }}></div>
-
-                </div>
-
-              </div>
-
+              )}
             </div>
 
           </div>
@@ -437,72 +365,22 @@ export const ProfilePage: React.FC = () => {
 
               <h3 className="text-sm font-bold text-slate-900">Recent Activity</h3>
 
-              <a href="#" className="text-xs font-semibold text-blue-600 hover:underline">View all</a>
+              <button className="text-xs font-semibold text-blue-600 hover:underline">View all</button>
 
             </div>
 
             <div className="space-y-6">
-
-              <div className="flex gap-4 items-start">
-                <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center flex-shrink-0 text-blue-600">
-                  <Check className="w-3.5 h-3.5" strokeWidth={3} />
+              {(!userData as any)?.activities || (userData as any)?.activities?.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-12 opacity-60">
+                   <Zap className="w-8 h-8 text-slate-300 mb-2" />
+                   <p className="text-xs text-slate-400 font-bold uppercase tracking-widest">No Activity Yet</p>
+                   <p className="text-[10px] text-slate-400 mt-1 text-center">Your progress will be tracked here.</p>
                 </div>
-
-                <div>
-
-                  <h4 className="text-sm font-bold text-slate-900">Completed Advanced Selectors challenge</h4>
-
-                  <p className="text-xs text-slate-400 mt-0.5">+450 XP • 2 hours ago</p>
-
+              ) : (
+                <div className="space-y-6">
+                   {/* Render actual activities here */}
                 </div>
-
-              </div>
-
-              <div className="flex gap-4 items-start">
-                <div className="w-8 h-8 rounded-full bg-orange-50 flex items-center justify-center flex-shrink-0 text-orange-500">
-                  <Zap className="w-3.5 h-3.5" strokeWidth={2.5} />
-                </div>
-
-                <div>
-
-                  <h4 className="text-sm font-bold text-slate-900">Won CSS Battle against User_992</h4>
-
-                  <p className="text-xs text-slate-400 mt-0.5">+120 XP • 5 hours ago</p>
-
-                </div>
-
-              </div>
-
-              <div className="flex gap-4 items-start">
-                <div className="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center flex-shrink-0 text-green-600">
-                  <BookOpen className="w-3.5 h-3.5" strokeWidth={2.5} />
-                </div>
-
-                <div>
-
-                  <h4 className="text-sm font-bold text-slate-900">Started Lesson BEM Methodology</h4>
-
-                  <p className="text-xs text-slate-400 mt-0.5">In progress • Yesterday</p>
-
-                </div>
-
-              </div>
-
-              <div className="flex gap-4 items-start">
-                <div className="w-8 h-8 rounded-full bg-purple-50 flex items-center justify-center flex-shrink-0 text-purple-600">
-                  <Shield className="w-3.5 h-3.5" strokeWidth={2.5} />
-                </div>
-
-                <div>
-
-                  <h4 className="text-sm font-bold text-slate-900">Unlocked Grid God badge</h4>
-
-                  <p className="text-xs text-slate-400 mt-0.5">Milestone • 2 days ago</p>
-
-                </div>
-
-              </div>
-
+              )}
             </div>
 
           </div>

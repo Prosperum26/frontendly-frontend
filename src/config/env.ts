@@ -1,8 +1,8 @@
 export const ENV = {
-  API_URL: import.meta.env.VITE_API_URL || 'http://localhost:3000/api',
+  API_URL: import.meta.env.VITE_API_URL || 'http://localhost:3000/api/v1',
   SOCKET_URL: import.meta.env.VITE_SOCKET_URL || 'http://localhost:3000',
   NODE_ENV: import.meta.env.MODE || 'development',
-  GOOGLE_CLIENT_ID: import.meta.env.VITE_GOOGLE_CLIENT_ID || '',
+  GOOGLE_CLIENT_ID: import.meta.env.VITE_GOOGLE_CLIENT_ID || 'your-google-client-id',
 } as const;
 
 // Log environment configuration for debugging

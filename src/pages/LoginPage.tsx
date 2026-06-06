@@ -44,11 +44,7 @@ export const LoginPage: React.FC = () => {
       localStorage.setItem('refreshToken', response.refreshToken);
       
       // Set auth state
-      setAuth(true, {
-        id: crypto.randomUUID(),
-        username: email.split('@')[0],
-        email: email,
-      });
+      setAuth(true, response.user);
       
       navigate('/profile', { replace: true });
     } catch (error: unknown) {
