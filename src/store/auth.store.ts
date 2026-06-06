@@ -6,6 +6,8 @@ interface User {
   username: string;
   avatar?: string;
   stage_progress?: string;
+  level?: number;
+  xp?: number;
 }
 
 interface AuthState {
