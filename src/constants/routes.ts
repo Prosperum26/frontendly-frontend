@@ -7,6 +7,7 @@ export const ROUTES = {
   PROFILE: '/profile',
   LEADERBOARD: '/leaderboard',
   LOGIN: '/login',
+  REGISTER: '/register',
   BANNED: '/banned',
   NOT_FOUND: '/404',
 } as const;
