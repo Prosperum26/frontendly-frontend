@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-import React from 'react';
-import type { Milestone } from '../types/learning-path.types';
-=======
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
@@ -25,15 +21,72 @@ import inProgressMilestoneIcon from "../../../assets/learning-path/InProgress_mi
 import { useAuthStore } from "../../../store/auth.store";
 import { useGuestStore } from "../../../store/guest.store";
 import { GuestModal } from "./GuestModal";
->>>>>>> origin/feature/learning-path/minhkola
 
 interface MilestoneCardProps {
   milestone: Milestone;
 }
 
+const getLessonIcon = (title: string, size: number = 14) => {
+  const t = title.toLowerCase();
+  if (t.includes("html")) return <FileCode2 size={size} />;
+  if (t.includes("css")) return <Palette size={size} />;
+  if (t.includes("layout") || t.includes("flexbox") || t.includes("grid"))
+    return <LayoutGrid size={size} />;
+  if (t.includes("position") || t.includes("event"))
+    return <Globe size={size} />;
+  if (
+    t.includes("animation") ||
+    t.includes("motion") ||
+    t.includes("element") ||
+    t.includes("manipulation")
+  )
+    return <Sparkles size={size} />;
+  if (
+    t.includes("responsive") ||
+    t.includes("async") ||
+    t.includes("data") ||
+    t.includes("z-index") ||
+    t.includes("fix")
+  )
+    return <Settings2 size={size} />;
+  if (t.includes("dom") || t.includes("js")) return <Code2 size={size} />;
+  if (t.includes("bug") || t.includes("error") || t.includes("interaction"))
+    return <Bug size={size} />;
+  if (t.includes("logic")) return <AlertTriangle size={size} />;
+  return <Zap size={size} />;
+};
+
+function getLessonLockState(
+  milestone: Milestone,
+  lessonIndex: number,
+): { isLocked: boolean; isActive: boolean } {
+  const lessons = milestone.lessons || [];
+  const lesson = lessons[lessonIndex];
+  const isMilestoneLocked = milestone.status === "locked";
+  const isMilestoneCompleted =
+    milestone.status === "completed" || milestone.completed;
+  const isMilestoneInProgress = milestone.status === "in_progress";
+
+  if (isMilestoneLocked) {
+    return { isLocked: true, isActive: false };
+  }
+
+  if (lesson.completed || isMilestoneCompleted) {
+    return { isLocked: false, isActive: false };
+  }
+
+  if (isMilestoneInProgress) {
+    const firstIncomplete = lessons.findIndex((l) => !l.completed);
+    return {
+      isLocked: firstIncomplete !== -1 && lessonIndex > firstIncomplete,
+      isActive: lessonIndex === firstIncomplete,
+    };
+  }
+
+  return { isLocked: true, isActive: false };
+}
+
 export const MilestoneCard: React.FC<MilestoneCardProps> = ({ milestone }) => {
-<<<<<<< HEAD
-=======
   const navigate = useNavigate();
   const lessons = milestone.lessons || [];
   const completedLessons = lessons.filter((l) => l.completed).length;
@@ -107,16 +160,58 @@ export const MilestoneCard: React.FC<MilestoneCardProps> = ({ milestone }) => {
     navigate(`/learning-path/milestone/${milestone.id}/lesson/${lessonId}`);
   };
 
->>>>>>> origin/feature/learning-path/minhkola
   return (
-    <div className={`milestone-card ${milestone.completed ? 'completed' : ''}`}>
-      <h3>{milestone.title}</h3>
-      <p>{milestone.description}</p>
-      <div className="lessons-count">
-        {milestone.lessons.length} lessons
+    <div
+      className={`milestone-card ${statusClass}`}
+      onClick={handleCardClick}
+      ref={cardRef}
+      style={{
+        cursor: isLocked ? "not-allowed" : "pointer",
+        opacity: isLocked ? 0.6 : 1,
+        borderColor: isInProgress ? "var(--color-primary, #2563eb)" : undefined,
+        boxShadow: isInProgress
+          ? "0 10px 15px -3px rgba(37, 99, 235, 0.15)"
+          : undefined,
+      }}
+    >
+      <div className="milestone-top-row">
+        <div className="milestone-header-left">
+          <div className="milestone-icon-box">
+            {completed ? (
+              <img src={completedMilestoneIcon} alt="Completed" />
+            ) : isInProgress ? (
+              <img src={inProgressMilestoneIcon} alt="In Progress" />
+            ) : (
+              <Lock size={24} />
+            )}
+          </div>
+          <div>
+            <span className="milestone-subtitle">
+              Milestone {milestone.order}
+            </span>
+            <h3 className="milestone-title">{milestone.title}</h3>
+          </div>
+        </div>
+
+        {completed && (
+          <span className="milestone-badge badge-completed">
+            100% Completed
+          </span>
+        )}
+        {isInProgress && (
+          <span
+            className="milestone-badge badge-progress"
+            style={{ backgroundColor: "#dbeafe", color: "#1e40af" }}
+          >
+            In Progress
+          </span>
+        )}
+        {isLocked && (
+          <span className="milestone-badge badge-locked">
+            <Lock size={12} /> Locked
+          </span>
+        )}
       </div>
-<<<<<<< HEAD
-=======
 
       <div className="lessons-grid">
         {lessons.map((lesson, index) => {
@@ -252,7 +347,6 @@ export const MilestoneCard: React.FC<MilestoneCardProps> = ({ milestone }) => {
         isOpen={showGuestModal}
         onClose={() => setShowGuestModal(false)}
       />
->>>>>>> origin/feature/learning-path/minhkola
     </div>
   );
 };

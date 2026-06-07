@@ -142,7 +142,7 @@ api.interceptors.response.use(
 
         const { setAuth } = useAuthStore.getState();
 
-        setAuth(true, user);
+        setAuth(true, user ?? null);
 
 
 

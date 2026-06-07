@@ -1,14 +1,5 @@
 import { create } from 'zustand';
-
-interface User {
-  id: string;
-  email: string;
-  username: string;
-  avatar?: string;
-  stage_progress?: string;
-  level?: number;
-  xp?: number;
-}
+import type { User } from '../features/auth/types/auth.types';
 
 interface AuthState {
   isAuthenticated: boolean;

@@ -47,7 +47,7 @@ export const ResetPasswordPage: React.FC = () => {
         <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-10 text-center">
           <h1 className="text-2xl font-bold text-red-600 mb-4">Lỗi</h1>
           <p className="text-slate-600 mb-8">Link đặt lại mật khẩu không hợp lệ hoặc đã hết hạn.</p>
-          <Link to="/forgot-password" class="text-blue-600 font-semibold hover:underline">Yêu cầu link mới</Link>
+          <Link to="/forgot-password" className="text-blue-600 font-semibold hover:underline">Yêu cầu link mới</Link>
         </div>
       </div>
     );

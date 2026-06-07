@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { authService } from '../features/auth/services/auth.service';
 import { useAuthStore } from '../store/auth.store';
 import type { User } from '../features/auth/types/auth.types';
 import NetworkErrorCard from '../components/NetworkErrorCard';
-import { Edit, Share2, Flame, Star, Target, Trophy, Check, Zap, BookOpen, Shield } from 'lucide-react';
+import { Edit, Share2, Flame, Star, Target, Trophy, Check, Zap, BookOpen } from 'lucide-react';
 
 export const ProfilePage: React.FC = () => {
   const { currentUser } = useAuthStore();

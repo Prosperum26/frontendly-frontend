@@ -2,8 +2,10 @@ import React, { useState, useEffect } from "react";
 import { PlayCircle, Flame, Trophy, Plus, Star, Zap, Sun } from "lucide-react";
 import api from "../../../services/api";
 import "./SideBar.css";
-import defaultAvatar from "../../../assets/default_avatar.png";
 import { useAuthStore } from "../../../store/auth.store";
+
+const DEFAULT_AVATAR =
+  "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80";
 
 import type { UserData, ProgressResponse, Badge } from "../types/apiResponses";
 
@@ -81,7 +83,7 @@ export const SideBar: React.FC<SideBarProps> = ({ onWatchIntro }) => {
 
   const displayName = userData?.name;
   const userTitle = userData?.userTitle;
-  const avatarUrl = userData?.avatarUrl || defaultAvatar;
+  const avatarUrl = userData?.avatarUrl || DEFAULT_AVATAR;
 
   const currentXp = progressData?.xp ?? 0;
   const maxXp = progressData?.xpToNextLevel ?? 0;

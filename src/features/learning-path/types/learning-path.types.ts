@@ -5,28 +5,26 @@ export interface Milestone {
   order: number;
   completed: boolean;
   lessons: Lesson[];
-<<<<<<< HEAD
-=======
   status?: "completed" | "in_progress" | "locked";
   icon: string;
->>>>>>> origin/feature/learning-path/minhkola
 }
 
 export interface Lesson {
   id: string;
   title: string;
   description: string;
-  type: 'theory' | 'practice';
+  type: "theory" | "practice";
   completed: boolean;
   xpReward: number;
+  isLocked: boolean;
 }
 
-<<<<<<< HEAD
 export interface Progress {
   milestoneId: string;
   lessonId: string;
   completedAt: number;
-=======
+}
+
 export interface ApiStage {
   id: string;
   title: string;
@@ -99,5 +97,4 @@ export interface MilestoneDetail {
     text: string;
     imageUrl: string;
   };
->>>>>>> origin/feature/learning-path/minhkola
 }

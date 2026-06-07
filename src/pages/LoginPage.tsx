@@ -44,7 +44,7 @@ export const LoginPage: React.FC = () => {
       localStorage.setItem('refreshToken', response.refreshToken);
       
       // Set auth state
-      setAuth(true, response.user);
+      setAuth(true, response.user ?? null);
       
       navigate('/profile', { replace: true });
     } catch (error: unknown) {
