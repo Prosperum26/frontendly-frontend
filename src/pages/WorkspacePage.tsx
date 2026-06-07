@@ -80,7 +80,7 @@ export const WorkspacePage: React.FC = () => {
     setIsCompleting(true);
 
     try {
-      await api.patch(`/v1/stages/${stageId}/complete`, {});
+      await api.patch(`/stages/${stageId}/complete`, {});
       await queryClient.invalidateQueries({ queryKey: ["roadmap"] });
       await refetch();
 

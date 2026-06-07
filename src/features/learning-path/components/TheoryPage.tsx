@@ -60,7 +60,7 @@ export const TheoryPage: React.FC = () => {
       setIsLoading(true);
       setError(null);
       try {
-        const response = await api.get(`/v1/stages/${stageId}/theory`);
+        const response = await api.get(`/stages/${stageId}/theory`);
         setTheoryData(response.data?.data || response.data);
       } catch (err: unknown) {
         console.error("Error fetching stage theory:", err);
@@ -153,7 +153,7 @@ export const TheoryPage: React.FC = () => {
 
     try {
       const response = await api.patch(
-        `/v1/stages/${stageId}/unlock-practice`,
+        `/stages/${stageId}/unlock-practice`,
         {},
       );
       const xpAwarded = response.data?.data?.xpAwarded || 0;

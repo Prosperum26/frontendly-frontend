@@ -42,7 +42,7 @@ export const LessonComplete: React.FC = () => {
   const handleNextLesson = async () => {
     if (lessonId) {
       try {
-        await api.patch(`/v1/stages/${lessonId}/complete`, {});
+        await api.patch(`/stages/${lessonId}/complete`, {});
       } catch (err) {
         console.error("Error marking lesson complete before navigating:", err);
       }
