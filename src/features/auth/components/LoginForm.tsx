@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Input } from '../../../components/Input';
 import { Button } from '../../../components/Button';
 import { useLogin } from '../hooks/useLogin';
-import { LoginCredentials } from '../types/auth.types';
+import type { LoginCredentials } from '../types/auth.types';
 
 export const LoginForm: React.FC = () => {
   const { login, loading, error } = useLogin();

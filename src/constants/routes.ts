@@ -1,6 +1,10 @@
 export const ROUTES = {
   HOME: '/',
   LEARNING_PATH: '/learning-path',
+  MILESTONE_DETAIL: '/learning-path/milestone/:milestoneId',
+  LESSON_THEORY: '/learning-path/milestone/:milestoneId/lesson/:lessonId',
+  LESSON_COMPLETE: '/learning-path/milestone/:milestoneId/lesson/:lessonId/complete',
+  MILESTONE_COMPLETE: '/learning-path/milestone/:milestoneId/complete',
   WORKSPACE: '/workspace',
   CHALLENGE_LOBBY: '/challenge/lobby',
   CHALLENGE_BATTLE: '/challenge/battle',
