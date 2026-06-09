@@ -19,10 +19,11 @@ import ProfilePage from './pages/ProfilePage';
 import LeaderboardPage from './pages/LeaderboardPage';
 import LoginPage from './pages/LoginPage';
 import NotFoundPage from './pages/NotFoundPage';
+import { DEFAULT_EXERCISE_ID } from './features/editor';
 import BannedPage from './pages/BannedPage';
 import { ProtectedRoute } from './components/ProtectedRoute/ProtectedRoute';
 import { useSessionVerification } from './features/auth/hooks/useSessionVerification';
-import { ROUTES } from './constants/routes';
+import { ROUTES, workspacePath } from './constants/routes';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import RegisterPage from './pages/RegisterPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
@@ -96,6 +97,10 @@ function App() {
                     <WorkspacePage />
                   </ProtectedRoute>
                 }
+              />
+              <Route
+                path="/workspace"
+                element={<Navigate to={workspacePath(DEFAULT_EXERCISE_ID)} replace />}
               />
               <Route
                 path={ROUTES.CHALLENGE_BATTLE}
