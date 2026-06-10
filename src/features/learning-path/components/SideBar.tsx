@@ -30,19 +30,20 @@ export const SideBar: React.FC<SideBarProps> = ({ onWatchIntro }) => {
       setError(null);
       try {
         const [userRes, progressRes, badgesRes] = await Promise.all([
-          api.get<{ success: boolean; data: any }>("/users/me"),
-          api.get<{ success: boolean; data: any }>("/users/progress"),
-          api.get<{ success: boolean; data: any }>("/users/badges"),
+          api.get<{ success: boolean; data: UserData }>("/users/me"),
+          api.get<{ success: boolean; data: ProgressResponse }>("/users/progress"),
+          api.get<{ success: boolean; data: Badge[] | { badges: Badge[] } }>("/users/badges"),
         ]);
 
-        const uData = userRes?.data?.data ?? {};
+        const uData = userRes?.data?.data ?? {} as UserData;
         setUserData(uData);
 
-        const pData = progressRes?.data?.data ?? {};
+        const pData = progressRes?.data?.data ?? {} as ProgressResponse;
         setProgressData(pData);
 
-        const bData = badgesRes?.data?.data?.badges ?? badgesRes?.data?.data ?? [];
-        setBadgesData(Array.isArray(bData) ? bData : []);
+        const badgesData = badgesRes?.data?.data;
+        const bData = Array.isArray(badgesData) ? badgesData : badgesData?.badges ?? [];
+        setBadgesData(bData);
       } catch (err: unknown) {
         const e = err as { response?: { status?: number }; message?: string };
         if (e?.response?.status === 401) {

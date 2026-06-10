@@ -34,8 +34,9 @@ export const ResetPasswordPage: React.FC = () => {
       setTimeout(() => {
         navigate('/login');
       }, 3000);
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Đã xảy ra lỗi khi đặt lại mật khẩu');
+    } catch (err: unknown) {
+      const error = err as { response?: { data?: { message?: string } } };
+      setError(error.response?.data?.message || 'Đã xảy ra lỗi khi đặt lại mật khẩu');
     } finally {
       setIsLoading(false);
     }

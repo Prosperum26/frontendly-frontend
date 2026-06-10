@@ -4,11 +4,14 @@ import type {
   WorkspaceFiles,
   ExerciseDefinition,
   ExerciseRequirement,
+  BackendExerciseResponse,
+  BackendSubmitResponse,
+  BackendRequirementResult,
 } from '../types/editor.types';
 
 export const editorService = {
   async getExercise(exerciseId: string, userId: string): Promise<ExerciseDefinition> {
-    const response = await api.get<any>(`/exercises/${exerciseId}/${userId}`);
+    const response = await api.get<{ success: boolean; data: BackendExerciseResponse }>(`/exercises/${exerciseId}/${userId}`);
     const data = response.data.data;
 
     return {
@@ -21,7 +24,7 @@ export const editorService = {
       estimatedTime: '20 min',
       topicTags: [data.module.split(':')[0]],
       targetImageUrl: data.target_design_url || '',
-      requirements: (data.requirements || []).map((req: any) => ({
+      requirements: (data.requirements || []).map((req) => ({
         id: req.id,
         label: req.text,
         done: false,
@@ -40,12 +43,14 @@ export const editorService = {
     files: WorkspaceFiles,
     requirements: ExerciseRequirement[]
   ): Promise<EvaluationResult> {
-    const response = await api.post<any>(`/exercises/${exerciseId}/${userId}/submit`, {
-      html: files.html,
-      css: files.css,
-      js: files.js,
+    const response = await api.post<{ success: boolean; data: BackendSubmitResponse }>(`/exercises/${exerciseId}/${userId}/submit`, {
+      editorContent: {
+        html: files.html,
+        css: files.css,
+        js: files.js,
+      },
     });
-    const data = response.data.data; // SubmitResponse
+    const data = response.data.data;
 
     // Check lint errors
     const lint = data.lint_errors;
@@ -55,21 +60,21 @@ export const editorService = {
       (lint?.js_err?.length ?? 0) > 0;
 
     let output = '';
-    if (hasLintErrors) {
-      output += '⚠️ LỖI CÚ PHÁP (LINT ERRORS):\n';
-      lint.html_err?.forEach((err: any) => {
+    if (hasLintErrors && lint) {
+      output += '⚠️ LỖI CÚ PHÁP (Lint ERRORS):\n';
+      lint.html_err?.forEach((err) => {
         output += `[HTML] Dòng ${err.line}: ${err.message}\n`;
       });
-      lint.css_err?.forEach((err: any) => {
+      lint.css_err?.forEach((err) => {
         output += `[CSS] Dòng ${err.line}: ${err.message}\n`;
       });
-      lint.js_err?.forEach((err: any) => {
+      lint.js_err?.forEach((err) => {
         output += `[JS] Dòng ${err.line}: ${err.message}\n`;
       });
       output += '\nVui lòng sửa tất cả lỗi cú pháp trước khi tiếp tục.';
     } else {
       const evaluationResults = data.requirementResult || data.evaluationResults || [];
-      const passedCount = evaluationResults.filter((r: any) => r.passed).length;
+      const passedCount = evaluationResults.filter((r) => r.passed).length;
       const totalCount = evaluationResults.length;
       output = `Kết quả chấm điểm: Đạt ${passedCount}/${totalCount} yêu cầu (${data.match_percentage}%).\n`;
       if (data.isCompleted) {
@@ -82,7 +87,7 @@ export const editorService = {
     // Map evaluationResults to criteria
     const evaluationResults = data.requirementResult || data.evaluationResults || [];
     const criteria = requirements.map((req) => {
-      const res = evaluationResults.find((r: any) => r.requirementId === req.id);
+      const res = evaluationResults.find((r: BackendRequirementResult) => r.requirementId === req.id);
       return {
         id: req.id,
         label: req.label,

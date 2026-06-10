@@ -207,8 +207,9 @@ const WorkspacePageContent: React.FC<WorkspacePageContentProps> = ({ exercise })
               message: 'Some requirements are still failing. Review the checklist and try again.',
             }
       );
-    } catch (err: any) {
-      setConsoleMessage(`Submission Error: ${err.message || 'Unknown backend error'}`);
+    } catch (err: unknown) {
+      const error = err as { message?: string };
+      setConsoleMessage(`Submission Error: ${error.message || 'Unknown backend error'}`);
       showToast({
         type: 'error',
         title: 'Submission Failed',
@@ -217,7 +218,7 @@ const WorkspacePageContent: React.FC<WorkspacePageContentProps> = ({ exercise })
     } finally {
       setIsSubmitting(false);
     }
-  }, [exercise.id, exercise.requirements, files, showToast]);
+  }, [exercise.id, exercise.requirements, files, showToast, userId]);
 
   const handleReset = useCallback(() => {
     reset();

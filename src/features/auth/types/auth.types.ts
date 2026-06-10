@@ -119,5 +119,10 @@ export interface GoogleLoginCredentials {
   idToken: string;
 }
 
+export interface ResetPasswordData {
+  token: string;
+  newPassword: string;
+}
+
 
 

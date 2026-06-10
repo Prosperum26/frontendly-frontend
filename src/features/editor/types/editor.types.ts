@@ -64,3 +64,37 @@ export interface TestCase {
   input: string;
   expectedOutput: string;
 }
+
+export interface BackendExerciseResponse {
+  id: string;
+  module: string;
+  title: string;
+  level?: 'easy' | 'medium' | 'hard';
+  description: string;
+  target_design_url?: string;
+  requirements?: Array<{
+    id: string;
+    text: string;
+  }>;
+  html_content?: string;
+  css_content?: string;
+  js_content?: string;
+}
+
+export interface BackendRequirementResult {
+  requirementId: string;
+  passed: boolean;
+  message?: string;
+}
+
+export interface BackendSubmitResponse {
+  lint_errors?: {
+    html_err?: Array<{ line: number; message: string }>;
+    css_err?: Array<{ line: number; message: string }>;
+    js_err?: Array<{ line: number; message: string }>;
+  };
+  requirementResult?: BackendRequirementResult[];
+  evaluationResults?: BackendRequirementResult[];
+  match_percentage?: number;
+  isCompleted: boolean;
+}

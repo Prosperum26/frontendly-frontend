@@ -27,11 +27,16 @@ export const LessonComplete: React.FC = () => {
     isMilestoneComplete: boolean;
   } | null>(null);
 
+  interface CompletionData {
+    xpEarned: number;
+    isMilestoneComplete: boolean;
+  }
+
   useEffect(() => {
     const markComplete = async () => {
       if (lessonId) {
         try {
-          const response = await api.patch<{ success: boolean; data: any }>(`/stages/${lessonId}/complete`, {});
+          const response = await api.patch<{ success: boolean; data: CompletionData }>(`/stages/${lessonId}/complete`, {});
           setCompletionData(response.data.data);
         } catch (err) {
           console.error("Error marking lesson complete:", err);

@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
+import { useAuthStore } from '../store/auth.store';
 import { profileService } from '../features/profile/services/profile.service';
 import type { UserProfile, Badge, ActivityLog } from '../features/profile/types/profile.types';
 import NetworkErrorCard from '../components/NetworkErrorCard';
@@ -40,9 +41,9 @@ export const ProfilePage: React.FC = () => {
           profileService.fetchActivityStats(),
         ]);
         setProfileData(profile);
-        setBadges(badgeList);
-        setActivities(activityList);
-        setActivityStats(statsList);
+        setBadges(Array.isArray(badgeList) ? badgeList : []);
+        setActivities(Array.isArray(activityList) ? activityList : []);
+        setActivityStats(Array.isArray(statsList) ? statsList : []);
       } catch (error) {
         console.error('Failed to fetch profile data:', error);
       } finally {
@@ -208,9 +209,9 @@ export const ProfilePage: React.FC = () => {
                   
                   {/* Dynamic Polygon based on skills */}
                   {(() => {
-                    const htmlSkill = userData.skills.find(s => s.name.toLowerCase() === 'html')?.level || 1;
-                    const cssSkill = userData.skills.find(s => s.name.toLowerCase() === 'css')?.level || 1;
-                    const jsSkill = userData.skills.find(s => s.name.toLowerCase() === 'js')?.level || 1;
+                    const htmlSkill = userData.skills?.find((s: { name: string; level: number }) => s.name.toLowerCase() === 'html')?.level || 1;
+                    const cssSkill = userData.skills?.find((s: { name: string; level: number }) => s.name.toLowerCase() === 'css')?.level || 1;
+                    const jsSkill = userData.skills?.find((s: { name: string; level: number }) => s.name.toLowerCase() === 'js')?.level || 1;
                     
                     // Normalize level (1-10) to radius (0-40)
                     const r1 = (htmlSkill / 10) * 40;

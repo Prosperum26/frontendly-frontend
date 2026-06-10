@@ -1,5 +1,5 @@
 import api from '../../../services/api';
-import type { LoginCredentials, RegisterCredentials, LoginResponse, User, GoogleLoginCredentials } from '../types/auth.types';
+import type { LoginCredentials, RegisterCredentials, LoginResponse, User, GoogleLoginCredentials, ResetPasswordData } from '../types/auth.types';
 
 export const authService = {
   async login(credentials: LoginCredentials): Promise<LoginResponse> {
@@ -36,7 +36,7 @@ export const authService = {
     return response.data;
   },
 
-  async resetPassword(data: any): Promise<{ message: string }> {
+  async resetPassword(data: ResetPasswordData): Promise<{ message: string }> {
     const response = await api.post<{ message: string }>('/auth/reset-password', data);
     return response.data;
   },

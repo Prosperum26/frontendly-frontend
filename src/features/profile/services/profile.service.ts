@@ -13,8 +13,9 @@ export const profileService = {
   },
 
   async fetchBadges(): Promise<Badge[]> {
-    const response = await api.get<{ success: boolean; data: Badge[] }>('/users/badges');
-    return response.data.data;
+    const response = await api.get<{ success: boolean; data: { badges: Badge[] } | Badge[] }>('/users/badges');
+    const data = response.data.data;
+    return Array.isArray(data) ? data : (data?.badges || []);
   },
 
   async fetchActivity(): Promise<ActivityLog[]> {

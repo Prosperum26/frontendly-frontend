@@ -172,10 +172,11 @@ export const RegisterPage: React.FC = () => {
 
       // Nếu không có lỗi -> Chuyển sang màn hình thành công
       setIsVerified(true);
-    } catch (error: any) {
+    } catch (error: unknown) {
       // Nếu gặp lỗi kết nối API/Trùng email -> Chuyển sang màn hình thất bại
       console.error(error);
-      const msg = error.response?.data?.message || 'Đã xảy ra lỗi trong quá trình xác thực thông tin kỹ thuật của bạn.';
+      const err = error as { response?: { data?: { message?: string | string[] } } };
+      const msg = err.response?.data?.message || 'Đã xảy ra lỗi trong quá trình xác thực thông tin kỹ thuật của bạn.';
       setErrorMessage(Array.isArray(msg) ? msg.join(', ') : msg);
       setBackendError(true);
     } finally {
