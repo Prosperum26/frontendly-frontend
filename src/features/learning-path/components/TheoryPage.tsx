@@ -5,7 +5,7 @@ import api from "../../../services/api";
 import { useRoadmapStore } from "../stores/roadmapStore";
 import { useRoadmap } from "../hooks/useRoadmap";
 import { DEFAULT_SKILL_ID } from "../utils/roadmapMappers";
-import { ROUTES } from "../../../constants/routes";
+import { ROUTES, workspacePath } from "../../../constants/routes";
 import { useAuthStore } from "../../../store/auth.store";
 import { useGuestStore } from "../../../store/guest.store";
 import { GuestModal } from "./GuestModal";
@@ -157,16 +157,18 @@ export const TheoryPage: React.FC = () => {
         {},
       );
       const xpAwarded = response.data?.data?.xpAwarded || 0;
+      const exerciseId = `exercise_${stageId}`;
+      const targetPath = `${workspacePath(exerciseId)}?stageId=${stageId}&milestoneId=${milestoneId}`;
 
       if (xpAwarded > 0) {
         setUnlockMessage(`+${xpAwarded} XP awarded for theory!`);
         setTimeout(() => {
-          navigate(`/workspace?stageId=${stageId}&milestoneId=${milestoneId}`, {
+          navigate(targetPath, {
             state: { fromTheory: true },
           });
         }, 1500);
       } else {
-        navigate(`/workspace?stageId=${stageId}&milestoneId=${milestoneId}`, {
+        navigate(targetPath, {
           state: { fromTheory: true },
         });
       }

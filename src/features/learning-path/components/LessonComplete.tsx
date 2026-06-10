@@ -22,11 +22,27 @@ export const LessonComplete: React.FC = () => {
   const getNextLessonId = useRoadmapStore((s) => s.getNextLessonId);
   const { refetch } = useRoadmap(DEFAULT_SKILL_ID);
 
+  const [completionData, setCompletionData] = React.useState<{
+    xpEarned: number;
+    isMilestoneComplete: boolean;
+  } | null>(null);
+
   useEffect(() => {
+    const markComplete = async () => {
+      if (lessonId) {
+        try {
+          const response = await api.patch<{ success: boolean; data: any }>(`/stages/${lessonId}/complete`, {});
+          setCompletionData(response.data.data);
+        } catch (err) {
+          console.error("Error marking lesson complete:", err);
+        }
+      }
+    };
+    void markComplete();
     void refetch();
     void queryClient.invalidateQueries({ queryKey: ["roadmap"] });
     window.scrollTo({ top: 0, behavior: "smooth" });
-  }, [refetch, queryClient]);
+  }, [lessonId, refetch, queryClient]);
 
   const milestone = milestoneId
     ? getMilestoneDetailById(milestoneId)
@@ -40,14 +56,6 @@ export const LessonComplete: React.FC = () => {
   };
 
   const handleNextLesson = async () => {
-    if (lessonId) {
-      try {
-        await api.patch(`/stages/${lessonId}/complete`, {});
-      } catch (err) {
-        console.error("Error marking lesson complete before navigating:", err);
-      }
-    }
-
     try {
       await queryClient.invalidateQueries({ queryKey: ["roadmap"] });
       await refetch();
@@ -62,7 +70,7 @@ export const LessonComplete: React.FC = () => {
       return;
     }
 
-    if (milestone && milestone.completedLessons === milestone.totalLessons) {
+    if (completionData?.isMilestoneComplete) {
       navigate(`/learning-path/milestone/${milestoneId}/complete`);
       return;
     }
@@ -127,7 +135,9 @@ export const LessonComplete: React.FC = () => {
               </div>
               <div className="lcp-badge-text">
                 <span className="lcp-badge-label">EXPERIENCE POINTS</span>
-                <span className="lcp-badge-value blue">+50 XP Earned</span>
+                <span className="lcp-badge-value blue">
+                  +{completionData?.xpEarned || 50} XP Earned
+                </span>
               </div>
             </div>
 

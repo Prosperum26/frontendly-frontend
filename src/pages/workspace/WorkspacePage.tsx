@@ -18,11 +18,13 @@ import { useDraftPersistence } from '../../features/editor/hooks/useDraftPersist
 import { useWorkspaceEditor } from '../../features/editor/hooks/useWorkspaceEditor';
 import { editorService } from '../../features/editor/services/editor.service';
 import { validatePreviewFiles } from '../../features/editor/utils/previewDocument';
+import { useAuthStore } from '../../store/auth.store';
 import '../../features/editor/components/editor-ui.css';
 
 export const WorkspacePage: React.FC = () => {
   const { exerciseId } = useParams<{ exerciseId: string }>();
-  const userId = 'user_01'; // Default dev user as specified in brainstorm_analysis
+  const currentUser = useAuthStore((s) => s.currentUser);
+  const userId = currentUser?.id || 'guest';
 
   const { data: exercise, isLoading, error } = useQuery<ExerciseDefinition>({
     queryKey: ['exercise', exerciseId, userId],
@@ -75,6 +77,9 @@ interface WorkspaceToastState {
 }
 
 const WorkspacePageContent: React.FC<WorkspacePageContentProps> = ({ exercise }) => {
+  const currentUser = useAuthStore((s) => s.currentUser);
+  const userId = currentUser?.id || 'guest';
+
   const { files, activeTab, isDirty, setActiveTab, setFile, replaceFiles, reset } =
     useWorkspaceEditor(exercise.starterFiles);
 
@@ -182,7 +187,7 @@ const WorkspacePageContent: React.FC<WorkspacePageContentProps> = ({ exercise })
     try {
       const result = await editorService.submitWorkspace(
         exercise.id,
-        'user_01',
+        userId,
         files,
         exercise.requirements
       );

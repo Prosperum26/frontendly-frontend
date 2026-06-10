@@ -9,13 +9,13 @@ import type {
 export const editorService = {
   async getExercise(exerciseId: string, userId: string): Promise<ExerciseDefinition> {
     const response = await api.get<any>(`/exercises/${exerciseId}/${userId}`);
-    const data = response.data;
+    const data = response.data.data;
 
     return {
       id: data.id,
       practiceLabel: data.module,
       title: data.title,
-      level: data.id.includes('span') || data.id.includes('wrap') || data.id.includes('classlist') || data.id.includes('3') ? 'hard' : (data.id.includes('2') || data.id.includes('med') || data.id.includes('event') ? 'medium' : 'easy'),
+      level: data.level || 'easy',
       description: data.description,
       objective: data.title,
       estimatedTime: '20 min',
@@ -41,13 +41,11 @@ export const editorService = {
     requirements: ExerciseRequirement[]
   ): Promise<EvaluationResult> {
     const response = await api.post<any>(`/exercises/${exerciseId}/${userId}/submit`, {
-      editorContent: {
-        html: files.html,
-        css: files.css,
-        js: files.js,
-      },
+      html: files.html,
+      css: files.css,
+      js: files.js,
     });
-    const data = response.data; // SubmitResponse
+    const data = response.data.data; // SubmitResponse
 
     // Check lint errors
     const lint = data.lint_errors;
@@ -70,8 +68,9 @@ export const editorService = {
       });
       output += '\nVui lòng sửa tất cả lỗi cú pháp trước khi tiếp tục.';
     } else {
-      const passedCount = (data.evaluationResults || []).filter((r: any) => r.passed).length;
-      const totalCount = (data.evaluationResults || []).length;
+      const evaluationResults = data.requirementResult || data.evaluationResults || [];
+      const passedCount = evaluationResults.filter((r: any) => r.passed).length;
+      const totalCount = evaluationResults.length;
       output = `Kết quả chấm điểm: Đạt ${passedCount}/${totalCount} yêu cầu (${data.match_percentage}%).\n`;
       if (data.isCompleted) {
         output += '🎉 Chúc mừng! Bạn đã hoàn thành xuất sắc tất cả yêu cầu bài tập!';
@@ -81,8 +80,9 @@ export const editorService = {
     }
 
     // Map evaluationResults to criteria
+    const evaluationResults = data.requirementResult || data.evaluationResults || [];
     const criteria = requirements.map((req) => {
-      const res = (data.evaluationResults || []).find((r: any) => r.requirementId === req.id);
+      const res = evaluationResults.find((r: any) => r.requirementId === req.id);
       return {
         id: req.id,
         label: req.label,

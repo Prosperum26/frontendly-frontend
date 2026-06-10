@@ -36,7 +36,7 @@ export const MOCK_EXERCISES: Record<string, ExerciseDefinition> = {
   },
 };
 
-export const DEFAULT_EXERCISE_ID = 'demo-grid-01';
+export const DEFAULT_EXERCISE_ID = 'exercise_s1';
 
 export function getMockExercise(exerciseId: string | undefined): ExerciseDefinition {
   if (exerciseId && MOCK_EXERCISES[exerciseId]) {

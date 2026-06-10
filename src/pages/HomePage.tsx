@@ -92,7 +92,7 @@ export const HomePage: React.FC = () => {
 
                 <div className="flex flex-col sm:flex-row gap-4 pt-2">
 
-                  <Link to="/learn" className="px-8 py-4 bg-blue-600 text-white rounded-lg text-center text-sm font-bold hover:bg-blue-700 transition-colors shadow-lg shadow-blue-600/30">
+                  <Link to="/learning-path" className="px-8 py-4 bg-blue-600 text-white rounded-lg text-center text-sm font-bold hover:bg-blue-700 transition-colors shadow-lg shadow-blue-600/30">
                     Start Learning!
                   </Link>
 

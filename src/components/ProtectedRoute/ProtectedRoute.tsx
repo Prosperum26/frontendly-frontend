@@ -39,8 +39,6 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, requir
     // Simple progression check - can be enhanced based on actual stage logic
     // For now, we'll allow access if user has any stage progress
     // You can implement more complex logic here based on your stage system
-    const currentStage = currentUser.stage_progress;
-    console.log(`Current stage: ${currentStage}, Required stage: ${requiredStage}`);
   }
 
   return <>{children}</>;

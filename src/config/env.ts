@@ -7,8 +7,6 @@ export const ENV = {
 } as const;
 
 // Log environment configuration for debugging
-if (ENV.NODE_ENV === 'production') {
-  console.log('Production Environment:');
-  console.log('API_URL:', ENV.API_URL);
-  console.log('SOCKET_URL:', ENV.SOCKET_URL);
+if (ENV.NODE_ENV === 'development') {
+  // Only log in development if needed
 }

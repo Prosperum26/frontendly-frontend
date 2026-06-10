@@ -2,24 +2,29 @@ import api from '../../../services/api';
 import type { UserProfile, Badge, ActivityLog } from '../types/profile.types';
 
 export const profileService = {
-  async fetchProfile(userId: string): Promise<UserProfile> {
-    const response = await api.get<UserProfile>(`/profile/${userId}`);
-    return response.data;
+  async fetchProfile(): Promise<UserProfile> {
+    const response = await api.get<{ success: boolean; data: UserProfile }>('/users/me');
+    return response.data.data;
   },
 
   async updateProfile(data: Partial<UserProfile>): Promise<UserProfile> {
-    const response = await api.put<UserProfile>('/profile', data);
-    return response.data;
+    const response = await api.patch<{ success: boolean; data: UserProfile }>('/users/me', data);
+    return response.data.data;
   },
 
-  async fetchBadges(userId: string): Promise<Badge[]> {
-    const response = await api.get<Badge[]>(`/profile/${userId}/badges`);
-    return response.data;
+  async fetchBadges(): Promise<Badge[]> {
+    const response = await api.get<{ success: boolean; data: Badge[] }>('/users/badges');
+    return response.data.data;
   },
 
-  async fetchActivity(userId: string): Promise<ActivityLog[]> {
-    const response = await api.get<ActivityLog[]>(`/profile/${userId}/activity`);
-    return response.data;
+  async fetchActivity(): Promise<ActivityLog[]> {
+    const response = await api.get<{ success: boolean; data: ActivityLog[] }>('/users/activity');
+    return response.data.data;
+  },
+
+  async fetchActivityStats(): Promise<Array<{ date: string; count: number }>> {
+    const response = await api.get<{ success: boolean; data: Array<{ date: string; count: number }> }>('/users/activity/stats');
+    return response.data.data;
   },
 };
 
