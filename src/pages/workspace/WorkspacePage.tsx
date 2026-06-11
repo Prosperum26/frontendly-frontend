@@ -7,11 +7,13 @@ import { WorkspaceFooter } from './WorkspaceFooter';
 import { Toast, type ToastType } from '../../components/Toast';
 import { Toolbar } from '../../features/editor/components/Toolbar';
 import { WorkspacePanels } from '../../features/editor/components/WorkspacePanels';
+import { EvaluationResultModal } from '../../features/editor/components/EvaluationResultModal';
 import type {
   EditorTab,
   EvaluationCriterion,
   ExerciseDefinition,
   WorkspaceFiles,
+  EvaluationResult as EditorEvaluationResult,
 } from '../../features/editor/types/editor.types';
 import { useDebounce } from '../../hooks/useDebounce';
 import { useDraftPersistence } from '../../features/editor/hooks/useDraftPersistence';
@@ -89,6 +91,9 @@ const WorkspacePageContent: React.FC<WorkspacePageContentProps> = ({ exercise })
   const [isConsoleOpen, setIsConsoleOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [criteria, setCriteria] = useState<EvaluationCriterion[] | undefined>();
+  const [evaluationResult, setEvaluationResult] = useState<EditorEvaluationResult | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isCompleted, setIsCompleted] = useState(false);
   const [toast, setToast] = useState<WorkspaceToastState | null>(null);
   const [editVersion, setEditVersion] = useState(0);
   const [previewRefreshKey, setPreviewRefreshKey] = useState(0);
@@ -193,7 +198,12 @@ const WorkspacePageContent: React.FC<WorkspacePageContentProps> = ({ exercise })
       );
 
       setCriteria(result.criteria);
+      setEvaluationResult(result);
       setConsoleMessage(result.output);
+      setIsModalOpen(true);
+      if (result.passed) {
+        setIsCompleted(true);
+      }
       showToast(
         result.passed
           ? {
@@ -310,7 +320,18 @@ const WorkspacePageContent: React.FC<WorkspacePageContentProps> = ({ exercise })
           />
         </section>
       </div>
-      <WorkspaceFooter />
+      <WorkspaceFooter
+        navigation={exercise.navigation}
+        isCompleted={isCompleted}
+      />
+      {evaluationResult && (
+        <EvaluationResultModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          evaluationResult={evaluationResult}
+          exercise={exercise}
+        />
+      )}
     </>
   );
 };

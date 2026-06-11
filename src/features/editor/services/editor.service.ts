@@ -7,6 +7,8 @@ import type {
   BackendExerciseResponse,
   BackendSubmitResponse,
   BackendRequirementResult,
+  LintEvaluationResult,
+  VisualEvaluationResult,
 } from '../types/editor.types';
 
 export const editorService = {
@@ -23,12 +25,21 @@ export const editorService = {
       objective: data.title,
       estimatedTime: '20 min',
       topicTags: [data.module.split(':')[0]],
-      targetImageUrl: data.target_design_url || '',
+      targetImageUrl: data.target_designs && data.target_designs.length > 0 ? data.target_designs[0].url : '',
+      targetDesigns: data.target_designs,
+      evaluationConfig: data.evaluation_config,
       requirements: (data.requirements || []).map((req) => ({
         id: req.id,
         label: req.text,
         done: false,
       })),
+      navigation: data.navigation
+        ? {
+            prev: data.navigation.prev,
+            next: data.navigation.next,
+            currentMilestoneId: data.navigation.currentMilestoneId
+          }
+        : undefined,
       starterFiles: {
         html: data.html_content || '',
         css: data.css_content || '',
@@ -95,11 +106,26 @@ export const editorService = {
       };
     });
 
+    // Map lint errors
+    const lintResult: LintEvaluationResult | undefined = lint
+      ? {
+          html: lint.html_err || [],
+          css: lint.css_err || [],
+          js: lint.js_err || [],
+        }
+      : undefined;
+
+    // Map visual results
+    const visualResult: VisualEvaluationResult[] | undefined = data.visual_results;
+
     return {
       passed: data.isCompleted,
       output,
       executionTime: 180,
       criteria,
+      lint: lintResult,
+      visual: visualResult,
+      matchPercentage: data.match_percentage,
     };
   },
 
