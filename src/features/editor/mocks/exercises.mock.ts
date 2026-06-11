@@ -34,6 +34,24 @@ export const MOCK_EXERCISES: Record<string, ExerciseDefinition> = {
       js: '',
     },
   },
+  'exercise_s1': {
+    id: 'exercise_s1',
+    practiceLabel: 'Module 1: Lesson 1',
+    title: 'Create your first heading',
+    level: 'easy',
+    objective: 'Create an HTML page with an h1 heading',
+    estimatedTime: '5 min',
+    topicTags: ['HTML'],
+    description: 'Add a heading tag to the page.',
+    requirements: [
+      { id: 'req-1', label: 'Page must have an h1 element', done: false },
+    ],
+    starterFiles: {
+      html: `<h1>Hello World!</h1>`,
+      css: '',
+      js: '',
+    },
+  },
 };
 
 export const DEFAULT_EXERCISE_ID = 'exercise_s1';
