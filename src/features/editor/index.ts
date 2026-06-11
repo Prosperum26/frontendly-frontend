@@ -9,7 +9,6 @@ export { useWorkspaceEditor } from './hooks/useWorkspaceEditor';
 export { useCodeSync } from './hooks/useCodeSync';
 export { useEvaluation } from './hooks/useEvaluation';
 export { editorService } from './services/editor.service';
-export { getMockExercise, MOCK_EXERCISES, DEFAULT_EXERCISE_ID } from './mocks/exercises.mock';
 export { buildPreviewDocument } from './utils/previewDocument';
 export type {
   EditorState,

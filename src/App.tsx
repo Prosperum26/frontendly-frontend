@@ -19,7 +19,6 @@ import ProfilePage from './pages/ProfilePage';
 import LeaderboardPage from './pages/LeaderboardPage';
 import LoginPage from './pages/LoginPage';
 import NotFoundPage from './pages/NotFoundPage';
-import { DEFAULT_EXERCISE_ID } from './features/editor';
 import BannedPage from './pages/BannedPage';
 import { ProtectedRoute } from './components/ProtectedRoute/ProtectedRoute';
 import { useSessionVerification } from './features/auth/hooks/useSessionVerification';
@@ -100,7 +99,7 @@ function App() {
               />
               <Route
                 path="/workspace"
-                element={<Navigate to={workspacePath(DEFAULT_EXERCISE_ID)} replace />}
+                element={<Navigate to={workspacePath('exercise_s1')} replace />}
               />
               <Route
                 path={ROUTES.CHALLENGE_BATTLE}
