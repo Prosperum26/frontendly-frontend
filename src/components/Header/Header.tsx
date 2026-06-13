@@ -69,7 +69,7 @@ export const Header: React.FC = () => {
             <NavLink to={ROUTES.LOGIN}>
               <Button variant="outline">Login</Button>
             </NavLink>
-            <NavLink to={ROUTES.LEARNING_PATH}>
+            <NavLink to={ROUTES.REGISTER}>
               <Button variant="primary">Sign Up</Button>
             </NavLink>
           </>

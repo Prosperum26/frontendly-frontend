@@ -6,9 +6,16 @@ import { ENV } from '../../../config/env';
 export const GoogleButton: React.FC = () => {
   const { handleGoogleLogin } = useGoogleLogin();
 
-  if (!ENV.GOOGLE_CLIENT_ID) {
-    console.warn('Google Client ID is not configured');
-    return null;
+  const isConfigured = ENV.GOOGLE_CLIENT_ID && 
+                      ENV.GOOGLE_CLIENT_ID !== 'your-google-client-id' && 
+                      ENV.GOOGLE_CLIENT_ID !== 'dummy_google_client_id';
+
+  if (!isConfigured) {
+    return (
+      <div className="text-xs text-slate-400 italic border border-dashed border-slate-200 p-3 rounded-lg">
+        Google Login chưa được cấu hình Client ID.
+      </div>
+    );
   }
 
   return (

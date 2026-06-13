@@ -1,57 +1,130 @@
-import React from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
+import { Link } from 'react-router-dom';
 import { useAuthStore } from '../store/auth.store';
-import { Edit, Share2, Flame, Star, Target, Trophy, Check, Zap, BookOpen, Shield } from 'lucide-react';
-
-
+import { profileService } from '../features/profile/services/profile.service';
+import type { UserProfile, Badge, ActivityLog } from '../features/profile/types/profile.types';
+import NetworkErrorCard from '../components/NetworkErrorCard';
+import { Edit, Share2, Flame, Star, Target, Trophy, Check, Zap, BookOpen } from 'lucide-react';
 
 export const ProfilePage: React.FC = () => {
   const { currentUser } = useAuthStore();
+  const [profileData, setProfileData] = useState<UserProfile | null>(null);
+  const [badges, setBadges] = useState<Badge[]>([]);
+  const [activities, setActivities] = useState<ActivityLog[]>([]);
+  const [activityStats, setActivityStats] = useState<Array<{ date: string; count: number }>>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isOffline, setIsOffline] = useState(!navigator.onLine);
 
-  // Tạo data giả lập cho biểu đồ Heatmap (Coding Activity)
-  const heatmapCells = Array.from({ length: 84 }).map((_, i) => {
-    // Thuật toán tạo pattern màu ngẫu nhiên nhưng cố định
-    const level = i % 7 === 0 ? 4 : i % 5 === 0 ? 3 : i % 3 === 0 ? 2 : i % 2 === 0 ? 1 : 0;
-    const colors = ['bg-slate-100', 'bg-blue-200', 'bg-blue-400', 'bg-blue-500', 'bg-blue-700'];
-    return <div key={i} className={`w-3 h-3 rounded-sm ${colors[level]}`}></div>;
-  });
+  useEffect(() => {
+    const handleOnline = () => setIsOffline(false);
+    const handleOffline = () => setIsOffline(true);
 
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
 
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
+
+  useEffect(() => {
+    const loadProfileData = async () => {
+      if (isOffline) return;
+      
+      setIsLoading(true);
+      try {
+        const [profile, badgeList, activityList, statsList] = await Promise.all([
+          profileService.fetchProfile(),
+          profileService.fetchBadges(),
+          profileService.fetchActivity(),
+          profileService.fetchActivityStats(),
+        ]);
+        setProfileData(profile);
+        setBadges(Array.isArray(badgeList) ? badgeList : []);
+        setActivities(Array.isArray(activityList) ? activityList : []);
+        setActivityStats(Array.isArray(statsList) ? statsList : []);
+      } catch (error) {
+        console.error('Failed to fetch profile data:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadProfileData();
+  }, [isOffline]);
+
+  // Create real data for heatmap (Coding Activity)
+  const heatmapCells = useMemo(() => {
+    // Last 84 days (12 weeks)
+    const cells = [];
+    const today = new Date();
+    
+    // Create a map for quick lookup
+    const statsMap = new Map(activityStats.map(s => [s.date, s.count]));
+
+    for (let i = 83; i >= 0; i--) {
+      const date = new Date(today);
+      date.setDate(today.getDate() - i);
+      const dateStr = date.toISOString().split('T')[0];
+      const count = statsMap.get(dateStr) || 0;
+      
+      const level = count === 0 ? 0 : count <= 2 ? 1 : count <= 5 ? 2 : count <= 10 ? 3 : 4;
+      const colors = ['bg-slate-100', 'bg-blue-200', 'bg-blue-400', 'bg-blue-500', 'bg-blue-700'];
+      
+      cells.push(
+        <div 
+          key={dateStr} 
+          className={`w-3 h-3 rounded-sm ${colors[level]} transition-colors`}
+          title={`${dateStr}: ${count} activities`}
+        ></div>
+      );
+    }
+    return cells;
+  }, [activityStats]);
+
+  if (isOffline) {
+    return <NetworkErrorCard onRetry={() => window.location.reload()} onBack={() => window.location.href = '/'} />;
+  }
+
+  if (isLoading) {
+    return (
+      <div className="bg-slate-50 min-h-screen py-8 font-sans text-slate-900 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-slate-600">Loading profile...</p>
+        </div>
+      </div>
+    );
+  }
+
+  const userData = profileData || currentUser;
 
   return (
-
     <div className="bg-slate-50 min-h-screen py-8 font-sans text-slate-900">
-
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
-
-
-
         {/* 1. Header Card (User Info) */}
-
         <div className="bg-white rounded-2xl p-8 border border-slate-200 shadow-sm">
-
           <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
-
             <div className="relative">
               <img
-                src={currentUser?.avatar || 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80'}
+                src={userData?.avatar || userData?.avatarUrl || 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80'}
                 alt="Avatar"
                 className="w-24 h-24 rounded-full object-cover border-4 border-white shadow-sm"
               />
               <span className="absolute bottom-0 right-0 bg-blue-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full border-2 border-white">
-                Lv. {currentUser?.level || 1}
+                Lv. {userData?.level || 1}
               </span>
             </div>
 
             <div className="flex-grow">
               <div className="flex items-center gap-2">
-                <h1 className="text-2xl font-bold">{currentUser?.username || 'User'}</h1>
+                <h1 className="text-2xl font-bold">{userData?.username || userData?.name || 'User'}</h1>
                 <Check className="w-4 h-4 text-blue-600" />
               </div>
-              <p className="text-sm font-semibold text-blue-600 mt-1">Frontend Master</p>
-              <p className="text-sm text-slate-500 mt-1 italic">"Code. Learn. Build. Repeat."</p>
+              <p className="text-sm font-semibold text-blue-600 mt-1">{userData?.role === 'user' ? 'Frontend Student' : 'Frontend Master'}</p>
+              <p className="text-sm text-slate-500 mt-1 italic">{userData?.email}</p>
             </div>
-
-
 
             <div className="flex gap-3 w-full md:w-auto mt-4 md:mt-0">
               <button className="flex-1 md:flex-none flex items-center justify-center gap-2 bg-blue-600 text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-blue-700 transition-colors">
@@ -63,37 +136,27 @@ export const ProfilePage: React.FC = () => {
                 Share Profile
               </button>
             </div>
-
           </div>
-
-
 
           <div className="mt-8">
-
             <div className="flex justify-between text-xs font-bold text-slate-500 mb-2">
               <span>XP Progress</span>
-              <span className="text-slate-900">{currentUser?.xp || 0} <span className="text-slate-400">/ 15,000 XP</span></span>
+              <span className="text-slate-900">{userData?.xp || 0} <span className="text-slate-400">/ {(userData?.level || 1) * 1000} XP</span></span>
             </div>
             <div className="h-2.5 w-full bg-slate-100 rounded-full overflow-hidden">
-              <div className="h-full bg-blue-600 rounded-full" style={{ width: `${((currentUser?.xp || 0) / 15000) * 100}%` }}></div>
+              <div className="h-full bg-blue-600 rounded-full" style={{ width: `${Math.min(((userData?.xp || 0) / ((userData?.level || 1) * 1000)) * 100, 100)}%` }}></div>
             </div>
-
           </div>
-
         </div>
 
-
-
         {/* 2. Stats Row */}
-
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-
           <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
             <div className="w-12 h-12 rounded-xl bg-orange-50 flex items-center justify-center text-xl">
               <Flame className="w-6 h-6 text-orange-500" />
             </div>
             <div>
-              <h3 className="text-2xl font-black">12</h3>
+              <h3 className="text-2xl font-black">{userData?.stats?.streakDays || 0}</h3>
               <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider mt-0.5">Day Streak</p>
             </div>
           </div>
@@ -103,7 +166,7 @@ export const ProfilePage: React.FC = () => {
               <Star className="w-6 h-6 text-yellow-500" />
             </div>
             <div>
-              <h3 className="text-2xl font-black">{currentUser?.xp || 0}</h3>
+              <h3 className="text-2xl font-black">{userData?.xp || 0}</h3>
               <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider mt-0.5">Total XP</p>
             </div>
           </div>
@@ -113,355 +176,145 @@ export const ProfilePage: React.FC = () => {
               <Target className="w-6 h-6 text-green-500" />
             </div>
             <div>
-              <h3 className="text-2xl font-black">92%</h3>
-              <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider mt-0.5">Accuracy</p>
+              <h3 className="text-2xl font-black">{userData?.stats?.coursesCompleted || 0}</h3>
+              <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider mt-0.5">Courses</p>
             </div>
           </div>
 
           <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
-            <div className="w-12 h-12 rounded-xl bg-yellow-50 flex items-center justify-center text-xl">
-              <Trophy className="w-6 h-6 text-yellow-500" />
+            <div className="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center text-xl">
+              <Trophy className="w-6 h-6 text-blue-500" />
             </div>
             <div>
-              <h3 className="text-2xl font-black">14</h3>
-              <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider mt-0.5">Challenges</p>
+              <h3 className="text-2xl font-black">{badges.length}</h3>
+              <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider mt-0.5">Badges</p>
             </div>
           </div>
-
         </div>
-
-
 
         {/* 3. Middle Grid: Radar, Badges, Heatmap */}
-
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-
-
-
-          {/* Radar Chart */}
-
+          {/* Radar Chart Placeholder */}
           <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-
             <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider mb-6">Proficiency Radar</h3>
+            <div className="relative w-full aspect-square flex flex-col items-center justify-center">
+              {userData?.skills && userData.skills.length >= 3 ? (
+                <svg viewBox="0 0 100 100" className="w-full h-full max-w-[200px] text-slate-400">
+                  <polygon points="50,10 90,80 10,80" fill="none" stroke="currentColor" strokeWidth="0.5" strokeDasharray="2,2" />
+                  <polygon points="50,30 78,70 22,70" fill="none" stroke="currentColor" strokeWidth="0.5" strokeDasharray="2,2" />
+                  <polygon points="50,50 65,60 35,60" fill="none" stroke="currentColor" strokeWidth="0.5" strokeDasharray="2,2" />
+                  <line x1="50" y1="50" x2="50" y2="10" stroke="currentColor" strokeWidth="0.5" />
+                  <line x1="50" y1="50" x2="90" y2="80" stroke="currentColor" strokeWidth="0.5" />
+                  <line x1="50" y1="50" x2="10" y2="80" stroke="currentColor" strokeWidth="0.5" />
+                  
+                  {/* Dynamic Polygon based on skills */}
+                  {(() => {
+                    const htmlSkill = userData.skills?.find((s: { name: string; level: number }) => s.name.toLowerCase() === 'html')?.level || 1;
+                    const cssSkill = userData.skills?.find((s: { name: string; level: number }) => s.name.toLowerCase() === 'css')?.level || 1;
+                    const jsSkill = userData.skills?.find((s: { name: string; level: number }) => s.name.toLowerCase() === 'js')?.level || 1;
+                    
+                    // Normalize level (1-10) to radius (0-40)
+                    const r1 = (htmlSkill / 10) * 40;
+                    const r2 = (cssSkill / 10) * 40;
+                    const r3 = (jsSkill / 10) * 40;
+                    
+                    const p1 = `50,${50 - r1}`;
+                    const p2 = `${50 + r2 * Math.cos(Math.PI / 6)},${50 + r2 * Math.sin(Math.PI / 6)}`;
+                    const p3 = `${50 - r3 * Math.cos(Math.PI / 6)},${50 + r3 * Math.sin(Math.PI / 6)}`;
+                    
+                    return <polygon points={`${p1} ${p2} ${p3}`} fill="rgba(37, 99, 235, 0.1)" stroke="#2563eb" strokeWidth="2" strokeLinejoin="round" />;
+                  })()}
 
-            <div className="relative w-full aspect-square flex items-center justify-center">
-
-              <svg viewBox="0 0 100 100" className="w-full h-full max-w-[200px] text-slate-400">
-
-                {/* Lưới Radar */}
-
-                <polygon points="50,10 90,80 10,80" fill="none" stroke="currentColor" strokeWidth="0.5" strokeDasharray="2,2" />
-
-                <polygon points="50,30 78,70 22,70" fill="none" stroke="currentColor" strokeWidth="0.5" strokeDasharray="2,2" />
-
-                <polygon points="50,50 65,60 35,60" fill="none" stroke="currentColor" strokeWidth="0.5" strokeDasharray="2,2" />
-
-                {/* Đường nối */}
-
-                <line x1="50" y1="50" x2="50" y2="10" stroke="currentColor" strokeWidth="0.5" />
-
-                <line x1="50" y1="50" x2="90" y2="80" stroke="currentColor" strokeWidth="0.5" />
-
-                <line x1="50" y1="50" x2="10" y2="80" stroke="currentColor" strokeWidth="0.5" />
-
-                {/* Data Polygon */}
-
-                <polygon points="50,25 80,75 30,65" fill="rgba(37, 99, 235, 0.1)" stroke="#2563eb" strokeWidth="2" strokeLinejoin="round" />
-
-
-
-                <text x="50" y="5" fontSize="6" textAnchor="middle" fill="#64748b" fontWeight="bold">HTML</text>
-
-                <text x="95" y="85" fontSize="6" textAnchor="middle" fill="#64748b" fontWeight="bold">CSS</text>
-
-                <text x="5" y="85" fontSize="6" textAnchor="middle" fill="#64748b" fontWeight="bold">JS</text>
-
-              </svg>
-
+                  <text x="50" y="5" fontSize="6" textAnchor="middle" fill="#64748b" fontWeight="bold">HTML</text>
+                  <text x="95" y="85" fontSize="6" textAnchor="middle" fill="#64748b" fontWeight="bold">CSS</text>
+                  <text x="5" y="85" fontSize="6" textAnchor="middle" fill="#64748b" fontWeight="bold">JS</text>
+                </svg>
+              ) : (
+                <div className="text-center py-8">
+                  <div className="w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <Zap className="w-6 h-6 text-slate-300" />
+                  </div>
+                  <p className="text-[10px] text-slate-400 font-medium px-4">Complete more lessons to see your proficiency radar</p>
+                </div>
+              )}
             </div>
-
           </div>
-
-
 
           {/* Badges Collection */}
-
           <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-
             <div className="flex justify-between items-center mb-6">
-
               <h3 className="text-sm font-bold text-slate-900">Badge Collection</h3>
-
               <a href="#" className="text-xs font-semibold text-blue-600 hover:underline">View all</a>
-
             </div>
-
-            <div className="grid grid-cols-3 gap-y-6 gap-x-2">
-
-              {[
-
-                { title: 'Flexbox Fanatic', icon: 'FX', active: true },
-
-                { title: 'Grid God', icon: 'GD', active: true },
-
-                { title: 'Async Ace', icon: 'JS', active: true },
-
-                { title: 'A11y Ally', icon: 'A1', active: false },
-
-                { title: 'Clean Coder', icon: 'CC', active: false },
-
-                { title: 'First Flight', icon: '✈️', active: false },
-
-              ].map((badge, idx) => (
-
-                <div key={idx} className="flex flex-col items-center text-center">
-
-                  <div
-
-                    className={`w-14 h-14 flex items-center justify-center font-black text-lg mb-2 transition-all ${badge.active ? 'bg-blue-50 text-blue-600' : 'bg-slate-50 text-slate-300 grayscale'}`}
-
-                    style={{ clipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)' }}
-
-                  >
-
-                    {badge.icon}
-
+            <div className="flex flex-col items-center justify-center min-h-[180px]">
+              {badges.length === 0 ? (
+                <div className="text-center">
+                  <div className="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                    <Trophy className="w-8 h-8 text-slate-300" />
                   </div>
-
-                  <span className={`text-[10px] font-semibold ${badge.active ? 'text-slate-600' : 'text-slate-400'}`}>{badge.title}</span>
-
+                  <p className="text-xs text-slate-500 font-medium px-6 text-center">No badges earned yet. Complete challenges to unlock them!</p>
                 </div>
-
-              ))}
-
+              ) : (
+                <div className="grid grid-cols-3 gap-y-6 gap-x-2 w-full">
+                  {badges.slice(0, 6).map((badge, idx) => (
+                    <div key={idx} className="flex flex-col items-center text-center">
+                      <div className="w-14 h-14 flex items-center justify-center mb-2 transition-all">
+                        <img src={badge.icon} alt={badge.name} className="w-full h-full object-contain" />
+                      </div>
+                      <span className="text-[10px] font-semibold text-slate-600 line-clamp-1">{badge.name}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
-
           </div>
 
-
-
-          {/* Coding Activity Heatmap */}
-
+          {/* Activity Heatmap */}
           <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-
             <div className="flex justify-between items-center mb-6">
-
               <h3 className="text-sm font-bold text-slate-900">Coding Activity</h3>
-
               <span className="text-xs text-slate-400 font-medium">Last 3 months</span>
-
             </div>
-
-            <div className="flex items-start gap-2 overflow-x-auto pb-2">
-
-              <div className="flex flex-col gap-[7px] text-[9px] text-slate-400 font-medium pt-1">
-
-                <span>Mon</span>
-
-                <span>Wed</span>
-
-                <span>Fri</span>
-
-                <span>Sun</span>
-
-              </div>
-
-              <div className="grid grid-rows-7 grid-flow-col gap-1.5">
-
-                {heatmapCells}
-
-              </div>
-
+            <div className="flex flex-wrap gap-1.5">
+              {heatmapCells}
             </div>
-
-            <div className="mt-4 flex justify-end items-center gap-1.5 text-xs text-slate-400">
-
-              <span>Less</span>
-
-              <div className="w-3 h-3 rounded-sm bg-slate-100"></div>
-
-              <div className="w-3 h-3 rounded-sm bg-blue-200"></div>
-
-              <div className="w-3 h-3 rounded-sm bg-blue-400"></div>
-
-              <div className="w-3 h-3 rounded-sm bg-blue-500"></div>
-
-              <div className="w-3 h-3 rounded-sm bg-blue-700"></div>
-
-              <span>More</span>
-
-            </div>
-
           </div>
-
         </div>
 
-
-
-        {/* 4. Bottom Grid: Courses & Recent Activity */}
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-
-
-
-          {/* Recent Courses */}
-
-          <div className="lg:col-span-2 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-
-            <div className="flex justify-between items-center mb-6">
-
-              <h3 className="text-sm font-bold text-slate-900">Recent Courses</h3>
-
-              <a href="#" className="text-xs font-semibold text-blue-600 hover:underline">View all</a>
-
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-
-              {/* Course 1 */}
-
-              <div className="border border-slate-100 p-5 rounded-xl shadow-sm">
-
-                <div className="text-blue-600 font-black text-xl mb-3">CSS</div>
-
-                <h4 className="font-bold text-sm text-slate-900">Advanced CSS</h4>
-
-                <p className="text-xs text-slate-500 mt-1 mb-4">12 / 16 lessons</p>
-
-                <div className="h-1.5 w-full bg-slate-100 rounded-full">
-
-                  <div className="h-full bg-blue-600 rounded-full" style={{ width: '75%' }}></div>
-
-                </div>
-
-              </div>
-
-              {/* Course 2 */}
-
-              <div className="border border-slate-100 p-5 rounded-xl shadow-sm">
-
-                <div className="text-yellow-500 font-black text-xl mb-3">JS</div>
-
-                <h4 className="font-bold text-sm text-slate-900">JavaScript Basics</h4>
-
-                <p className="text-xs text-slate-500 mt-1 mb-4">9 / 15 lessons</p>
-
-                <div className="h-1.5 w-full bg-slate-100 rounded-full">
-
-                  <div className="h-full bg-yellow-500 rounded-full" style={{ width: '60%' }}></div>
-
-                </div>
-
-              </div>
-
-              {/* Course 3 */}
-
-              <div className="border border-slate-100 p-5 rounded-xl shadow-sm">
-
-                <div className="text-teal-500 font-black text-xl mb-3">RE</div>
-
-                <h4 className="font-bold text-sm text-slate-900">React Essentials</h4>
-
-                <p className="text-xs text-slate-500 mt-1 mb-4">6 / 20 lessons</p>
-
-                <div className="h-1.5 w-full bg-slate-100 rounded-full">
-
-                  <div className="h-full bg-teal-500 rounded-full" style={{ width: '30%' }}></div>
-
-                </div>
-
-              </div>
-
-            </div>
-
+        {/* 4. Recent Activity Feed */}
+        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm">
+          <div className="p-6 border-b border-slate-100">
+            <h3 className="text-lg font-bold flex items-center gap-2">
+              <Star className="w-5 h-5 text-blue-600" />
+              Recent Achievements
+            </h3>
           </div>
-
-
-
-          {/* Recent Activity */}
-
-          <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-
-            <div className="flex justify-between items-center mb-6">
-
-              <h3 className="text-sm font-bold text-slate-900">Recent Activity</h3>
-
-              <a href="#" className="text-xs font-semibold text-blue-600 hover:underline">View all</a>
-
-            </div>
-
-            <div className="space-y-6">
-
-              <div className="flex gap-4 items-start">
-                <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center flex-shrink-0 text-blue-600">
-                  <Check className="w-3.5 h-3.5" strokeWidth={3} />
+          <div className="divide-y divide-slate-50">
+            {activities.length === 0 ? (
+              <p className="p-6 text-center text-slate-400 text-sm italic">No recent activities</p>
+            ) : (
+              activities.map((activity) => (
+                <div key={activity.id} className="p-5 flex items-start gap-4 hover:bg-slate-50/50 transition-colors">
+                  <div className={`mt-1 p-2 rounded-lg ${
+                    activity.type === 'lesson_completed' ? 'bg-green-50 text-green-600' :
+                    activity.type === 'challenge_won' ? 'bg-blue-50 text-blue-600' :
+                    'bg-orange-50 text-orange-600'
+                  }`}>
+                    {activity.type === 'lesson_completed' ? <BookOpen className="w-4 h-4" /> :
+                     activity.type === 'challenge_won' ? <Trophy className="w-4 h-4" /> :
+                     <Zap className="w-4 h-4" />}
+                  </div>
+                  <div className="flex-grow">
+                    <p className="text-sm text-slate-900 font-bold leading-tight">{activity.description}</p>
+                    <p className="text-xs text-slate-400 mt-1 font-medium">{new Date(activity.timestamp).toLocaleString()}</p>
+                  </div>
+                  <Link to="#" className="text-xs text-blue-600 font-bold hover:underline shrink-0">View Details</Link>
                 </div>
-
-                <div>
-
-                  <h4 className="text-sm font-bold text-slate-900">Completed Advanced Selectors challenge</h4>
-
-                  <p className="text-xs text-slate-400 mt-0.5">+450 XP • 2 hours ago</p>
-
-                </div>
-
-              </div>
-
-              <div className="flex gap-4 items-start">
-                <div className="w-8 h-8 rounded-full bg-orange-50 flex items-center justify-center flex-shrink-0 text-orange-500">
-                  <Zap className="w-3.5 h-3.5" strokeWidth={2.5} />
-                </div>
-
-                <div>
-
-                  <h4 className="text-sm font-bold text-slate-900">Won CSS Battle against User_992</h4>
-
-                  <p className="text-xs text-slate-400 mt-0.5">+120 XP • 5 hours ago</p>
-
-                </div>
-
-              </div>
-
-              <div className="flex gap-4 items-start">
-                <div className="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center flex-shrink-0 text-green-600">
-                  <BookOpen className="w-3.5 h-3.5" strokeWidth={2.5} />
-                </div>
-
-                <div>
-
-                  <h4 className="text-sm font-bold text-slate-900">Started Lesson BEM Methodology</h4>
-
-                  <p className="text-xs text-slate-400 mt-0.5">In progress • Yesterday</p>
-
-                </div>
-
-              </div>
-
-              <div className="flex gap-4 items-start">
-                <div className="w-8 h-8 rounded-full bg-purple-50 flex items-center justify-center flex-shrink-0 text-purple-600">
-                  <Shield className="w-3.5 h-3.5" strokeWidth={2.5} />
-                </div>
-
-                <div>
-
-                  <h4 className="text-sm font-bold text-slate-900">Unlocked Grid God badge</h4>
-
-                  <p className="text-xs text-slate-400 mt-0.5">Milestone • 2 days ago</p>
-
-                </div>
-
-              </div>
-
-            </div>
-
+              ))
+            )}
           </div>
-
-
-
         </div>
-
       </div>
-
     </div>
 
   );

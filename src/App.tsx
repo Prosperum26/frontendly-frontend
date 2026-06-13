@@ -6,6 +6,12 @@ import AuthLayout from './layouts/AuthLayout';
 import WorkspaceLayout from './layouts/WorkspaceLayout';
 import HomePage from './pages/HomePage';
 import LearningPathPage from './pages/LearningPathPage';
+import {
+  MilestoneDetailPage,
+  TheoryPage,
+  LessonComplete,
+  MilestoneCompletePage,
+} from './features/learning-path';
 import WorkspacePage from './pages/WorkspacePage';
 import ChallengeLobbyPage from './pages/ChallengeLobbyPage';
 import ChallengeBattlePage from './pages/ChallengeBattlePage';
@@ -16,11 +22,10 @@ import NotFoundPage from './pages/NotFoundPage';
 import BannedPage from './pages/BannedPage';
 import { ProtectedRoute } from './components/ProtectedRoute/ProtectedRoute';
 import { useSessionVerification } from './features/auth/hooks/useSessionVerification';
-import { ROUTES } from './constants/routes';
+import { ROUTES, workspacePath } from './constants/routes';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import RegisterPage from './pages/RegisterPage';
-
-
+import ResetPasswordPage from './pages/ResetPasswordPage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -46,16 +51,23 @@ function App() {
             {/* Auth routes */}
             <Route element={<AuthLayout />}>
               <Route path={ROUTES.LOGIN} element={<LoginPage />} />
-              <Route path="/register" element={<RegisterPage />} />
-              {/* ĐÃ CHUYỂN: Đưa trang quên mật khẩu vào đây để dùng chung layout auth sạch sẽ */}
-              <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+              <Route path={ROUTES.REGISTER} element={<RegisterPage />} />
+              <Route path={ROUTES.FORGOT_PASSWORD} element={<ForgotPasswordPage />} />
+              <Route path={ROUTES.RESET_PASSWORD} element={<ResetPasswordPage />} />
             </Route>
 
             {/* Main app routes */}
             <Route element={<MainLayout />}>
               <Route path={ROUTES.HOME} element={<HomePage />} />
               <Route path={ROUTES.LEARNING_PATH} element={<LearningPathPage />} />
-              <Route path={ROUTES.CHALLENGE_LOBBY} element={<ChallengeLobbyPage />} />
+              <Route
+                path={ROUTES.MILESTONE_DETAIL}
+                element={<MilestoneDetailPage />}
+              />
+              <Route
+                path={ROUTES.CHALLENGE_LOBBY}
+                element={<ChallengeLobbyPage />}
+              />
               <Route
                 path={ROUTES.PROFILE}
                 element={
@@ -67,6 +79,14 @@ function App() {
               <Route path={ROUTES.LEADERBOARD} element={<LeaderboardPage />} />
             </Route>
 
+            {/* Standalone learning pages (own full-screen header) */}
+            <Route path={ROUTES.LESSON_THEORY} element={<TheoryPage />} />
+            <Route path={ROUTES.LESSON_COMPLETE} element={<LessonComplete />} />
+            <Route
+              path={ROUTES.MILESTONE_COMPLETE}
+              element={<MilestoneCompletePage />}
+            />
+
             {/* Workspace routes */}
             <Route element={<WorkspaceLayout />}>
               <Route
@@ -76,6 +96,10 @@ function App() {
                     <WorkspacePage />
                   </ProtectedRoute>
                 }
+              />
+              <Route
+                path="/workspace"
+                element={<Navigate to={workspacePath('exercise_s1')} replace />}
               />
               <Route
                 path={ROUTES.CHALLENGE_BATTLE}

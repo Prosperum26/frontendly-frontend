@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 
 import { Link, useNavigate } from 'react-router-dom';
 
+import { authService } from '../features/auth/services/auth.service';
 import NetworkErrorCard from '../components/NetworkErrorCard';
 import { GoogleButton } from '../features/auth/components/GoogleButton';
 
@@ -38,7 +39,7 @@ export const RegisterPage: React.FC = () => {
   const [isVerified, setIsVerified] = useState(false);
 
   const [backendError, setBackendError] = useState(false);
-
+  const [errorMessage, setErrorMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
 
@@ -162,57 +163,25 @@ export const RegisterPage: React.FC = () => {
 
 
   // Hàm gọi API Backend (Tích hợp Try/Catch kiểm tra lỗi lưu thông tin)
-
   const handleVerifyAndSave = async () => {
-
     setIsLoading(true);
-
     setBackendError(false);
-
+    setErrorMessage('');
     try {
-
-      // TODO: Sau này bạn thay thế đoạn này bằng lệnh gọi Axios/Fetch tới Backend của bạn
-
-      // ví dụ: await axios.post('/api/auth/register', { name, email, password });
-
-
-
-      // Giả lập thời gian phản hồi từ server 1.2 giây
-
-      await new Promise((resolve, reject) => {
-
-        setTimeout(() => {
-
-          const isServerOk = true; // Đổi thành 'false' nếu bạn muốn test giao diện Lỗi xác minh
-
-          if (isServerOk) resolve(true);
-
-          else reject(new Error("Lỗi lưu dữ liệu người dùng"));
-
-        }, 1200);
-
-      });
-
-
+      await authService.register({ name, email, password });
 
       // Nếu không có lỗi -> Chuyển sang màn hình thành công
-
       setIsVerified(true);
-
-    } catch (error) {
-
+    } catch (error: unknown) {
       // Nếu gặp lỗi kết nối API/Trùng email -> Chuyển sang màn hình thất bại
-
       console.error(error);
-
+      const err = error as { response?: { data?: { message?: string | string[] } } };
+      const msg = err.response?.data?.message || 'Đã xảy ra lỗi trong quá trình xác thực thông tin kỹ thuật của bạn.';
+      setErrorMessage(Array.isArray(msg) ? msg.join(', ') : msg);
       setBackendError(true);
-
     } finally {
-
       setIsLoading(false);
-
     }
-
   };
 
 
@@ -611,10 +580,8 @@ export const RegisterPage: React.FC = () => {
 
               <h2 className="text-2xl md:text-3xl font-bold !text-slate-900 mb-3">Xác minh thất bại</h2>
 
-              <p className="text-sm text-slate-500 mb-8 leading-relaxed font-medium">
-
-                Vui lòng thử lại. Đã xảy ra lỗi trong quá trình xác thực thông tin kỹ thuật của bạn.
-
+              <p className="text-sm text-red-500 mb-8 leading-relaxed font-medium">
+                {errorMessage || 'Vui lòng thử lại. Đã xảy ra lỗi trong quá trình xác thực thông tin kỹ thuật của bạn.'}
               </p>
 
               <div className="space-y-3">

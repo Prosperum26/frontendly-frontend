@@ -8,11 +8,8 @@ import NetworkErrorCard from '../components/NetworkErrorCard';
 export const HomePage: React.FC = () => {
 
   const navigate = useNavigate();
-
-
-
-  // THEO DÕI TRẠNG THÁI MẠNG (Đã tổng hợp)
-
+  
+  // Network status monitoring (consolidated)
   const [isOffline, setIsOffline] = useState(!navigator.onLine);
 
 
@@ -46,12 +43,8 @@ export const HomePage: React.FC = () => {
   return (
 
     <div className="w-full flex-grow flex flex-col bg-slate-50 font-sans">
-
-
-
-      {/* LƯU Ý: Đã xóa <nav> và <footer> ở đây để tránh lỗi lặp giao diện như đã thống nhất */}
-
-
+      
+      {/* NOTE: Removed <nav> and <footer> here to avoid UI duplication as agreed */}
 
       {/* Main Content */}
 
@@ -82,9 +75,7 @@ export const HomePage: React.FC = () => {
             {/* HERO SECTION */}
 
             <section className="w-full max-w-7xl mx-auto px-8 pt-20 pb-24 grid lg:grid-cols-2 gap-16 items-center">
-
-              {/* Cột trái: Text & Buttons */}
-
+              {/* Left column: Text & Buttons */}
               <div className="flex flex-col space-y-8 z-10">
 
                 <h1 className="text-5xl md:text-6xl lg:text-7xl font-black !text-slate-900 leading-[1.1] tracking-tight">
@@ -96,41 +87,30 @@ export const HomePage: React.FC = () => {
                 </h1>
 
                 <p className="text-slate-600 font-medium leading-relaxed max-w-lg text-base md:text-lg">
-
-                  Với FrontEndly, bạn có thể tự học về lập trình Frontend một cách đơn giản, dễ hiểu. Tính năng code editor và live server cho phép bạn lập trình và chạy dự án với thời gian thật mà không cần cài đặt phức tạp.
-
+                  With FrontEndly, you can learn Frontend programming in a simple, easy-to-understand way. The code editor and live server features allow you to program and run projects in real-time without complex setup.
                 </p>
 
                 <div className="flex flex-col sm:flex-row gap-4 pt-2">
 
-                  <Link to="/learn" className="px-8 py-4 bg-blue-600 text-white rounded-lg text-center text-sm font-bold hover:bg-blue-700 transition-colors shadow-lg shadow-blue-600/30">
-
-                    Học ngay!
-
+                  <Link to="/learning-path" className="px-8 py-4 bg-blue-600 text-white rounded-lg text-center text-sm font-bold hover:bg-blue-700 transition-colors shadow-lg shadow-blue-600/30">
+                    Start Learning!
                   </Link>
 
                   <Link to="/register" className="px-8 py-4 bg-white text-slate-800 border border-slate-300 rounded-lg text-center text-sm font-bold hover:bg-slate-50 transition-colors shadow-sm">
-
-                    Đăng ký
-
+                    Sign Up
                   </Link>
 
                 </div>
 
               </div>
 
-
-
-              {/* Cột phải: Code Editor Mockup & Floating Preview */}
-
+              {/* Right column: Code Editor Mockup & Floating Preview */}
               <div className="relative mt-8 lg:mt-0 w-full max-w-lg mx-auto lg:ml-auto select-none">
 
                 {/* Mockup Editor */}
 
                 <div className="bg-[#1e1e2e] rounded-xl shadow-2xl overflow-hidden border border-slate-800">
-
-                  {/* Header của Editor */}
-
+                  {/* Editor Header */}
                   <div className="bg-[#181825] px-4 py-3 flex items-center justify-between border-b border-slate-700/50">
 
                     <div className="flex space-x-2">
@@ -146,9 +126,7 @@ export const HomePage: React.FC = () => {
                     <div className="text-[10px] text-slate-500 font-mono tracking-wider">index.html</div>
 
                   </div>
-
-                  {/* Nội dung Code */}
-
+                  {/* Code Content */}
                   <div className="p-6 font-mono text-sm leading-relaxed overflow-x-auto text-slate-300">
 
                     <div>
@@ -222,10 +200,7 @@ export const HomePage: React.FC = () => {
 
             </section>
 
-
-
-            {/* FEATURES SECTION (ĐÃ THÊM HIỆU ỨNG HOVER NỔI BẬT) */}
-
+            {/* FEATURES SECTION (Added prominent hover effects) */}
             <section className="w-full bg-white pt-24 pb-32 border-t border-slate-100">
 
               <div className="max-w-7xl mx-auto px-8">

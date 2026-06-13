@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { authService } from '../features/auth/services/auth.service';
 
 export const ForgotPasswordPage: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -14,11 +15,7 @@ export const ForgotPasswordPage: React.FC = () => {
     setIsLoading(true);
 
     try {
-      // TODO: Gọi API gửi email ở đây sau này
-      // ví dụ: await api.sendResetPasswordLink({ email });
-
-      // Giả lập mạng chậm 1 giây (bạn có thể xóa sau khi có API thật)
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await authService.forgotPassword(email);
 
       // Gọi API thành công -> chuyển sang giao diện thông báo
       setIsSubmitted(true);

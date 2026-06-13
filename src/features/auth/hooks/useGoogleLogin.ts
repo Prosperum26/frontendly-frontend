@@ -21,7 +21,7 @@ export const useGoogleLogin = () => {
       if (response.refreshToken) {
         localStorage.setItem('refreshToken', response.refreshToken);
       }
-      setAuth(true, response.user);
+      setAuth(true, response.user ?? null);
     },
   });
 
