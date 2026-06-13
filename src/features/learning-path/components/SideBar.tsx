@@ -2,7 +2,10 @@ import React, { useState, useEffect } from "react";
 import { PlayCircle, Flame, Trophy, Plus, Star, Zap, Sun } from "lucide-react";
 import api from "../../../services/api";
 import "./SideBar.css";
-import defaultAvatar from "../../../assets/default_avatar.png";
+import { useAuthStore } from "../../../store/auth.store";
+
+const DEFAULT_AVATAR =
+  "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80";
 
 import type { UserData, ProgressResponse, Badge } from "../types/apiResponses";
 
@@ -11,47 +14,51 @@ interface SideBarProps {
 }
 
 export const SideBar: React.FC<SideBarProps> = ({ onWatchIntro }) => {
+  const { isAuthenticated } = useAuthStore();
   const [userData, setUserData] = useState<UserData | null>(null);
   const [progressData, setProgressData] = useState<ProgressResponse | null>(
     null,
   );
   const [badgesData, setBadgesData] = useState<Badge[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState<boolean>(() => isAuthenticated);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (!isAuthenticated) return;
     const fetchData = async () => {
       setIsLoading(true);
       setError(null);
       try {
         const [userRes, progressRes, badgesRes] = await Promise.all([
-          api.get("/v1/users/me"),
-          api.get("/v1/users/progress"),
-          api.get("/v1/users/badges"),
+          api.get<{ success: boolean; data: UserData }>("/users/me"),
+          api.get<{ success: boolean; data: ProgressResponse }>("/users/progress"),
+          api.get<{ success: boolean; data: Badge[] | { badges: Badge[] } }>("/users/badges"),
         ]);
 
-        const uData = userRes?.data?.data ?? {};
+        const uData = userRes?.data?.data ?? {} as UserData;
         setUserData(uData);
 
-        const pData = progressRes?.data ?? {};
+        const pData = progressRes?.data?.data ?? {} as ProgressResponse;
         setProgressData(pData);
 
-        const bData = badgesRes?.data?.badges ?? badgesRes?.data ?? [];
-        setBadgesData(Array.isArray(bData) ? bData : []);
-      } catch (err: any) {
-        if (err?.response?.status === 401) {
+        const badgesData = badgesRes?.data?.data;
+        const bData = Array.isArray(badgesData) ? badgesData : badgesData?.badges ?? [];
+        setBadgesData(bData);
+      } catch (err: unknown) {
+        const e = err as { response?: { status?: number }; message?: string };
+        if (e?.response?.status === 401) {
           setError("Unauthenticated – please log in.");
         } else {
           console.error("Error fetching sidebar user details:", err);
-          setError(err?.message || "Failed to load user info");
+          setError(e?.message ?? "Failed to load user info");
         }
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchData();
-  }, []);
+    void fetchData();
+  }, [isAuthenticated]);
 
   const renderBadge = (badge: Badge, index: number) => {
     const { name, icon, isUnlocked } = badge;
@@ -77,7 +84,7 @@ export const SideBar: React.FC<SideBarProps> = ({ onWatchIntro }) => {
 
   const displayName = userData?.name;
   const userTitle = userData?.userTitle;
-  const avatarUrl = userData?.avatarUrl || defaultAvatar;
+  const avatarUrl = userData?.avatarUrl || DEFAULT_AVATAR;
 
   const currentXp = progressData?.xp ?? 0;
   const maxXp = progressData?.xpToNextLevel ?? 0;
@@ -137,6 +144,18 @@ export const SideBar: React.FC<SideBarProps> = ({ onWatchIntro }) => {
               }}
             >
               Loading user progress…
+            </div>
+          ) : !isAuthenticated ? (
+            <div
+              style={{
+                padding: "20px 0",
+                textAlign: "center",
+                color: "#94a3b8",
+                fontSize: "14px",
+                lineHeight: 1.6,
+              }}
+            >
+              Đăng nhập để xem tiến trình học tập của bạn
             </div>
           ) : error ? (
             <div

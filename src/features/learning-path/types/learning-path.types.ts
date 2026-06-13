@@ -19,6 +19,12 @@ export interface Lesson {
   isLocked: boolean;
 }
 
+export interface Progress {
+  milestoneId: string;
+  lessonId: string;
+  completedAt: number;
+}
+
 export interface ApiStage {
   id: string;
   title: string;

@@ -18,6 +18,9 @@ import "./MilestoneCard.css";
 import type { Milestone } from "../types/learning-path.types";
 import completedMilestoneIcon from "../../../assets/learning-path/completed_milestone.svg";
 import inProgressMilestoneIcon from "../../../assets/learning-path/InProgress_milestone.svg";
+import { useAuthStore } from "../../../store/auth.store";
+import { useGuestStore } from "../../../store/guest.store";
+import { GuestModal } from "./GuestModal";
 
 interface MilestoneCardProps {
   milestone: Milestone;
@@ -98,7 +101,10 @@ export const MilestoneCard: React.FC<MilestoneCardProps> = ({ milestone }) => {
   const [activeTooltipLessonId, setActiveTooltipLessonId] = useState<
     string | null
   >(null);
+  const [showGuestModal, setShowGuestModal] = useState<boolean>(false);
   const cardRef = useRef<HTMLDivElement>(null);
+  const { isAuthenticated } = useAuthStore();
+  const { canViewTheory, recordTheoryView } = useGuestStore();
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -141,6 +147,16 @@ export const MilestoneCard: React.FC<MilestoneCardProps> = ({ milestone }) => {
       return;
     }
     e.stopPropagation();
+
+    if (!isAuthenticated) {
+      const lesson = lessons.find((l) => l.id === lessonId);
+      if (lesson?.type === "practice" || !canViewTheory(lessonId)) {
+        setShowGuestModal(true);
+        return;
+      }
+      recordTheoryView(lessonId);
+    }
+
     navigate(`/learning-path/milestone/${milestone.id}/lesson/${lessonId}`);
   };
 
@@ -327,6 +343,10 @@ export const MilestoneCard: React.FC<MilestoneCardProps> = ({ milestone }) => {
           </div>
         </div>
       )}
+      <GuestModal
+        isOpen={showGuestModal}
+        onClose={() => setShowGuestModal(false)}
+      />
     </div>
   );
 };

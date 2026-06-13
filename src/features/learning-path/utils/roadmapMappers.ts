@@ -5,7 +5,7 @@ import type {
   MilestoneDetail,
 } from "../types/learning-path.types";
 
-export const DEFAULT_SKILL_ID = "react";
+export const DEFAULT_SKILL_ID = "frontend";
 
 export function mapApiMilestonesToMilestones(
   apiMilestones: ApiMilestone[],

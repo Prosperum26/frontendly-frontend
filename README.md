@@ -2,6 +2,10 @@
 
 A gamified frontend learning platform built with React, TypeScript, and Vite.
 
+## Tổng hợp Kiểm tra và Phát triển dự án
+
+Xem chi tiết [tại đây](../PROJECT_ASSESSMENT_AND_PLAN.md) để biết đánh giá toàn diện và lộ trình phát triển tiếp theo.
+
 ## Project Structure
 
 This project follows a feature-based architecture for scalability and maintainability:

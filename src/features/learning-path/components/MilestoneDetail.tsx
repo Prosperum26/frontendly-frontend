@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import {
@@ -15,20 +15,36 @@ import type { DetailLesson } from "../types/learning-path.types";
 import { useRoadmapStore } from "../stores/roadmapStore";
 import { useRoadmap } from "../hooks/useRoadmap";
 import { DEFAULT_SKILL_ID } from "../utils/roadmapMappers";
+import { useAuthStore } from "../../../store/auth.store";
+import { useGuestStore } from "../../../store/guest.store";
+import { GuestModal } from "./GuestModal";
 import "./MilestoneDetail.css";
 
 const CompletedCard: React.FC<{
   lesson: DetailLesson;
   milestoneId: string;
-}> = ({ lesson, milestoneId }) => {
+  onGuestBlock: () => void;
+}> = ({ lesson, milestoneId, onGuestBlock }) => {
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuthStore();
+  const { canViewTheory, recordTheoryView } = useGuestStore();
+
+  const handleClick = () => {
+    if (!isAuthenticated) {
+      if (!canViewTheory(lesson.id)) {
+        onGuestBlock();
+        return;
+      }
+      recordTheoryView(lesson.id);
+    }
+    navigate(`/learning-path/milestone/${milestoneId}/lesson/${lesson.id}`);
+  };
+
   return (
     <button
       type="button"
       className="md-lesson-card card-completed card-clickable"
-      onClick={() =>
-        navigate(`/learning-path/milestone/${milestoneId}/lesson/${lesson.id}`)
-      }
+      onClick={handleClick}
     >
       <div className="md-card-info">
         <h3>{lesson.title}</h3>
@@ -47,8 +63,23 @@ const CompletedCard: React.FC<{
 const InProgressCard: React.FC<{
   lesson: DetailLesson;
   milestoneId: string;
-}> = ({ lesson, milestoneId }) => {
+  onGuestBlock: () => void;
+}> = ({ lesson, milestoneId, onGuestBlock }) => {
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuthStore();
+  const { canViewTheory, recordTheoryView } = useGuestStore();
+
+  const handleContinue = () => {
+    if (!isAuthenticated) {
+      if (!canViewTheory(lesson.id)) {
+        onGuestBlock();
+        return;
+      }
+      recordTheoryView(lesson.id);
+    }
+    navigate(`/learning-path/milestone/${milestoneId}/lesson/${lesson.id}`);
+  };
+
   return (
     <div className="md-lesson-card card-in-progress">
       <div className="md-card-expanded">
@@ -75,11 +106,7 @@ const InProgressCard: React.FC<{
             <button
               type="button"
               className="md-continue-btn"
-              onClick={() =>
-                navigate(
-                  `/learning-path/milestone/${milestoneId}/lesson/${lesson.id}`,
-                )
-              }
+              onClick={handleContinue}
             >
               Continue Lesson <Play size={16} fill="white" />
             </button>
@@ -162,6 +189,9 @@ export const MilestoneDetailPage: React.FC = () => {
     (s) => s.getMilestoneDetailById,
   );
   const milestones = useRoadmapStore((s) => s.milestones);
+  const { isAuthenticated } = useAuthStore();
+  const { canViewTheory, recordTheoryView } = useGuestStore();
+  const [showGuestModal, setShowGuestModal] = useState<boolean>(false);
 
   const { isLoading, isError, refetch } = useRoadmap(DEFAULT_SKILL_ID);
 
@@ -243,6 +273,13 @@ export const MilestoneDetailPage: React.FC = () => {
                     lesson.status !== "locked" &&
                     lesson.type !== "finalProject"
                   ) {
+                    if (!isAuthenticated) {
+                      if (!canViewTheory(lesson.id)) {
+                        setShowGuestModal(true);
+                        return;
+                      }
+                      recordTheoryView(lesson.id);
+                    }
                     navigate(
                       `/learning-path/milestone/${milestone.id}/lesson/${lesson.id}`,
                     );
@@ -288,9 +325,17 @@ export const MilestoneDetailPage: React.FC = () => {
               {lesson.type === "finalProject" ? (
                 <FinalProjectCard lesson={lesson} />
               ) : lesson.status === "completed" ? (
-                <CompletedCard lesson={lesson} milestoneId={milestone.id} />
+                <CompletedCard
+                  lesson={lesson}
+                  milestoneId={milestone.id}
+                  onGuestBlock={() => setShowGuestModal(true)}
+                />
               ) : lesson.status === "in_progress" ? (
-                <InProgressCard lesson={lesson} milestoneId={milestone.id} />
+                <InProgressCard
+                  lesson={lesson}
+                  milestoneId={milestone.id}
+                  onGuestBlock={() => setShowGuestModal(true)}
+                />
               ) : (
                 <LockedCard lesson={lesson} />
               )}
@@ -298,6 +343,10 @@ export const MilestoneDetailPage: React.FC = () => {
           ))}
         </div>
       </main>
+      <GuestModal
+        isOpen={showGuestModal}
+        onClose={() => setShowGuestModal(false)}
+      />
     </div>
   );
 };

@@ -13,7 +13,7 @@ export const useAuth = () => {
       const response = await authService.login(credentials);
       localStorage.setItem('accessToken', response.accessToken);
       localStorage.setItem('refreshToken', response.refreshToken);
-      setAuth(true, response.user);
+      setAuth(true, response.user ?? null);
     } finally {
       setLoading(false);
     }
@@ -25,7 +25,7 @@ export const useAuth = () => {
       const response = await authService.register(credentials);
       localStorage.setItem('accessToken', response.accessToken);
       localStorage.setItem('refreshToken', response.refreshToken);
-      setAuth(true, response.user);
+      setAuth(true, response.user ?? null);
     } finally {
       setLoading(false);
     }

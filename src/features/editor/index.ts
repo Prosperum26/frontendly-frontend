@@ -3,12 +3,20 @@ export { LivePreview } from './components/LivePreview';
 export { ProblemPane } from './components/ProblemPane';
 export { ResultConsole } from './components/ResultConsole';
 export { Toolbar } from './components/Toolbar';
+export { WorkspacePanels } from './components/WorkspacePanels';
 export { useEditorState } from './hooks/useEditorState';
+export { useWorkspaceEditor } from './hooks/useWorkspaceEditor';
 export { useCodeSync } from './hooks/useCodeSync';
 export { useEvaluation } from './hooks/useEvaluation';
 export { editorService } from './services/editor.service';
+export { buildPreviewDocument } from './utils/previewDocument';
 export type {
   EditorState,
+  EditorTab,
   EvaluationResult,
+  ExerciseDefinition,
+  ExerciseRequirement,
   TestCase,
+  WorkspaceEditorState,
+  WorkspaceFiles,
 } from './types/editor.types';

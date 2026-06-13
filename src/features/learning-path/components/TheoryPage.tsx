@@ -5,7 +5,10 @@ import api from "../../../services/api";
 import { useRoadmapStore } from "../stores/roadmapStore";
 import { useRoadmap } from "../hooks/useRoadmap";
 import { DEFAULT_SKILL_ID } from "../utils/roadmapMappers";
-import { ROUTES } from "../../../constants/routes";
+import { ROUTES, workspacePath } from "../../../constants/routes";
+import { useAuthStore } from "../../../store/auth.store";
+import { useGuestStore } from "../../../store/guest.store";
+import { GuestModal } from "./GuestModal";
 import "./TheoryPage.css";
 
 interface TheoryApiData {
@@ -29,6 +32,9 @@ export const TheoryPage: React.FC = () => {
   const milestones = useRoadmapStore((s) => s.milestones);
   const { refetch, isLoading: roadmapLoading } = useRoadmap(DEFAULT_SKILL_ID);
 
+  const { isAuthenticated } = useAuthStore();
+  const { canViewTheory, recordTheoryView } = useGuestStore();
+  const [showGuestModal, setShowGuestModal] = useState(false);
   const [theoryData, setTheoryData] = useState<TheoryApiData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -47,13 +53,14 @@ export const TheoryPage: React.FC = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [lessonId]);
 
+
   useEffect(() => {
     const fetchTheory = async () => {
       if (!stageId) return;
       setIsLoading(true);
       setError(null);
       try {
-        const response = await api.get(`/v1/stages/${stageId}/theory`);
+        const response = await api.get(`/stages/${stageId}/theory`);
         setTheoryData(response.data?.data || response.data);
       } catch (err: unknown) {
         console.error("Error fetching stage theory:", err);
@@ -120,31 +127,48 @@ export const TheoryPage: React.FC = () => {
   const handleLessonSelect = (id: string, status: string) => {
     if (status === "locked") return;
     if (id === lessonId) return;
+
+    if (!isAuthenticated) {
+      if (!canViewTheory(id)) {
+        setShowGuestModal(true);
+        return;
+      }
+      recordTheoryView(id);
+    }
+
     navigate(`/learning-path/milestone/${milestoneId}/lesson/${id}`);
   };
 
   const handleContinue = async () => {
     if (!stageId || !milestoneId) return;
+
+    if (!isAuthenticated) {
+      setShowGuestModal(true);
+      return;
+    }
+
     setIsUnlocking(true);
     setUnlockMessage(null);
     setError(null);
 
     try {
       const response = await api.patch(
-        `/v1/stages/${stageId}/unlock-practice`,
+        `/stages/${stageId}/unlock-practice`,
         {},
       );
       const xpAwarded = response.data?.data?.xpAwarded || 0;
+      const exerciseId = `exercise_${stageId}`;
+      const targetPath = `${workspacePath(exerciseId)}?stageId=${stageId}&milestoneId=${milestoneId}`;
 
       if (xpAwarded > 0) {
         setUnlockMessage(`+${xpAwarded} XP awarded for theory!`);
         setTimeout(() => {
-          navigate(`/workspace?stageId=${stageId}&milestoneId=${milestoneId}`, {
+          navigate(targetPath, {
             state: { fromTheory: true },
           });
         }, 1500);
       } else {
-        navigate(`/workspace?stageId=${stageId}&milestoneId=${milestoneId}`, {
+        navigate(targetPath, {
           state: { fromTheory: true },
         });
       }
@@ -419,6 +443,10 @@ export const TheoryPage: React.FC = () => {
           </div>
         )}
       </footer>
+      <GuestModal
+        isOpen={showGuestModal}
+        onClose={() => setShowGuestModal(false)}
+      />
     </div>
   );
 };
