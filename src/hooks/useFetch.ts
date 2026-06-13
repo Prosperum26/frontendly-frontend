@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import api from '../services/api';
-import { ApiResponse } from '../types/api.types';
+import type { ApiResponse } from '../types/api.types';
 
 export const useFetch = <T>(url: string) => {
   const [data, setData] = useState<T | null>(null);

@@ -4,28 +4,42 @@ import type {
   WorkspaceFiles,
   ExerciseDefinition,
   ExerciseRequirement,
+  BackendExerciseResponse,
+  BackendSubmitResponse,
+  BackendRequirementResult,
+  LintEvaluationResult,
+  VisualEvaluationResult,
 } from '../types/editor.types';
 
 export const editorService = {
   async getExercise(exerciseId: string, userId: string): Promise<ExerciseDefinition> {
-    const response = await api.get<any>(`/exercises/${exerciseId}/${userId}`);
-    const data = response.data;
+    const response = await api.get<{ success: boolean; data: BackendExerciseResponse }>(`/exercises/${exerciseId}/${userId}`);
+    const data = response.data.data;
 
     return {
       id: data.id,
       practiceLabel: data.module,
       title: data.title,
-      level: data.id.includes('span') || data.id.includes('wrap') || data.id.includes('classlist') || data.id.includes('3') ? 'hard' : (data.id.includes('2') || data.id.includes('med') || data.id.includes('event') ? 'medium' : 'easy'),
+      level: data.level || 'easy',
       description: data.description,
       objective: data.title,
       estimatedTime: '20 min',
       topicTags: [data.module.split(':')[0]],
-      targetImageUrl: data.target_design_url || '',
-      requirements: (data.requirements || []).map((req: any) => ({
+      targetImageUrl: data.target_designs && data.target_designs.length > 0 ? data.target_designs[0].url : '',
+      targetDesigns: data.target_designs,
+      evaluationConfig: data.evaluation_config,
+      requirements: (data.requirements || []).map((req) => ({
         id: req.id,
         label: req.text,
         done: false,
       })),
+      navigation: data.navigation
+        ? {
+            prev: data.navigation.prev,
+            next: data.navigation.next,
+            currentMilestoneId: data.navigation.currentMilestoneId
+          }
+        : undefined,
       starterFiles: {
         html: data.html_content || '',
         css: data.css_content || '',
@@ -40,14 +54,14 @@ export const editorService = {
     files: WorkspaceFiles,
     requirements: ExerciseRequirement[]
   ): Promise<EvaluationResult> {
-    const response = await api.post<any>(`/exercises/${exerciseId}/${userId}/submit`, {
+    const response = await api.post<{ success: boolean; data: BackendSubmitResponse }>(`/exercises/${exerciseId}/${userId}/submit`, {
       editorContent: {
         html: files.html,
         css: files.css,
         js: files.js,
       },
     });
-    const data = response.data; // SubmitResponse
+    const data = response.data.data;
 
     // Check lint errors
     const lint = data.lint_errors;
@@ -57,21 +71,22 @@ export const editorService = {
       (lint?.js_err?.length ?? 0) > 0;
 
     let output = '';
-    if (hasLintErrors) {
-      output += '⚠️ LỖI CÚ PHÁP (LINT ERRORS):\n';
-      lint.html_err?.forEach((err: any) => {
+    if (hasLintErrors && lint) {
+      output += '⚠️ LỖI CÚ PHÁP (Lint ERRORS):\n';
+      lint.html_err?.forEach((err) => {
         output += `[HTML] Dòng ${err.line}: ${err.message}\n`;
       });
-      lint.css_err?.forEach((err: any) => {
+      lint.css_err?.forEach((err) => {
         output += `[CSS] Dòng ${err.line}: ${err.message}\n`;
       });
-      lint.js_err?.forEach((err: any) => {
+      lint.js_err?.forEach((err) => {
         output += `[JS] Dòng ${err.line}: ${err.message}\n`;
       });
       output += '\nVui lòng sửa tất cả lỗi cú pháp trước khi tiếp tục.';
     } else {
-      const passedCount = (data.evaluationResults || []).filter((r: any) => r.passed).length;
-      const totalCount = (data.evaluationResults || []).length;
+      const evaluationResults = data.requirementResult || data.evaluationResults || [];
+      const passedCount = evaluationResults.filter((r) => r.passed).length;
+      const totalCount = evaluationResults.length;
       output = `Kết quả chấm điểm: Đạt ${passedCount}/${totalCount} yêu cầu (${data.match_percentage}%).\n`;
       if (data.isCompleted) {
         output += '🎉 Chúc mừng! Bạn đã hoàn thành xuất sắc tất cả yêu cầu bài tập!';
@@ -81,8 +96,9 @@ export const editorService = {
     }
 
     // Map evaluationResults to criteria
+    const evaluationResults = data.requirementResult || data.evaluationResults || [];
     const criteria = requirements.map((req) => {
-      const res = (data.evaluationResults || []).find((r: any) => r.requirementId === req.id);
+      const res = evaluationResults.find((r: BackendRequirementResult) => r.requirementId === req.id);
       return {
         id: req.id,
         label: req.label,
@@ -90,11 +106,26 @@ export const editorService = {
       };
     });
 
+    // Map lint errors
+    const lintResult: LintEvaluationResult | undefined = lint
+      ? {
+          html: lint.html_err || [],
+          css: lint.css_err || [],
+          js: lint.js_err || [],
+        }
+      : undefined;
+
+    // Map visual results
+    const visualResult: VisualEvaluationResult[] | undefined = data.visual_results;
+
     return {
       passed: data.isCompleted,
       output,
       executionTime: 180,
       criteria,
+      lint: lintResult,
+      visual: visualResult,
+      matchPercentage: data.match_percentage,
     };
   },
 

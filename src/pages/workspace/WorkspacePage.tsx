@@ -7,22 +7,26 @@ import { WorkspaceFooter } from './WorkspaceFooter';
 import { Toast, type ToastType } from '../../components/Toast';
 import { Toolbar } from '../../features/editor/components/Toolbar';
 import { WorkspacePanels } from '../../features/editor/components/WorkspacePanels';
+import { EvaluationResultModal } from '../../features/editor/components/EvaluationResultModal';
 import type {
   EditorTab,
   EvaluationCriterion,
   ExerciseDefinition,
   WorkspaceFiles,
+  EvaluationResult as EditorEvaluationResult,
 } from '../../features/editor/types/editor.types';
 import { useDebounce } from '../../hooks/useDebounce';
 import { useDraftPersistence } from '../../features/editor/hooks/useDraftPersistence';
 import { useWorkspaceEditor } from '../../features/editor/hooks/useWorkspaceEditor';
 import { editorService } from '../../features/editor/services/editor.service';
 import { validatePreviewFiles } from '../../features/editor/utils/previewDocument';
+import { useAuthStore } from '../../store/auth.store';
 import '../../features/editor/components/editor-ui.css';
 
 export const WorkspacePage: React.FC = () => {
   const { exerciseId } = useParams<{ exerciseId: string }>();
-  const userId = 'user_01'; // Default dev user as specified in brainstorm_analysis
+  const currentUser = useAuthStore((s) => s.currentUser);
+  const userId = currentUser?.id || 'guest';
 
   const { data: exercise, isLoading, error } = useQuery<ExerciseDefinition>({
     queryKey: ['exercise', exerciseId, userId],
@@ -75,6 +79,9 @@ interface WorkspaceToastState {
 }
 
 const WorkspacePageContent: React.FC<WorkspacePageContentProps> = ({ exercise }) => {
+  const currentUser = useAuthStore((s) => s.currentUser);
+  const userId = currentUser?.id || 'guest';
+
   const { files, activeTab, isDirty, setActiveTab, setFile, replaceFiles, reset } =
     useWorkspaceEditor(exercise.starterFiles);
 
@@ -84,6 +91,9 @@ const WorkspacePageContent: React.FC<WorkspacePageContentProps> = ({ exercise })
   const [isConsoleOpen, setIsConsoleOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [criteria, setCriteria] = useState<EvaluationCriterion[] | undefined>();
+  const [evaluationResult, setEvaluationResult] = useState<EditorEvaluationResult | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isCompleted, setIsCompleted] = useState(false);
   const [toast, setToast] = useState<WorkspaceToastState | null>(null);
   const [editVersion, setEditVersion] = useState(0);
   const [previewRefreshKey, setPreviewRefreshKey] = useState(0);
@@ -182,13 +192,18 @@ const WorkspacePageContent: React.FC<WorkspacePageContentProps> = ({ exercise })
     try {
       const result = await editorService.submitWorkspace(
         exercise.id,
-        'user_01',
+        userId,
         files,
         exercise.requirements
       );
 
       setCriteria(result.criteria);
+      setEvaluationResult(result);
       setConsoleMessage(result.output);
+      setIsModalOpen(true);
+      if (result.passed) {
+        setIsCompleted(true);
+      }
       showToast(
         result.passed
           ? {
@@ -202,8 +217,9 @@ const WorkspacePageContent: React.FC<WorkspacePageContentProps> = ({ exercise })
               message: 'Some requirements are still failing. Review the checklist and try again.',
             }
       );
-    } catch (err: any) {
-      setConsoleMessage(`Submission Error: ${err.message || 'Unknown backend error'}`);
+    } catch (err: unknown) {
+      const error = err as { message?: string };
+      setConsoleMessage(`Submission Error: ${error.message || 'Unknown backend error'}`);
       showToast({
         type: 'error',
         title: 'Submission Failed',
@@ -212,7 +228,7 @@ const WorkspacePageContent: React.FC<WorkspacePageContentProps> = ({ exercise })
     } finally {
       setIsSubmitting(false);
     }
-  }, [exercise.id, exercise.requirements, files, showToast]);
+  }, [exercise.id, exercise.requirements, files, showToast, userId]);
 
   const handleReset = useCallback(() => {
     reset();
@@ -304,7 +320,18 @@ const WorkspacePageContent: React.FC<WorkspacePageContentProps> = ({ exercise })
           />
         </section>
       </div>
-      <WorkspaceFooter />
+      <WorkspaceFooter
+        navigation={exercise.navigation}
+        isCompleted={isCompleted}
+      />
+      {evaluationResult && (
+        <EvaluationResultModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          evaluationResult={evaluationResult}
+          exercise={exercise}
+        />
+      )}
     </>
   );
 };

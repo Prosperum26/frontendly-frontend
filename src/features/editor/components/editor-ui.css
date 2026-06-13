@@ -570,3 +570,244 @@
 .result-console__body--empty {
   color: #64748b;
 }
+
+/* Evaluation Result Modal */
+.evaluation-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 16px;
+}
+
+.evaluation-modal {
+  background: white;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow: auto;
+  box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1),
+    0 8px 10px -6px rgb(0 0 0 / 0.1);
+}
+
+.evaluation-modal__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.evaluation-modal__title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.evaluation-modal__close {
+  background: transparent;
+  border: none;
+  font-size: 28px;
+  line-height: 1;
+  cursor: pointer;
+  color: #64748b;
+  padding: 4px 8px;
+}
+
+.evaluation-modal__close:hover {
+  color: #0f172a;
+}
+
+.evaluation-modal__body {
+  padding: 24px;
+}
+
+.evaluation-modal__footer {
+  padding: 16px 24px;
+  border-top: 1px solid #e5e7eb;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.evaluation-modal__button {
+  padding: 10px 24px;
+  background: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.evaluation-modal__button:hover {
+  background: #1d4ed8;
+}
+
+.evaluation-section {
+  margin-bottom: 24px;
+}
+
+.evaluation-section__title {
+  margin: 0 0 12px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #334155;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.evaluation-status--success {
+  color: #16a34a;
+}
+
+.evaluation-status--warning {
+  color: #d97706;
+}
+
+.evaluation-status--error {
+  color: #dc2626;
+}
+
+.evaluation-score {
+  display: flex;
+  justify-content: center;
+}
+
+.evaluation-score__circle {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  border: 8px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.evaluation-score__circle--success {
+  border-color: #16a34a;
+}
+
+.evaluation-score__circle--warning {
+  border-color: #d97706;
+}
+
+.evaluation-score__value {
+  font-size: 32px;
+  font-weight: 800;
+}
+
+.lint-errors__group {
+  margin-bottom: 16px;
+}
+
+.lint-errors__group-title {
+  margin: 0 0 8px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #64748b;
+}
+
+.lint-errors__list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.lint-errors__item {
+  background: #fef2f2;
+  border-left: 3px solid #dc2626;
+  padding: 8px 12px;
+  margin-bottom: 4px;
+  font-family: monospace;
+  font-size: 13px;
+}
+
+.lint-errors__line {
+  color: #991b1b;
+  font-weight: 600;
+}
+
+.requirements-checklist {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.requirements-checklist__item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  margin-bottom: 6px;
+}
+
+.requirements-checklist__item--passed {
+  background: #f0fdf4;
+}
+
+.requirements-checklist__item--failed {
+  background: #fef2f2;
+}
+
+.requirements-checklist__icon {
+  font-weight: 700;
+  font-size: 16px;
+}
+
+.requirements-checklist__item--passed .requirements-checklist__icon {
+  color: #16a34a;
+}
+
+.requirements-checklist__item--failed .requirements-checklist__icon {
+  color: #dc2626;
+}
+
+.visual-results {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.visual-result {
+  background: #f8fafc;
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.visual-result__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.visual-result__device {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.visual-result__score {
+  font-weight: 700;
+}
+
+.visual-result__score--success {
+  color: #16a34a;
+}
+
+.visual-result__diff {
+  margin-top: 12px;
+}
+
+.visual-result__diff img {
+  max-width: 100%;
+  border-radius: 6px;
+  border: 1px solid #e5e7eb;
+}
+
