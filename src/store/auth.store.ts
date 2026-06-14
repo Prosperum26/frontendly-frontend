@@ -1,41 +1,30 @@
 import { create } from 'zustand';
-import api from '../services/api'; // Đã sửa lại thành { api }
-
-interface User {
-  id: string;
-  email: string;
-  username: string;
-  avatar?: string;
-}
+import type { User } from '../features/auth/types/auth.types';
 
 interface AuthState {
   isAuthenticated: boolean;
   currentUser: User | null;
+  isAuthChecking: boolean;
+  previousRoute: string | null;
   setAuth: (isAuthenticated: boolean, user: User | null) => void;
   logout: () => void;
-  login: (email: string, password: string) => Promise<void>;
-  register: (email: string, name: string, password: string) => Promise<void>;
+  setAuthChecking: (isChecking: boolean) => void;
+  setPreviousRoute: (route: string | null) => void;
+  updateUser: (user: User) => void;
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
   isAuthenticated: !!localStorage.getItem('accessToken'),
   currentUser: null,
-  setAuth: (isAuthenticated, currentUser) => set({ isAuthenticated, currentUser }),
+  isAuthChecking: true,
+  previousRoute: null,
+  setAuth: (isAuthenticated, currentUser) => set({ isAuthenticated, currentUser, isAuthChecking: false }),
   logout: () => {
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
-    set({ isAuthenticated: false, currentUser: null });
+    set({ isAuthenticated: false, currentUser: null, isAuthChecking: false, previousRoute: null });
   },
-  
-  login: async (email, password) => {
-    const res = await api.post('/auth/login', { email, password });
-    if (res.data.token) {
-      localStorage.setItem('accessToken', res.data.token);
-      set({ isAuthenticated: true });
-    }
-  },
-
-  register: async (email, name, password) => {
-    await api.post('/auth/register', { email, name, password });
-  }
+  setAuthChecking: (isChecking) => set({ isAuthChecking: isChecking }),
+  setPreviousRoute: (route) => set({ previousRoute: route }),
+  updateUser: (user) => set({ currentUser: user }),
 }));

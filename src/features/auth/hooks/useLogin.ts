@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { useState } from 'react';
 import { useAuth } from './useAuth';
-import { LoginCredentials } from '../types/auth.types';
+import type { LoginCredentials } from '../types/auth.types';
 
 function loginErrorMessage(err: unknown): string {
   if (axios.isAxiosError(err)) {

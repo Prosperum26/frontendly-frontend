@@ -1,10 +1,21 @@
 import React from 'react';
+import './editor-ui.css';
 
-export const ResultConsole: React.FC = () => {
+export interface ResultConsoleProps {
+  message?: string;
+}
+
+export const ResultConsole: React.FC<ResultConsoleProps> = ({
+  message = 'Run or submit your code to see results here.',
+}) => {
+  const isEmpty = message === 'Run or submit your code to see results here.';
+
   return (
     <div className="result-console">
-      <h3>Console Output</h3>
-      <pre>Results will appear here...</pre>
+      <div className="result-console__header">Console output</div>
+      <pre className={`result-console__body ${isEmpty ? 'result-console__body--empty' : ''}`}>
+        {message}
+      </pre>
     </div>
   );
 };

@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { cn } from '../../utils/cn';
 import './Modal.css';
 
-interface ModalProps {
+export interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
   children: React.ReactNode;

@@ -2,7 +2,7 @@ import React from 'react';
 import { cn } from '../../utils/cn';
 import './ProgressBar.css';
 
-interface ProgressBarProps {
+export interface ProgressBarProps {
   value: number;
   max?: number;
   className?: string;
