@@ -4,7 +4,7 @@ import { useAuthStore } from '../store/auth.store';
 import { authService } from '../features/auth/services/auth.service';
 import NetworkErrorCard from '../components/NetworkErrorCard';
 import { GoogleButton } from '../features/auth/components/GoogleButton';
-
+import Header from '../components/Header/Header'; 
 export const LoginPage: React.FC = () => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
@@ -71,23 +71,7 @@ export const LoginPage: React.FC = () => {
       )}
 
       {/* Navbar */}
-      <nav className="bg-white border-b border-slate-200 px-8 py-4 flex justify-between items-center">
-        <div className="flex items-center space-x-8">
-          <Link to="/" className="text-2xl font-black text-blue-600 tracking-tight">
-            FrontEndly
-          </Link>
-          <div className="hidden md:flex space-x-6">
-            <Link to="#" className="px-3 py-2 bg-blue-600 text-white rounded-md text-sm font-medium">Home</Link>
-            <Link to="#" className="px-3 py-2 text-slate-600 hover:text-slate-900 text-sm font-medium">Learn</Link>
-            <Link to="#" className="px-3 py-2 text-slate-600 hover:text-slate-900 text-sm font-medium">Challenge</Link>
-            <Link to="#" className="px-3 py-2 text-slate-600 hover:text-slate-900 text-sm font-medium">About</Link>
-          </div>
-        </div>
-        <div className="flex space-x-4">
-          <Link to="/register" className="px-4 py-2 text-blue-600 border border-slate-300 rounded-md text-sm font-semibold hover:bg-slate-50">Sign Up</Link>
-          <button className="px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-semibold hover:bg-blue-700">Start Learning</button>
-        </div>
-      </nav>
+    <Header />
 
       {/* Main Content */}
       <main className="flex-grow flex flex-col items-center justify-center p-6">
