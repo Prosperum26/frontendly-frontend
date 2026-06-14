@@ -496,38 +496,22 @@ export const RegisterPage: React.FC = () => {
               {(isPasswordFocused || password) && (
 
                 <div className="w-full md:w-[280px] bg-red-50/60 border border-red-200 rounded-xl p-5 md:absolute md:-right-[300px] md:top-[180px] transition-all duration-200 shadow-lg shadow-red-100/50">
-
-                  <h3 className="text-xs font-bold !text-slate-800 uppercase tracking-wider mb-4">YÊU CẦU MẬT KHẨU:</h3>
-
-                  <ul className="space-y-2.5 text-xs font-semibold">
-
-                    <li className={`flex items-center gap-2.5 ${isLengthValid ? 'text-emerald-600' : 'text-rose-500'}`}>
-
-                      <span className="text-sm">{isLengthValid ? '●' : '○'}</span> Từ 8 đến 32 ký tự
-
-                    </li>
-
-                    <li className={`flex items-center gap-2.5 ${hasUppercase ? 'text-emerald-600' : 'text-rose-500'}`}>
-
-                      <span className="text-sm">{hasUppercase ? '●' : '○'}</span> Chứa ít nhất một chữ hoa
-
-                    </li>
-
-                    <li className={`flex items-center gap-2.5 ${hasLowercase ? 'text-emerald-600' : 'text-rose-500'}`}>
-
-                      <span className="text-sm">{hasLowercase ? '●' : '○'}</span> Chứa ít nhất một chữ thường
-
-                    </li>
-
-                    <li className={`flex items-center gap-2.5 ${hasNumber ? 'text-emerald-600' : 'text-rose-500'}`}>
-
-                      <span className="text-sm">{hasNumber ? '●' : '○'}</span> Chứa ít nhất một con số
-
-                    </li>
-
-                  </ul>
-
-                </div>
+  <h3 className="text-xs font-bold !text-slate-800 uppercase tracking-wider mb-4">PASSWORD REQUIREMENTS:</h3>
+  <ul className="space-y-2.5 text-xs font-semibold">
+    <li className={`flex items-center gap-2.5 ${isLengthValid ? 'text-emerald-600' : 'text-rose-500'}`}>
+      <span className="text-sm">{isLengthValid ? '●' : '○'}</span> 8 to 32 characters
+    </li>
+    <li className={`flex items-center gap-2.5 ${hasUppercase ? 'text-emerald-600' : 'text-rose-500'}`}>
+      <span className="text-sm">{hasUppercase ? '●' : '○'}</span> At least one uppercase letter
+    </li>
+    <li className={`flex items-center gap-2.5 ${hasLowercase ? 'text-emerald-600' : 'text-rose-500'}`}>
+      <span className="text-sm">{hasLowercase ? '●' : '○'}</span> At least one lowercase letter
+    </li>
+    <li className={`flex items-center gap-2.5 ${hasNumber ? 'text-emerald-600' : 'text-rose-500'}`}>
+      <span className="text-sm">{hasNumber ? '●' : '○'}</span> At least one number
+    </li>
+  </ul>
+</div>
 
               )}
 
