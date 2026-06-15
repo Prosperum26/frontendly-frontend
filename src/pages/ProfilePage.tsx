@@ -4,8 +4,8 @@ import { useAuthStore } from '../store/auth.store';
 import { profileService } from '../features/profile/services/profile.service';
 import type { UserProfile, Badge, ActivityLog } from '../features/profile/types/profile.types';
 import NetworkErrorCard from '../components/NetworkErrorCard';
-import { Edit, Share2, Flame, Star, Target, Trophy, Check, Zap, BookOpen } from 'lucide-react';
-
+import { Share2, Flame, Star, Target, Trophy, Zap, BookOpen } from 'lucide-react';
+import { EditProfileForm } from '../features/profile/components/EditProfileForm';
 export const ProfilePage: React.FC = () => {
   const { currentUser } = useAuthStore();
   const [profileData, setProfileData] = useState<UserProfile | null>(null);
@@ -14,6 +14,7 @@ export const ProfilePage: React.FC = () => {
   const [activityStats, setActivityStats] = useState<Array<{ date: string; count: number }>>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isOffline, setIsOffline] = useState(!navigator.onLine);
+  const [isEditing, setIsEditing] = React.useState(false);
 
   useEffect(() => {
     const handleOnline = () => setIsOffline(false);
@@ -119,25 +120,43 @@ export const ProfilePage: React.FC = () => {
 
             <div className="flex-grow">
               <div className="flex items-center gap-2">
-                <h1 className="text-2xl font-bold">{userData?.username || userData?.name || 'User'}</h1>
-                <Check className="w-4 h-4 text-blue-600" />
-              </div>
+<h1 className="text-2xl font-bold" style={{ color: '#000000', opacity: 1 }}>{userData?.username || userData?.name || 'User'}</h1>              </div>
               <p className="text-sm font-semibold text-blue-600 mt-1">{userData?.role === 'user' ? 'Frontend Student' : 'Frontend Master'}</p>
               <p className="text-sm text-slate-500 mt-1 italic">{userData?.email}</p>
             </div>
 
             <div className="flex gap-3 w-full md:w-auto mt-4 md:mt-0">
-              <button className="flex-1 md:flex-none flex items-center justify-center gap-2 bg-blue-600 text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-blue-700 transition-colors">
-                <Edit className="w-4 h-4" />
-                Edit Profile
-              </button>
+              <button 
+  onClick={() => setIsEditing(true)} 
+  className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold"
+>
+  {/* Keep your existing icon here if you have one */}
+  Edit Profile
+</button>
               <button className="flex-1 md:flex-none flex items-center justify-center gap-2 border border-slate-300 text-slate-700 px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-slate-50 transition-colors">
                 <Share2 className="w-4 h-4" />
                 Share Profile
               </button>
             </div>
           </div>
-
+          {/* PASTE THE NEW BLOCK HERE */}
+    {isEditing && (
+      <div className="mt-4 bg-white p-6 rounded-xl border border-slate-100 shadow-sm">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-lg font-bold text-slate-900">Update Personal Details</h2>
+          <button 
+            onClick={() => setIsEditing(false)}
+            className="text-sm text-slate-400 hover:text-slate-600"
+          >
+            Cancel
+          </button>
+        </div>
+        <EditProfileForm 
+          currentUser={userData} 
+          onSuccess={() => setIsEditing(false)} 
+        />
+      </div>
+    )}
           <div className="mt-8">
             <div className="flex justify-between text-xs font-bold text-slate-500 mb-2">
               <span>XP Progress</span>
