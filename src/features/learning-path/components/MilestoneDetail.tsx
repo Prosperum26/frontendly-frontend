@@ -208,7 +208,7 @@ export const MilestoneDetailPage: React.FC = () => {
   if (isLoading && !milestone) {
     return (
       <div style={{ padding: 48, textAlign: "center", color: "#64748b" }}>
-        Đang tải chi tiết milestone...
+        Loading milestone details...
       </div>
     );
   }
@@ -216,11 +216,11 @@ export const MilestoneDetailPage: React.FC = () => {
   if (!milestone) {
     return (
       <div style={{ padding: 48, textAlign: "center" }}>
-        <h2>Không tìm thấy milestone</h2>
+        <h2>Milestone Not Found</h2>
         <p style={{ color: "#64748b", marginBottom: 16 }}>
           {isError
-            ? "Không thể tải dữ liệu lộ trình."
-            : "Milestone này không có trong lộ trình hiện tại."}
+            ? "Unable to load roadmap data."
+            : "This milestone does not exist in the current learning path."}
         </p>
         <button
           type="button"
@@ -231,7 +231,7 @@ export const MilestoneDetailPage: React.FC = () => {
           }}
         >
           <ArrowLeft size={16} />
-          Về Learning Path
+          Back to Learning Path
         </button>
       </div>
     );

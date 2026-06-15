@@ -285,14 +285,16 @@
   padding: 40px 48px;
   overflow-y: auto;
   background-color: #ffffff;
+  display: flex;
+  justify-content: center;
 }
 
 .tp-body-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 48px;
-  max-width: 1200px;
-  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  max-width: 800px;
+  width: 100%;
 }
 
 .tp-body-left {
@@ -617,8 +619,10 @@
   .tp-left-sidebar {
     display: none;
   }
+  .tp-main-body {
+    padding: 32px 24px;
+  }
   .tp-body-grid {
-    grid-template-columns: 1fr;
-    gap: 32px;
+    max-width: 100%;
   }
 }

@@ -116,6 +116,7 @@
   border: 1px solid #e2e8f0;
 }
 
+/*Lessons Grid*/
 .lessons-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -123,35 +124,91 @@
   margin-top: 24px;
 }
 
+/*Base lesson card */
 .lesson-card {
-  padding: 16px;
-  border-radius: 8px;
-  border: 1px solid #e2e8f0;
+  padding: 14px 14px 10px;
+  border-radius: 10px;
+  border: 1.5px solid #e2e8f0;
   background-color: var(--color-main-bg);
   cursor: pointer;
   transition: all 0.2s ease;
+  position: relative;
 }
+
 .lesson-card:hover {
-  border-color: #cbd5e1;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  border-color: #93c5fd;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.08);
 }
 
+/*ACTIVE*/
 .lesson-card.is-active {
-  border: 2px solid var(--color-primary);
-  background: #f0f5ff;
+  border: 2px solid #2563eb;
+  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+  box-shadow: 0 4px 16px rgba(37, 99, 235, 0.15);
 }
 
+/*COMPLETED*/
 .lesson-card.is-completed {
-  opacity: 0.85;
+  border: 2px solid #22c55e;
+  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+}
+
+.lesson-card.is-completed:hover {
+  border-color: #16a34a;
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.18);
+}
+
+/*LOCKED*/
+.lesson-card.is-locked-stage {
+  cursor: not-allowed;
+  border-color: #e2e8f0;
+  background-color: #f8fafc;
+}
+
+.lesson-card.is-locked-stage:hover {
+  border-color: #e2e8f0;
+  box-shadow: none;
 }
 
 .is-locked .lesson-card {
   cursor: default;
-  opacity: 0.6;
+  opacity: 0.55;
 }
 .is-locked .lesson-card:hover {
   border-color: #e2e8f0;
   box-shadow: none;
+}
+
+.lesson-card-status-icon {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lesson-status-done {
+  color: #16a34a;
+}
+
+.lesson-status-lock {
+  color: #94a3b8;
+}
+
+.lesson-status-active-pulse {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #2563eb;
+  box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.5);
+  animation: activePulse 1.6s ease-in-out infinite;
+}
+
+@keyframes activePulse {
+  0% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.5); }
+  70% { box-shadow: 0 0 0 6px rgba(37, 99, 235, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0); }
 }
 
 .lesson-type {
@@ -159,10 +216,19 @@
   font-weight: 800;
   text-transform: uppercase;
   color: #64748b;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
+  padding-right: 20px;
+}
+
+.lesson-card.is-completed .lesson-type {
+  color: #16a34a;
+}
+
+.lesson-card.is-active .lesson-type {
+  color: #2563eb;
 }
 
 .lesson-title {
@@ -170,6 +236,22 @@
   font-weight: 600;
   color: var(--color-heading);
   line-height: 1.4;
+}
+
+.lesson-card.is-locked-stage .lesson-title {
+  color: #94a3b8;
+}
+
+.lesson-revisit-hint {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 8px;
+  font-size: 10px;
+  font-weight: 700;
+  color: #16a34a;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
 .milestone-progress-section {
