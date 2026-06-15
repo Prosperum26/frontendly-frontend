@@ -4,16 +4,40 @@ import { useAuthStore } from '../store/auth.store';
 import { profileService } from '../features/profile/services/profile.service';
 import type { UserProfile, Badge, ActivityLog } from '../features/profile/types/profile.types';
 import NetworkErrorCard from '../components/NetworkErrorCard';
-import { Edit, Share2, Flame, Star, Target, Trophy, Check, Zap, BookOpen } from 'lucide-react';
+import { Edit, Share2, Flame, Star, Target, Trophy, Check, Zap, BookOpen, Camera } from 'lucide-react';
 
 export const ProfilePage: React.FC = () => {
-  const { currentUser } = useAuthStore();
+  const { currentUser, setAuth } = useAuthStore();
   const [profileData, setProfileData] = useState<UserProfile | null>(null);
   const [badges, setBadges] = useState<Badge[]>([]);
   const [activities, setActivities] = useState<ActivityLog[]>([]);
   const [activityStats, setActivityStats] = useState<Array<{ date: string; count: number }>>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isOffline, setIsOffline] = useState(!navigator.onLine);
+  const [isUploading, setIsUploading] = useState(false);
+
+  const handleAvatarUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    setIsUploading(true);
+    try {
+      // Convert file to base64
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64String = reader.result as string;
+        // Update user avatar in store
+        if (currentUser) {
+          setAuth(true, { ...currentUser, avatar: base64String });
+        }
+        setIsUploading(false);
+      };
+      reader.readAsDataURL(file);
+    } catch (error) {
+      console.error('Failed to upload avatar:', error);
+      setIsUploading(false);
+    }
+  };
 
   useEffect(() => {
     const handleOnline = () => setIsOffline(false);
@@ -108,11 +132,21 @@ export const ProfilePage: React.FC = () => {
           <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
             <div className="relative">
               <img
-                src={userData?.avatar || userData?.avatarUrl || 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80'}
+                src={currentUser?.avatar || currentUser?.avatarUrl || `https://ui-avatars.com/api/?name=${currentUser?.username || currentUser?.name || 'User'}&background=0D8ABC&color=fff&size=200`}
                 alt="Avatar"
                 className="w-24 h-24 rounded-full object-cover border-4 border-white shadow-sm"
               />
-              <span className="absolute bottom-0 right-0 bg-blue-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full border-2 border-white">
+              <label className="absolute bottom-0 right-0 bg-blue-600 text-white p-2 rounded-full cursor-pointer hover:bg-blue-700 transition-colors border-2 border-white">
+                <Camera className="w-4 h-4" />
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleAvatarUpload}
+                  className="hidden"
+                  disabled={isUploading}
+                />
+              </label>
+              <span className="absolute top-0 right-0 bg-blue-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full border-2 border-white">
                 Lv. {userData?.level || 1}
               </span>
             </div>

@@ -2,9 +2,10 @@ import React from 'react';
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 import { useGoogleLogin } from '../hooks/useGoogleLogin';
 import { ENV } from '../../../config/env';
+import Notification from '../../../components/Notification/Notification';
 
 export const GoogleButton: React.FC = () => {
-  const { handleGoogleLogin } = useGoogleLogin();
+  const { handleGoogleLogin, notification, setNotification } = useGoogleLogin();
 
   const isConfigured = ENV.GOOGLE_CLIENT_ID && 
                       ENV.GOOGLE_CLIENT_ID !== 'your-google-client-id' && 
@@ -20,6 +21,13 @@ export const GoogleButton: React.FC = () => {
 
   return (
     <GoogleOAuthProvider clientId={ENV.GOOGLE_CLIENT_ID}>
+      {notification && (
+        <Notification
+          message={notification.message}
+          type={notification.type}
+          onClose={() => setNotification(null)}
+        />
+      )}
       <div className="w-full flex justify-center">
         <GoogleLogin
           onSuccess={handleGoogleLogin}
