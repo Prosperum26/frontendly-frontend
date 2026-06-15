@@ -2,6 +2,7 @@ import { useMutation } from '@tanstack/react-query';
 import type { CredentialResponse } from '@react-oauth/google';
 import { authService } from '../services/auth.service';
 import { useAuthStore } from '../../../store/auth.store';
+import { syncGuestProgress } from '../../../store/guest.store';
 
 export const useGoogleLogin = () => {
   const { setAuth } = useAuthStore();
@@ -16,12 +17,19 @@ export const useGoogleLogin = () => {
       });
       return response;
     },
-    onSuccess: (response) => {
+    onSuccess: async (response) => {
       localStorage.setItem('accessToken', response.accessToken);
       if (response.refreshToken) {
         localStorage.setItem('refreshToken', response.refreshToken);
       }
       setAuth(true, response.user ?? null);
+      
+      // Sync guest progress
+      try {
+        await syncGuestProgress();
+      } catch (syncErr) {
+        console.error('Error syncing guest progress on Google login:', syncErr);
+      }
     },
   });
 

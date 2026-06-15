@@ -92,7 +92,7 @@ function App() {
               <Route
                 path={ROUTES.WORKSPACE}
                 element={
-                  <ProtectedRoute>
+                  <ProtectedRoute allowGuest={true}>
                     <WorkspacePage />
                   </ProtectedRoute>
                 }

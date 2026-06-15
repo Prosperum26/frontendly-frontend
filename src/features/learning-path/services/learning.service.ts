@@ -1,6 +1,8 @@
 import api from "../../../services/api";
 import type { RoadmapResponse, RoadmapDto } from "../types/learning-path.types";
 import { applyMilestoneUnlockRules, mapApiMilestonesToMilestones } from "../utils/roadmapMappers";
+import { useAuthStore } from "../../../store/auth.store";
+import { useGuestStore } from "../../../store/guest.store";
 
 export const learningService = {
   async fetchRoadmap(
@@ -52,14 +54,46 @@ export const learningService = {
     if (!response.success || !response.data?.milestones) {
       return null;
     }
-    const milestones = applyMilestoneUnlockRules(
-      mapApiMilestonesToMilestones(response.data.milestones),
-    );
+
+    let milestones = mapApiMilestonesToMilestones(response.data.milestones);
+    const isAuthenticated = useAuthStore.getState().isAuthenticated;
+    let userProgress = response.data.userProgress;
+
+    if (!isAuthenticated) {
+      const guestStore = useGuestStore.getState();
+      const completedIds = guestStore.completedLessonIds;
+
+      // Map completed status locally
+      milestones = milestones.map((m) => ({
+        ...m,
+        lessons: m.lessons.map((l) => ({
+          ...l,
+          completed: completedIds.includes(l.id),
+        })),
+      }));
+
+      // Map locked status for exceeding limits
+      milestones = milestones.map((m) => ({
+        ...m,
+        lessons: m.lessons.map((l) => ({
+          ...l,
+          isLocked: guestStore.isLessonLockedForGuest(l.id),
+        })),
+      }));
+
+      userProgress = {
+        currentXp: completedIds.length * 50,
+        streakDays: 0,
+      };
+    }
+
+    milestones = applyMilestoneUnlockRules(milestones);
+
     return {
       skillId: response.data.skillId,
       skillTitle: response.data.skillTitle,
       milestones,
-      userProgress: response.data.userProgress,
+      userProgress,
     };
   },
 };

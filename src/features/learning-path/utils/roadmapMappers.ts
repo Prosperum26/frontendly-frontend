@@ -88,7 +88,7 @@ export function milestoneToDetail(milestone: Milestone): MilestoneDetail {
     title: lesson.title,
     description: lesson.description,
     type: "theory",
-    status: deriveStageStatus(milestone.status, index, stages),
+    status: lesson.isLocked ? "locked" : deriveStageStatus(milestone.status, index, stages),
     duration: "",
     tags: [],
     order: index + 1,
