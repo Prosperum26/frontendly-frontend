@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { PlayCircle, Flame, Trophy, Plus, Star, Zap, Sun } from "lucide-react";
+import { Flame, Trophy, Plus, Star, Zap, Sun } from "lucide-react";
 import api from "../../../services/api";
 import "./SideBar.css";
 import { useAuthStore } from "../../../store/auth.store";
@@ -10,10 +10,10 @@ const DEFAULT_AVATAR =
 import type { UserData, ProgressResponse, Badge } from "../types/apiResponses";
 
 interface SideBarProps {
-  onWatchIntro: () => void;
+  className?: string;
 }
 
-export const SideBar: React.FC<SideBarProps> = ({ onWatchIntro }) => {
+export const SideBar: React.FC<SideBarProps> = ({ className = "" }) => {
   const { isAuthenticated } = useAuthStore();
   const [userData, setUserData] = useState<UserData | null>(null);
   const [progressData, setProgressData] = useState<ProgressResponse | null>(
@@ -102,36 +102,7 @@ export const SideBar: React.FC<SideBarProps> = ({ onWatchIntro }) => {
       : (progressData?.rank ?? "-");
 
   return (
-    <aside className="sidebar">
-      <div className="sidebar-section">
-        <h4 className="sidebar-section-title">INTRODUCTION</h4>
-        <div className="sidebar-intro-card">
-          <div
-            className="sidebar-intro-thumbnail"
-            onClick={onWatchIntro}
-            style={{ cursor: "pointer" }}
-          >
-            <img
-              src="https://img.youtube.com/vi/SqcY0GlETPk/maxresdefault.jpg"
-              alt="Frontendly Getting Started Tutorial Thumbnail"
-            />
-            <div className="play-overlay">
-              <PlayCircle className="play-icon" />
-            </div>
-          </div>
-          <div className="intro-content">
-            <h3 className="intro-heading">Getting Started</h3>
-            <p className="intro-desc">
-              Learn how to navigate the expert mentor mode and utilize the
-              interactive workspace for maximum learning efficiency.
-            </p>
-            <button className="watch-btn" onClick={onWatchIntro}>
-              <PlayCircle size={16} /> Watch Intro
-            </button>
-          </div>
-        </div>
-      </div>
-
+    <aside className={`sidebar ${className}`}>
       <div className="progress-section">
         <h4 className="progress-section-title">YOUR PROGRESS</h4>
         <div className="progress-card">
