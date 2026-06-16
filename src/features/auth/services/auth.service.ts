@@ -22,7 +22,7 @@ export const authService = {
   },
 
   async getProfile(): Promise<User> {
-    const response = await api.get<{ message: string; user: User }>('/auth/me');
+    const response = await api.get<{ message: string; user: User }>('/users/me');
     return response.data.user;
   },
 

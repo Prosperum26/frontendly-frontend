@@ -128,7 +128,7 @@ export const LoginPage: React.FC = () => {
                     onChange={(e) => { setPassword(e.target.value); setIsError(false); }}
                     placeholder="••••••••"
                     className={`w-full pl-10 pr-3 py-2.5 border rounded-lg text-sm focus:outline-none focus:ring-1 ${isError ? 'border-red-500 text-red-500 focus:border-red-500 focus:ring-red-500' : 'border-slate-300 focus:border-blue-500 focus:ring-blue-500'}`}
-                  />
+                  />  
                 </div>
               </div>
 

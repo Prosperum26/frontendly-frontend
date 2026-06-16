@@ -6,6 +6,7 @@ import type { UserProfile, Badge, ActivityLog } from '../features/profile/types/
 import NetworkErrorCard from '../components/NetworkErrorCard';
 import { Share2, Flame, Star, Target, Trophy, Zap, BookOpen } from 'lucide-react';
 import { EditProfileForm } from '../features/profile/components/EditProfileForm';
+import { AvatarUpload } from '../features/profile/components/AvatarUpload';
 export const ProfilePage: React.FC = () => {
   const { currentUser } = useAuthStore();
   const [profileData, setProfileData] = useState<UserProfile | null>(null);
@@ -103,20 +104,18 @@ export const ProfilePage: React.FC = () => {
 
   return (
     <div className="bg-slate-50 min-h-screen py-8 font-sans text-slate-900">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
-        {/* 1. Header Card (User Info) */}
-        <div className="bg-white rounded-2xl p-8 border border-slate-200 shadow-sm">
-          <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
-            <div className="relative">
-              <img
-                src={userData?.avatar || userData?.avatarUrl || 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80'}
-                alt="Avatar"
-                className="w-24 h-24 rounded-full object-cover border-4 border-white shadow-sm"
-              />
-              <span className="absolute bottom-0 right-0 bg-blue-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full border-2 border-white">
-                Lv. {userData?.level || 1}
-              </span>
-            </div>
+  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+    {/* 1. Header Card (User Info) */}
+    <div className="bg-white rounded-2xl p-8 border border-slate-200 shadow-sm">
+      <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
+        
+        {/* Đã xóa thẻ span và div relative thừa, truyền thẳng level vào AvatarUpload */}
+        <AvatarUpload 
+          currentAvatarUrl={currentUser?.avatarUrl} // Sửa thành avatarUrl
+  level={userData?.level || 1}
+  onSuccess={() => window.location.reload()}
+        />
+             
 
             <div className="flex-grow">
               <div className="flex items-center gap-2">
