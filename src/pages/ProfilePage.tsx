@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect} from 'react';
 import { Link } from 'react-router-dom';
 import { useAuthStore } from '../store/auth.store';
 import { profileService } from '../features/profile/services/profile.service';
@@ -7,12 +7,12 @@ import NetworkErrorCard from '../components/NetworkErrorCard';
 import { Share2, Flame, Star, Target, Trophy, Zap, BookOpen } from 'lucide-react';
 import { EditProfileForm } from '../features/profile/components/EditProfileForm';
 import { AvatarUpload } from '../features/profile/components/AvatarUpload';
+import { CodingActivity } from '../features/profile/components/CodingActivity';
 export const ProfilePage: React.FC = () => {
   const { currentUser } = useAuthStore();
   const [profileData, setProfileData] = useState<UserProfile | null>(null);
   const [badges, setBadges] = useState<Badge[]>([]);
   const [activities, setActivities] = useState<ActivityLog[]>([]);
-  const [activityStats, setActivityStats] = useState<Array<{ date: string; count: number }>>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isOffline, setIsOffline] = useState(!navigator.onLine);
   const [isEditing, setIsEditing] = React.useState(false);
@@ -36,7 +36,7 @@ export const ProfilePage: React.FC = () => {
       
       setIsLoading(true);
       try {
-        const [profile, badgeList, activityList, statsList] = await Promise.all([
+        const [profile, badgeList, activityList] = await Promise.all([
           profileService.fetchProfile(),
           profileService.fetchBadges(),
           profileService.fetchActivity(),
@@ -45,7 +45,7 @@ export const ProfilePage: React.FC = () => {
         setProfileData(profile);
         setBadges(Array.isArray(badgeList) ? badgeList : []);
         setActivities(Array.isArray(activityList) ? activityList : []);
-        setActivityStats(Array.isArray(statsList) ? statsList : []);
+       
       } catch (error) {
         console.error('Failed to fetch profile data:', error);
       } finally {
@@ -57,33 +57,7 @@ export const ProfilePage: React.FC = () => {
   }, [isOffline]);
 
   // Create real data for heatmap (Coding Activity)
-  const heatmapCells = useMemo(() => {
-    // Last 84 days (12 weeks)
-    const cells = [];
-    const today = new Date();
-    
-    // Create a map for quick lookup
-    const statsMap = new Map(activityStats.map(s => [s.date, s.count]));
-
-    for (let i = 83; i >= 0; i--) {
-      const date = new Date(today);
-      date.setDate(today.getDate() - i);
-      const dateStr = date.toISOString().split('T')[0];
-      const count = statsMap.get(dateStr) || 0;
-      
-      const level = count === 0 ? 0 : count <= 2 ? 1 : count <= 5 ? 2 : count <= 10 ? 3 : 4;
-      const colors = ['bg-slate-100', 'bg-blue-200', 'bg-blue-400', 'bg-blue-500', 'bg-blue-700'];
-      
-      cells.push(
-        <div 
-          key={dateStr} 
-          className={`w-3 h-3 rounded-sm ${colors[level]} transition-colors`}
-          title={`${dateStr}: ${count} activities`}
-        ></div>
-      );
-    }
-    return cells;
-  }, [activityStats]);
+  
 
   if (isOffline) {
     return <NetworkErrorCard onRetry={() => window.location.reload()} onBack={() => window.location.href = '/'} />;
@@ -142,7 +116,9 @@ export const ProfilePage: React.FC = () => {
     {isEditing && (
       <div className="mt-4 bg-white p-6 rounded-xl border border-slate-100 shadow-sm">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-lg font-bold text-slate-900">Update Personal Details</h2>
+       <h2 className="text-2xl font-bold text-gray-900 tracking-tight mb-6">
+  Update Personal Details
+</h2>
           <button 
             onClick={() => setIsEditing(false)}
             className="text-sm text-slate-400 hover:text-slate-600"
@@ -288,17 +264,8 @@ export const ProfilePage: React.FC = () => {
           </div>
 
           {/* Activity Heatmap */}
-          <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-            <div className="flex justify-between items-center mb-6">
-              <h3 className="text-sm font-bold text-slate-900">Coding Activity</h3>
-              <span className="text-xs text-slate-400 font-medium">Last 3 months</span>
-            </div>
-            <div className="flex flex-wrap gap-1.5">
-              {heatmapCells}
-            </div>
+          <CodingActivity />
           </div>
-        </div>
-
         {/* 4. Recent Activity Feed */}
         <div className="bg-white rounded-2xl border border-slate-200 shadow-sm">
           <div className="p-6 border-b border-slate-100">
@@ -334,6 +301,7 @@ export const ProfilePage: React.FC = () => {
         </div>
       </div>
     </div>
+   
 
   );
 

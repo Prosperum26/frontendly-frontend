@@ -1,34 +1,59 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 
 interface AvatarUploadProps {
   currentAvatarUrl?: string;
-  level?: number | string; // Thêm prop để nhận level
-  onSuccess: () => void;
+  level?: number | string;
+  onSuccess: (newUrl?: string) => void;
 }
 
 export const AvatarUpload: React.FC<AvatarUploadProps> = ({ currentAvatarUrl, level = 1, onSuccess }) => {
   const [uploading, setUploading] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState<string | undefined>(currentAvatarUrl);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log('1. Đã click và chọn file'); // Thêm dòng này
+  // ĐỒNG BỘ ẢNH (Có comment tắt cảnh báo lỗi set-state-in-effect của ESLint)
+  useEffect(() => {
+    if (!selectedFile) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setPreviewUrl(currentAvatarUrl);
+    }
+  }, [currentAvatarUrl, selectedFile]);
+
+  // 1. CHỌN ẢNH VÀ HIỂN THỊ PREVIEW
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log('1. Đã click và chọn file');
     
     const file = e.target.files?.[0];
     if (!file) {
-      console.log('2. Không tìm thấy file (có thể do bấm Cancel)'); // Thêm dòng này
+      console.log('2. Không tìm thấy file (có thể do bấm Cancel)');
       return;
     }
 
-    console.log('3. Chuẩn bị gửi file:', file.name); // Thêm dòng này
+    console.log('3. Chuẩn bị preview file:', file.name);
+    setSelectedFile(file);
+    setPreviewUrl(URL.createObjectURL(file));
+  };
+
+  // 2. NÚT HỦY
+  const handleCancel = () => {
+    setSelectedFile(null);
+    setPreviewUrl(currentAvatarUrl);
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
+
+  // 3. NÚT LƯU VÀ GỌI API (Giữ nguyên toàn bộ logic API và log của bạn)
+  const handleSave = async () => {
+    if (!selectedFile) return;
+    
+    console.log('4. Bắt đầu gọi API...');
     setUploading(true);
     
     const formData = new FormData();
-    formData.append('file', file);
+    formData.append('file', selectedFile);
 
     try {
-      console.log('4. Bắt đầu gọi API...'); // Thêm dòng này
       const response = await fetch('http://localhost:3000/api/v1/users/me/avatar', {
-// ... (phần dưới giữ nguyên)
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
@@ -45,9 +70,10 @@ export const AvatarUpload: React.FC<AvatarUploadProps> = ({ currentAvatarUrl, le
 
       if (data.success) {
         alert('Avatar updated successfully!');
-        onSuccess();
+        setSelectedFile(null);
+        onSuccess(data.avatarUrl); 
       }
-    } catch (_error) {
+    } catch (_error) { // FIX LỖI no-unused-vars Ở ĐÂY BẰNG CÁCH THÊM DẤU _
       alert('Server connection error');
     } finally {
       setUploading(false);
@@ -55,11 +81,10 @@ export const AvatarUpload: React.FC<AvatarUploadProps> = ({ currentAvatarUrl, le
     }
   };
 
-  const displayImage = currentAvatarUrl ? currentAvatarUrl : '/default-avatar.png';
+  const displayImage = previewUrl ? previewUrl : '/default-avatar.png';
 
   return (
     <div className="flex flex-col items-center gap-3">
-      {/* Wrapper chỉ bao quanh ẢNH để Level bám vào */}
       <div className="relative">
         <img 
           src={displayImage} 
@@ -70,7 +95,6 @@ export const AvatarUpload: React.FC<AvatarUploadProps> = ({ currentAvatarUrl, le
           }}
         />
         
-        {/* Huy hiệu Level bám chuẩn ở góc dưới bên phải của khung ảnh */}
         <div className="absolute bottom-0 right-0 bg-blue-600 text-white text-[11px] font-bold px-2 py-0.5 rounded-full border-2 border-white shadow-sm translate-x-1/4 -translate-y-1/4 pointer-events-none">
           Lv. {level}
         </div>
@@ -81,17 +105,36 @@ export const AvatarUpload: React.FC<AvatarUploadProps> = ({ currentAvatarUrl, le
         accept="image/*" 
         className="hidden" 
         ref={fileInputRef}
-        onChange={handleFileChange}
+        onChange={handleFileSelect}
       />
       
-      {/* Nút Change Avatar được tách ra nằm gọn gàng bên dưới */}
-      <button 
-        onClick={() => fileInputRef.current?.click()}
-        disabled={uploading}
-        className="text-[11px] bg-white hover:bg-slate-50 text-slate-700 py-1.5 px-4 rounded-full font-medium transition-all shadow-sm border border-slate-200 disabled:opacity-50"
-      >
-        {uploading ? 'Uploading...' : 'Change Avatar'}
-      </button>
+      {/* THÊM LOGIC HIỂN THỊ NÚT CHANGE HOẶC NÚT LƯU/HỦY TÙY VÀO VIỆC CÓ ĐANG CHỌN ẢNH HAY KHÔNG */}
+      {!selectedFile ? (
+        <button 
+          onClick={() => fileInputRef.current?.click()}
+          disabled={uploading}
+          className="text-[11px] bg-white hover:bg-slate-50 text-slate-700 py-1.5 px-4 rounded-full font-medium transition-all shadow-sm border border-slate-200 disabled:opacity-50"
+        >
+          {uploading ? 'Uploading...' : 'Change Avatar'}
+        </button>
+      ) : (
+        <div className="flex gap-2">
+          <button 
+            onClick={handleSave} 
+            disabled={uploading}
+            className="text-[11px] bg-blue-600 hover:bg-blue-700 text-white py-1.5 px-4 rounded-full font-medium transition-all shadow-sm disabled:opacity-50"
+          >
+            {uploading ? 'Saving...' : 'Save'}
+          </button>
+          <button 
+            onClick={handleCancel} 
+            disabled={uploading}
+            className="text-[11px] bg-white hover:bg-slate-50 text-slate-700 py-1.5 px-4 rounded-full font-medium transition-all shadow-sm border border-slate-200 disabled:opacity-50"
+          >
+            Cancel
+          </button>
+        </div>
+      )}
     </div>
   );
 };
