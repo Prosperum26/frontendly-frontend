@@ -4,12 +4,12 @@ import { authService } from '../services/auth.service';
 import { useAuthStore } from '../../../store/auth.store';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../../../constants/routes';
-import { useState } from 'react';
+import { useToast } from '../../../components/Toast';
 
 export const useGoogleLogin = () => {
-  const { setAuth } = useAuthStore();
+  const { setAuth, logout, isAuthenticated } = useAuthStore();
   const navigate = useNavigate();
-  const [notification, setNotification] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
+  const { addToast } = useToast();
 
   const googleLoginMutation = useMutation({
     mutationFn: async (credentialResponse: CredentialResponse) => {
@@ -27,21 +27,37 @@ export const useGoogleLogin = () => {
         localStorage.setItem('refreshToken', response.refreshToken);
       }
       setAuth(true, response.user ?? null);
-      setNotification({ message: 'Login successful!', type: 'success' });
+      addToast('Login Successful', 'You have been successfully logged in.', 'success');
       setTimeout(() => {
         navigate(ROUTES.HOME);
       }, 1500);
     },
-    onError: () => {
-      setNotification({ message: 'Login failed. Please try again.', type: 'error' });
+    onError: (error: any) => {
+      if (error.response?.status === 401) {
+        addToast('Unauthorized', 'Invalid Google credentials. Please try again.', 'error');
+        logout();
+      } else if (error.response?.status === 429) {
+        const retryAfter = error.response?.data?.retryAfter || 15;
+        addToast('Too Many Attempts', `Too many login attempts. Please try again in ${retryAfter} minutes.`, 'alert');
+      } else if (error.response?.status === 403) {
+        addToast('Account Banned', 'Your account has been banned. Please contact support.', 'error');
+        logout();
+        window.location.href = '/banned';
+      } else {
+        addToast('Login Failed', 'Unable to log in with Google. Please try again.', 'error');
+      }
     },
   });
 
   const handleGoogleLogin = (credentialResponse: CredentialResponse) => {
+    // Handle re-login scenario: if user is already authenticated, logout first
+    if (isAuthenticated) {
+      logout();
+    }
     googleLoginMutation.mutate(credentialResponse);
   };
 
-  return { handleGoogleLogin, isLoading: googleLoginMutation.isPending, notification, setNotification };
+  return { handleGoogleLogin, isLoading: googleLoginMutation.isPending };
 };
 
 export default useGoogleLogin;

@@ -176,7 +176,7 @@ export const RegisterPage: React.FC = () => {
       // Nếu gặp lỗi kết nối API/Trùng email -> Chuyển sang màn hình thất bại
       console.error(error);
       const err = error as { response?: { data?: { message?: string | string[] } } };
-      const msg = err.response?.data?.message || 'Đã xảy ra lỗi trong quá trình xác thực thông tin kỹ thuật của bạn.';
+      const msg = err.response?.data?.message || 'An error occurred during the verification of your technical information.';
       setErrorMessage(Array.isArray(msg) ? msg.join(', ') : msg);
       setBackendError(true);
     } finally {
@@ -200,13 +200,13 @@ export const RegisterPage: React.FC = () => {
 
           <div className="hidden md:flex space-x-6">
 
-            <Link to="#" className="px-3 py-2 bg-blue-600 text-white rounded-md text-sm font-medium">Home</Link>
+            <Link to="/" className="px-3 py-2 bg-blue-600 text-white rounded-md text-sm font-medium">Home</Link>
 
-            <Link to="#" className="px-3 py-2 text-slate-600 hover:text-slate-900 text-sm font-medium">Learn</Link>
+            <Link to="/learning-path" className="px-3 py-2 text-slate-600 hover:text-slate-900 text-sm font-medium">Learn</Link>
 
-            <Link to="#" className="px-3 py-2 text-slate-600 hover:text-slate-900 text-sm font-medium">Challenge</Link>
+            <Link to="/challenge/lobby" className="px-3 py-2 text-slate-600 hover:text-slate-900 text-sm font-medium">Challenge</Link>
 
-            <Link to="#" className="px-3 py-2 text-slate-600 hover:text-slate-900 text-sm font-medium">About</Link>
+            <Link to="/leaderboard" className="px-3 py-2 text-slate-600 hover:text-slate-900 text-sm font-medium">Leaderboard</Link>
 
           </div>
 
@@ -214,9 +214,9 @@ export const RegisterPage: React.FC = () => {
 
         <div className="flex space-x-4">
 
-          <Link to="/login" className="px-4 py-2 text-blue-600 border border-slate-300 rounded-md text-sm font-semibold hover:bg-slate-50">Đăng nhập</Link>
+          <Link to="/login" className="px-4 py-2 text-blue-600 border border-slate-300 rounded-md text-sm font-semibold hover:bg-slate-50">Log in</Link>
 
-          <button className="px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-semibold hover:bg-blue-700">Bắt đầu học</button>
+          <button onClick={() => navigate('/')} className="px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-semibold hover:bg-blue-700">Start Learning</button>
 
         </div>
 
@@ -326,7 +326,7 @@ export const RegisterPage: React.FC = () => {
 
                     {email && !isEmailValid && (
 
-                      <p className="text-xs text-red-500 mt-1.5">Định dạng email không hợp lệ</p>
+                      <p className="text-xs text-red-500 mt-1.5">Invalid email format</p>
 
                     )}
 
@@ -388,7 +388,7 @@ export const RegisterPage: React.FC = () => {
 
                       {password && !isPasswordValid && (
 
-                        <p className="text-xs text-red-500 mt-1.5">Mật khẩu không hợp lệ</p>
+                        <p className="text-xs text-red-500 mt-1.5">Invalid password</p>
 
                       )}
 
@@ -444,7 +444,7 @@ export const RegisterPage: React.FC = () => {
 
                       {confirmPassword && password !== confirmPassword && (
 
-                        <p className="text-xs text-red-500 mt-1.5">Mật khẩu xác nhận không khớp</p>
+                        <p className="text-xs text-red-500 mt-1.5">Passwords do not match</p>
 
                       )}
 
@@ -474,7 +474,7 @@ export const RegisterPage: React.FC = () => {
 
                     <label htmlFor="terms" className="ml-2 block text-xs text-slate-500 leading-normal font-medium">
 
-                      Tôi đồng ý với các <a href="#" className="!text-blue-600 font-bold hover:underline">Điều khoản dịch vụ</a> và <a href="#" className="!text-blue-600 font-bold hover:underline">Chính sách bảo mật</a> của FrontEndly.
+                      I agree to the <a href="#" className="!text-blue-600 font-bold hover:underline">Terms of Service</a> and <a href="#" className="!text-blue-600 font-bold hover:underline">Privacy Policy</a> of FrontEndly.
 
                     </label>
 
@@ -526,31 +526,31 @@ export const RegisterPage: React.FC = () => {
 
                 <div className="w-full md:w-[280px] bg-red-50/60 border border-red-200 rounded-xl p-5 md:absolute md:-right-[300px] md:top-[180px] transition-all duration-200 shadow-lg shadow-red-100/50">
 
-                  <h3 className="text-xs font-bold !text-slate-800 uppercase tracking-wider mb-4">YÊU CẦU MẬT KHẨU:</h3>
+                  <h3 className="text-xs font-bold !text-slate-800 uppercase tracking-wider mb-4">PASSWORD REQUIREMENTS:</h3>
 
                   <ul className="space-y-2.5 text-xs font-semibold">
 
                     <li className={`flex items-center gap-2.5 ${isLengthValid ? 'text-emerald-600' : 'text-rose-500'}`}>
 
-                      <span className="text-sm">{isLengthValid ? '●' : '○'}</span> Từ 8 đến 32 ký tự
+                      <span className="text-sm">{isLengthValid ? '●' : '○'}</span> 8 to 32 characters
 
                     </li>
 
                     <li className={`flex items-center gap-2.5 ${hasUppercase ? 'text-emerald-600' : 'text-rose-500'}`}>
 
-                      <span className="text-sm">{hasUppercase ? '●' : '○'}</span> Chứa ít nhất một chữ hoa
+                      <span className="text-sm">{hasUppercase ? '●' : '○'}</span> At least one uppercase letter
 
                     </li>
 
                     <li className={`flex items-center gap-2.5 ${hasLowercase ? 'text-emerald-600' : 'text-rose-500'}`}>
 
-                      <span className="text-sm">{hasLowercase ? '●' : '○'}</span> Chứa ít nhất một chữ thường
+                      <span className="text-sm">{hasLowercase ? '●' : '○'}</span> At least one lowercase letter
 
                     </li>
 
                     <li className={`flex items-center gap-2.5 ${hasNumber ? 'text-emerald-600' : 'text-rose-500'}`}>
 
-                      <span className="text-sm">{hasNumber ? '●' : '○'}</span> Chứa ít nhất một con số
+                      <span className="text-sm">{hasNumber ? '●' : '○'}</span> At least one number
 
                     </li>
 
@@ -578,10 +578,10 @@ export const RegisterPage: React.FC = () => {
 
               </div>
 
-              <h2 className="text-2xl md:text-3xl font-bold !text-slate-900 mb-3">Xác minh thất bại</h2>
+              <h2 className="text-2xl md:text-3xl font-bold !text-slate-900 mb-3">Verification Failed</h2>
 
               <p className="text-sm text-red-500 mb-8 leading-relaxed font-medium">
-                {errorMessage || 'Vui lòng thử lại. Đã xảy ra lỗi trong quá trình xác thực thông tin kỹ thuật của bạn.'}
+                {errorMessage || 'Please try again. An error occurred during the verification of your technical information.'}
               </p>
 
               <div className="space-y-3">
@@ -594,7 +594,7 @@ export const RegisterPage: React.FC = () => {
 
                 >
 
-                  Thử lại
+                  Try Again
 
                 </button>
 
@@ -606,7 +606,7 @@ export const RegisterPage: React.FC = () => {
 
                 >
 
-                  Quay lại
+                  Go Back
 
                 </button>
 
@@ -622,9 +622,9 @@ export const RegisterPage: React.FC = () => {
 
           <div className="w-full flex flex-col items-center justify-center animate-in fade-in duration-200">
 
-            <h2 className="text-2xl md:text-3xl font-bold !text-slate-900 mb-3">Xác minh bạn không phải là robot 🤖</h2>
+            <h2 className="text-2xl md:text-3xl font-bold !text-slate-900 mb-3">Verify you're not a robot 🤖</h2>
 
-            <p className="text-sm text-slate-500 mb-8 text-center px-4 font-medium">Chúng tôi cần đảm bảo bạn là người thật để bảo mật tài khoản</p>
+            <p className="text-sm text-slate-500 mb-8 text-center px-4 font-medium">We need to ensure you're a real person to secure your account</p>
 
 
 
@@ -636,7 +636,7 @@ export const RegisterPage: React.FC = () => {
 
                   <input type="checkbox" className="w-6 h-6 border-2 border-slate-300 rounded-md cursor-pointer" />
 
-                  <span className="text-sm font-semibold !text-slate-800">Tôi không phải là người máy</span>
+                  <span className="text-sm font-semibold !text-slate-800">I'm not a robot</span>
 
                 </div>
 
@@ -650,7 +650,7 @@ export const RegisterPage: React.FC = () => {
 
                   <span className="text-[9px] text-slate-400 font-bold mt-1">reCAPTCHA</span>
 
-                  <div className="text-[8px] text-slate-400 mt-0.5 font-medium"><a href="#" className="hover:underline">Bảo mật</a> - <a href="#" className="hover:underline">Điều khoản</a></div>
+                  <div className="text-[8px] text-slate-400 mt-0.5 font-medium"><a href="#" className="hover:underline">Privacy</a> - <a href="#" className="hover:underline">Terms</a></div>
 
                 </div>
 
@@ -664,9 +664,9 @@ export const RegisterPage: React.FC = () => {
 
                 <div>
 
-                  <h4 className="text-sm font-bold !text-slate-900">Vì sao tôi thấy thông báo này?</h4>
+                  <h4 className="text-sm font-bold !text-slate-900">Why am I seeing this?</h4>
 
-                  <p className="text-xs text-slate-500 mt-1.5 leading-relaxed font-medium">Chúng tôi phát hiện thấy các hoạt động truy cập không bình thường từ mạng của bạn. Vui lòng xác nhận để tiếp tục.</p>
+                  <p className="text-xs text-slate-500 mt-1.5 leading-relaxed font-medium">We detected unusual access activity from your network. Please confirm to continue.</p>
 
                 </div>
 
@@ -686,7 +686,7 @@ export const RegisterPage: React.FC = () => {
 
                 >
 
-                  {isLoading ? 'Đang kiểm tra...' : 'Tiếp tục →'}
+                  {isLoading ? 'Checking...' : 'Continue →'}
 
                 </button>
 
@@ -700,7 +700,7 @@ export const RegisterPage: React.FC = () => {
 
                 >
 
-                  Quay lại trang chủ
+                  Back to Home
 
                 </button>
 
@@ -730,7 +730,7 @@ export const RegisterPage: React.FC = () => {
 
 
 
-              <h2 className="text-2xl font-bold !text-slate-900 mb-8">Xác minh thành công</h2>
+              <h2 className="text-2xl font-bold !text-slate-900 mb-8">Verification Successful</h2>
 
 
 
@@ -764,13 +764,13 @@ export const RegisterPage: React.FC = () => {
 
                   >
 
-                    Tiếp tục
+                    Continue
 
                   </button>
 
                   <p className="text-[11px] text-slate-400 font-medium">
 
-                    Nếu bạn không được chuyển hướng tự động, vui lòng nhấn nút ở trên.
+                    If you are not redirected automatically, please click the button above.
 
                   </p>
 

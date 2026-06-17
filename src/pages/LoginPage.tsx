@@ -76,15 +76,15 @@ export const LoginPage: React.FC = () => {
             FrontEndly
           </Link>
           <div className="hidden md:flex space-x-6">
-            <Link to="#" className="px-3 py-2 bg-blue-600 text-white rounded-md text-sm font-medium">Home</Link>
-            <Link to="#" className="px-3 py-2 text-slate-600 hover:text-slate-900 text-sm font-medium">Learn</Link>
-            <Link to="#" className="px-3 py-2 text-slate-600 hover:text-slate-900 text-sm font-medium">Challenge</Link>
-            <Link to="#" className="px-3 py-2 text-slate-600 hover:text-slate-900 text-sm font-medium">About</Link>
+            <Link to="/" className="px-3 py-2 bg-blue-600 text-white rounded-md text-sm font-medium">Home</Link>
+            <Link to="/learning-path" className="px-3 py-2 text-slate-600 hover:text-slate-900 text-sm font-medium">Learn</Link>
+            <Link to="/challenge/lobby" className="px-3 py-2 text-slate-600 hover:text-slate-900 text-sm font-medium">Challenge</Link>
+            <Link to="/leaderboard" className="px-3 py-2 text-slate-600 hover:text-slate-900 text-sm font-medium">Leaderboard</Link>
           </div>
         </div>
         <div className="flex space-x-4">
           <Link to="/register" className="px-4 py-2 text-blue-600 border border-slate-300 rounded-md text-sm font-semibold hover:bg-slate-50">Sign Up</Link>
-          <button className="px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-semibold hover:bg-blue-700">Start Learning</button>
+          <button onClick={() => navigate('/')} className="px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-semibold hover:bg-blue-700">Start Learning</button>
         </div>
       </nav>
 

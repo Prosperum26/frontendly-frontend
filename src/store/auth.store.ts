@@ -15,16 +15,27 @@ interface AuthState {
 
 export const useAuthStore = create<AuthState>((set) => ({
   isAuthenticated: !!localStorage.getItem('accessToken'),
-  currentUser: null,
+  currentUser: JSON.parse(localStorage.getItem('currentUser') || 'null'),
   isAuthChecking: true,
   previousRoute: null,
-  setAuth: (isAuthenticated, currentUser) => set({ isAuthenticated, currentUser, isAuthChecking: false }),
+  setAuth: (isAuthenticated, currentUser) => {
+    if (currentUser) {
+      localStorage.setItem('currentUser', JSON.stringify(currentUser));
+    } else {
+      localStorage.removeItem('currentUser');
+    }
+    set({ isAuthenticated, currentUser, isAuthChecking: false });
+  },
   logout: () => {
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
+    localStorage.removeItem('currentUser');
     set({ isAuthenticated: false, currentUser: null, isAuthChecking: false, previousRoute: null });
   },
   setAuthChecking: (isChecking) => set({ isAuthChecking: isChecking }),
   setPreviousRoute: (route) => set({ previousRoute: route }),
-  updateUser: (user) => set({ currentUser: user }),
+  updateUser: (user) => {
+    localStorage.setItem('currentUser', JSON.stringify(user));
+    set({ currentUser: user });
+  },
 }));

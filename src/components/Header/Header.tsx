@@ -4,6 +4,7 @@ import { useAuthStore } from '../../store/auth.store';
 import { ROUTES } from '../../constants/routes';
 import { Button } from '../Button/Button';
 import { ChevronDown, User, LogOut, Menu, X } from 'lucide-react';
+import { authService } from '../../features/auth/services/auth.service';
 
 export const Header: React.FC = () => {
   const { isAuthenticated, currentUser, logout } = useAuthStore();
@@ -18,11 +19,17 @@ export const Header: React.FC = () => {
     { name: 'Leaderboard', path: ROUTES.LEADERBOARD },
   ];
 
-  const handleLogout = () => {
-    logout();
-    navigate(ROUTES.LOGIN);
-    setDropdownOpen(false);
-    setMobileMenuOpen(false);
+  const handleLogout = async () => {
+    try {
+      await authService.logout();
+    } catch (error) {
+      console.error('Logout API call failed:', error);
+    } finally {
+      logout();
+      navigate(ROUTES.LOGIN);
+      setDropdownOpen(false);
+      setMobileMenuOpen(false);
+    }
   };
 
   const handleProfileClick = () => {

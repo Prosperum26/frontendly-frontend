@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useAuthStore } from '../../../store/auth.store';
 import { authService } from '../services/auth.service';
+import { profileService } from '../../profile/services/profile.service';
 
 export const useSessionVerification = () => {
   const { isAuthenticated, setAuth, setAuthChecking, logout } = useAuthStore();
@@ -17,7 +18,20 @@ export const useSessionVerification = () => {
       try {
         // Verify session by calling profile API
         const user = await authService.getProfile();
-        setAuth(true, user);
+        
+        // Also fetch profile data to get latest avatar
+        try {
+          const profile = await profileService.fetchProfile();
+          // Merge profile data with user data, prioritizing profile avatar
+          setAuth(true, { 
+            ...user, 
+            avatar: profile.avatar || profile.avatarUrl || user.avatar || user.avatarUrl,
+            avatarUrl: profile.avatarUrl || profile.avatar || user.avatarUrl || user.avatar
+          });
+        } catch {
+          // If profile fetch fails, use auth user data
+          setAuth(true, user);
+        }
       } catch {
         // Session is invalid or expired
         logout();

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { authService } from '../features/auth/services/auth.service';
+import { useToast } from '../components/Toast';
 
 export const ForgotPasswordPage: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -8,6 +9,7 @@ export const ForgotPasswordPage: React.FC = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   // THÊM: Trạng thái loading chờ gọi API
   const [isLoading, setIsLoading] = useState(false);
+  const { addToast } = useToast();
 
   // CHUẨN BỊ CHO BACKEND: Đổi thành async function với try/catch
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -15,13 +17,22 @@ export const ForgotPasswordPage: React.FC = () => {
     setIsLoading(true);
 
     try {
-      await authService.forgotPassword(email);
+      console.log('Sending password reset request for email:', email);
+      const result = await authService.forgotPassword(email);
+      console.log('Password reset response:', result);
 
       // Gọi API thành công -> chuyển sang giao diện thông báo
       setIsSubmitted(true);
+      addToast('Email Sent', 'Password reset link has been sent to your email.', 'success');
     } catch (error) {
       console.error('Lỗi khi gửi email:', error);
-      // Xử lý báo lỗi ở đây (nếu có)
+      const err = error as { response?: { data?: { message?: string }; status?: number; statusText?: string } };
+      console.error('Error details:', {
+        status: err.response?.status,
+        statusText: err.response?.statusText,
+        data: err.response?.data,
+      });
+      addToast('Send Failed', err.response?.data?.message || `Failed to send reset email (Status: ${err.response?.status || 'Unknown'}). Please try again.`, 'error');
     } finally {
       setIsLoading(false);
     }
@@ -43,8 +54,8 @@ export const ForgotPasswordPage: React.FC = () => {
             </div>
 
             <div className="text-center mb-8">
-              <h1 className="text-2xl font-bold !text-slate-900">Quên mật khẩu</h1>
-              <p className="text-sm text-slate-500 mt-2 px-4">Nhập email của bạn để nhận link đặt lại mật khẩu</p>
+              <h1 className="text-2xl font-bold !text-slate-900">Forgot Password</h1>
+              <p className="text-sm text-slate-500 mt-2 px-4">Enter your email to receive a password reset link</p>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
@@ -68,18 +79,18 @@ export const ForgotPasswordPage: React.FC = () => {
                 </div>
               </div>
 
-              <button 
-                type="submit" 
+              <button
+                type="submit"
                 disabled={isLoading}
                 className="w-full bg-blue-600 text-white font-semibold py-3 rounded-lg hover:bg-blue-700 transition-colors shadow-lg shadow-blue-200 flex justify-center disabled:opacity-70 disabled:cursor-not-allowed"
               >
-                {isLoading ? 'Đang gửi...' : 'Gửi link đặt lại'}
+                {isLoading ? 'Sending...' : 'Send Reset Link'}
               </button>
             </form>
 
             <div className="mt-8 text-center border-t border-slate-100 pt-6">
               <Link to="/login" className="text-sm font-semibold text-blue-600 hover:underline flex items-center justify-center">
-                <span className="mr-2">←</span> Quay lại Đăng nhập
+                <span className="mr-2">←</span> Back to Login
               </Link>
             </div>
           </>
@@ -91,27 +102,27 @@ export const ForgotPasswordPage: React.FC = () => {
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
               </div>
               
-              <h1 className="text-2xl font-bold !text-slate-900 mb-3">Chúng tôi đã gửi email đặt lại mật khẩu</h1>
+              <h1 className="text-2xl font-bold !text-slate-900 mb-3">Password reset email sent</h1>
               <p className="text-sm text-slate-500 mb-8 px-2">
-                Vui lòng kiểm tra hộp thư đến của bạn. Chúng tôi đã gửi một liên kết an toàn để đặt lại mật khẩu của bạn.
+                Please check your inbox. We have sent a secure link to reset your password.
               </p>
 
               <div className="bg-slate-50 border border-slate-200 rounded-lg py-3.5 mb-8 flex items-center justify-center gap-2 text-sm text-slate-600 font-medium">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-                Link có hiệu lực trong 15 phút
+                Link valid for 15 minutes
               </div>
 
               <Link to="/login" className="block w-full bg-blue-600 text-white font-semibold py-3 rounded-lg hover:bg-blue-700 transition-colors mb-6 shadow-lg shadow-blue-200">
-                Quay lại Đăng nhập
+                Back to Login
               </Link>
 
               <p className="text-sm text-slate-500">
-                Bạn không nhận được email?{' '}
-                <button 
-                  onClick={() => setIsSubmitted(false)} 
+                Didn't receive the email?{' '}
+                <button
+                  onClick={() => setIsSubmitted(false)}
                   className="font-semibold text-blue-600 hover:underline"
                 >
-                  Gửi lại yêu cầu
+                  Resend request
                 </button>
               </p>
             </div>

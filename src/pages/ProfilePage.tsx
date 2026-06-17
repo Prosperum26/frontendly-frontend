@@ -1,13 +1,17 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/auth.store';
 import { profileService } from '../features/profile/services/profile.service';
+import { authService } from '../features/auth/services/auth.service';
 import type { UserProfile, Badge, ActivityLog } from '../features/profile/types/profile.types';
 import NetworkErrorCard from '../components/NetworkErrorCard';
-import { Edit, Share2, Flame, Star, Target, Trophy, Check, Zap, BookOpen, Camera } from 'lucide-react';
+import { useToast } from '../components/Toast';
+import { Edit, Share2, Flame, Star, Target, Trophy, Check, Zap, BookOpen, Camera, LogOut } from 'lucide-react';
 
 export const ProfilePage: React.FC = () => {
-  const { currentUser, setAuth } = useAuthStore();
+  const { currentUser, setAuth, logout } = useAuthStore();
+  const navigate = useNavigate();
+  const { addToast } = useToast();
   const [profileData, setProfileData] = useState<UserProfile | null>(null);
   const [badges, setBadges] = useState<Badge[]>([]);
   const [activities, setActivities] = useState<ActivityLog[]>([]);
@@ -24,18 +28,63 @@ export const ProfilePage: React.FC = () => {
     try {
       // Convert file to base64
       const reader = new FileReader();
-      reader.onloadend = () => {
+      reader.onloadend = async () => {
         const base64String = reader.result as string;
-        // Update user avatar in store
-        if (currentUser) {
-          setAuth(true, { ...currentUser, avatar: base64String });
+        
+        // Update on backend
+        try {
+          await profileService.updateProfile({ avatar: base64String });
+          
+          // Reload profile data from backend to get the updated avatar
+          const updatedProfile = await profileService.fetchProfile();
+          setProfileData(updatedProfile);
+          
+          // Update user avatar in store with the backend response
+          if (currentUser) {
+            setAuth(true, { 
+              ...currentUser, 
+              avatar: updatedProfile.avatar || updatedProfile.avatarUrl || base64String,
+              avatarUrl: updatedProfile.avatarUrl || updatedProfile.avatar
+            });
+          }
+          
+          addToast('Avatar Updated', 'Your profile picture has been updated successfully.', 'success');
+        } catch (error) {
+          console.error('Failed to update avatar on backend:', error);
+          addToast('Update Failed', 'Unable to update your avatar. Please try again.', 'error');
         }
+        
         setIsUploading(false);
       };
       reader.readAsDataURL(file);
     } catch (error) {
       console.error('Failed to upload avatar:', error);
       setIsUploading(false);
+      addToast('Upload Failed', 'Unable to upload your avatar. Please try again.', 'error');
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await authService.logout();
+      logout();
+      navigate('/login');
+      addToast('Logout Successful', 'You have been logged out successfully.', 'success');
+    } catch (error) {
+      console.error('Logout failed:', error);
+      addToast('Logout Failed', 'Unable to logout. Please try again.', 'error');
+    }
+  };
+
+  const handleLogoutAll = async () => {
+    try {
+      await authService.logoutAll();
+      logout();
+      navigate('/login');
+      addToast('Logout All Devices', 'You have been logged out from all devices successfully.', 'success');
+    } catch (error) {
+      console.error('Logout all failed:', error);
+      addToast('Logout All Failed', 'Unable to logout from all devices. Please try again.', 'error');
     }
   };
 
@@ -168,6 +217,23 @@ export const ProfilePage: React.FC = () => {
               <button className="flex-1 md:flex-none flex items-center justify-center gap-2 border border-slate-300 text-slate-700 px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-slate-50 transition-colors">
                 <Share2 className="w-4 h-4" />
                 Share Profile
+              </button>
+            </div>
+
+            <div className="flex gap-3 w-full md:w-auto mt-4 md:mt-0">
+              <button
+                onClick={handleLogout}
+                className="flex-1 md:flex-none flex items-center justify-center gap-2 border border-red-300 text-red-600 px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-red-50 transition-colors"
+              >
+                <LogOut className="w-4 h-4" />
+                Logout
+              </button>
+              <button
+                onClick={handleLogoutAll}
+                className="flex-1 md:flex-none flex items-center justify-center gap-2 bg-red-600 text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-red-700 transition-colors"
+              >
+                <LogOut className="w-4 h-4" />
+                Logout All Devices
               </button>
             </div>
           </div>

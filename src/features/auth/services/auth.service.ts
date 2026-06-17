@@ -16,6 +16,10 @@ export const authService = {
     await api.post('/auth/logout');
   },
 
+  async logoutAll(): Promise<void> {
+    await api.post('/auth/logout-all');
+  },
+
   async refreshToken(): Promise<LoginResponse> {
     const response = await api.post<LoginResponse>('/auth/refresh');
     return response.data;

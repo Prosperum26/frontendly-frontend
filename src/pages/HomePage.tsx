@@ -98,9 +98,9 @@ export const HomePage: React.FC = () => {
             <button className="bg-white text-blue-600 px-6 py-2 rounded-lg font-medium hover:bg-slate-100 transition-colors">
               Start Challenge
             </button>
-            <button className="bg-white/20 text-white px-6 py-2 rounded-lg font-medium hover:bg-white/30 transition-colors">
+            <Link to="/leaderboard" className="bg-white/20 text-white px-6 py-2 rounded-lg font-medium hover:bg-white/30 transition-colors">
               View Leaderboard
-            </button>
+            </Link>
           </div>
         </div>
 
