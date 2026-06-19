@@ -101,7 +101,7 @@ export const ProfilePage: React.FC = () => {
             
             <div className="flex-grow">
               <div className="flex items-center gap-2">
-                <h1 className="text-2xl font-bold" style={{ color: '#000000', opacity: 1 }>
+                <h1 className="text-2xl font-bold" style={{ color: '#000000', opacity: 1 }}>
                   {userData?.username || userData?.name || 'User'}
                 </h1>
               </div>
@@ -131,12 +131,12 @@ export const ProfilePage: React.FC = () => {
           <div className="mt-8">
             <div className="flex justify-between text-xs font-bold text-slate-500 mb-2">
               <span>XP Progress</span>
-              <span className="text-slate-900">{userData?.xp || 0} <span className="text-slate-400">/ {(userData?.level || 1) * 1000} XP</span>
+              <span className="text-slate-900">{userData?.xp || 0} <span className="text-slate-400">/ {(userData?.level || 1) * 1000} XP</span></span>
             </div>
             <div className="h-2.5 w-full bg-slate-100 rounded-full overflow-hidden">
               <div 
                 className="h-full bg-blue-600 rounded-full" 
-                style={{ width: `${Math.min(((userData?.xp || 0 / ((userData?.level || 1) * 1000)) * 100, 100)}% }}>
+                style={{ width: `${Math.min(((userData?.xp || 0) / ((userData?.level || 1) * 1000)) * 100, 100)}%` }}>
               </div>
             </div>
           </div>
