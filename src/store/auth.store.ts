@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import type { User } from '../features/auth/types/auth.types';
+import { normalizeUser } from '../features/auth/utils/normalizeUser';
 
 interface AuthState {
   isAuthenticated: boolean;
@@ -18,7 +19,12 @@ export const useAuthStore = create<AuthState>((set) => ({
   currentUser: null,
   isAuthChecking: true,
   previousRoute: null,
-  setAuth: (isAuthenticated, currentUser) => set({ isAuthenticated, currentUser, isAuthChecking: false }),
+  setAuth: (isAuthenticated, currentUser) =>
+    set({
+      isAuthenticated,
+      currentUser: currentUser ? normalizeUser(currentUser) : null,
+      isAuthChecking: false,
+    }),
   logout: () => {
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
@@ -26,5 +32,5 @@ export const useAuthStore = create<AuthState>((set) => ({
   },
   setAuthChecking: (isChecking) => set({ isAuthChecking: isChecking }),
   setPreviousRoute: (route) => set({ previousRoute: route }),
-  updateUser: (user) => set({ currentUser: user }),
+  updateUser: (user) => set({ currentUser: normalizeUser(user) }),
 }));

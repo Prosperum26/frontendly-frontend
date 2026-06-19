@@ -42,7 +42,6 @@ export const ProfilePage: React.FC = () => {
           profileService.fetchProfile(),
           profileService.fetchBadges(),
           profileService.fetchActivity(),
-          profileService.fetchActivityStats(),
         ]);
         setProfileData(profile);
         setBadges(Array.isArray(badgeList) ? badgeList : []);
@@ -87,7 +86,7 @@ export const ProfilePage: React.FC = () => {
         
         {/* Đã xóa thẻ span và div relative thừa, truyền thẳng level vào AvatarUpload */}
         <AvatarUpload 
-          currentAvatarUrl={currentUser?.avatarUrl} // Sửa thành avatarUrl
+          currentAvatarUrl={profileData?.avatarUrl || currentUser?.avatarUrl || currentUser?.avatar}
   level={userData?.level || 1}
   onSuccess={() => window.location.reload()}
         />

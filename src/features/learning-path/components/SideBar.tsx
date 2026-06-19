@@ -9,6 +9,21 @@ const DEFAULT_AVATAR =
 
 import type { UserData, ProgressResponse, Badge } from "../types/apiResponses";
 
+interface MeApiData {
+  name?: string;
+  username?: string;
+  avatarUrl?: string;
+  xp?: number;
+  level?: number;
+  role?: string;
+}
+
+interface BadgesApiData {
+  earned?: Array<{ id: string; name: string; icon: string }>;
+  unearned?: Array<{ id: string; name: string; icon: string }>;
+  badges?: Badge[];
+}
+
 interface SideBarProps {
   onWatchIntro: () => void;
 }
@@ -30,19 +45,46 @@ export const SideBar: React.FC<SideBarProps> = ({ onWatchIntro }) => {
       setError(null);
       try {
         const [userRes, progressRes, badgesRes] = await Promise.all([
-          api.get<{ success: boolean; data: UserData }>("/users/me"),
+          api.get<{ success: boolean; data: MeApiData }>("/users/me"),
           api.get<{ success: boolean; data: ProgressResponse }>("/users/progress"),
-          api.get<{ success: boolean; data: Badge[] | { badges: Badge[] } }>("/users/badges"),
+          api.get<{ success: boolean; data: Badge[] | BadgesApiData }>("/users/badges"),
         ]);
 
-        const uData = userRes?.data?.data ?? {} as UserData;
-        setUserData(uData);
+        const rawUser = userRes?.data?.data ?? {};
+        setUserData({
+          id: "",
+          name: rawUser.name || rawUser.username || "",
+          avatarUrl: rawUser.avatarUrl || "",
+          totalXp: rawUser.xp ?? 0,
+          currentLevel: rawUser.level ?? 1,
+          userTitle: rawUser.role === "user" ? "Frontend Student" : "Frontend Master",
+        });
 
         const pData = progressRes?.data?.data ?? {} as ProgressResponse;
         setProgressData(pData);
 
-        const badgesData = badgesRes?.data?.data;
-        const bData = Array.isArray(badgesData) ? badgesData : badgesData?.badges ?? [];
+        const badgesRaw = badgesRes?.data?.data;
+        let bData: Badge[] = [];
+        if (Array.isArray(badgesRaw)) {
+          bData = badgesRaw;
+        } else if (badgesRaw?.earned || badgesRaw?.unearned) {
+          bData = [
+            ...(badgesRaw.earned ?? []).map((badge) => ({
+              id: badge.id,
+              name: badge.name,
+              icon: badge.icon,
+              isUnlocked: true,
+            })),
+            ...(badgesRaw.unearned ?? []).map((badge) => ({
+              id: badge.id,
+              name: badge.name,
+              icon: badge.icon,
+              isUnlocked: false,
+            })),
+          ];
+        } else {
+          bData = badgesRaw?.badges ?? [];
+        }
         setBadgesData(bData);
       } catch (err: unknown) {
         const e = err as { response?: { status?: number }; message?: string };

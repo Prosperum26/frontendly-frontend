@@ -11,6 +11,9 @@ export interface UserData {
   totalXp: number;
   currentLevel: number;
   userTitle?: string;
+  /** Raw API fields mapped from GET /users/me */
+  xp?: number;
+  level?: number;
 }
 
 export interface ProgressResponse {

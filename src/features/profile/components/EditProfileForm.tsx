@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Loader2, CheckCircle2 } from 'lucide-react';
+import { profileService } from '../services/profile.service';
 import type { UserProfile } from '../types/profile.types';
 
 interface ProfileData {
@@ -54,31 +55,14 @@ export const EditProfileForm = ({ currentUser, onSuccess }: { currentUser: Profi
     }
 
     try {
-      const response = await fetch('http://localhost:3000/api/v1/users/me', {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
-        },
-        body: JSON.stringify({ username, bio, dateOfBirth }),
-      });
-
-      const data = await response.json();
-      
-      if (!response.ok) {
-        setErrorMsg(data.message || 'Session expired. Please log in again.');
-        setLoading(false);
-        return; 
-      }
-
-      if (data.success || response.ok) {
-        setShowSuccess(true);
-        setTimeout(() => {
-          onSuccess();
-        }, 1500);
-      }
-    } catch {
-      setErrorMsg('Server connection error. Please try again later.');
+      await profileService.updateProfile({ username, bio, dateOfBirth });
+      setShowSuccess(true);
+      setTimeout(() => {
+        onSuccess();
+      }, 1500);
+    } catch (error: unknown) {
+      const err = error as { response?: { data?: { message?: string } } };
+      setErrorMsg(err.response?.data?.message || 'Server connection error. Please try again later.');
     } finally {
       setLoading(false);
     }

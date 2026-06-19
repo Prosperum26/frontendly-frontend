@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-// ADDED: Award icon from lucide-react for the 100% completion celebration
 import { Target, Lock, Unlock, Award } from 'lucide-react';
+import { profileService, type LearningProgress } from '../services/profile.service';
 
 export const ProgressTrack = () => {
-  const [progress, setProgress] = useState({
+  const [progress, setProgress] = useState<LearningProgress>({
     totalLessons: 0,
     completedLessons: 0,
     completionPercentage: 0,
@@ -14,11 +14,8 @@ export const ProgressTrack = () => {
   useEffect(() => {
     const fetchProgress = async () => {
       try {
-        const res = await fetch('http://localhost:3000/api/v1/users/learning-progress', {
-          headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
-        });
-        const json = await res.json();
-        if (json.success) setProgress(json.data);
+        const data = await profileService.fetchLearningProgress();
+        setProgress(data);
       } catch (error) {
         console.error('Error fetching progress:', error);
       }
@@ -26,19 +23,16 @@ export const ProgressTrack = () => {
     fetchProgress();
   }, []);
 
-  // ADDED: Dynamic check for 100% completion to toggle special styles
   const isCompleted = progress.completionPercentage === 100;
 
   return (
     <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm hover:shadow-md transition-all duration-500 mt-4 animate-in fade-in slide-in-from-bottom-4 relative overflow-hidden">
-      {/* ADDED: Decorative background blur effect when completed */}
       {isCompleted && (
         <div className="absolute -right-10 -top-10 w-40 h-40 bg-green-500/5 rounded-full blur-3xl pointer-events-none" />
       )}
 
       <div className="flex items-center justify-between mb-5">
         <h3 className="text-xl font-bold text-slate-900 flex items-center gap-2.5">
-          {/* ADDED: Dynamic icon wrapper with bouncing effect upon completion */}
           <div className={`p-2 rounded-xl ${isCompleted ? 'bg-green-50 text-green-500' : 'bg-blue-50 text-blue-500'}`}>
             {isCompleted ? <Award className="w-5 h-5 animate-bounce" /> : <Target className="w-5 h-5" />}
           </div>
@@ -57,7 +51,6 @@ export const ProgressTrack = () => {
         </div>
       </div>
 
-      {/* ADDED: Grid layout for stats tracking details */}
       <div className="grid grid-cols-2 gap-4 mb-5">
         <div className="bg-slate-50/60 p-3 rounded-xl border border-slate-100/80">
           <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Current Milestone</p>
@@ -72,7 +65,6 @@ export const ProgressTrack = () => {
         </div>
       </div>
 
-      {/* Modern Progress Bar Container */}
       <div className="space-y-2">
         <div className="w-full bg-slate-100 rounded-full h-4 overflow-hidden p-0.5 shadow-inner flex items-center">
           <div 

@@ -74,14 +74,10 @@ api.interceptors.response.use(
         }
 
         const response = await authService.refreshToken();
-        const { accessToken, refreshToken: newRefreshToken, user } = response;
+        const { accessToken, refreshToken: newRefreshToken } = response;
 
         localStorage.setItem('accessToken', accessToken);
         localStorage.setItem('refreshToken', newRefreshToken);
-
-        // Update auth store with new user data
-        const { setAuth } = useAuthStore.getState();
-        setAuth(true, user ?? null);
 
         // Retry all pending requests with new token
         refreshSubscribers.forEach((callback) => callback(accessToken));

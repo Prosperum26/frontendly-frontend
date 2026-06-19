@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { profileService } from '../services/profile.service';
 
 interface ActivityDay {
   date: string;
@@ -12,31 +13,21 @@ export const CodingActivity = () => {
   useEffect(() => {
     const fetchActivity = async () => {
       try {
-        const response = await fetch('http://localhost:3000/api/v1/users/activity/stats', {
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
-          }
-        });
-        const result = await response.json();
+        const dataArray = await profileService.fetchActivityStats();
+        const last90Days: ActivityDay[] = [];
 
-       if (result.success) {
-          // Ép kiểu về mảng nếu API trả về sai định dạng
-          const dataArray = Array.isArray(result.data) ? result.data : [];
-          
-          const last90Days: ActivityDay[] = [];
-          for (let i = 89; i >= 0; i--) {
-            const d = new Date();
-            d.setDate(d.getDate() - i);
-            const dateString = d.toISOString().split('T')[0];
-            const existingData = dataArray.find((item: ActivityDay) => item.date === dateString);
-            
-            last90Days.push({
-              date: dateString,
-              count: existingData ? existingData.count : 0
-            });
-          }
-          setActivityData(last90Days);
+        for (let i = 89; i >= 0; i--) {
+          const d = new Date();
+          d.setDate(d.getDate() - i);
+          const dateString = d.toISOString().split('T')[0];
+          const existingData = dataArray.find((item) => item.date === dateString);
+
+          last90Days.push({
+            date: dateString,
+            count: existingData ? existingData.count : 0,
+          });
         }
+        setActivityData(last90Days);
       } catch {
         console.error('Lỗi tải dữ liệu activity');
       } finally {
@@ -47,12 +38,11 @@ export const CodingActivity = () => {
     fetchActivity();
   }, []);
 
-  // Hàm quyết định màu sắc từng ô map dựa trên số lượng hoạt động
   const getColorClass = (count: number) => {
-    if (count === 0) return 'bg-slate-100'; // Xám khi không có hoạt động
-    if (count <= 2) return 'bg-blue-200';   // Xanh nhạt
-    if (count <= 4) return 'bg-blue-400';   // Xanh vừa
-    return 'bg-blue-600';                   // Xanh đậm
+    if (count === 0) return 'bg-slate-100';
+    if (count <= 2) return 'bg-blue-200';
+    if (count <= 4) return 'bg-blue-400';
+    return 'bg-blue-600';
   };
 
   return (
@@ -62,7 +52,6 @@ export const CodingActivity = () => {
         <span className="text-xs font-medium text-slate-400">Last 3 months</span>
       </div>
 
-      {/* Khối hiển thị các ô map */}
       <div className="flex flex-wrap gap-1.5">
         {loading 
           ? Array.from({ length: 90 }).map((_, i) => (

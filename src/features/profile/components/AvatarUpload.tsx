@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { profileService } from '../services/profile.service';
 
 interface AvatarUploadProps {
   currentAvatarUrl?: string;
@@ -48,32 +49,13 @@ export const AvatarUpload: React.FC<AvatarUploadProps> = ({ currentAvatarUrl, le
     
     console.log('4. Bắt đầu gọi API...');
     setUploading(true);
-    
-    const formData = new FormData();
-    formData.append('file', selectedFile);
 
     try {
-      const response = await fetch('http://localhost:3000/api/v1/users/me/avatar', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
-        },
-        body: formData,
-      });
-
-      const data = await response.json();
-      
-      if (!response.ok) {
-        alert(data.message || 'Tải ảnh thất bại.');
-        return;
-      }
-
-      if (data.success) {
-        alert('Avatar updated successfully!');
-        setSelectedFile(null);
-        onSuccess(data.avatarUrl); 
-      }
-    } catch  { // FIX LỖI no-unused-vars Ở ĐÂY BẰNG CÁCH THÊM DẤU _
+      const avatarUrl = await profileService.uploadAvatar(selectedFile);
+      alert('Avatar updated successfully!');
+      setSelectedFile(null);
+      onSuccess(avatarUrl);
+    } catch {
       alert('Server connection error');
     } finally {
       setUploading(false);

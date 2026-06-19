@@ -1,4 +1,7 @@
+import axios from 'axios';
 import api from '../../../services/api';
+import { ENV } from '../../../config/env';
+import { normalizeUser } from '../utils/normalizeUser';
 import type { LoginCredentials, RegisterCredentials, LoginResponse, User, GoogleLoginCredentials, ResetPasswordData } from '../types/auth.types';
 
 export const authService = {
@@ -13,17 +16,28 @@ export const authService = {
   },
 
   async logout(): Promise<void> {
-    await api.post('/auth/logout');
+    const refreshToken = localStorage.getItem('refreshToken');
+    if (refreshToken) {
+      await api.post('/auth/logout', { refreshToken });
+    }
   },
 
-  async refreshToken(): Promise<LoginResponse> {
-    const response = await api.post<LoginResponse>('/auth/refresh');
+  async refreshToken(): Promise<{ message: string; accessToken: string; refreshToken: string }> {
+    const refreshToken = localStorage.getItem('refreshToken');
+    if (!refreshToken) {
+      throw new Error('No refresh token available');
+    }
+
+    const response = await axios.post<{ message: string; accessToken: string; refreshToken: string }>(
+      `${ENV.API_URL}/auth/refresh-token`,
+      { refreshToken },
+    );
     return response.data;
   },
 
   async getProfile(): Promise<User> {
-    const response = await api.get<{ message: string; user: User }>('/users/me');
-    return response.data.user;
+    const response = await api.get<{ success: boolean; data: Record<string, unknown> }>('/users/me');
+    return normalizeUser(response.data.data);
   },
 
   async googleLogin(credentials: GoogleLoginCredentials): Promise<LoginResponse> {

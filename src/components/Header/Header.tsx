@@ -1,5 +1,7 @@
 import React from 'react';
-import { NavLink, useNavigate, Link, useLocation } from 'react-router-dom';import { useAuthStore } from '../../store/auth.store';
+import { NavLink, useNavigate, Link, useLocation } from 'react-router-dom';
+import { useAuthStore } from '../../store/auth.store';
+import { authService } from '../../features/auth/services/auth.service';
 import { ROUTES } from '../../constants/routes';
 import { Button } from '../Button/Button';
 
@@ -15,7 +17,12 @@ export const Header: React.FC = () => {
     { name: 'Leaderboard', path: ROUTES.LEADERBOARD },
   ];
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      await authService.logout();
+    } catch {
+      // Proceed with local logout even if server revoke fails
+    }
     logout();
     navigate(ROUTES.LOGIN);
   };
@@ -52,9 +59,9 @@ export const Header: React.FC = () => {
         {isAuthenticated && currentUser ? (
           <>
             <div className="flex items-center space-x-3">
-              {currentUser.avatar && (
+              {(currentUser.avatarUrl || currentUser.avatar) && (
                 <img
-                  src={currentUser.avatar}
+                  src={currentUser.avatarUrl || currentUser.avatar}
                   alt={currentUser.username}
                   className="w-8 h-8 rounded-full object-cover"
                 />
