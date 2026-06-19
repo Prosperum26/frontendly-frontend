@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Eye } from 'lucide-react';
 import NetworkErrorCard from '../components/NetworkErrorCard';
+import { ROUTES } from '../constants/routes';
 
 
 
@@ -91,16 +92,19 @@ export const HomePage: React.FC = () => {
                 </p>
 
                 <div className="flex flex-col sm:flex-row gap-4 pt-2">
+              <Link to={ROUTES.ENTRANCE_TEST} className="px-8 py-4 bg-green-600 text-white rounded-lg text-center text-sm font-bold hover:bg-green-700 transition-colors shadow-lg shadow-green-600/30">
+                Take Entrance Test
+              </Link>
 
-                  <Link to="/learning-path" className="px-8 py-4 bg-blue-600 text-white rounded-lg text-center text-sm font-bold hover:bg-blue-700 transition-colors shadow-lg shadow-blue-600/30">
-                    Start Learning!
-                  </Link>
+              <Link to={ROUTES.LEARNING_PATH} className="px-8 py-4 bg-blue-600 text-white rounded-lg text-center text-sm font-bold hover:bg-blue-700 transition-colors shadow-lg shadow-blue-600/30">
+                Start Learning!
+              </Link>
 
-                  <Link to="/register" className="px-8 py-4 bg-white text-slate-800 border border-slate-300 rounded-lg text-center text-sm font-bold hover:bg-slate-50 transition-colors shadow-sm">
-                    Sign Up
-                  </Link>
+              <Link to={ROUTES.REGISTER} className="px-8 py-4 bg-white text-slate-800 border border-slate-300 rounded-lg text-center text-sm font-bold hover:bg-slate-50 transition-colors shadow-sm">
+                Sign Up
+              </Link>
 
-                </div>
+            </div>
 
               </div>
 

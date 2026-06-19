@@ -7,12 +7,14 @@ const TAB_CONFIG: { id: EditorTab; label: string; dotClass: string; dot: string 
   { id: 'html', label: 'index.html', dotClass: 'code-editor__tab-dot--html', dot: '◆' },
   { id: 'css', label: 'style.css', dotClass: 'code-editor__tab-dot--css', dot: '#' },
   { id: 'js', label: 'script.js', dotClass: 'code-editor__tab-dot--js', dot: '⚡' },
+  { id: 'jsx', label: 'App.jsx', dotClass: 'code-editor__tab-dot--jsx', dot: '⚛' },
 ];
 
 const MONACO_LANGUAGE: Record<EditorTab, string> = {
   html: 'html',
   css: 'css',
   js: 'javascript',
+  jsx: 'javascript',
 };
 
 export interface CodeEditorProps {

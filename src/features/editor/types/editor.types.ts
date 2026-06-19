@@ -1,9 +1,10 @@
-export type EditorTab = 'html' | 'css' | 'js';
+export type EditorTab = 'html' | 'css' | 'js' | 'jsx';
 
 export interface WorkspaceFiles {
   html: string;
   css: string;
   js: string;
+  jsx?: string;
 }
 
 export interface WorkspaceEditorState {

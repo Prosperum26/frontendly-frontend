@@ -6,6 +6,7 @@ import AuthLayout from './layouts/AuthLayout';
 import WorkspaceLayout from './layouts/WorkspaceLayout';
 import HomePage from './pages/HomePage';
 import LearningPathPage from './pages/LearningPathPage';
+import EntranceTestPage from './pages/EntranceTestPage';
 import {
   MilestoneDetailPage,
   TheoryPage,
@@ -59,6 +60,7 @@ function App() {
             {/* Main app routes */}
             <Route element={<MainLayout />}>
               <Route path={ROUTES.HOME} element={<HomePage />} />
+              <Route path={ROUTES.ENTRANCE_TEST} element={<EntranceTestPage />} />
               <Route path={ROUTES.LEARNING_PATH} element={<LearningPathPage />} />
               <Route
                 path={ROUTES.MILESTONE_DETAIL}

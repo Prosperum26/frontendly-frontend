@@ -1,5 +1,6 @@
 export const ROUTES = {
   HOME: '/',
+  ENTRANCE_TEST: '/entrance-test',
   LEARNING_PATH: '/learning-path',
   MILESTONE_DETAIL: '/learning-path/milestone/:milestoneId',
   LESSON_THEORY: '/learning-path/milestone/:milestoneId/lesson/:lessonId',
