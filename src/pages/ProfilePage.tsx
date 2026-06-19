@@ -4,10 +4,11 @@ import { useAuthStore } from '../store/auth.store';
 import { profileService } from '../features/profile/services/profile.service';
 import type { UserProfile, Badge, ActivityLog } from '../features/profile/types/profile.types';
 import NetworkErrorCard from '../components/NetworkErrorCard';
-import { Share2, Flame, Star, Target, Trophy, Zap, BookOpen } from 'lucide-react';
+import { Share2, Flame, Star, Trophy, Zap, BookOpen } from 'lucide-react';
 import { EditProfileForm } from '../features/profile/components/EditProfileForm';
 import { AvatarUpload } from '../features/profile/components/AvatarUpload';
 import { CodingActivity } from '../features/profile/components/CodingActivity';
+import { ProgressTrack } from '../features/profile/components/ProgressTrack';
 export const ProfilePage: React.FC = () => {
   const { currentUser } = useAuthStore();
   const [profileData, setProfileData] = useState<UserProfile | null>(null);
@@ -16,6 +17,7 @@ export const ProfilePage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isOffline, setIsOffline] = useState(!navigator.onLine);
   const [isEditing, setIsEditing] = React.useState(false);
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
 
   useEffect(() => {
     const handleOnline = () => setIsOffline(false);
@@ -74,7 +76,7 @@ export const ProfilePage: React.FC = () => {
     );
   }
 
-  const userData = profileData || currentUser;
+ const userData = (profileData || currentUser) as UserProfile;
 
   return (
     <div className="bg-slate-50 min-h-screen py-8 font-sans text-slate-900">
@@ -106,19 +108,22 @@ export const ProfilePage: React.FC = () => {
   {/* Keep your existing icon here if you have one */}
   Edit Profile
 </button>
-              <button className="flex-1 md:flex-none flex items-center justify-center gap-2 border border-slate-300 text-slate-700 px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-slate-50 transition-colors">
-                <Share2 className="w-4 h-4" />
-                Share Profile
-              </button>
+              <button 
+  onClick={() => setIsShareModalOpen(true)} 
+  className="flex-1 md:flex-none flex items-center justify-center gap-2 border border-slate-300 text-slate-700 px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-slate-50 transition-colors"
+>
+  <Share2 className="w-4 h-4" />
+  Share Profile
+</button>
             </div>
           </div>
           {/* PASTE THE NEW BLOCK HERE */}
     {isEditing && (
       <div className="mt-4 bg-white p-6 rounded-xl border border-slate-100 shadow-sm">
         <div className="flex justify-between items-center mb-4">
-       <h2 className="text-2xl font-bold text-gray-900 tracking-tight mb-6">
+      <h3 style={{ color: '#0f172a' }} className="text-xl font-bold text-slate-900">
   Update Personal Details
-</h2>
+</h3>
           <button 
             onClick={() => setIsEditing(false)}
             className="text-sm text-slate-400 hover:text-slate-600"
@@ -132,19 +137,13 @@ export const ProfilePage: React.FC = () => {
         />
       </div>
     )}
-          <div className="mt-8">
-            <div className="flex justify-between text-xs font-bold text-slate-500 mb-2">
-              <span>XP Progress</span>
-              <span className="text-slate-900">{userData?.xp || 0} <span className="text-slate-400">/ {(userData?.level || 1) * 1000} XP</span></span>
-            </div>
-            <div className="h-2.5 w-full bg-slate-100 rounded-full overflow-hidden">
-              <div className="h-full bg-blue-600 rounded-full" style={{ width: `${Math.min(((userData?.xp || 0) / ((userData?.level || 1) * 1000)) * 100, 100)}%` }}></div>
-            </div>
-          </div>
+         
         </div>
-
+ <ProgressTrack />
         {/* 2. Stats Row */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          
+          {/* Day Streak Card */}
           <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
             <div className="w-12 h-12 rounded-xl bg-orange-50 flex items-center justify-center text-xl">
               <Flame className="w-6 h-6 text-orange-500" />
@@ -155,26 +154,36 @@ export const ProfilePage: React.FC = () => {
             </div>
           </div>
 
-          <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
-            <div className="w-12 h-12 rounded-xl bg-yellow-50 flex items-center justify-center text-xl">
-              <Star className="w-6 h-6 text-yellow-500" />
+          {/* Combined Card: Total XP + Courses with Progress Bar */}
+          <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
+            <div className="flex justify-between items-start w-full">
+              <div>
+                <h3 className="text-2xl font-black text-slate-900">{userData?.xp || 0} XP</h3>
+                <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider mt-0.5">Total XP</p>
+              </div>
+              <div className="text-right">
+                <p className="text-sm font-bold text-slate-800">
+{userData?.stats?.coursesCompleted || 0}/{userData?.stats?.totalCourses || 0}                </p>
+                <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider mt-0.5">Courses</p>
+              </div>
             </div>
-            <div>
-              <h3 className="text-2xl font-black">{userData?.xp || 0}</h3>
-              <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider mt-0.5">Total XP</p>
+            
+            {/* Progress Bar (Fills based on completion percentage) */}
+            <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden mt-4">
+              <div 
+                className="bg-emerald-500 h-full rounded-full transition-all duration-300"
+                style={{
+  width: `${
+    userData?.stats?.totalCourses
+      ? ((userData?.stats?.coursesCompleted || 0) / userData.stats.totalCourses) * 100
+      : 0
+  }%`
+}}
+              />
             </div>
           </div>
 
-          <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
-            <div className="w-12 h-12 rounded-xl bg-green-50 flex items-center justify-center text-xl">
-              <Target className="w-6 h-6 text-green-500" />
-            </div>
-            <div>
-              <h3 className="text-2xl font-black">{userData?.stats?.coursesCompleted || 0}</h3>
-              <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider mt-0.5">Courses</p>
-            </div>
-          </div>
-
+          {/* Badges Card */}
           <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
             <div className="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center text-xl">
               <Trophy className="w-6 h-6 text-blue-500" />
@@ -184,6 +193,7 @@ export const ProfilePage: React.FC = () => {
               <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider mt-0.5">Badges</p>
             </div>
           </div>
+
         </div>
 
         {/* 3. Middle Grid: Radar, Badges, Heatmap */}
@@ -300,6 +310,87 @@ export const ProfilePage: React.FC = () => {
           </div>
         </div>
       </div>
+      {/* KHỐI CODE THÊM MỚI: POPUP THẺ BÀI SHARE PROFILE */}
+      {isShareModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4">
+          <div className="relative w-full max-w-sm bg-white rounded-3xl p-6 shadow-2xl border border-slate-200 animate-in zoom-in-95 duration-300">
+            
+            {/* Nút đóng (X) */}
+            <button 
+              onClick={() => setIsShareModalOpen(false)}
+              className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 bg-slate-100 hover:bg-slate-200 p-1.5 rounded-full transition-colors"
+            >
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+
+            {/* Logo / Header thẻ */}
+            <div className="w-full flex justify-between items-center mb-6">
+              <span className="text-xs font-black tracking-widest text-blue-600 uppercase">Frontendly Card</span>
+              <span className="text-xs font-bold text-slate-600 bg-slate-100 px-2 py-1 rounded-md border border-slate-200">Lv. {userData?.level || 1}</span>
+            </div>
+
+            {/* Avatar & Tên */}
+            <div className="flex flex-col items-center mb-6">
+              <img 
+                src={userData?.avatarUrl || 'https://ui-avatars.com/api/?name=User&background=e2e8f0&color=475569'} 
+                alt="Avatar" 
+                className="w-24 h-24 object-cover rounded-full border-4 border-slate-50 shadow-sm mb-3"
+              />
+<h2 style={{ color: '#0f172a' }} className="text-2xl font-black mb-1">
+  {userData?.username || userData?.name || 'Developer'}
+</h2>
+              <p className="text-blue-600 text-sm font-bold">{userData?.role === 'user' ? 'Frontend Student' : 'Frontend Master'}</p>
+            </div>
+
+            {/* THÊM: Bảng Thông tin cá nhân */}
+            <div className="bg-slate-50 rounded-2xl p-4 mb-6 border border-slate-100 space-y-3">
+              <div className="flex justify-between items-center">
+                <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Email</span>
+                <span className="text-sm font-semibold text-slate-700">{userData?.email || 'N/A'}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Phone</span>
+<span className="text-sm font-semibold text-slate-700">{(userData as UserProfile)?.phoneNumber || 'N/A'}</span>              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Date of Birth</span>
+               <span className="text-sm font-semibold text-slate-700">
+  {(userData as UserProfile)?.dateOfBirth ? new Date((userData as UserProfile).dateOfBirth!).toLocaleDateString('en-GB') : 'N/A'}
+</span>
+              </div>
+            </div>
+
+            {/* Lưới thông số (Stats Grid) */}
+            <div className="w-full grid grid-cols-3 gap-3 mb-6">
+              <div className="bg-blue-50/50 p-3 rounded-2xl text-center border border-blue-100">
+                <p className="text-[10px] text-blue-600 font-bold mb-1 uppercase tracking-wider">XP</p>
+                <p className="font-black text-blue-700">{userData?.xp || 0}</p>
+              </div>
+              <div className="bg-orange-50/50 p-3 rounded-2xl text-center border border-orange-100">
+                <p className="text-[10px] text-orange-600 font-bold mb-1 uppercase tracking-wider">Streak</p>
+                <p className="font-black text-orange-700">{userData?.stats?.streakDays || 0}🔥</p>
+              </div>
+              <div className="bg-yellow-50/50 p-3 rounded-2xl text-center border border-yellow-100">
+                <p className="text-[10px] text-yellow-600 font-bold mb-1 uppercase tracking-wider">Badges</p>
+                <p className="font-black text-yellow-700">{badges.length}🏆</p>
+              </div>
+            </div>
+
+            {/* Nút hành động */}
+            <button 
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 shadow-sm hover:shadow-md hover:-translate-y-0.5"
+              onClick={() => {
+                navigator.clipboard.writeText(window.location.href);
+                alert('Profile link copied to clipboard!');
+              }}
+            >
+              <Share2 className="w-4 h-4" />
+              Copy Link
+            </button>
+          </div>
+        </div>
+      )}
     </div>
    
 

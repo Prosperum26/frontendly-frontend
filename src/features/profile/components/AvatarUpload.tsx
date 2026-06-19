@@ -73,7 +73,7 @@ export const AvatarUpload: React.FC<AvatarUploadProps> = ({ currentAvatarUrl, le
         setSelectedFile(null);
         onSuccess(data.avatarUrl); 
       }
-    } catch (_error) { // FIX LỖI no-unused-vars Ở ĐÂY BẰNG CÁCH THÊM DẤU _
+    } catch  { // FIX LỖI no-unused-vars Ở ĐÂY BẰNG CÁCH THÊM DẤU _
       alert('Server connection error');
     } finally {
       setUploading(false);
