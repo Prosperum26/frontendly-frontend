@@ -1,3 +1,4 @@
+
 import axios from 'axios';
 import api from '../../../services/api';
 import { ENV } from '../../../config/env';
@@ -20,6 +21,10 @@ export const authService = {
     if (refreshToken) {
       await api.post('/auth/logout', { refreshToken });
     }
+  },
+
+  async logoutAll(): Promise<void> {
+    await api.post('/auth/logout-all');
   },
 
   async refreshToken(): Promise<{ message: string; accessToken: string; refreshToken: string }> {

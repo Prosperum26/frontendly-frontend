@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { Link, useSearchParams, useNavigate } from 'react-router-dom';
 import { authService } from '../features/auth/services/auth.service';
+import { useToast } from '../components/Toast';
 
 export const ResetPasswordPage: React.FC = () => {
   const [searchParams] = useSearchParams();
   const token = searchParams.get('token');
   const navigate = useNavigate();
+  const { addToast } = useToast();
 
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -16,12 +18,24 @@ export const ResetPasswordPage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (password !== confirmPassword) {
-      setError('Mật khẩu xác nhận không khớp');
+      setError('Passwords do not match');
       return;
     }
 
     if (!token) {
-      setError('Token không hợp lệ');
+      setError('Invalid token');
+      return;
+    }
+
+    // Password validation
+    if (password.length < 8) {
+      setError('New password must contain at least 1 uppercase letter, 1 lowercase letter, 1 number, and 1 special character');
+      return;
+    }
+
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    if (!passwordRegex.test(password)) {
+      setError('New password must contain at least 1 uppercase letter, 1 lowercase letter, 1 number, and 1 special character');
       return;
     }
 
@@ -31,12 +45,13 @@ export const ResetPasswordPage: React.FC = () => {
     try {
       await authService.resetPassword({ token, newPassword: password });
       setIsSubmitted(true);
+      addToast('Password Reset Successful', 'Your password has been reset successfully. Please login with your new password.', 'success');
       setTimeout(() => {
         navigate('/login');
       }, 3000);
     } catch (err: unknown) {
       const error = err as { response?: { data?: { message?: string } } };
-      setError(error.response?.data?.message || 'Đã xảy ra lỗi khi đặt lại mật khẩu');
+      setError(error.response?.data?.message || 'The password reset link is invalid or has expired. Please request a new link to continue.');
     } finally {
       setIsLoading(false);
     }
@@ -46,9 +61,9 @@ export const ResetPasswordPage: React.FC = () => {
     return (
       <div className="flex-grow flex flex-col items-center justify-center p-6 bg-slate-50 min-h-[70vh]">
         <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-10 text-center">
-          <h1 className="text-2xl font-bold text-red-600 mb-4">Lỗi</h1>
-          <p className="text-slate-600 mb-8">Link đặt lại mật khẩu không hợp lệ hoặc đã hết hạn.</p>
-          <Link to="/forgot-password" className="text-blue-600 font-semibold hover:underline">Yêu cầu link mới</Link>
+          <h1 className="text-2xl font-bold text-red-600 mb-4">Error</h1>
+          <p className="text-slate-600 mb-8">The password reset link is invalid or has expired. Please request a new link to continue.</p>
+          <Link to="/forgot-password" className="text-blue-600 font-semibold hover:underline">Request a new link</Link>
         </div>
       </div>
     );
@@ -60,8 +75,8 @@ export const ResetPasswordPage: React.FC = () => {
         {!isSubmitted ? (
           <>
             <div className="text-center mb-8">
-              <h1 className="text-2xl font-bold !text-slate-900">Đặt lại mật khẩu</h1>
-              <p className="text-sm text-slate-500 mt-2 px-4">Nhập mật khẩu mới cho tài khoản của bạn</p>
+              <h1 className="text-2xl font-bold !text-slate-900">Reset Password</h1>
+              <p className="text-sm text-slate-500 mt-2 px-4">Enter your new password for your account</p>
             </div>
 
             {error && (
@@ -72,7 +87,7 @@ export const ResetPasswordPage: React.FC = () => {
 
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-2 uppercase tracking-wide">Mật khẩu mới</label>
+                <label className="block text-xs font-bold text-slate-700 mb-2 uppercase tracking-wide">New Password</label>
                 <input
                   type="password"
                   required
@@ -84,7 +99,7 @@ export const ResetPasswordPage: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-2 uppercase tracking-wide">Xác nhận mật khẩu</label>
+                <label className="block text-xs font-bold text-slate-700 mb-2 uppercase tracking-wide">Confirm Password</label>
                 <input
                   type="password"
                   required
@@ -100,7 +115,7 @@ export const ResetPasswordPage: React.FC = () => {
                 disabled={isLoading}
                 className="w-full bg-blue-600 text-white font-semibold py-3 rounded-lg hover:bg-blue-700 transition-colors shadow-lg disabled:opacity-70"
               >
-                {isLoading ? 'Đang cập nhật...' : 'Cập nhật mật khẩu'}
+                {isLoading ? 'Updating...' : 'Update Password'}
               </button>
             </form>
           </>
@@ -109,12 +124,12 @@ export const ResetPasswordPage: React.FC = () => {
             <div className="mx-auto w-14 h-14 bg-emerald-500 rounded-full flex items-center justify-center text-white mb-6 shadow-md shadow-emerald-200">
               <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
             </div>
-            <h1 className="text-2xl font-bold !text-slate-900 mb-3">Thành công!</h1>
+            <h1 className="text-2xl font-bold !text-slate-900 mb-3">Success!</h1>
             <p className="text-sm text-slate-500 mb-8 px-2">
-              Mật khẩu của bạn đã được đặt lại thành công. Bạn sẽ được chuyển hướng tới trang đăng nhập trong giây lát.
+              Your password has been reset successfully. You will be redirected to the login page in a moment.
             </p>
             <Link to="/login" className="block w-full bg-blue-600 text-white font-semibold py-3 rounded-lg hover:bg-blue-700 transition-colors">
-              Đăng nhập ngay
+              Login Now
             </Link>
           </div>
         )}

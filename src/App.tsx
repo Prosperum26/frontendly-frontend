@@ -26,6 +26,7 @@ import { ROUTES, workspacePath } from './constants/routes';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import RegisterPage from './pages/RegisterPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
+import { ToastProvider, ToastContainer } from './components/Toast';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -43,81 +44,84 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
-        <Router>
-          <Routes>
-            {/* Banned route */}
-            <Route path={ROUTES.BANNED} element={<BannedPage />} />
+        <ToastProvider>
+          <Router>
+            <Routes>
+              {/* Banned route */}
+              <Route path={ROUTES.BANNED} element={<BannedPage />} />
 
-            {/* Auth routes */}
-            <Route element={<AuthLayout />}>
-              <Route path={ROUTES.LOGIN} element={<LoginPage />} />
-              <Route path={ROUTES.REGISTER} element={<RegisterPage />} />
-              <Route path={ROUTES.FORGOT_PASSWORD} element={<ForgotPasswordPage />} />
-              <Route path={ROUTES.RESET_PASSWORD} element={<ResetPasswordPage />} />
-            </Route>
+              {/* Auth routes */}
+              <Route element={<AuthLayout />}>
+                <Route path={ROUTES.LOGIN} element={<LoginPage />} />
+                <Route path={ROUTES.REGISTER} element={<RegisterPage />} />
+                <Route path={ROUTES.FORGOT_PASSWORD} element={<ForgotPasswordPage />} />
+                <Route path={ROUTES.RESET_PASSWORD} element={<ResetPasswordPage />} />
+              </Route>
 
-            {/* Main app routes */}
-            <Route element={<MainLayout />}>
-              <Route path={ROUTES.HOME} element={<HomePage />} />
-              <Route path={ROUTES.LEARNING_PATH} element={<LearningPathPage />} />
-              <Route
-                path={ROUTES.MILESTONE_DETAIL}
-                element={<MilestoneDetailPage />}
-              />
-              <Route
-                path={ROUTES.CHALLENGE_LOBBY}
-                element={<ChallengeLobbyPage />}
-              />
-              <Route
-                path={ROUTES.PROFILE}
-                element={
-                  <ProtectedRoute>
-                    <ProfilePage />
-                  </ProtectedRoute>
-                }
-              />
-              <Route path={ROUTES.LEADERBOARD} element={<LeaderboardPage />} />
-            </Route>
+              {/* Main app routes */}
+              <Route element={<MainLayout />}>
+                <Route path={ROUTES.HOME} element={<HomePage />} />
+                <Route path={ROUTES.LEARNING_PATH} element={<LearningPathPage />} />
+                <Route
+                  path={ROUTES.MILESTONE_DETAIL}
+                  element={<MilestoneDetailPage />}
+                />
+                <Route
+                  path={ROUTES.CHALLENGE_LOBBY}
+                  element={<ChallengeLobbyPage />}
+                />
+                <Route
+                  path={ROUTES.PROFILE}
+                  element={
+                    <ProtectedRoute>
+                      <ProfilePage />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route path={ROUTES.LEADERBOARD} element={<LeaderboardPage />} />
+              </Route>
 
-            {/* Standalone learning pages (own full-screen header) */}
-            <Route path={ROUTES.LESSON_THEORY} element={<TheoryPage />} />
-            <Route path={ROUTES.LESSON_COMPLETE} element={<LessonComplete />} />
-            <Route
-              path={ROUTES.MILESTONE_COMPLETE}
-              element={<MilestoneCompletePage />}
-            />
-
-            {/* Workspace routes */}
-            <Route element={<WorkspaceLayout />}>
+              {/* Standalone learning pages (own full-screen header) */}
+              <Route path={ROUTES.LESSON_THEORY} element={<TheoryPage />} />
+              <Route path={ROUTES.LESSON_COMPLETE} element={<LessonComplete />} />
               <Route
-                path={ROUTES.WORKSPACE}
-                element={
-                  <ProtectedRoute>
-                    <WorkspacePage />
-                  </ProtectedRoute>
-                }
+                path={ROUTES.MILESTONE_COMPLETE}
+                element={<MilestoneCompletePage />}
               />
-              <Route
-                path="/workspace"
-                element={<Navigate to={workspacePath('exercise_s1')} replace />}
-              />
-              <Route
-                path={ROUTES.CHALLENGE_BATTLE}
-                element={
-                  <ProtectedRoute>
-                    <ChallengeBattlePage />
-                  </ProtectedRoute>
-                }
-              />
-            </Route>
 
-            {/* Default redirect */}
-            <Route path="/" element={<Navigate to={ROUTES.HOME} replace />} />
+              {/* Workspace routes */}
+              <Route element={<WorkspaceLayout />}>
+                <Route
+                  path={ROUTES.WORKSPACE}
+                  element={
+                    <ProtectedRoute>
+                      <WorkspacePage />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/workspace"
+                  element={<Navigate to={workspacePath('exercise_s1')} replace />}
+                />
+                <Route
+                  path={ROUTES.CHALLENGE_BATTLE}
+                  element={
+                    <ProtectedRoute>
+                      <ChallengeBattlePage />
+                    </ProtectedRoute>
+                  }
+                />
+              </Route>
 
-            {/* 404 */}
-            <Route path="*" element={<NotFoundPage />} />
-          </Routes>
-        </Router>
+              {/* Default redirect */}
+              <Route path="/" element={<Navigate to={ROUTES.HOME} replace />} />
+
+              {/* 404 */}
+              <Route path="*" element={<NotFoundPage />} />
+            </Routes>
+          </Router>
+          <ToastContainer />
+        </ToastProvider>
       </ThemeProvider>
     </QueryClientProvider>
   );

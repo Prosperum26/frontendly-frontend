@@ -3,7 +3,7 @@
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  background-color: #e5e7eb;
+  background-color: #0D8ABC;
   overflow: hidden;
 }
 
@@ -31,5 +31,5 @@
 .avatar-fallback {
   font-size: 1rem;
   font-weight: 500;
-  color: #6b7280;
+  color: #ffffff;
 }

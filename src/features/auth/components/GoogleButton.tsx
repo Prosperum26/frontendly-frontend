@@ -1,14 +1,26 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 import { useGoogleLogin } from '../hooks/useGoogleLogin';
 import { ENV } from '../../../config/env';
+import { Loader } from '../../../components/Loader/Loader';
 
 export const GoogleButton: React.FC = () => {
-  const { handleGoogleLogin } = useGoogleLogin();
+  const { handleGoogleLogin, isLoading } = useGoogleLogin();
+  const [error, setError] = useState<string | null>(null);
 
   const isConfigured = ENV.GOOGLE_CLIENT_ID && 
                       ENV.GOOGLE_CLIENT_ID !== 'your-google-client-id' && 
                       ENV.GOOGLE_CLIENT_ID !== 'dummy_google_client_id';
+
+  const handleGoogleError = () => {
+    setError('Google login failed. Please try again.');
+    console.error('Google Login Failed');
+  };
+
+  const handleSuccess = (credentialResponse: any) => {
+    setError(null);
+    handleGoogleLogin(credentialResponse);
+  };
 
   if (!isConfigured) {
     return (
@@ -20,17 +32,26 @@ export const GoogleButton: React.FC = () => {
 
   return (
     <GoogleOAuthProvider clientId={ENV.GOOGLE_CLIENT_ID}>
-      <div className="w-full flex justify-center">
-        <GoogleLogin
-          onSuccess={handleGoogleLogin}
-          onError={() => console.error('Google Login Failed')}
-          useOneTap={false}
-          type="standard"
-          theme="outline"
-          size="large"
-          text="continue_with"
-          shape="rectangular"
-        />
+      <div className="w-full flex flex-col items-center gap-2">
+        {isLoading ? (
+          <div className="w-full h-[40px] flex items-center justify-center border border-slate-300 rounded-md bg-white">
+            <Loader size="sm" />
+          </div>
+        ) : (
+          <GoogleLogin
+            onSuccess={handleSuccess}
+            onError={handleGoogleError}
+            useOneTap={false}
+            type="standard"
+            theme="outline"
+            size="large"
+            text="continue_with"
+            shape="rectangular"
+          />
+        )}
+        {error && (
+          <p className="text-xs text-red-500">{error}</p>
+        )}
       </div>
     </GoogleOAuthProvider>
   );

@@ -1,3 +1,4 @@
+
 import { create } from 'zustand';
 import type { User } from '../features/auth/types/auth.types';
 import { normalizeUser } from '../features/auth/utils/normalizeUser';
@@ -16,21 +17,33 @@ interface AuthState {
 
 export const useAuthStore = create<AuthState>((set) => ({
   isAuthenticated: !!localStorage.getItem('accessToken'),
-  currentUser: null,
+  currentUser: JSON.parse(localStorage.getItem('currentUser') || 'null'),
   isAuthChecking: true,
   previousRoute: null,
-  setAuth: (isAuthenticated, currentUser) =>
-    set({
-      isAuthenticated,
-      currentUser: currentUser ? normalizeUser(currentUser) : null,
-      isAuthChecking: false,
-    }),
+
+  setAuth: (isAuthenticated, currentUser) => {
+    const normalizedUser = currentUser ? normalizeUser(currentUser) : null;
+    if (normalizedUser) {
+      localStorage.setItem('currentUser', JSON.stringify(normalizedUser));
+    } else {
+      localStorage.removeItem('currentUser');
+    }
+    set({ isAuthenticated, currentUser: normalizedUser, isAuthChecking: false });
+  },
+
   logout: () => {
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
+    localStorage.removeItem('currentUser');
     set({ isAuthenticated: false, currentUser: null, isAuthChecking: false, previousRoute: null });
   },
+
   setAuthChecking: (isChecking) => set({ isAuthChecking: isChecking }),
   setPreviousRoute: (route) => set({ previousRoute: route }),
-  updateUser: (user) => set({ currentUser: normalizeUser(user) }),
+
+  updateUser: (user) => {
+    const normalizedUser = normalizeUser(user);
+    localStorage.setItem('currentUser', JSON.stringify(normalizedUser));
+    set({ currentUser: normalizedUser });
+  },
 }));
