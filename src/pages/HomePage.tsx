@@ -100,6 +100,10 @@ export const HomePage: React.FC = () => {
                 Start Learning!
               </Link>
 
+              <Link to={ROUTES.CHALLENGE_LOBBY} className="px-8 py-4 bg-purple-600 text-white rounded-lg text-center text-sm font-bold hover:bg-purple-700 transition-colors shadow-lg shadow-purple-600/30">
+                Practice Coding
+              </Link>
+
               <Link to={ROUTES.REGISTER} className="px-8 py-4 bg-white text-slate-800 border border-slate-300 rounded-lg text-center text-sm font-bold hover:bg-slate-50 transition-colors shadow-sm">
                 Sign Up
               </Link>
