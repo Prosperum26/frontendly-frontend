@@ -30,7 +30,7 @@ export interface UserProfile {
     earnedAt: Date;
   }>;
   badges?: Array<{
-    badgeId: any;
+    badgeId: string;
     earnedAt: Date;
   }>;
   stage_progress?: {

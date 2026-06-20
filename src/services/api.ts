@@ -71,8 +71,8 @@ api.interceptors.response.use(
     // Handle 403 Forbidden - Only redirect to /banned if it's an actual ban
     if (error.response?.status === 403) {
       // Check if it's a ban error
-      const isBanError = 
-        (error.response?.data as any)?.message?.toLowerCase().includes('banned');
+      const data = error.response.data as { message?: string };
+      const isBanError = data.message?.toLowerCase().includes('banned');
       
       if (isBanError) {
         localStorage.removeItem('accessToken');

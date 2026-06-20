@@ -1,5 +1,5 @@
 import api from '../../../services/api';
-import type { Room, MatchState } from '../types/challenge.types';
+import type { Room, MatchState, ChallengeExercise } from '../types/challenge.types';
 
 export const challengeService = {
   async createRoom(name: string): Promise<Room> {
@@ -19,6 +19,11 @@ export const challengeService = {
 
   async getMatchState(roomId: string): Promise<MatchState> {
     const response = await api.get<MatchState>(`/challenge/matches/${roomId}`);
+    return response.data;
+  },
+
+  async getChallenges(): Promise<ChallengeExercise[]> {
+    const response = await api.get<ChallengeExercise[]>('/challenge/exercises');
     return response.data;
   },
 };

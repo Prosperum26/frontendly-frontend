@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import type { EntranceTestQuestion, EntranceTestState, EntranceTestResult } from '../types/entrance-test.types';
+import entranceTestService from '../services/entrance-test.service';
 
 const STORAGE_KEY = 'entrance-test-state';
 
@@ -32,30 +33,14 @@ export function useEntranceTest() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(testState));
   }, [testState]);
 
-  // Mock function to load questions - replace with actual API call later
   const loadQuestions = useCallback(async () => {
     setIsLoading(true);
     setError(null);
     try {
-      // Mock questions for now
-      const mockQuestions: EntranceTestQuestion[] = [
-        {
-          id: 'q1',
-          type: 'multiple-choice',
-          question: 'What is the primary purpose of React?',
-          options: ['To build user interfaces', 'To handle backend logic', 'To manage databases', 'To design graphics'],
-          correctAnswer: 'To build user interfaces',
-        },
-        {
-          id: 'q2',
-          type: 'single-choice',
-          question: 'Which hook is used to manage state in functional components?',
-          options: ['useEffect', 'useState', 'useContext', 'useReducer'],
-          correctAnswer: 'useState',
-        },
-      ];
-      setQuestions(mockQuestions);
+      const fetchedQuestions = await entranceTestService.getQuestions();
+      setQuestions(fetchedQuestions);
     } catch (err) {
+      console.error(err);
       setError('Failed to load questions');
     } finally {
       setIsLoading(false);
@@ -66,10 +51,10 @@ export function useEntranceTest() {
     loadQuestions();
   }, [loadQuestions]);
 
-  const selectAnswer = useCallback((questionId: string, answer: any) => {
+  const selectAnswer = useCallback((questionId: string, answer: unknown) => {
     setTestState((prev) => {
       const newAnswers = { ...prev.answers, [questionId]: answer };
-      const progress = Object.keys(newAnswers).length / questions.length;
+      const progress = questions.length > 0 ? Object.keys(newAnswers).length / questions.length : 0;
       return { ...prev, answers: newAnswers, progress };
     });
   }, [questions.length]);
@@ -93,11 +78,11 @@ export function useEntranceTest() {
   }, [testState.currentQuestionIndex]);
 
   const submitTest = useCallback(async (): Promise<EntranceTestResult> => {
-    // Mock submission - replace with actual API call
+    const result = await entranceTestService.submitTest(testState.answers);
     setTestState((prev) => ({ ...prev, isCompleted: true }));
     localStorage.removeItem(STORAGE_KEY);
-    return { skipToMilestoneId: 'milestone_2' };
-  }, []);
+    return result;
+  }, [testState.answers]);
 
   const resetTest = useCallback(() => {
     setTestState({

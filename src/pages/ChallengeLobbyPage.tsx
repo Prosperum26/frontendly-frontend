@@ -1,32 +1,73 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { DUMMY_CHALLENGES } from '../features/challenge/temp/challenge.data';
-import type { ChallengeExercise } from '../features/challenge/temp/challenge.types';
+import type { ChallengeExercise } from '../features/challenge/types/challenge.types';
+import challengeService from '../features/challenge/services/challenge.service';
 import { Button } from '../components/Button';
 import { Input } from '../components/Input';
 import { Card } from '../components/Card';
+import { Loader } from '../components/Loader';
 
 export const ChallengeLobbyPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
+  const [challenges, setChallenges] = useState<ChallengeExercise[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Load challenges from API
+  useEffect(() => {
+    const loadChallenges = async () => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        const data = await challengeService.getChallenges();
+        setChallenges(data);
+      } catch (err) {
+        console.error(err);
+        setError('Failed to load challenges');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    loadChallenges();
+  }, []);
 
   // Get all unique tags from challenges
   const allTags = useMemo(() => {
     const tags = new Set<string>();
-    DUMMY_CHALLENGES.forEach((challenge) => {
+    challenges.forEach((challenge) => {
       challenge.tags.forEach((tag) => tags.add(tag));
     });
     return Array.from(tags);
-  }, []);
+  }, [challenges]);
 
   // Filter challenges
   const filteredChallenges = useMemo(() => {
-    return DUMMY_CHALLENGES.filter((challenge) => {
+    return challenges.filter((challenge) => {
       const matchesSearch = challenge.title.toLowerCase().includes(searchTerm.toLowerCase());
       const matchesTag = selectedTag ? challenge.tags.includes(selectedTag) : true;
       return matchesSearch && matchesTag;
     });
-  }, [searchTerm, selectedTag]);
+  }, [searchTerm, selectedTag, challenges]);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+        <Loader />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-red-600 font-bold mb-4">{error}</div>
+          <Button onClick={() => window.location.reload()}>Try Again</Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-slate-50 p-6 md:p-12">

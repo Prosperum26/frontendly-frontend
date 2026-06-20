@@ -14,7 +14,7 @@ export interface EntranceTestQuestion {
 
 export interface EntranceTestState {
   currentQuestionIndex: number;
-  answers: Record<string, any>;
+  answers: Record<string, unknown>;
   isCompleted: boolean;
   progress: number;
 }

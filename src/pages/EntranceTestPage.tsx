@@ -24,7 +24,7 @@ export const EntranceTestPage: React.FC = () => {
 
   const handleSubmit = async () => {
     try {
-      const result = await submitTest();
+      await submitTest();
       // TODO: Sync result with backend
       navigate(ROUTES.LEARNING_PATH);
     } catch (err) {
@@ -76,7 +76,7 @@ export const EntranceTestPage: React.FC = () => {
       <div className="entrance-test-container">
         <div className="mb-8">
           <h1 className="text-2xl font-bold text-slate-900 mb-4">Entrance Test</h1>
-          <ProgressBar progress={testState.progress * 100} />
+          <ProgressBar value={testState.progress * 100} />
           <div className="text-sm text-slate-500 mt-2">
             Question {testState.currentQuestionIndex + 1} of {questions.length}
           </div>
