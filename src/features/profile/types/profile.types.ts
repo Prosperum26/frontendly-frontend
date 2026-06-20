@@ -62,3 +62,8 @@ export interface ActivityLog {
   description: string;
   timestamp: number;
 }
+
+export interface LearningProgress {
+  currentMilestone?: string;
+  completionPercentage?: number;
+}
