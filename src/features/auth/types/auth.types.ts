@@ -74,11 +74,18 @@ export interface AuthState {
 
 
 
+export interface DailyCheckIn {
+  checkedIn: boolean;
+  xpEarned: number;
+  currentStreak: number;
+}
+
 export interface LoginResponse {
   message: string;
   accessToken: string;
   refreshToken: string;
   user?: User;
+  dailyCheckIn?: DailyCheckIn;
 }
 
 

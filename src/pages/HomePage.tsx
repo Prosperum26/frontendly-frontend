@@ -35,7 +35,6 @@ const Dashboard: React.FC<DashboardProps> = ({
   }
 
   const user = profileData || currentUser;
-  const recentBadges = badgesData?.slice(0, 4) || [];
 
   return (
     <div className="min-h-screen bg-slate-50">

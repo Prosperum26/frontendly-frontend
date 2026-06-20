@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Target, Lock, Unlock, Award } from 'lucide-react';
 import { profileService, type LearningProgress } from '../services/profile.service';
 

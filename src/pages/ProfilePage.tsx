@@ -14,7 +14,7 @@ import { CodingActivity } from '../features/profile/components/CodingActivity';
 import { ProgressTrack } from '../features/profile/components/ProgressTrack';
 
 export const ProfilePage: React.FC = () => {
-  const { currentUser, setAuth, logout } = useAuthStore();
+  const { currentUser, logout } = useAuthStore();
   const navigate = useNavigate();
   const [profileData, setProfileData] = useState<UserProfile | null>(null);
   const [badges, setBadges] = useState<BadgeType[]>([]);
@@ -125,6 +125,12 @@ export const ProfilePage: React.FC = () => {
               >
                 <Share2 className="w-4 h-4" />
                 Share Profile
+              </button>
+              <button 
+                onClick={handleLogout}
+                className="flex items-center justify-center gap-2 border border-red-300 text-red-700 px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-red-50 transition-colors"
+              >
+                Logout
               </button>
             </div>
           </div>

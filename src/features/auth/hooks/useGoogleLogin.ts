@@ -27,7 +27,19 @@ export const useGoogleLogin = () => {
       if (response.refreshToken) {
         localStorage.setItem('refreshToken', response.refreshToken);
       }
-      setAuth(true, response.user ?? null);
+      
+      const dailyCheckIn = response.dailyCheckIn;
+      
+      // Update user XP if daily check-in earned XP
+      let updatedUser = response.user;
+      if (dailyCheckIn?.checkedIn && updatedUser) {
+        updatedUser = {
+          ...updatedUser,
+          xp: (updatedUser.xp || 0) + dailyCheckIn.xpEarned,
+        };
+      }
+      
+      setAuth(true, updatedUser ?? null);
 
       // Sync guest progress
       try {
@@ -37,6 +49,18 @@ export const useGoogleLogin = () => {
       }
 
       addToast('Login Successful', 'You have been successfully logged in.', 'success');
+      
+      // Show daily check-in toast if applicable
+      if (dailyCheckIn?.checkedIn) {
+        setTimeout(() => {
+          addToast(
+            'Điểm danh thành công', 
+            `Bạn đã nhận được ${dailyCheckIn.xpEarned} XP! Streak hiện tại: ${dailyCheckIn.currentStreak} ngày.`, 
+            'xp'
+          );
+        }, 1600);
+      }
+      
       setTimeout(() => {
         navigate(ROUTES.HOME);
       }, 1500);
