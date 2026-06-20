@@ -94,9 +94,9 @@ function App() {
                 <Route
                   path={ROUTES.WORKSPACE}
                   element={
-                    <ProtectedRoute>
-                      <WorkspacePage />
-                    </ProtectedRoute>
+                    <ProtectedRoute allowGuest={true}>
+                    <WorkspacePage />
+                  </ProtectedRoute>
                   }
                 />
                 <Route

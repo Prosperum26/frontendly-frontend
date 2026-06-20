@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import './workspace.css';
 import { WorkspaceExerciseSection } from './WorkspaceExerciseSection';
@@ -21,6 +21,7 @@ import { useWorkspaceEditor } from '../../features/editor/hooks/useWorkspaceEdit
 import { editorService } from '../../features/editor/services/editor.service';
 import { validatePreviewFiles } from '../../features/editor/utils/previewDocument';
 import { useAuthStore } from '../../store/auth.store';
+import { useGuestStore } from '../../store/guest.store';
 import '../../features/editor/components/editor-ui.css';
 
 export const WorkspacePage: React.FC = () => {
@@ -81,6 +82,11 @@ interface WorkspaceToastState {
 const WorkspacePageContent: React.FC<WorkspacePageContentProps> = ({ exercise }) => {
   const currentUser = useAuthStore((s) => s.currentUser);
   const userId = currentUser?.id || 'guest';
+  const navigate = useNavigate();
+
+  const queryParams = new URLSearchParams(window.location.search);
+  const stageId = queryParams.get('stageId') || exercise.id.replace('exercise_', '');
+  const milestoneId = queryParams.get('milestoneId') || exercise.navigation?.currentMilestoneId || '';
 
   const { files, activeTab, isDirty, setActiveTab, setFile, replaceFiles, reset } =
     useWorkspaceEditor(exercise.starterFiles);
@@ -203,6 +209,10 @@ const WorkspacePageContent: React.FC<WorkspacePageContentProps> = ({ exercise })
       setIsModalOpen(true);
       if (result.passed) {
         setIsCompleted(true);
+        const isAuthenticated = useAuthStore.getState().isAuthenticated;
+        if (!isAuthenticated) {
+          useGuestStore.getState().completeLesson(stageId);
+        }
       }
       showToast(
         result.passed
@@ -327,7 +337,12 @@ const WorkspacePageContent: React.FC<WorkspacePageContentProps> = ({ exercise })
       {evaluationResult && (
         <EvaluationResultModal
           isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
+          onClose={() => {
+            setIsModalOpen(false);
+            if (isCompleted && milestoneId && stageId) {
+              navigate(`/learning-path/milestone/${milestoneId}/lesson/${stageId}/complete`);
+            }
+          }}
           evaluationResult={evaluationResult}
           exercise={exercise}
         />

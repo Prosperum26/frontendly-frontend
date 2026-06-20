@@ -143,7 +143,16 @@ export const TheoryPage: React.FC = () => {
     if (!stageId || !milestoneId) return;
 
     if (!isAuthenticated) {
-      setShowGuestModal(true);
+      if (!canViewTheory(stageId)) {
+        setShowGuestModal(true);
+        return;
+      }
+      recordTheoryView(stageId);
+      const exerciseId = `exercise_${stageId}`;
+      const targetPath = `${workspacePath(exerciseId)}?stageId=${stageId}&milestoneId=${milestoneId}`;
+      navigate(targetPath, {
+        state: { fromTheory: true },
+      });
       return;
     }
 

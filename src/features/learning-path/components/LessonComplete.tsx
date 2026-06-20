@@ -9,6 +9,9 @@ import { DEFAULT_SKILL_ID } from "../utils/roadmapMappers";
 import { ROUTES } from "../../../constants/routes";
 import "./LessonComplete.css";
 
+import { useAuthStore } from "../../../store/auth.store";
+import { useGuestStore } from "../../../store/guest.store";
+
 export const LessonComplete: React.FC = () => {
   const { milestoneId, lessonId } = useParams<{
     milestoneId: string;
@@ -34,20 +37,36 @@ export const LessonComplete: React.FC = () => {
 
   useEffect(() => {
     const markComplete = async () => {
-      if (lessonId) {
+      if (!lessonId) return;
+
+      const isAuthenticated = useAuthStore.getState().isAuthenticated;
+      if (isAuthenticated) {
         try {
           const response = await api.patch<{ success: boolean; data: CompletionData }>(`/stages/${lessonId}/complete`, {});
           setCompletionData(response.data.data);
         } catch (err) {
           console.error("Error marking lesson complete:", err);
         }
+      } else {
+        const guestStore = useGuestStore.getState();
+        guestStore.completeLesson(lessonId);
+
+        const milestone = milestoneId ? getMilestoneDetailById(milestoneId) : undefined;
+        const isMilestoneComplete = milestone 
+          ? milestone.lessons.every(l => l.status === "completed" || l.id === lessonId)
+          : false;
+
+        setCompletionData({
+          xpEarned: 50,
+          isMilestoneComplete,
+        });
       }
     };
     void markComplete();
     void refetch();
     void queryClient.invalidateQueries({ queryKey: ["roadmap"] });
     window.scrollTo({ top: 0, behavior: "smooth" });
-  }, [lessonId, refetch, queryClient]);
+  }, [lessonId, milestoneId, refetch, queryClient, getMilestoneDetailById]);
 
   const milestone = milestoneId
     ? getMilestoneDetailById(milestoneId)

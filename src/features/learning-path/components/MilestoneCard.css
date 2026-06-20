@@ -2,7 +2,7 @@
   padding: 24px;
   border-radius: 12px;
   background-color: var(--color-main-bg);
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-border);
   margin-bottom: 24px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
   transition: all 0.3s ease;
@@ -10,7 +10,7 @@
 }
 
 .milestone-card.is-completed {
-  border-color: #e2e8f0;
+  border-color: var(--color-border);
 }
 
 .milestone-card.is-in-progress {
@@ -57,8 +57,8 @@
   color: var(--color-warning);
 }
 .is-locked .milestone-icon-box {
-  background-color: #e2e8f0;
-  color: #94a3b8;
+  background-color: var(--color-border);
+  color: var(--color-subtle);
 }
 
 .milestone-subtitle {
@@ -77,7 +77,7 @@
   color: var(--color-warning);
 }
 .is-locked .milestone-subtitle {
-  color: #94a3b8;
+  color: var(--color-subtle);
 }
 
 .milestone-title {
@@ -101,19 +101,19 @@
 }
 
 .badge-completed {
-  background-color: #dcfce7;
-  color: #15803d;
+  background-color: var(--color-success-light);
+  color: var(--color-success-darker);
 }
 
 .badge-progress {
-  background-color: #fef3c7;
+  background-color: var(--color-warning-light);
   color: #92400e;
 }
 
 .badge-locked {
-  background-color: #f1f5f9;
-  color: #64748b;
-  border: 1px solid #e2e8f0;
+  background-color: var(--color-surface-raised);
+  color: var(--color-muted);
+  border: 1px solid var(--color-border);
 }
 
 .lessons-grid {
@@ -124,45 +124,106 @@
 }
 
 .lesson-card {
-  padding: 16px;
-  border-radius: 8px;
-  border: 1px solid #e2e8f0;
+  padding: 14px 14px 10px;
+  border-radius: 10px;
+  border: 1.5px solid var(--color-border);
   background-color: var(--color-main-bg);
   cursor: pointer;
   transition: all 0.2s ease;
+  position: relative;
 }
+
 .lesson-card:hover {
-  border-color: #cbd5e1;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  border-color: var(--color-primary-border);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.08);
 }
 
 .lesson-card.is-active {
   border: 2px solid var(--color-primary);
-  background: #f0f5ff;
+  background: linear-gradient(135deg, var(--color-primary-light) 0%, #dbeafe 100%);
+  box-shadow: 0 4px 16px rgba(37, 99, 235, 0.15);
 }
 
 .lesson-card.is-completed {
-  opacity: 0.85;
+  border: 2px solid #22c55e;
+  background: linear-gradient(135deg, var(--color-success-lighter) 0%, var(--color-success-light) 100%);
+}
+
+.lesson-card.is-completed:hover {
+  border-color: var(--color-success-dark);
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.18);
+}
+
+.lesson-card.is-locked-stage {
+  cursor: not-allowed;
+  border-color: var(--color-border);
+  background-color: var(--color-surface);
+}
+
+.lesson-card.is-locked-stage:hover {
+  border-color: var(--color-border);
+  box-shadow: none;
 }
 
 .is-locked .lesson-card {
   cursor: default;
-  opacity: 0.6;
+  opacity: 0.55;
 }
 .is-locked .lesson-card:hover {
-  border-color: #e2e8f0;
+  border-color: var(--color-border);
   box-shadow: none;
+}
+
+.lesson-card-status-icon {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lesson-status-done {
+  color: var(--color-success-dark);
+}
+
+.lesson-status-lock {
+  color: var(--color-subtle);
+}
+
+.lesson-status-active-pulse {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--color-primary);
+  box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.5);
+  animation: activePulse 1.6s ease-in-out infinite;
+}
+
+@keyframes activePulse {
+  0%   { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.5); }
+  70%  { box-shadow: 0 0 0 6px rgba(37, 99, 235, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0); }
 }
 
 .lesson-type {
   font-size: 10px;
   font-weight: 800;
   text-transform: uppercase;
-  color: #64748b;
-  margin-bottom: 8px;
+  color: var(--color-muted);
+  margin-bottom: 6px;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
+  padding-right: 20px;
+}
+
+.lesson-card.is-completed .lesson-type {
+  color: var(--color-success-dark);
+}
+
+.lesson-card.is-active .lesson-type {
+  color: var(--color-primary);
 }
 
 .lesson-title {
@@ -172,10 +233,26 @@
   line-height: 1.4;
 }
 
+.lesson-card.is-locked-stage .lesson-title {
+  color: var(--color-subtle);
+}
+
+.lesson-revisit-hint {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 8px;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--color-success-dark);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
 .milestone-progress-section {
   margin-top: 24px;
   padding-top: 20px;
-  border-top: 1px solid #e2e8f0;
+  border-top: 1px solid var(--color-border);
 }
 
 .milestone-progress-header {
@@ -194,7 +271,7 @@
 
 .milestone-progress-track {
   width: 100%;
-  background-color: #e2e8f0;
+  background-color: var(--color-border);
   border-radius: 999px;
   height: 8px;
   overflow: hidden;

@@ -6,9 +6,11 @@ import { MilestoneCard } from "../features/learning-path/components/MilestoneCar
 import { useRoadmap } from "../features/learning-path/hooks/useRoadmap";
 import { DEFAULT_SKILL_ID } from "../features/learning-path/utils/roadmapMappers";
 import certificateIcon from "../assets/learning-path/certificate_icon.svg";
+import { ChevronLeft, ChevronRight, PlayCircle } from "lucide-react";
 
 export const LearningPathPage: React.FC = () => {
   const [isModuleOpen, setIsModuleOpen] = React.useState<boolean>(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = React.useState<boolean>(false);
   const { data, isLoading, error, refetch } = useRoadmap(DEFAULT_SKILL_ID);
   const milestones = useMemo(() => data?.milestones ?? [], [data?.milestones]);
   const skillTitle = data?.skillTitle;
@@ -26,8 +28,17 @@ export const LearningPathPage: React.FC = () => {
   }, [isLoading, milestones]);
 
   return (
-    <div className="learning-path-wrapper">
-      <SideBar onWatchIntro={() => setIsModuleOpen(true)} />
+    <div className={`learning-path-wrapper ${isSidebarCollapsed ? "sidebar-collapsed" : ""}`}>
+      <SideBar className={isSidebarCollapsed ? "collapsed" : ""} />
+      
+      <button 
+        className={`sidebar-toggle-btn ${isSidebarCollapsed ? "collapsed" : ""}`}
+        onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+        aria-label={isSidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+      >
+        {isSidebarCollapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
+      </button>
+
       <div className="learning-path-content">
         <header className="learning-path-header">
           <div className="learning-path-badge">
@@ -165,9 +176,39 @@ export const LearningPathPage: React.FC = () => {
             </div>
           )}
 
-          {!isLoading &&
-            !error &&
-            milestones.map((m) => <MilestoneCard key={m.id} milestone={m} />)}
+          {!isLoading && !error && (
+            <>
+              <div className="learning-path-intro-banner">
+                <div className="intro-banner-content">
+                  <span className="intro-banner-tag">INTRODUCTION</span>
+                  <h2 className="intro-banner-title">Getting Started</h2>
+                  <p className="intro-banner-desc">
+                    Learn how to navigate the expert mentor mode and utilize the
+                    interactive workspace for maximum learning efficiency.
+                  </p>
+                  <button className="intro-banner-btn" onClick={() => setIsModuleOpen(true)}>
+                    <PlayCircle size={16} /> Watch Intro
+                  </button>
+                </div>
+                <div
+                  className="intro-banner-video"
+                  onClick={() => setIsModuleOpen(true)}
+                >
+                  <img
+                    src="https://img.youtube.com/vi/SqcY0GlETPk/maxresdefault.jpg"
+                    alt="Frontendly Getting Started Tutorial Thumbnail"
+                  />
+                  <div className="play-overlay">
+                    <PlayCircle className="play-icon" />
+                  </div>
+                </div>
+              </div>
+
+              {milestones.map((m) => (
+                <MilestoneCard key={m.id} milestone={m} />
+              ))}
+            </>
+          )}
         </section>
       </div>
       <VideoModule

@@ -13,6 +13,8 @@ import {
   Settings2,
   Bug,
   AlertTriangle,
+  CheckCircle2,
+  RotateCcw,
 } from "lucide-react";
 import "./MilestoneCard.css";
 import type { Milestone } from "../types/learning-path.types";
@@ -222,15 +224,26 @@ export const MilestoneCard: React.FC<MilestoneCardProps> = ({ milestone }) => {
             <motion.div
               key={lesson.id}
               className={`lesson-card ${isLessonActive ? "is-active" : ""} ${lesson.completed ? "is-completed" : ""} ${isLessonLocked ? "is-locked-stage" : ""}`}
-              whileHover={!isLessonLocked ? { scale: 1.05, y: -2 } : {}}
+              whileHover={!isLessonLocked ? { scale: 1.03, y: -2 } : {}}
               transition={{ duration: 0.2 }}
               onClick={(e) => handleLessonClick(e, lesson.id, isLessonLocked)}
               style={{
                 position: "relative",
                 cursor: isLessonLocked ? "not-allowed" : "pointer",
-                opacity: isLessonLocked ? 0.6 : 1,
+                opacity: isLessonLocked ? 0.55 : 1,
               }}
             >
+              {/* Status indicator in top-right corner */}
+              <div className="lesson-card-status-icon">
+                {lesson.completed ? (
+                  <CheckCircle2 size={14} className="lesson-status-done" />
+                ) : isLessonActive ? (
+                  <div className="lesson-status-active-pulse" />
+                ) : isLessonLocked ? (
+                  <Lock size={12} className="lesson-status-lock" />
+                ) : null}
+              </div>
+
               <div className="lesson-type">
                 {getLessonIcon(lesson.title, 14)}
                 {lesson.title.split(" ")[0] || "LESSON"}
@@ -238,6 +251,11 @@ export const MilestoneCard: React.FC<MilestoneCardProps> = ({ milestone }) => {
               <div className="lesson-title">
                 {index + 1}. {lesson.title}
               </div>
+              {lesson.completed && (
+                <div className="lesson-revisit-hint">
+                  <RotateCcw size={10} /> Revisit
+                </div>
+              )}
 
               <AnimatePresence>
                 {activeTooltipLessonId === lesson.id && (
@@ -272,8 +290,7 @@ export const MilestoneCard: React.FC<MilestoneCardProps> = ({ milestone }) => {
                         lineHeight: "1.4",
                       }}
                     >
-                      🔒 Bài học này đang khóa! Hãy hoàn thành các bài trước để
-                      mở khóa nhé.
+                      🔒 This lesson is locked. Complete the previous lessons to unlock it.
                     </div>
                     <button
                       type="button"
@@ -296,7 +313,7 @@ export const MilestoneCard: React.FC<MilestoneCardProps> = ({ milestone }) => {
                         width: "100%",
                       }}
                     >
-                      Học tiếp bài hiện tại
+                      Continue Current Lesson
                     </button>
                     <div
                       style={{

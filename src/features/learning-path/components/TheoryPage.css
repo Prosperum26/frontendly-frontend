@@ -3,8 +3,8 @@
   flex-direction: column;
   min-height: 100vh;
   width: 100%;
-  background-color: #f8fafc;
-  font-family: var(--font-inter, "Inter", sans-serif);
+  background-color: var(--color-surface);
+  font-family: var(--font-inter);
 }
 
 .tp-top-header {
@@ -16,8 +16,8 @@
   align-items: center;
   height: 64px;
   padding: 0 24px;
-  background-color: #ffffff;
-  border-bottom: 1px solid #e2e8f0;
+  background-color: var(--color-main-bg);
+  border-bottom: 1px solid var(--color-border);
 }
 
 .tp-header-left {
@@ -25,11 +25,11 @@
   align-items: center;
   gap: 12px;
   cursor: pointer;
-  color: #1e293b;
+  color: var(--color-heading);
 }
 
 .tp-arrow-icon {
-  color: #475569;
+  color: var(--color-body);
   transition: transform 0.2s ease;
 }
 
@@ -38,10 +38,10 @@
 }
 
 .tp-header-title {
-  font-family: var(--font-heading, "Outfit", "Inter", sans-serif);
+  font-family: var(--font-heading);
   font-size: 16px;
   font-weight: 700;
-  color: #1e293b;
+  color: var(--color-heading);
   margin: 0;
 }
 
@@ -55,7 +55,7 @@
 .tp-header-nav a {
   font-size: 14px;
   font-weight: 600;
-  color: #475569;
+  color: var(--color-body);
   cursor: pointer;
   padding: 6px 4px;
   position: relative;
@@ -65,11 +65,11 @@
 
 .tp-header-nav span:hover,
 .tp-header-nav a:hover {
-  color: #2563eb;
+  color: var(--color-primary);
 }
 
 .tp-header-nav span.active {
-  color: #2563eb;
+  color: var(--color-primary);
 }
 
 .tp-header-nav span.active::after {
@@ -79,7 +79,7 @@
   left: 0;
   right: 0;
   height: 3px;
-  background-color: #2563eb;
+  background-color: var(--color-primary);
   border-radius: 99px;
 }
 
@@ -96,17 +96,17 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  border: 1px solid #e2e8f0;
-  background-color: #ffffff;
-  color: #475569;
+  border: 1px solid var(--color-border);
+  background-color: var(--color-main-bg);
+  color: var(--color-body);
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .tp-icon-btn:hover {
-  background-color: #f1f5f9;
-  color: #1e293b;
-  border-color: #cbd5e1;
+  background-color: var(--color-surface-raised);
+  color: var(--color-heading);
+  border-color: var(--color-border-strong);
 }
 
 .tp-profile-pic {
@@ -114,7 +114,7 @@
   height: 36px;
   border-radius: 50%;
   object-fit: cover;
-  border: 2px solid #e2e8f0;
+  border: 2px solid var(--color-border);
 }
 
 .tp-content-layout {
@@ -127,8 +127,8 @@
 .tp-left-sidebar {
   width: 280px;
   min-width: 280px;
-  background-color: #f1f5f9;
-  border-right: 1px solid #e2e8f0;
+  background-color: var(--color-surface-raised);
+  border-right: 1px solid var(--color-border);
   padding: 32px 20px;
   display: flex;
   flex-direction: column;
@@ -137,8 +137,8 @@
 }
 
 .tp-sidebar-progress-box {
-  background-color: #ffffff;
-  border: 1px solid #e2e8f0;
+  background-color: var(--color-main-bg);
+  border: 1px solid var(--color-border);
   border-radius: 12px;
   padding: 20px;
   margin-bottom: 24px;
@@ -148,7 +148,7 @@
   display: block;
   font-size: 10px;
   font-weight: 800;
-  color: #64748b;
+  color: var(--color-muted);
   letter-spacing: 0.1em;
   text-transform: uppercase;
   margin-bottom: 12px;
@@ -163,21 +163,21 @@
 .tp-sidebar-progress-bar-track {
   width: 100%;
   height: 6px;
-  background-color: #e2e8f0;
+  background-color: var(--color-border);
   border-radius: 99px;
   overflow: hidden;
 }
 
 .tp-sidebar-progress-bar-fill {
   height: 100%;
-  background-color: #2563eb;
+  background-color: var(--color-primary);
   border-radius: 99px;
 }
 
 .tp-sidebar-progress-text {
   font-size: 12px;
   font-weight: 600;
-  color: #475569;
+  color: var(--color-body);
 }
 
 .tp-sidebar-lessons {
@@ -204,33 +204,33 @@
   border-radius: 10px;
   font-size: 13px;
   font-weight: 600;
-  color: #475569;
+  color: var(--color-body);
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .tp-lesson-item:hover {
   background-color: rgba(255, 255, 255, 0.5);
-  color: #1e293b;
+  color: var(--color-heading);
 }
 
 .tp-lesson-item.completed {
-  color: #475569;
+  color: var(--color-body);
 }
 
 .tp-lesson-icon.completed {
-  color: #10b981;
+  color: var(--color-success);
 }
 
 .tp-lesson-icon {
-  color: #94a3b8;
+  color: var(--color-subtle);
   flex-shrink: 0;
 }
 
 .tp-lesson-item.active {
-  background-color: #ffffff;
-  color: #2563eb;
-  border: 1px solid #e2e8f0;
+  background-color: var(--color-main-bg);
+  color: var(--color-primary);
+  border: 1px solid var(--color-border);
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
 }
 
@@ -238,7 +238,7 @@
   width: 18px;
   height: 18px;
   border-radius: 50%;
-  border: 2px solid #2563eb;
+  border: 2px solid var(--color-primary);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -249,13 +249,13 @@
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background-color: #2563eb;
+  background-color: var(--color-primary);
 }
 
 .tp-help-label {
   font-size: 12px;
   font-weight: 600;
-  color: #1e40af;
+  color: var(--color-primary-hover);
 }
 
 .tp-help-btn {
@@ -266,9 +266,9 @@
   width: 100%;
   padding: 10px;
   border-radius: 8px;
-  border: 1px solid #bfdbfe;
-  background-color: #ffffff;
-  color: #1e40af;
+  border: 1px solid var(--color-primary-border);
+  background-color: var(--color-main-bg);
+  color: var(--color-primary-hover);
   font-size: 13px;
   font-weight: 700;
   cursor: pointer;
@@ -276,7 +276,7 @@
 }
 
 .tp-help-btn:hover {
-  background-color: #eff6ff;
+  background-color: var(--color-primary-light);
   border-color: #93c5fd;
 }
 
@@ -284,15 +284,17 @@
   flex: 1;
   padding: 40px 48px;
   overflow-y: auto;
-  background-color: #ffffff;
+  background-color: var(--color-main-bg);
+  display: flex;
+  justify-content: center;
 }
 
 .tp-body-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 48px;
-  max-width: 1200px;
-  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  max-width: 800px;
+  width: 100%;
 }
 
 .tp-body-left {
@@ -304,8 +306,8 @@
   align-self: flex-start;
   font-size: 11px;
   font-weight: 800;
-  background-color: #2563eb;
-  color: #ffffff;
+  background-color: var(--color-primary);
+  color: var(--color-main-bg);
   padding: 4px 10px;
   border-radius: 6px;
   letter-spacing: 0.05em;
@@ -313,10 +315,10 @@
 }
 
 .tp-title {
-  font-family: var(--font-heading, "Outfit", "Inter", sans-serif);
+  font-family: var(--font-heading);
   font-size: 32px;
   font-weight: 800;
-  color: #0f172a;
+  color: var(--color-heading);
   margin: 0 0 16px 0;
   letter-spacing: -0.02em;
 }
@@ -324,16 +326,16 @@
 .tp-description {
   font-size: 15px;
   line-height: 1.6;
-  color: #475569;
+  color: var(--color-body);
   margin: 0 0 32px 0;
 }
 
 .tp-description code {
-  background-color: #f1f5f9;
-  color: #0f172a;
+  background-color: var(--color-surface-raised);
+  color: var(--color-heading);
   padding: 2px 6px;
   border-radius: 4px;
-  font-family: var(--font-jetbrains, monospace);
+  font-family: var(--font-jetbrains);
   font-size: 14px;
 }
 
@@ -348,13 +350,13 @@
   gap: 16px;
   padding: 20px;
   border-radius: 12px;
-  border: 1px solid #e2e8f0;
-  background-color: #ffffff;
+  border: 1px solid var(--color-border);
+  background-color: var(--color-main-bg);
   transition: all 0.2s ease;
 }
 
 .tp-info-card:hover {
-  border-color: #cbd5e1;
+  border-color: var(--color-border-strong);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
 }
 
@@ -365,8 +367,8 @@
   width: 44px;
   height: 44px;
   border-radius: 10px;
-  background-color: #eff6ff;
-  color: #2563eb;
+  background-color: var(--color-primary-light);
+  color: var(--color-primary);
   flex-shrink: 0;
 }
 
@@ -379,23 +381,23 @@
 .tp-card-heading {
   font-size: 15px;
   font-weight: 700;
-  color: #1e293b;
+  color: var(--color-heading);
   margin: 0;
 }
 
 .tp-card-text {
   font-size: 13px;
   line-height: 1.5;
-  color: #64748b;
+  color: var(--color-muted);
   margin: 0;
 }
 
 .tp-card-text code {
-  background-color: #f1f5f9;
-  color: #0f172a;
+  background-color: var(--color-surface-raised);
+  color: var(--color-heading);
   padding: 1px 4px;
   border-radius: 4px;
-  font-family: var(--font-jetbrains, monospace);
+  font-family: var(--font-jetbrains);
 }
 
 .tp-body-right {
@@ -405,8 +407,8 @@
 }
 
 .tp-demo-container {
-  background-color: #ffffff;
-  border: 1px solid #e2e8f0;
+  background-color: var(--color-main-bg);
+  border: 1px solid var(--color-border);
   border-radius: 16px;
   padding: 32px;
   display: flex;
@@ -426,16 +428,16 @@
 }
 
 .tp-demo-cell {
-  background-color: #eff6ff;
-  border: 2px dashed #2563eb;
+  background-color: var(--color-primary-light);
+  border: 2px dashed var(--color-primary);
   border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: var(--font-heading, "Outfit", "Inter", sans-serif);
+  font-family: var(--font-heading);
   font-size: 16px;
   font-weight: 700;
-  color: #2563eb;
+  color: var(--color-primary);
 }
 
 .tp-code-editor {
@@ -465,21 +467,15 @@
   border-radius: 50%;
 }
 
-.tp-dot.red {
-  background-color: #ef4444;
-}
-.tp-dot.yellow {
-  background-color: #f59e0b;
-}
-.tp-dot.green {
-  background-color: #10b981;
-}
+.tp-dot.red    { background-color: var(--color-error); }
+.tp-dot.yellow { background-color: var(--color-warning); }
+.tp-dot.green  { background-color: var(--color-success); }
 
 .tp-editor-filename {
-  font-family: var(--font-jetbrains, monospace);
+  font-family: var(--font-jetbrains);
   font-size: 11px;
   font-weight: 600;
-  color: #64748b;
+  color: var(--color-muted);
   letter-spacing: 0.05em;
 }
 
@@ -490,10 +486,10 @@
 }
 
 .tp-editor-content code {
-  font-family: var(--font-jetbrains, monospace);
+  font-family: var(--font-jetbrains);
   font-size: 13px;
   line-height: 1.7;
-  color: #e2e8f0;
+  color: var(--color-border);
 }
 
 .tp-fixed-footer {
@@ -502,8 +498,8 @@
   left: 0;
   right: 0;
   height: 64px;
-  background-color: #ffffff;
-  border-top: 1px solid #e2e8f0;
+  background-color: var(--color-main-bg);
+  border-top: 1px solid var(--color-border);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -517,7 +513,7 @@
   gap: 8px;
   background: none;
   border: none;
-  color: #475569;
+  color: var(--color-body);
   font-size: 13px;
   font-weight: 700;
   cursor: pointer;
@@ -525,15 +521,15 @@
 }
 
 .tp-footer-back-link:hover {
-  color: #1e293b;
+  color: var(--color-heading);
 }
 
 .tp-footer-progress-pill {
   display: flex;
   align-items: center;
   gap: 12px;
-  background-color: #f1f5f9;
-  border: 1px solid #e2e8f0;
+  background-color: var(--color-surface-raised);
+  border: 1px solid var(--color-border);
   border-radius: 99px;
   padding: 6px 16px 6px 12px;
 }
@@ -541,36 +537,36 @@
 .tp-progress-pill-label {
   font-size: 10px;
   font-weight: 800;
-  color: #64748b;
+  color: var(--color-muted);
   letter-spacing: 0.05em;
 }
 
 .tp-progress-pill-track {
   width: 100px;
   height: 6px;
-  background-color: #cbd5e1;
+  background-color: var(--color-border-strong);
   border-radius: 99px;
   overflow: hidden;
 }
 
 .tp-progress-pill-fill {
   height: 100%;
-  background-color: #2563eb;
+  background-color: var(--color-primary);
   border-radius: 99px;
 }
 
 .tp-progress-pill-count {
   font-size: 12px;
   font-weight: 600;
-  color: #475569;
+  color: var(--color-body);
 }
 
 .tp-footer-continue-btn {
   display: flex;
   align-items: center;
   gap: 8px;
-  background-color: #2563eb;
-  color: #ffffff;
+  background-color: var(--color-primary);
+  color: var(--color-main-bg);
   border: none;
   border-radius: 8px;
   padding: 10px 24px;
@@ -581,7 +577,7 @@
 }
 
 .tp-footer-continue-btn:hover {
-  background-color: #1d4ed8;
+  background-color: var(--color-primary-hover);
   transform: translateY(-1px);
 }
 
@@ -602,8 +598,8 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  background-color: #2563eb;
-  color: white;
+  background-color: var(--color-primary);
+  color: var(--color-main-bg);
   border: none;
   border-radius: 8px;
   padding: 10px 20px;
@@ -617,8 +613,10 @@
   .tp-left-sidebar {
     display: none;
   }
+  .tp-main-body {
+    padding: 32px 24px;
+  }
   .tp-body-grid {
-    grid-template-columns: 1fr;
-    gap: 32px;
+    max-width: 100%;
   }
 }
