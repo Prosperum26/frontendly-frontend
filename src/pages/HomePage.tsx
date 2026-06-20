@@ -42,7 +42,7 @@ export const HomePage: React.FC = () => {
 
   return (
 
-    <div className="w-full flex-grow flex flex-col bg-slate-50 font-sans">
+    <div className="w-full flex-grow flex flex-col bg-surface font-sans">
       
       {/* NOTE: Removed <nav> and <footer> here to avoid UI duplication as agreed */}
 
@@ -78,7 +78,7 @@ export const HomePage: React.FC = () => {
               {/* Left column: Text & Buttons */}
               <div className="flex flex-col space-y-8 z-10">
 
-                <h1 className="text-5xl md:text-6xl lg:text-7xl font-black !text-slate-900 leading-[1.1] tracking-tight">
+                <h1 className="text-5xl md:text-6xl lg:text-7xl font-black !text-heading leading-[1.1] tracking-tight">
 
                   Code the Web <br />
 
@@ -86,7 +86,7 @@ export const HomePage: React.FC = () => {
 
                 </h1>
 
-                <p className="text-slate-600 font-medium leading-relaxed max-w-lg text-base md:text-lg">
+                <p className="text-body font-medium leading-relaxed max-w-lg text-base md:text-lg">
                   With FrontEndly, you can learn Frontend programming in a simple, easy-to-understand way. The code editor and live server features allow you to program and run projects in real-time without complex setup.
                 </p>
 
@@ -96,7 +96,7 @@ export const HomePage: React.FC = () => {
                     Start Learning!
                   </Link>
 
-                  <Link to="/register" className="px-8 py-4 bg-white text-slate-800 border border-slate-300 rounded-lg text-center text-sm font-bold hover:bg-slate-50 transition-colors shadow-sm">
+                  <Link to="/register" className="px-8 py-4 bg-main-bg text-heading border border-border rounded-lg text-center text-sm font-bold hover:bg-surface transition-colors shadow-sm">
                     Sign Up
                   </Link>
 
@@ -175,7 +175,7 @@ export const HomePage: React.FC = () => {
 
                 {/* Floating Preview Card */}
 
-                <div className="absolute -bottom-10 -right-4 md:-right-10 bg-white p-5 rounded-xl shadow-[0_20px_50px_-12px_rgba(0,0,0,0.15)] border border-slate-100 w-64 z-20">
+                <div className="absolute -bottom-10 -right-4 md:-right-10 bg-main-bg p-5 rounded-xl shadow-[0_20px_50px_-12px_rgba(0,0,0,0.15)] border border-slate-100 w-64 z-20">
 
                   <div className="flex items-center gap-2 mb-4">
                     <Eye className="w-4 h-4 text-blue-600" />
@@ -201,7 +201,7 @@ export const HomePage: React.FC = () => {
             </section>
 
             {/* FEATURES SECTION (Added prominent hover effects) */}
-            <section className="w-full bg-white pt-24 pb-32 border-t border-slate-100">
+            <section className="w-full bg-main-bg pt-24 pb-32 border-t border-border">
 
               <div className="max-w-7xl mx-auto px-8">
 
@@ -209,7 +209,7 @@ export const HomePage: React.FC = () => {
 
                 <div className="text-center mb-16">
 
-                  <h2 className="text-3xl md:text-4xl font-bold !text-slate-900 mb-4 tracking-tight">Master the Core Technologies</h2>
+                  <h2 className="text-3xl md:text-4xl font-bold !text-heading mb-4 tracking-tight">Master the Core Technologies</h2>
 
                   <p className="text-sm md:text-base text-slate-500 font-medium">Build a rock-solid foundation with our structured learning paths designed for the modern web.</p>
 
@@ -223,7 +223,7 @@ export const HomePage: React.FC = () => {
 
                   {/* Card 1: HTML */}
 
-                  <div className="group bg-white rounded-xl p-8 border-t-2 border-slate-200 border-t-[#d97706] shadow-sm transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_10px_40px_-10px_rgba(217,119,6,0.3)] flex flex-col h-full cursor-pointer">
+                  <div className="group bg-main-bg rounded-xl p-8 border-t-2 border-border border-t-[#d97706] shadow-sm transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_10px_40px_-10px_rgba(217,119,6,0.3)] flex flex-col h-full cursor-pointer">
 
                     <div className="w-10 h-10 rounded-lg bg-[#ffedd5] flex items-center justify-center mb-6 transition-transform duration-300 group-hover:scale-110">
 
@@ -231,7 +231,7 @@ export const HomePage: React.FC = () => {
 
                     </div>
 
-                    <h3 className="text-xl font-bold !text-slate-900 mb-3">HTML5 Mastery</h3>
+                    <h3 className="text-xl font-bold !text-heading mb-3">HTML5 Mastery</h3>
 
                     <p className="text-sm text-slate-500 leading-relaxed font-medium mb-8 flex-grow">
 
@@ -251,7 +251,7 @@ export const HomePage: React.FC = () => {
 
                   {/* Card 2: CSS */}
 
-                  <div className="group bg-white rounded-xl p-8 border-t-2 border-slate-200 border-t-[#4f46e5] shadow-sm transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_10px_40px_-10px_rgba(79,70,229,0.3)] flex flex-col h-full cursor-pointer">
+                  <div className="group bg-main-bg rounded-xl p-8 border-t-2 border-border border-t-[#4f46e5] shadow-sm transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_10px_40px_-10px_rgba(79,70,229,0.3)] flex flex-col h-full cursor-pointer">
 
                     <div className="w-10 h-10 rounded-lg bg-[#e0e7ff] flex items-center justify-center mb-6 transition-transform duration-300 group-hover:scale-110">
 
@@ -259,7 +259,7 @@ export const HomePage: React.FC = () => {
 
                     </div>
 
-                    <h3 className="text-xl font-bold !text-slate-900 mb-3">Modern CSS</h3>
+                    <h3 className="text-xl font-bold !text-heading mb-3">Modern CSS</h3>
 
                     <p className="text-sm text-slate-500 leading-relaxed font-medium mb-8 flex-grow">
 
@@ -279,7 +279,7 @@ export const HomePage: React.FC = () => {
 
                   {/* Card 3: JS */}
 
-                  <div className="group bg-white rounded-xl p-8 border-t-2 border-slate-200 border-t-[#0ea5e9] shadow-sm transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_10px_40px_-10px_rgba(14,165,233,0.3)] flex flex-col h-full cursor-pointer">
+                  <div className="group bg-main-bg rounded-xl p-8 border-t-2 border-border border-t-[#0ea5e9] shadow-sm transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_10px_40px_-10px_rgba(14,165,233,0.3)] flex flex-col h-full cursor-pointer">
 
                     <div className="w-10 h-10 rounded-lg bg-[#e0f2fe] flex items-center justify-center mb-6 transition-transform duration-300 group-hover:scale-110">
 
@@ -287,7 +287,7 @@ export const HomePage: React.FC = () => {
 
                     </div>
 
-                    <h3 className="text-xl font-bold !text-slate-900 mb-3">JavaScript ES6+</h3>
+                    <h3 className="text-xl font-bold !text-heading mb-3">JavaScript ES6+</h3>
 
                     <p className="text-sm text-slate-500 leading-relaxed font-medium mb-8 flex-grow">
 

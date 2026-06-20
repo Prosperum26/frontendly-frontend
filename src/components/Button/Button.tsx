@@ -18,8 +18,8 @@ export const Button: React.FC<ButtonProps> = ({
   const tailwindVariants = {
     primary: 'bg-blue-600 text-white hover:bg-blue-700',
     secondary: '', 
-    outline: 'bg-white text-slate-800 border border-slate-200 hover:bg-slate-50',
-    ghost: 'text-blue-600 hover:bg-blue-50'
+    outline: 'bg-main-bg text-heading border border-border hover:bg-surface',
+    ghost: 'text-blue-600 hover:bg-surface'
   };
   const tailwindBase = 'px-6 py-2.5 rounded-lg text-sm font-medium flex items-center justify-center transition duration-150';
 

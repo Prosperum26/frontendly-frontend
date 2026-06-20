@@ -188,11 +188,11 @@ export const RegisterPage: React.FC = () => {
 
   return (
 
-    <div className="min-h-screen flex flex-col bg-slate-50 font-sans relative">
+    <div className="min-h-screen flex flex-col bg-main-bg font-sans relative">
 
       {/* Navbar */}
 
-      <nav className="bg-white border-b border-slate-200 px-8 py-4 flex justify-between items-center">
+      <nav className="bg-main-bg border-b border-border px-8 py-4 flex justify-between items-center">
 
         <div className="flex items-center space-x-8">
 
@@ -202,11 +202,11 @@ export const RegisterPage: React.FC = () => {
 
             <Link to="#" className="px-3 py-2 bg-blue-600 text-white rounded-md text-sm font-medium">Home</Link>
 
-            <Link to="#" className="px-3 py-2 text-slate-600 hover:text-slate-900 text-sm font-medium">Learn</Link>
+            <Link to="#" className="px-3 py-2 text-body hover:text-heading text-sm font-medium">Learn</Link>
 
-            <Link to="#" className="px-3 py-2 text-slate-600 hover:text-slate-900 text-sm font-medium">Challenge</Link>
+            <Link to="#" className="px-3 py-2 text-body hover:text-heading text-sm font-medium">Challenge</Link>
 
-            <Link to="#" className="px-3 py-2 text-slate-600 hover:text-slate-900 text-sm font-medium">About</Link>
+            <Link to="#" className="px-3 py-2 text-body hover:text-heading text-sm font-medium">About</Link>
 
           </div>
 
@@ -214,7 +214,7 @@ export const RegisterPage: React.FC = () => {
 
         <div className="flex space-x-4">
 
-          <Link to="/login" className="px-4 py-2 text-blue-600 border border-slate-300 rounded-md text-sm font-semibold hover:bg-slate-50">Đăng nhập</Link>
+          <Link to="/login" className="px-4 py-2 text-blue-600 border border-border rounded-md text-sm font-semibold hover:bg-surface">Đăng nhập</Link>
 
           <button className="px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-semibold hover:bg-blue-700">Bắt đầu học</button>
 
@@ -260,17 +260,17 @@ export const RegisterPage: React.FC = () => {
 
             <div className="relative w-full max-w-2xl flex flex-col md:flex-row items-start gap-6 justify-center">
 
-              <div className="w-full max-w-xl bg-white rounded-2xl shadow-xl shadow-slate-200/40 border border-slate-200 p-8 md:p-10">
+              <div className="w-full max-w-xl bg-main-bg rounded-2xl shadow-xl border border-border p-8 md:p-10">
 
                 <div className="text-center mb-8">
 
-                  <p className="text-sm text-slate-600 font-medium mb-4">
+                  <p className="text-sm text-body font-medium mb-4">
 
                     Already have an account? <Link to="/login" className="!text-blue-600 font-bold hover:underline">Log in</Link>
 
                   </p>
 
-                  <h1 className="text-2xl md:text-3xl font-bold !text-slate-900 text-center">Create Account</h1>
+                  <h1 className="text-2xl md:text-3xl font-bold !text-heading text-center">Create Account</h1>
 
                   <p className="text-sm text-slate-500 mt-2 text-center">Enter your details to join the community.</p>
 
@@ -282,7 +282,7 @@ export const RegisterPage: React.FC = () => {
 
                   <div>
 
-                    <label className="block text-xs font-bold uppercase tracking-wider mb-2 text-slate-700">Full Name</label>
+                    <label className="block text-xs font-bold uppercase tracking-wider mb-2 text-body">Full Name</label>
 
                     <input
 
@@ -296,7 +296,7 @@ export const RegisterPage: React.FC = () => {
 
                       placeholder="John Doe"
 
-                      className="w-full px-4 py-2.5 border border-slate-200 rounded-lg text-sm bg-slate-50/50 focus:outline-none focus:border-blue-500 focus:bg-white"
+                      className="w-full px-4 py-2.5 border border-border rounded-lg text-sm bg-surface/50 focus:outline-none focus:border-blue-500 focus:bg-main-bg"
 
                     />
 
@@ -306,7 +306,7 @@ export const RegisterPage: React.FC = () => {
 
                   <div>
 
-                    <label className="block text-xs font-bold uppercase tracking-wider mb-2 text-slate-700">Email Address</label>
+                    <label className="block text-xs font-bold uppercase tracking-wider mb-2 text-body">Email Address</label>
 
                     <input
 
@@ -320,7 +320,7 @@ export const RegisterPage: React.FC = () => {
 
                       placeholder="john@example.com"
 
-                      className={`w-full px-4 py-2.5 border rounded-lg text-sm bg-slate-50/50 focus:outline-none focus:border-blue-500 focus:bg-white ${email && !isEmailValid ? 'border-red-400 text-red-500 bg-red-50/20' : 'border-slate-200'}`}
+                      className={`w-full px-4 py-2.5 border rounded-lg text-sm bg-surface/50 focus:outline-none focus:border-blue-500 focus:bg-main-bg ${email && !isEmailValid ? 'border-red-400 text-red-500 bg-red-50/20' : 'border-border'}`}
 
                     />
 
@@ -338,7 +338,7 @@ export const RegisterPage: React.FC = () => {
 
                     <div>
 
-                      <label className="block text-xs font-bold uppercase tracking-wider mb-2 text-slate-700">Password</label>
+                      <label className="block text-xs font-bold uppercase tracking-wider mb-2 text-body">Password</label>
 
                       <div className="relative">
 
@@ -358,7 +358,7 @@ export const RegisterPage: React.FC = () => {
 
                           placeholder="••••••••"
 
-                          className={`w-full pl-4 pr-10 py-2.5 border rounded-lg text-sm bg-slate-50/50 focus:outline-none focus:border-blue-500 focus:bg-white ${password && !isPasswordValid ? 'border-red-400 text-red-500 bg-red-50/20' : 'border-slate-200'}`}
+                          className={`w-full pl-4 pr-10 py-2.5 border rounded-lg text-sm bg-surface/50 focus:outline-none focus:border-blue-500 focus:bg-main-bg ${password && !isPasswordValid ? 'border-red-400 text-red-500 bg-red-50/20' : 'border-border'}`}
 
                         />
 
@@ -368,7 +368,7 @@ export const RegisterPage: React.FC = () => {
 
                           onClick={() => setShowPassword(!showPassword)}
 
-                          className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600"
+                          className="absolute inset-y-0 right-0 pr-3 flex items-center text-muted hover:text-body"
 
                         >
 
@@ -398,7 +398,7 @@ export const RegisterPage: React.FC = () => {
 
                     <div>
 
-                      <label className="block text-xs font-bold uppercase tracking-wider mb-2 text-slate-700">Confirm Password</label>
+                      <label className="block text-xs font-bold uppercase tracking-wider mb-2 text-body">Confirm Password</label>
 
                       <div className="relative">
 
@@ -414,7 +414,7 @@ export const RegisterPage: React.FC = () => {
 
                           placeholder="••••••••"
 
-                          className={`w-full pl-4 pr-10 py-2.5 border rounded-lg text-sm bg-slate-50/50 focus:outline-none focus:border-blue-500 focus:bg-white ${confirmPassword && password !== confirmPassword ? 'border-red-400 text-red-500 bg-red-50/20' : 'border-slate-200'}`}
+                          className={`w-full pl-4 pr-10 py-2.5 border rounded-lg text-sm bg-surface/50 focus:outline-none focus:border-blue-500 focus:bg-main-bg ${confirmPassword && password !== confirmPassword ? 'border-red-400 text-red-500 bg-red-50/20' : 'border-border'}`}
 
                         />
 
@@ -424,7 +424,7 @@ export const RegisterPage: React.FC = () => {
 
                           onClick={() => setShowConfirmPassword(!showConfirmPassword)}
 
-                          className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600"
+                          className="absolute inset-y-0 right-0 pr-3 flex items-center text-muted hover:text-body"
 
                         >
 
@@ -502,11 +502,11 @@ export const RegisterPage: React.FC = () => {
 
                 <div className="mt-8 flex items-center justify-between">
 
-                  <hr className="w-full border-slate-200" />
+                  <hr className="w-full border-border" />
 
-                  <span className="px-3 text-[10px] text-slate-400 font-bold uppercase tracking-widest whitespace-nowrap">Or register with</span>
+                  <span className="px-3 text-[10px] text-muted font-bold uppercase tracking-widest whitespace-nowrap">Or register with</span>
 
-                  <hr className="w-full border-slate-200" />
+                  <hr className="w-full border-border" />
 
                 </div>
 
@@ -526,7 +526,7 @@ export const RegisterPage: React.FC = () => {
 
                 <div className="w-full md:w-[280px] bg-red-50/60 border border-red-200 rounded-xl p-5 md:absolute md:-right-[300px] md:top-[180px] transition-all duration-200 shadow-lg shadow-red-100/50">
 
-                  <h3 className="text-xs font-bold !text-slate-800 uppercase tracking-wider mb-4">YÊU CẦU MẬT KHẨU:</h3>
+                  <h3 className="text-xs font-bold !text-heading uppercase tracking-wider mb-4">YÊU CẦU MẬT KHẨU:</h3>
 
                   <ul className="space-y-2.5 text-xs font-semibold">
 
@@ -570,7 +570,7 @@ export const RegisterPage: React.FC = () => {
 
           <div className="w-full flex flex-col items-center justify-center animate-in fade-in duration-200">
 
-            <div className="w-full max-w-md bg-white rounded-xl shadow-lg shadow-slate-200/50 border border-slate-200 p-8 md:p-10 text-center">
+            <div className="w-full max-w-md bg-main-bg rounded-xl shadow-lg border border-border p-8 md:p-10 text-center">
 
               <div className="mx-auto w-16 h-16 bg-red-100 rounded-2xl flex items-center justify-center text-red-600 mb-6">
 
@@ -578,7 +578,7 @@ export const RegisterPage: React.FC = () => {
 
               </div>
 
-              <h2 className="text-2xl md:text-3xl font-bold !text-slate-900 mb-3">Xác minh thất bại</h2>
+              <h2 className="text-2xl md:text-3xl font-bold !text-heading mb-3">Xác minh thất bại</h2>
 
               <p className="text-sm text-red-500 mb-8 leading-relaxed font-medium">
                 {errorMessage || 'Vui lòng thử lại. Đã xảy ra lỗi trong quá trình xác thực thông tin kỹ thuật của bạn.'}
@@ -602,7 +602,7 @@ export const RegisterPage: React.FC = () => {
 
                   onClick={() => setShowCaptcha(false)}
 
-                  className="w-full bg-white border border-slate-300 text-slate-700 font-bold py-3.5 rounded-lg hover:bg-slate-50 transition-colors"
+                  className="w-full bg-white border border-slate-300 text-body font-bold py-3.5 rounded-lg hover:bg-surface transition-colors"
 
                 >
 
@@ -622,21 +622,21 @@ export const RegisterPage: React.FC = () => {
 
           <div className="w-full flex flex-col items-center justify-center animate-in fade-in duration-200">
 
-            <h2 className="text-2xl md:text-3xl font-bold !text-slate-900 mb-3">Xác minh bạn không phải là robot 🤖</h2>
+            <h2 className="text-2xl md:text-3xl font-bold !text-heading mb-3">Xác minh bạn không phải là robot 🤖</h2>
 
             <p className="text-sm text-slate-500 mb-8 text-center px-4 font-medium">Chúng tôi cần đảm bảo bạn là người thật để bảo mật tài khoản</p>
 
 
 
-            <div className="w-full max-w-md bg-white rounded-xl shadow-lg shadow-slate-200/50 border border-slate-200 p-6 md:p-8">
+            <div className="w-full max-w-md bg-main-bg rounded-xl shadow-lg border border-border p-6 md:p-8">
 
-              <div className="border border-slate-300 bg-slate-50 rounded-lg p-5 flex items-center justify-between mb-8">
+              <div className="border border-slate-300 bg-surface rounded-lg p-5 flex items-center justify-between mb-8">
 
                 <div className="flex items-center gap-4">
 
                   <input type="checkbox" className="w-6 h-6 border-2 border-slate-300 rounded-md cursor-pointer" />
 
-                  <span className="text-sm font-semibold !text-slate-800">Tôi không phải là người máy</span>
+                  <span className="text-sm font-semibold !text-heading">Tôi không phải là người máy</span>
 
                 </div>
 
@@ -648,9 +648,9 @@ export const RegisterPage: React.FC = () => {
 
                   </svg>
 
-                  <span className="text-[9px] text-slate-400 font-bold mt-1">reCAPTCHA</span>
+                  <span className="text-[9px] text-muted font-bold mt-1">reCAPTCHA</span>
 
-                  <div className="text-[8px] text-slate-400 mt-0.5 font-medium"><a href="#" className="hover:underline">Bảo mật</a> - <a href="#" className="hover:underline">Điều khoản</a></div>
+                  <div className="text-[8px] text-muted mt-0.5 font-medium"><a href="#" className="hover:underline">Bảo mật</a> - <a href="#" className="hover:underline">Điều khoản</a></div>
 
                 </div>
 
@@ -664,7 +664,7 @@ export const RegisterPage: React.FC = () => {
 
                 <div>
 
-                  <h4 className="text-sm font-bold !text-slate-900">Vì sao tôi thấy thông báo này?</h4>
+                  <h4 className="text-sm font-bold !text-heading">Vì sao tôi thấy thông báo này?</h4>
 
                   <p className="text-xs text-slate-500 mt-1.5 leading-relaxed font-medium">Chúng tôi phát hiện thấy các hoạt động truy cập không bình thường từ mạng của bạn. Vui lòng xác nhận để tiếp tục.</p>
 
@@ -696,7 +696,7 @@ export const RegisterPage: React.FC = () => {
 
                   disabled={isLoading}
 
-                  className="w-full bg-white border border-slate-300 text-slate-700 font-bold py-3.5 rounded-lg hover:bg-slate-50 transition-colors disabled:opacity-50"
+                  className="w-full bg-main-bg border border-slate-300 text-body font-bold py-3.5 rounded-lg hover:bg-surface transition-colors disabled:opacity-50"
 
                 >
 
@@ -716,7 +716,7 @@ export const RegisterPage: React.FC = () => {
 
           <div className="w-full flex flex-col items-center justify-center animate-in fade-in duration-200">
 
-            <div className="w-full max-w-md bg-white rounded-xl shadow-lg shadow-slate-200/50 border border-slate-200 p-8 md:p-10 text-center">
+            <div className="w-full max-w-md bg-main-bg rounded-xl shadow-lg border border-border p-8 md:p-10 text-center">
 
               <div className="mx-auto w-16 h-16 bg-[#fed7aa] rounded-2xl flex items-center justify-center text-[#9a3412] mb-6">
 
@@ -730,13 +730,13 @@ export const RegisterPage: React.FC = () => {
 
 
 
-              <h2 className="text-2xl font-bold !text-slate-900 mb-8">Xác minh thành công</h2>
+              <h2 className="text-2xl font-bold !text-heading mb-8">Xác minh thành công</h2>
 
 
 
               {/* Thanh Progress chạy mượt theo thời gian thực */}
 
-              <div className="w-full h-1.5 bg-slate-100 rounded-full mb-8 overflow-hidden relative">
+              <div className="w-full h-1.5 bg-surface rounded-full mb-8 overflow-hidden relative">
 
                 <div
 
@@ -768,7 +768,7 @@ export const RegisterPage: React.FC = () => {
 
                   </button>
 
-                  <p className="text-[11px] text-slate-400 font-medium">
+                  <p className="text-[11px] text-muted font-medium">
 
                     Nếu bạn không được chuyển hướng tự động, vui lòng nhấn nút ở trên.
 
@@ -792,13 +792,13 @@ export const RegisterPage: React.FC = () => {
 
       {/* Footer */}
 
-      <footer className="bg-slate-100 border-t border-slate-200 py-12 px-8">
+      <footer className="bg-surface border-t border-border py-12 px-8">
 
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between">
 
           <div className="mb-8 md:mb-0 max-w-sm">
 
-            <h3 className="text-lg font-black !text-slate-900 mb-2">FrontEndly</h3>
+            <h3 className="text-lg font-black !text-heading mb-2">FrontEndly</h3>
 
             <p className="text-sm font-semibold text-slate-600 mb-4">Keep going, you're doing great!</p>
 

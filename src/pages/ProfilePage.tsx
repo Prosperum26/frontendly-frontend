@@ -89,10 +89,10 @@ export const ProfilePage: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="bg-slate-50 min-h-screen py-8 font-sans text-slate-900 flex items-center justify-center">
+      <div className="bg-surface min-h-screen py-8 font-sans text-heading flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-slate-600">Loading profile...</p>
+          <p className="mt-4 text-body">Loading profile...</p>
         </div>
       </div>
     );
@@ -101,10 +101,10 @@ export const ProfilePage: React.FC = () => {
   const userData = profileData || currentUser;
 
   return (
-    <div className="bg-slate-50 min-h-screen py-8 font-sans text-slate-900">
+    <div className="bg-surface min-h-screen py-8 font-sans text-heading">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
         {/* 1. Header Card (User Info) */}
-        <div className="bg-white rounded-2xl p-8 border border-slate-200 shadow-sm">
+        <div className="bg-main-bg rounded-2xl p-8 border border-border shadow-sm">
           <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
             <div className="relative">
               <img
@@ -131,7 +131,7 @@ export const ProfilePage: React.FC = () => {
                 <Edit className="w-4 h-4" />
                 Edit Profile
               </button>
-              <button className="flex-1 md:flex-none flex items-center justify-center gap-2 border border-slate-300 text-slate-700 px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-slate-50 transition-colors">
+              <button className="flex-1 md:flex-none flex items-center justify-center gap-2 border border-slate-300 text-body px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-surface transition-colors">
                 <Share2 className="w-4 h-4" />
                 Share Profile
               </button>
@@ -141,7 +141,7 @@ export const ProfilePage: React.FC = () => {
           <div className="mt-8">
             <div className="flex justify-between text-xs font-bold text-slate-500 mb-2">
               <span>XP Progress</span>
-              <span className="text-slate-900">{userData?.xp || 0} <span className="text-slate-400">/ {(userData?.level || 1) * 1000} XP</span></span>
+              <span className="text-heading">{userData?.xp || 0} <span className="text-muted">/ {(userData?.level || 1) * 1000} XP</span></span>
             </div>
             <div className="h-2.5 w-full bg-slate-100 rounded-full overflow-hidden">
               <div className="h-full bg-blue-600 rounded-full" style={{ width: `${Math.min(((userData?.xp || 0) / ((userData?.level || 1) * 1000)) * 100, 100)}%` }}></div>
@@ -151,7 +151,7 @@ export const ProfilePage: React.FC = () => {
 
         {/* 2. Stats Row */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
+          <div className="bg-main-bg p-6 rounded-2xl border border-border shadow-sm flex items-center gap-4">
             <div className="w-12 h-12 rounded-xl bg-orange-50 flex items-center justify-center text-xl">
               <Flame className="w-6 h-6 text-orange-500" />
             </div>
@@ -161,7 +161,7 @@ export const ProfilePage: React.FC = () => {
             </div>
           </div>
 
-          <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
+          <div className="bg-main-bg p-6 rounded-2xl border border-border shadow-sm flex items-center gap-4">
             <div className="w-12 h-12 rounded-xl bg-yellow-50 flex items-center justify-center text-xl">
               <Star className="w-6 h-6 text-yellow-500" />
             </div>
@@ -171,7 +171,7 @@ export const ProfilePage: React.FC = () => {
             </div>
           </div>
 
-          <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
+          <div className="bg-main-bg p-6 rounded-2xl border border-border shadow-sm flex items-center gap-4">
             <div className="w-12 h-12 rounded-xl bg-green-50 flex items-center justify-center text-xl">
               <Target className="w-6 h-6 text-green-500" />
             </div>
@@ -181,7 +181,7 @@ export const ProfilePage: React.FC = () => {
             </div>
           </div>
 
-          <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
+          <div className="bg-main-bg p-6 rounded-2xl border border-border shadow-sm flex items-center gap-4">
             <div className="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center text-xl">
               <Trophy className="w-6 h-6 text-blue-500" />
             </div>
@@ -195,11 +195,11 @@ export const ProfilePage: React.FC = () => {
         {/* 3. Middle Grid: Radar, Badges, Heatmap */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Radar Chart Placeholder */}
-          <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-            <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider mb-6">Proficiency Radar</h3>
+          <div className="bg-main-bg p-6 rounded-2xl border border-border shadow-sm">
+            <h3 className="text-xs font-bold text-heading uppercase tracking-wider mb-6">Proficiency Radar</h3>
             <div className="relative w-full aspect-square flex flex-col items-center justify-center">
               {userData?.skills && userData.skills.length >= 3 ? (
-                <svg viewBox="0 0 100 100" className="w-full h-full max-w-[200px] text-slate-400">
+                <svg viewBox="0 0 100 100" className="w-full h-full max-w-[200px] text-muted">
                   <polygon points="50,10 90,80 10,80" fill="none" stroke="currentColor" strokeWidth="0.5" strokeDasharray="2,2" />
                   <polygon points="50,30 78,70 22,70" fill="none" stroke="currentColor" strokeWidth="0.5" strokeDasharray="2,2" />
                   <polygon points="50,50 65,60 35,60" fill="none" stroke="currentColor" strokeWidth="0.5" strokeDasharray="2,2" />
@@ -222,34 +222,34 @@ export const ProfilePage: React.FC = () => {
                     const p2 = `${50 + r2 * Math.cos(Math.PI / 6)},${50 + r2 * Math.sin(Math.PI / 6)}`;
                     const p3 = `${50 - r3 * Math.cos(Math.PI / 6)},${50 + r3 * Math.sin(Math.PI / 6)}`;
                     
-                    return <polygon points={`${p1} ${p2} ${p3}`} fill="rgba(37, 99, 235, 0.1)" stroke="#2563eb" strokeWidth="2" strokeLinejoin="round" />;
+                    return <polygon points={`${p1} ${p2} ${p3}`} fill="rgba(37, 99, 235, 0.1)" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />;
                   })()}
 
-                  <text x="50" y="5" fontSize="6" textAnchor="middle" fill="#64748b" fontWeight="bold">HTML</text>
-                  <text x="95" y="85" fontSize="6" textAnchor="middle" fill="#64748b" fontWeight="bold">CSS</text>
-                  <text x="5" y="85" fontSize="6" textAnchor="middle" fill="#64748b" fontWeight="bold">JS</text>
+                  <text x="50" y="5" fontSize="6" textAnchor="middle" fill="currentColor" fontWeight="bold">HTML</text>
+                  <text x="95" y="85" fontSize="6" textAnchor="middle" fill="currentColor" fontWeight="bold">CSS</text>
+                  <text x="5" y="85" fontSize="6" textAnchor="middle" fill="currentColor" fontWeight="bold">JS</text>
                 </svg>
               ) : (
                 <div className="text-center py-8">
-                  <div className="w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <div className="w-12 h-12 bg-surface rounded-full flex items-center justify-center mx-auto mb-3">
                     <Zap className="w-6 h-6 text-slate-300" />
                   </div>
-                  <p className="text-[10px] text-slate-400 font-medium px-4">Complete more lessons to see your proficiency radar</p>
+                  <p className="text-[10px] text-muted font-medium px-4">Complete more lessons to see your proficiency radar</p>
                 </div>
               )}
             </div>
           </div>
 
           {/* Badges Collection */}
-          <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+          <div className="bg-main-bg p-6 rounded-2xl border border-border shadow-sm">
             <div className="flex justify-between items-center mb-6">
-              <h3 className="text-sm font-bold text-slate-900">Badge Collection</h3>
+              <h3 className="text-sm font-bold text-heading">Badge Collection</h3>
               <a href="#" className="text-xs font-semibold text-blue-600 hover:underline">View all</a>
             </div>
             <div className="flex flex-col items-center justify-center min-h-[180px]">
               {badges.length === 0 ? (
                 <div className="text-center">
-                  <div className="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                  <div className="w-16 h-16 bg-surface rounded-2xl flex items-center justify-center mx-auto mb-4">
                     <Trophy className="w-8 h-8 text-slate-300" />
                   </div>
                   <p className="text-xs text-slate-500 font-medium px-6 text-center">No badges earned yet. Complete challenges to unlock them!</p>
@@ -259,9 +259,9 @@ export const ProfilePage: React.FC = () => {
                   {badges.slice(0, 6).map((badge, idx) => (
                     <div key={idx} className="flex flex-col items-center text-center">
                       <div className="w-14 h-14 flex items-center justify-center mb-2 transition-all">
-                        <img src={badge.icon} alt={badge.name} className="w-full h-full object-contain" />
+                        <img src={badge.icon} alt={badge.name} className="w-full h-full object-contain dark:opacity-90 dark:brightness-95" />
                       </div>
-                      <span className="text-[10px] font-semibold text-slate-600 line-clamp-1">{badge.name}</span>
+                      <span className="text-[10px] font-semibold text-body line-clamp-1">{badge.name}</span>
                     </div>
                   ))}
                 </div>
@@ -270,10 +270,10 @@ export const ProfilePage: React.FC = () => {
           </div>
 
           {/* Activity Heatmap */}
-          <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+          <div className="bg-main-bg p-6 rounded-2xl border border-border shadow-sm">
             <div className="flex justify-between items-center mb-6">
-              <h3 className="text-sm font-bold text-slate-900">Coding Activity</h3>
-              <span className="text-xs text-slate-400 font-medium">Last 3 months</span>
+              <h3 className="text-sm font-bold text-heading">Coding Activity</h3>
+              <span className="text-xs text-muted font-medium">Last 3 months</span>
             </div>
             <div className="flex flex-wrap gap-1.5">
               {heatmapCells}
@@ -282,19 +282,19 @@ export const ProfilePage: React.FC = () => {
         </div>
 
         {/* 4. Recent Activity Feed */}
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm">
-          <div className="p-6 border-b border-slate-100">
+        <div className="bg-main-bg rounded-2xl border border-border shadow-sm">
+          <div className="p-6 border-b border-border">
             <h3 className="text-lg font-bold flex items-center gap-2">
               <Star className="w-5 h-5 text-blue-600" />
               Recent Achievements
             </h3>
           </div>
-          <div className="divide-y divide-slate-50">
+          <div className="divide-y divide-border">
             {activities.length === 0 ? (
-              <p className="p-6 text-center text-slate-400 text-sm italic">No recent activities</p>
+              <p className="p-6 text-center text-muted text-sm italic">No recent activities</p>
             ) : (
               activities.map((activity) => (
-                <div key={activity.id} className="p-5 flex items-start gap-4 hover:bg-slate-50/50 transition-colors">
+                <div key={activity.id} className="p-5 flex items-start gap-4 hover:bg-surface/50 transition-colors">
                   <div className={`mt-1 p-2 rounded-lg ${
                     activity.type === 'lesson_completed' ? 'bg-green-50 text-green-600' :
                     activity.type === 'challenge_won' ? 'bg-blue-50 text-blue-600' :
@@ -305,8 +305,8 @@ export const ProfilePage: React.FC = () => {
                      <Zap className="w-4 h-4" />}
                   </div>
                   <div className="flex-grow">
-                    <p className="text-sm text-slate-900 font-bold leading-tight">{activity.description}</p>
-                    <p className="text-xs text-slate-400 mt-1 font-medium">{new Date(activity.timestamp).toLocaleString()}</p>
+                    <p className="text-sm text-heading font-bold leading-tight">{activity.description}</p>
+                    <p className="text-xs text-muted mt-1 font-medium">{new Date(activity.timestamp).toLocaleString()}</p>
                   </div>
                   <Link to="#" className="text-xs text-blue-600 font-bold hover:underline shrink-0">View Details</Link>
                 </div>
