@@ -11,10 +11,17 @@ export const MilestoneCompletePage: React.FC = () => {
   const getMilestoneDetailById = useRoadmapStore(
     (s) => s.getMilestoneDetailById,
   );
+  const getNextLessonId = useRoadmapStore((s) => s.getNextLessonId);
 
   const milestone = milestoneId
     ? getMilestoneDetailById(milestoneId)
     : undefined;
+
+  const nextMilestoneLesson = React.useMemo(() => {
+    if (!milestoneId || !milestone?.lessons.length) return null;
+    const lastLesson = milestone.lessons[milestone.lessons.length - 1];
+    return getNextLessonId(milestoneId, lastLesson.id);
+  }, [getNextLessonId, milestone, milestoneId]);
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -25,6 +32,12 @@ export const MilestoneCompletePage: React.FC = () => {
   };
 
   const handleGoToNextMilestone = () => {
+    if (nextMilestoneLesson) {
+      navigate(
+        `/learning-path/milestone/${nextMilestoneLesson.milestoneId}/lesson/${nextMilestoneLesson.lessonId}`,
+      );
+      return;
+    }
     navigate(ROUTES.LEARNING_PATH);
   };
 

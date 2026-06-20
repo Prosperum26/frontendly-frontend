@@ -48,12 +48,12 @@ export const LearningPathPage: React.FC = () => {
 
           <div className="learning-path-header-controls">
             <h1 className="learning-path-title">
-              {skillTitle || "React.js Learning Path"}
+              {skillTitle || "React Fundamentals"}
             </h1>
           </div>
 
           <p className="learning-path-desc">
-            Master the art of building modern interfaces from core fundamentals to advanced DOM manipulation and performance debugging.
+            Master React from core fundamentals — JSX, components, props, styling, and state — through interactive theory and workspace practice.
           </p>
         </header>
 

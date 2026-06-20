@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { ArrowLeft, MoreVertical, Award, Star } from "lucide-react";
@@ -12,6 +12,11 @@ import "./LessonComplete.css";
 import { useAuthStore } from "../../../store/auth.store";
 import { useGuestStore } from "../../../store/guest.store";
 
+interface CompletionData {
+  xpEarned: number;
+  isMilestoneComplete: boolean;
+}
+
 export const LessonComplete: React.FC = () => {
   const { milestoneId, lessonId } = useParams<{
     milestoneId: string;
@@ -24,25 +29,23 @@ export const LessonComplete: React.FC = () => {
   );
   const getNextLessonId = useRoadmapStore((s) => s.getNextLessonId);
   const { refetch } = useRoadmap(DEFAULT_SKILL_ID);
+  const completedRef = useRef<string | null>(null);
 
-  const [completionData, setCompletionData] = React.useState<{
-    xpEarned: number;
-    isMilestoneComplete: boolean;
-  } | null>(null);
-
-  interface CompletionData {
-    xpEarned: number;
-    isMilestoneComplete: boolean;
-  }
+  const [completionData, setCompletionData] = React.useState<CompletionData | null>(null);
+  const [isRefreshing, setIsRefreshing] = React.useState(false);
 
   useEffect(() => {
     const markComplete = async () => {
-      if (!lessonId) return;
+      if (!lessonId || completedRef.current === lessonId) return;
+      completedRef.current = lessonId;
 
       const isAuthenticated = useAuthStore.getState().isAuthenticated;
       if (isAuthenticated) {
         try {
-          const response = await api.patch<{ success: boolean; data: CompletionData }>(`/stages/${lessonId}/complete`, {});
+          const response = await api.patch<{ success: boolean; data: CompletionData }>(
+            `/stages/${lessonId}/complete`,
+            {},
+          );
           setCompletionData(response.data.data);
         } catch (err) {
           console.error("Error marking lesson complete:", err);
@@ -52,8 +55,8 @@ export const LessonComplete: React.FC = () => {
         guestStore.completeLesson(lessonId);
 
         const milestone = milestoneId ? getMilestoneDetailById(milestoneId) : undefined;
-        const isMilestoneComplete = milestone 
-          ? milestone.lessons.every(l => l.status === "completed" || l.id === lessonId)
+        const isMilestoneComplete = milestone
+          ? milestone.lessons.every((l) => l.status === "completed" || l.id === lessonId)
           : false;
 
         setCompletionData({
@@ -61,10 +64,12 @@ export const LessonComplete: React.FC = () => {
           isMilestoneComplete,
         });
       }
+
+      await queryClient.invalidateQueries({ queryKey: ["roadmap", DEFAULT_SKILL_ID] });
+      await refetch();
     };
+
     void markComplete();
-    void refetch();
-    void queryClient.invalidateQueries({ queryKey: ["roadmap"] });
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [lessonId, milestoneId, refetch, queryClient, getMilestoneDetailById]);
 
@@ -76,30 +81,38 @@ export const LessonComplete: React.FC = () => {
     milestoneId && lessonId ? getNextLessonId(milestoneId, lessonId) : null;
 
   const handleReturn = () => {
-    navigate(ROUTES.HOME);
+    navigate(ROUTES.LEARNING_PATH);
   };
 
   const handleNextLesson = async () => {
+    setIsRefreshing(true);
     try {
-      await queryClient.invalidateQueries({ queryKey: ["roadmap"] });
+      await queryClient.invalidateQueries({ queryKey: ["roadmap", DEFAULT_SKILL_ID] });
       await refetch();
     } catch (err) {
       console.error("Error refreshing roadmap after completion:", err);
+    } finally {
+      setIsRefreshing(false);
     }
 
-    if (next) {
+    const refreshedNext =
+      milestoneId && lessonId
+        ? useRoadmapStore.getState().getNextLessonId(milestoneId, lessonId)
+        : null;
+
+    if (refreshedNext) {
       navigate(
-        `/learning-path/milestone/${next.milestoneId}/lesson/${next.lessonId}`,
+        `/learning-path/milestone/${refreshedNext.milestoneId}/lesson/${refreshedNext.lessonId}`,
       );
       return;
     }
 
-    if (completionData?.isMilestoneComplete) {
+    if (completionData?.isMilestoneComplete && milestoneId) {
       navigate(`/learning-path/milestone/${milestoneId}/complete`);
       return;
     }
 
-    navigate(ROUTES.HOME);
+    navigate(ROUTES.LEARNING_PATH);
   };
 
   return (
@@ -184,8 +197,9 @@ export const LessonComplete: React.FC = () => {
                 type="button"
                 className="lcp-btn-next"
                 onClick={handleNextLesson}
+                disabled={isRefreshing}
               >
-                Next Lesson
+                {isRefreshing ? "Loading..." : "Next Lesson"}
               </button>
             )}
             <button

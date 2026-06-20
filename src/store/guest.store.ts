@@ -117,9 +117,20 @@ export const useGuestStore = create<GuestState>((set, get) => {
 export const syncGuestProgress = async () => {
   const guestStore = useGuestStore.getState();
   const completedIds = guestStore.completedLessonIds;
-  if (completedIds.length === 0) return;
+  const viewedIds = guestStore.viewedTheoryIds.filter(
+    (id) => !completedIds.includes(id),
+  );
 
-  console.log('Syncing guest completed lessons:', completedIds);
+  if (completedIds.length === 0 && viewedIds.length === 0) return;
+
+  for (const lessonId of viewedIds) {
+    try {
+      await api.patch(`/stages/${lessonId}/unlock-practice`, {});
+    } catch (err) {
+      console.error(`Failed to sync theory view for ${lessonId}:`, err);
+    }
+  }
+
   for (const lessonId of completedIds) {
     try {
       await api.patch(`/stages/${lessonId}/complete`, {});
