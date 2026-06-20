@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { Flame, Trophy, Plus, Star, Zap, Sun } from "lucide-react";
+import { Flame, Trophy, Star } from "lucide-react";
 import api from "../../../services/api";
 import "./SideBar.css";
 import { useAuthStore } from "../../../store/auth.store";
+import { Badge as BadgeComponent } from "../../profile/components/Badge";
+import type { Badge as ProfileBadge } from "../../profile/types/profile.types";
 
 const DEFAULT_AVATAR =
   "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80";
 
-import type { UserData, ProgressResponse, Badge } from "../types/apiResponses";
+import type { UserData, ProgressResponse } from "../types/apiResponses";
 
 interface MeApiData {
   name?: string;
@@ -21,7 +23,7 @@ interface MeApiData {
 interface BadgesApiData {
   earned?: Array<{ id: string; name: string; icon: string }>;
   unearned?: Array<{ id: string; name: string; icon: string }>;
-  badges?: Badge[];
+  badges?: ProfileBadge[];
 }
 
 interface SideBarProps {
@@ -34,7 +36,7 @@ export const SideBar: React.FC<SideBarProps> = ({ className = "" }) => {
   const [progressData, setProgressData] = useState<ProgressResponse | null>(
     null,
   );
-  const [badgesData, setBadgesData] = useState<Badge[]>([]);
+  const [badgesData, setBadgesData] = useState<ProfileBadge[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(() => isAuthenticated);
   const [error, setError] = useState<string | null>(null);
 
@@ -47,7 +49,7 @@ export const SideBar: React.FC<SideBarProps> = ({ className = "" }) => {
         const [userRes, progressRes, badgesRes] = await Promise.all([
           api.get<{ success: boolean; data: MeApiData }>("/users/me"),
           api.get<{ success: boolean; data: ProgressResponse }>("/users/progress"),
-          api.get<{ success: boolean; data: Badge[] | BadgesApiData }>("/users/badges"),
+          api.get<{ success: boolean; data: ProfileBadge[] | BadgesApiData }>("/users/badges"),
         ]);
 
         const rawUser = userRes?.data?.data ?? {};
@@ -64,7 +66,7 @@ export const SideBar: React.FC<SideBarProps> = ({ className = "" }) => {
         setProgressData(pData);
 
         const badgesRaw = badgesRes?.data?.data;
-        let bData: Badge[] = [];
+        let bData: ProfileBadge[] = [];
         if (Array.isArray(badgesRaw)) {
           bData = badgesRaw;
         } else if (badgesRaw?.earned || badgesRaw?.unearned) {
@@ -73,13 +75,15 @@ export const SideBar: React.FC<SideBarProps> = ({ className = "" }) => {
               id: badge.id,
               name: badge.name,
               icon: badge.icon,
-              isUnlocked: true,
+              description: "",
+              earnedAt: Date.now(),
             })),
             ...(badgesRaw.unearned ?? []).map((badge) => ({
               id: badge.id,
               name: badge.name,
               icon: badge.icon,
-              isUnlocked: false,
+              description: "",
+              earnedAt: 0,
             })),
           ];
         } else {
@@ -101,28 +105,6 @@ export const SideBar: React.FC<SideBarProps> = ({ className = "" }) => {
 
     void fetchData();
   }, [isAuthenticated]);
-
-  const renderBadge = (badge: Badge, index: number) => {
-    const { name, icon, isUnlocked } = badge;
-    const iconElement = (() => {
-      switch (icon) {
-        case "zap":
-          return <Zap size={16} fill="#2563eb" color="#2563eb" />;
-        case "sun":
-          return <Sun size={16} fill="#d97706" color="#d97706" />;
-        default:
-          return name;
-      }
-    })();
-    const badgeClass = isUnlocked
-      ? "badge-icon bg-blue-light text-blue"
-      : "badge-icon bg-gray-200 text-gray-500 grayscale opacity-50";
-    return (
-      <div key={index} className={badgeClass} title={name}>
-        {iconElement}
-      </div>
-    );
-  };
 
   const displayName = userData?.name;
   const userTitle = userData?.userTitle;
@@ -230,11 +212,10 @@ export const SideBar: React.FC<SideBarProps> = ({ className = "" }) => {
 
               <div className="badges-section">
                 <span className="stat-label">Badges Earned</span>
-                <div className="badges-list">
-                  {badgesData.map((badge, idx) => renderBadge(badge, idx))}
-                  <div className="badge-empty">
-                    <Plus size={16} color="#94a3b8" />
-                  </div>
+                <div className="badges-list flex flex-wrap gap-2">
+                  {badgesData.map((badge, idx) => (
+                    <BadgeComponent key={badge.id || idx} badge={badge} size="sm" />
+                  ))}
                 </div>
               </div>
             </>

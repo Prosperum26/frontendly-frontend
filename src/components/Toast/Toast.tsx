@@ -12,10 +12,12 @@ export interface ToastProps {
   className?: string;
 }
 
-const ICONS: Record<ToastType, string> = {
+const ICONS: Record<ToastType, React.ReactNode> = {
   success: '✅',
   error: '❌',
   alert: '⚠️',
+  xp: <span className="text-yellow-500 font-bold text-2xl">+XP</span>,
+  badge: <span className="text-yellow-400 text-3xl">🏆</span>,
 };
 
 export const Toast: React.FC<ToastProps> = ({
@@ -32,11 +34,13 @@ export const Toast: React.FC<ToastProps> = ({
       exit={{ opacity: 0, x: 400 }}
       transition={{ duration: 0.3, ease: 'easeOut' }}
       className={cn(
-        'fixed right-4 z-50 flex items-start gap-3 rounded-lg border-2 p-4 shadow-lg',
-        'w-full max-w-[400px] md:max-w-[448px]',
+        'fixed right-4 z-50 flex items-start gap-3 rounded-xl border-2 p-5 shadow-2xl',
+        'w-full max-w-[400px] md:max-w-[448px] backdrop-blur-sm',
         type === 'error' && 'bg-red-50 border-red-600 text-red-700',
         type === 'success' && 'bg-green-50 border-green-600 text-green-700',
         type === 'alert' && 'bg-yellow-50 border-yellow-600 text-yellow-700',
+        type === 'xp' && 'bg-gradient-to-r from-yellow-50 to-amber-50 border-amber-500 text-amber-900',
+        type === 'badge' && 'bg-gradient-to-r from-yellow-50 to-orange-50 border-orange-500 text-orange-900',
         className
       )}
       role="alert"

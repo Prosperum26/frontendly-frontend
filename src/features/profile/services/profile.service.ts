@@ -93,7 +93,7 @@ export const profileService = {
     const response = await api.get<{ success: boolean; data: BadgesApiResponse | Badge[] | { badges: Badge[] } }>(
       '/users/badges',
     );
-    return mapBadges(response.data.data).filter((badge) => badge.earnedAt > 0);
+    return mapBadges(response.data.data);
   },
 
   async fetchActivity(): Promise<ActivityLog[]> {

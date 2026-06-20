@@ -4,9 +4,10 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/auth.store';
 import { profileService } from '../features/profile/services/profile.service';
 import { authService } from '../features/auth/services/auth.service';
-import type { UserProfile, Badge, ActivityLog } from '../features/profile/types/profile.types';
+import type { UserProfile, Badge as BadgeType, ActivityLog } from '../features/profile/types/profile.types';
 import NetworkErrorCard from '../components/NetworkErrorCard';
 import { Share2, Flame, Star, Trophy, Zap, BookOpen } from 'lucide-react';
+import { Badge } from '../features/profile/components/Badge';
 import { EditProfileForm } from '../features/profile/components/EditProfileForm';
 import { AvatarUpload } from '../features/profile/components/AvatarUpload';
 import { CodingActivity } from '../features/profile/components/CodingActivity';
@@ -16,7 +17,7 @@ export const ProfilePage: React.FC = () => {
   const { currentUser, setAuth, logout } = useAuthStore();
   const navigate = useNavigate();
   const [profileData, setProfileData] = useState<UserProfile | null>(null);
-  const [badges, setBadges] = useState<Badge[]>([]);
+  const [badges, setBadges] = useState<BadgeType[]>([]);
   const [activities, setActivities] = useState<ActivityLog[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isOffline, setIsOffline] = useState(!navigator.onLine);
@@ -269,33 +270,19 @@ export const ProfilePage: React.FC = () => {
           </div>
 
           {/* Badges Collection */}
-          <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-            <div className="flex justify-between items-center mb-6">
-              <h3 className="text-sm font-bold text-slate-900">Badge Collection</h3>
-              <a href="#" className="text-xs font-semibold text-blue-600 hover:underline">View all</a>
-            </div>
-            <div className="flex flex-col items-center justify-center min-h-[180px]">
-              {badges.length === 0 ? (
-                <div className="text-center">
-                  <div className="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                    <Trophy className="w-8 h-8 text-slate-300" />
-                  </div>
-                  <p className="text-xs text-slate-500 font-medium px-6 text-center">No badges earned yet. Complete challenges to unlock them!</p>
-                </div>
-              ) : (
-                <div className="grid grid-cols-3 gap-y-6 gap-x-2 w-full">
-                  {badges.slice(0, 6).map((badge, idx) => (
-                    <div key={idx} className="flex flex-col items-center text-center">
-                      <div className="w-14 h-14 flex items-center justify-center mb-2 transition-all">
-                        <img src={badge.icon} alt={badge.name} className="w-full h-full object-contain" />
-                      </div>
-                      <span className="text-[10px] font-semibold text-slate-600 line-clamp-1">{badge.name}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
+        <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+          <div className="flex justify-between items-center mb-6">
+            <h3 className="text-sm font-bold text-slate-900">Badge Collection</h3>
+            <div className="text-xs text-slate-500 font-semibold">
+              {badges.filter(b => b.earnedAt > 0).length}/{badges.length} Earned
             </div>
           </div>
+          <div className="grid grid-cols-4 md:grid-cols-5 gap-4 justify-items-center">
+            {badges.map((badge, idx) => (
+              <Badge key={badge.id || idx} badge={badge} size="md" />
+            ))}
+          </div>
+        </div>
 
           {/* Activity Heatmap */}
           <CodingActivity />

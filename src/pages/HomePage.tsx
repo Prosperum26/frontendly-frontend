@@ -6,12 +6,13 @@ import NetworkErrorCard from '../components/NetworkErrorCard';
 import { useAuthStore } from '../store/auth.store';
 import { profileService } from '../features/profile/services/profile.service';
 import { leaderboardService } from '../features/leaderboard/services/leaderboard.service';
+import { Badge } from '../features/profile/components/Badge';
 import type { User } from '../features/auth/types/auth.types';
-import type { UserProfile, Badge, LearningProgress } from '../features/profile/types/profile.types';
+import type { UserProfile, Badge as BadgeType, LearningProgress } from '../features/profile/types/profile.types';
 
 interface DashboardProps {
   profileData: UserProfile | undefined;
-  badgesData: Badge[] | undefined;
+  badgesData: BadgeType[] | undefined;
   userRank: number | null | undefined;
   learningProgress: LearningProgress | undefined;
   profileLoading: boolean;
@@ -92,29 +93,20 @@ const Dashboard: React.FC<DashboardProps> = ({
           </div>
         </div>
 
-        {/* Recent Achievements */}
+        {/* Badge Collection */}
         <div className="bg-white rounded-xl p-6 shadow-sm mb-8">
-          <h2 className="text-xl font-bold text-slate-900 mb-4">Recent Achievements</h2>
-          {recentBadges.length > 0 ? (
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-              {recentBadges.map((badge) => (
-                <div key={badge.id} className="bg-slate-50 rounded-lg p-4 text-center">
-                  <div className="w-12 h-12 bg-yellow-100 rounded-full mx-auto mb-2 flex items-center justify-center overflow-hidden">
-                    {badge.icon ? (
-                      <img src={badge.icon} alt={badge.name} className="w-full h-full object-contain" />
-                    ) : (
-                      <span className="text-2xl">🏆</span>
-                    )}
-                  </div>
-                  <p className="text-sm font-medium text-slate-700">{badge.name}</p>
-                </div>
+          <h2 className="text-xl font-bold text-slate-900 mb-4">Badge Collection</h2>
+          {badgesData && badgesData.length > 0 ? (
+            <div className="grid grid-cols-3 md:grid-cols-5 gap-4 mb-4 justify-items-center">
+              {badgesData.map((badge, idx) => (
+                <Badge key={badge.id || idx} badge={badge} size="lg" />
               ))}
             </div>
           ) : (
-            <p className="text-slate-500">No badges earned yet. Complete lessons to unlock badges!</p>
+            <p className="text-slate-500">No badges yet. Complete lessons to unlock badges!</p>
           )}
           <Link to="/profile" className="text-blue-600 font-medium hover:underline">
-            View All {badgesData?.length || 0} Badges
+            View Profile
           </Link>
         </div>
       </div>
