@@ -27,15 +27,13 @@ export const ResetPasswordPage: React.FC = () => {
       return;
     }
 
-    // Password validation
-    if (password.length < 8) {
-      setError('New password must contain at least 1 uppercase letter, 1 lowercase letter, 1 number, and 1 special character');
-      return;
-    }
-
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-    if (!passwordRegex.test(password)) {
-      setError('New password must contain at least 1 uppercase letter, 1 lowercase letter, 1 number, and 1 special character');
+    // Password validation (same as register)
+    const isLengthValid = password.length >= 8 && password.length <= 32;
+    const hasUppercase = /[A-Z]/.test(password);
+    const hasLowercase = /[a-z]/.test(password);
+    const hasNumber = /[0-9]/.test(password);
+    if (!isLengthValid || !hasUppercase || !hasLowercase || !hasNumber) {
+      setError('New password must be 8-32 characters and contain at least 1 uppercase letter, 1 lowercase letter, and 1 number');
       return;
     }
 

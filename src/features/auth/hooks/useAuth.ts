@@ -66,13 +66,8 @@ export const useAuth = () => {
     setLoading(true);
     try {
       const response = await authService.register(credentials);
-      localStorage.setItem('accessToken', response.accessToken);
-      localStorage.setItem('refreshToken', response.refreshToken);
-      setAuth(true, response.user ?? null);
-      addToast('Registration Successful', 'Your account has been created successfully.', 'success');
-      setTimeout(() => {
-        navigate(ROUTES.HOME);
-      }, 1500);
+      addToast('Registration Successful', response.message || 'Your account has been created successfully. Please log in.', 'success');
+      navigate(ROUTES.LOGIN);
     } catch {
       addToast('Registration Failed', 'Unable to create your account. Please try again.', 'error');
     } finally {

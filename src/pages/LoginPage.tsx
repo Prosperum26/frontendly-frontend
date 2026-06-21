@@ -11,6 +11,7 @@ import Header from '../components/Header/Header';
 export const LoginPage: React.FC = () => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
+  const [rememberMe, setRememberMe] = useState<boolean>(false);
   const [isError, setIsError] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
@@ -41,7 +42,7 @@ export const LoginPage: React.FC = () => {
     setErrorMessage('');
 
     try {
-      const response = await authService.login({ email, password });
+      const response = await authService.login({ email, password, rememberMe });
       
       // Store tokens
       localStorage.setItem('accessToken', response.accessToken);
@@ -138,7 +139,13 @@ export const LoginPage: React.FC = () => {
               </div>
 
               <div className="flex items-start">
-                <input type="checkbox" id="remember" className="mt-1 h-4 w-4 text-blue-600 border-slate-300 rounded" />
+                <input 
+                  type="checkbox" 
+                  id="remember" 
+                  className="mt-1 h-4 w-4 text-blue-600 border-slate-300 rounded" 
+                  checked={rememberMe}
+                  onChange={(e) => setRememberMe(e.target.checked)}
+                />
                 <label htmlFor="remember" className="ml-2 block text-sm text-heading font-semibold">
                   Remember me
                   <span className="block text-xs font-normal text-muted italic">Browser can save password for quick login</span>
