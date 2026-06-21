@@ -15,7 +15,6 @@ import AuthLayout from './layouts/AuthLayout';
 import MainLayout from './layouts/MainLayout';
 import WorkspaceLayout from './layouts/WorkspaceLayout';
 import BannedPage from './pages/BannedPage';
-import ChallengeBattlePage from './pages/ChallengeBattlePage';
 import ChallengeLobbyPage from './pages/ChallengeLobbyPage';
 import EntranceTestPage from './pages/EntranceTestPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
@@ -89,14 +88,6 @@ function App() {
                 <Route
                   path="/workspace"
                   element={<Navigate to={workspacePath('exercise_s1')} replace />}
-                />
-                <Route
-                  path={ROUTES.CHALLENGE_BATTLE}
-                  element={
-                    <ProtectedRoute>
-                      <ChallengeBattlePage />
-                    </ProtectedRoute>
-                  }
                 />
               </Route>
 

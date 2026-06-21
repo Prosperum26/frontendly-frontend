@@ -9,7 +9,6 @@ export const ROUTES = {
   MILESTONE_COMPLETE: '/learning-path/milestone/:milestoneId/complete',
   WORKSPACE: '/workspace/:exerciseId',
   CHALLENGE_LOBBY: '/challenge/lobby',
-  CHALLENGE_BATTLE: '/challenge/battle',
   PROFILE: '/profile',
   LEADERBOARD: '/leaderboard',
   LOGIN: '/login',

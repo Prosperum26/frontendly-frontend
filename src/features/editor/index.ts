@@ -6,7 +6,6 @@ export { Toolbar } from './components/Toolbar';
 export { WorkspacePanels } from './components/WorkspacePanels';
 export { useEditorState } from './hooks/useEditorState';
 export { useWorkspaceEditor } from './hooks/useWorkspaceEditor';
-export { useCodeSync } from './hooks/useCodeSync';
 export { useEvaluation } from './hooks/useEvaluation';
 export { editorService } from './services/editor.service';
 export { buildPreviewDocument } from './utils/previewDocument';

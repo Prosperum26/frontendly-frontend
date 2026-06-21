@@ -49,12 +49,7 @@ export const Footer: React.FC = () => {
             </li>
             <li>
               <Link to={ROUTES.CHALLENGE_LOBBY} className="text-blue-600 hover:text-blue-700 hover:underline transition-colors">
-                Challenge Lobby
-              </Link>
-            </li>
-            <li>
-              <Link to={ROUTES.CHALLENGE_BATTLE} className="text-blue-600 hover:text-blue-700 hover:underline transition-colors">
-                Challenge Battle
+                Challenges
               </Link>
             </li>
           </ul>
