@@ -62,14 +62,14 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 24px;
+  gap: 16px;
   margin-bottom: 16px;
   flex-wrap: wrap;
 }
 
 .learning-path-title {
   font-family: var(--font-heading);
-  font-size: 36px;
+  font-size: clamp(24px, 4vw, 36px);
   font-weight: 700;
   color: var(--color-heading);
   margin: 0;
@@ -80,7 +80,7 @@
 .learning-path-desc {
   font-family: var(--font-inter);
   color: var(--color-body);
-  font-size: 14px;
+  font-size: clamp(14px, 2vw, 16px);
   font-weight: 400;
   line-height: 1.7;
   max-width: 672px;
@@ -96,8 +96,8 @@
   position: fixed;
   left: calc(30% - 16px);
   top: 32px;
-  width: 32px;
-  height: 32px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
   background: var(--color-surface, #ffffff);
   border: 1px solid #e2e8f0;
@@ -157,7 +157,7 @@
 
 .intro-banner-title {
   font-family: var(--font-heading);
-  font-size: 24px;
+  font-size: clamp(20px, 3vw, 24px);
   font-weight: 700;
   color: var(--color-heading);
   margin: 0;
@@ -177,7 +177,7 @@
   justify-content: center;
   gap: 8px;
   align-self: flex-start;
-  padding: 10px 20px;
+  padding: 12px 24px;
   background: var(--color-primary);
   color: white;
   border: none;
@@ -187,6 +187,7 @@
   cursor: pointer;
   transition: all 0.2s ease;
   box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+  min-height: 48px;
 }
 
 .intro-banner-btn:hover {
@@ -259,5 +260,18 @@
     grid-template-columns: 1fr;
     padding: 24px;
     gap: 24px;
+  }
+  .learning-path-content {
+    padding: 24px 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .learning-path-header {
+    margin-bottom: 32px;
+  }
+  .learning-path-intro-banner {
+    padding: 20px;
+    gap: 20px;
   }
 }

@@ -5,8 +5,8 @@ import './Input.css';
 export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
   error?: string;
-  icon?: React.ReactNode; // Đã thêm
-  rightElement?: React.ReactNode; // Đã thêm
+  icon?: React.ReactNode;
+  rightElement?: React.ReactNode;
 }
 
 export const Input: React.FC<InputProps> = ({
@@ -26,7 +26,7 @@ export const Input: React.FC<InputProps> = ({
           className={cn(
             'input', 
             error && 'input--error', 
-            `w-full ${icon ? 'pl-11' : 'pl-4'} pr-4 py-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-200 outline-none text-slate-700`, // Đã thêm Tailwind
+            `w-full ${icon ? 'pl-11' : 'pl-4'} pr-4 py-3 border border-border rounded-lg focus:ring-2 focus:ring-blue-200 focus:border-blue-500 outline-none text-body bg-main-bg min-h-[48px] text-base`,
             className
           )}
           {...props}

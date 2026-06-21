@@ -52,7 +52,7 @@ export const ChallengeLobbyPage: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+      <div className="min-h-screen bg-surface flex items-center justify-center">
         <Loader />
       </div>
     );
@@ -60,7 +60,7 @@ export const ChallengeLobbyPage: React.FC = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+      <div className="min-h-screen bg-surface flex items-center justify-center">
         <div className="text-center">
           <div className="text-red-600 font-bold mb-4">{error}</div>
           <Button onClick={() => window.location.reload()}>Try Again</Button>
@@ -70,16 +70,16 @@ export const ChallengeLobbyPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 p-6 md:p-12">
+    <div className="min-h-screen bg-surface p-4 sm:p-6 md:p-12">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="mb-10">
-          <h1 className="text-4xl font-bold text-slate-900 mb-2">Challenge Lobby</h1>
-          <p className="text-slate-600 text-lg">Luyện tập coding với các bài tập thực tế!</p>
+        <div className="mb-6 sm:mb-10">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-heading mb-2">Challenge Lobby</h1>
+          <p className="text-body text-sm sm:text-base md:text-lg">Luyện tập coding với các bài tập thực tế!</p>
         </div>
 
         {/* Search and Filter */}
-        <div className="flex flex-col md:flex-row gap-4 mb-8">
+        <div className="flex flex-col gap-4 mb-6 sm:mb-8">
           <Input
             type="text"
             placeholder="Tìm kiếm bài tập..."
@@ -90,7 +90,7 @@ export const ChallengeLobbyPage: React.FC = () => {
         </div>
 
         {/* Tag Filter */}
-        <div className="flex flex-wrap gap-3 mb-8">
+        <div className="flex flex-wrap gap-2 sm:gap-3 mb-6 sm:mb-8">
           <Button
             variant={selectedTag === null ? 'primary' : 'secondary'}
             onClick={() => setSelectedTag(null)}
@@ -109,7 +109,7 @@ export const ChallengeLobbyPage: React.FC = () => {
         </div>
 
         {/* Challenges Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {filteredChallenges.map((challenge) => (
             <ChallengeCard key={challenge.id} challenge={challenge} />
           ))}
@@ -117,11 +117,11 @@ export const ChallengeLobbyPage: React.FC = () => {
 
         {/* Empty State */}
         {filteredChallenges.length === 0 && (
-          <div className="text-center py-20">
-            <h3 className="text-2xl font-semibold text-slate-700 mb-2">
+          <div className="text-center py-12 sm:py-20">
+            <h3 className="text-xl sm:text-2xl font-semibold text-heading mb-2">
               Không tìm thấy bài tập nào
             </h3>
-            <p className="text-slate-500">
+            <p className="text-muted text-sm sm:text-base">
               Thay đổi từ khóa tìm kiếm hoặc tag để tìm bài tập phù hợp!
             </p>
           </div>
@@ -138,16 +138,16 @@ interface ChallengeCardProps {
 const ChallengeCard: React.FC<ChallengeCardProps> = ({ challenge }) => {
   // Difficulty colors
   const difficultyColors: Record<ChallengeExercise['difficulty'], string> = {
-    easy: 'bg-green-100 text-green-800',
-    medium: 'bg-yellow-100 text-yellow-800',
-    hard: 'bg-red-100 text-red-800',
+    easy: 'bg-success-light text-success-darker',
+    medium: 'bg-warning-light text-amber-800',
+    hard: 'bg-red-100 text-error',
   };
 
   return (
     <Link to={`/workspace/${challenge.id}`}>
       <Card className="overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
         {/* Preview Image */}
-        <div className="h-48 overflow-hidden">
+        <div className="h-36 sm:h-48 overflow-hidden">
           <img
             src={challenge.previewImage}
             alt={challenge.title}
@@ -156,7 +156,7 @@ const ChallengeCard: React.FC<ChallengeCardProps> = ({ challenge }) => {
         </div>
 
         {/* Card Content */}
-        <div className="p-5">
+        <div className="p-4 sm:p-5">
           {/* Difficulty Badge */}
           <div className="flex items-center justify-between mb-3">
             <span className={`text-xs font-semibold px-3 py-1 rounded-full ${difficultyColors[challenge.difficulty]}`}>
@@ -165,12 +165,12 @@ const ChallengeCard: React.FC<ChallengeCardProps> = ({ challenge }) => {
           </div>
 
           {/* Title */}
-          <h3 className="text-xl font-bold text-slate-900 mb-2 line-clamp-2">
+          <h3 className="text-lg sm:text-xl font-bold text-heading mb-2 line-clamp-2">
             {challenge.title}
           </h3>
 
           {/* Description */}
-          <p className="text-slate-600 text-sm mb-4 line-clamp-2">
+          <p className="text-body text-sm mb-4 line-clamp-2">
             {challenge.description}
           </p>
 
@@ -179,7 +179,7 @@ const ChallengeCard: React.FC<ChallengeCardProps> = ({ challenge }) => {
             {challenge.tags.map((tag) => (
               <span
                 key={tag}
-                className="text-xs bg-slate-100 text-slate-700 px-2 py-1 rounded"
+                className="text-xs bg-surface text-muted px-2 py-1 rounded"
               >
                 {tag}
               </span>

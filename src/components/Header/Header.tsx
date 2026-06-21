@@ -27,7 +27,7 @@ export const Header: React.FC = () => {
     // Return a placeholder that matches the structure to avoid layout shift
     return (
       <header className="bg-main-bg border-b border-border px-4 sm:px-6 py-3 flex items-center justify-between sticky top-0 z-50">
-        <div className="text-2xl font-bold text-blue-600">FrontEndly</div>
+        <div className="text-xl sm:text-2xl font-bold text-blue-600">FrontEndly</div>
         <div className="md:hidden w-8 h-8"></div>
       </header>
     );
@@ -65,26 +65,27 @@ export const Header: React.FC = () => {
 
   return (
     <header className="bg-main-bg border-b border-border px-4 sm:px-6 py-3 flex items-center justify-between sticky top-0 z-50">
-      <Link to={ROUTES.HOME} className="text-2xl font-bold text-blue-600 hover:text-blue-700 transition-colors">
+      <Link to={ROUTES.HOME} className="text-xl sm:text-2xl font-bold text-blue-600 hover:text-blue-700 transition-colors">
         FrontEndly
       </Link>
 
       {/* Mobile Menu Button */}
       <button
         onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-        className="md:hidden p-2 rounded-lg hover:bg-surface transition-colors"
+        className="md:hidden p-3 rounded-lg hover:bg-surface transition-colors min-h-[48px] min-w-[48px]"
+        aria-label="Toggle menu"
       >
         {mobileMenuOpen ? <X className="w-6 h-6 text-body" /> : <Menu className="w-6 h-6 text-body" />}
       </button>
 
       {/* Desktop Navigation */}
-      <nav className="hidden md:flex space-x-6 items-center">
+      <nav className="hidden md:flex space-x-4 lg:space-x-6 items-center">
         {navLinks.map((link) => (
           <NavLink
             key={link.name}
             to={link.path}
             className={({ isActive }) =>
-              `px-4 py-2 rounded-lg text-sm transition-all duration-150 ${
+              `px-3 lg:px-4 py-2 rounded-lg text-sm transition-all duration-150 ${
                 isActive
                   ? 'bg-blue-600 text-white font-medium shadow-sm'
                   : 'text-body hover:bg-surface hover:text-heading'
@@ -101,7 +102,7 @@ export const Header: React.FC = () => {
         {/* Dark Mode Toggle */}
         <button
           onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
-          className="p-2 rounded-lg hover:bg-surface dark:hover:bg-surface transition-colors"
+          className="p-3 rounded-lg hover:bg-surface dark:hover:bg-surface transition-colors min-h-[48px] min-w-[48px]"
           aria-label="Toggle dark mode"
         >
           {resolvedTheme === 'dark' ? <Sun className="w-5 h-5 text-body" /> : <Moon className="w-5 h-5 text-body" />}
@@ -111,7 +112,8 @@ export const Header: React.FC = () => {
           <div className="relative">
             <button
               onClick={() => setDropdownOpen(!dropdownOpen)}
-              className="flex items-center space-x-2 p-2 rounded-lg hover:bg-surface transition-colors"
+              className="flex items-center space-x-2 p-2 rounded-lg hover:bg-surface transition-colors min-h-[48px] min-w-[48px]"
+              aria-label="User menu"
             >
               <img
                 src={
@@ -119,20 +121,20 @@ export const Header: React.FC = () => {
                   currentUser.avatarUrl ||
                   `https://ui-avatars.com/api/?name=${
                     currentUser.username || currentUser.name || 'User'
-                  }&background=0D8ABC&color=fff`
+                  }&background=0D8ABC&color=fff&size=48`
                 }
                 alt={currentUser.username}
-                className="w-8 h-8 rounded-full object-cover"
+                className="w-8 h-8 sm:w-10 sm:h-10 rounded-full object-cover"
               />
               <ChevronDown className="w-4 h-4 text-muted" />
             </button>
 
             {/* Dropdown Menu */}
             {dropdownOpen && (
-              <div className="absolute right-0 mt-2 w-48 bg-main-bg rounded-lg shadow-lg border border-border py-2 z-50">
+              <div className="absolute right-0 mt-2 w-48 sm:w-56 bg-main-bg rounded-lg shadow-lg border border-border py-2 z-50">
                 <button
                   onClick={handleProfileClick}
-                  className="w-full flex items-center space-x-3 px-4 py-2 text-sm text-body hover:bg-surface transition-colors"
+                  className="w-full flex items-center space-x-3 px-4 py-3 text-sm text-body hover:bg-surface transition-colors min-h-[48px]"
                 >
                   <User className="w-4 h-4" />
                   <span>Profile</span>
@@ -140,7 +142,7 @@ export const Header: React.FC = () => {
                 <div className="border-t border-border my-2"></div>
                 <button
                   onClick={handleLogout}
-                  className="w-full flex items-center space-x-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
+                  className="w-full flex items-center space-x-3 px-4 py-3 text-sm text-red-600 hover:bg-red-50 transition-colors min-h-[48px]"
                 >
                   <LogOut className="w-4 h-4" />
                   <span>Logout</span>
@@ -213,7 +215,7 @@ export const Header: React.FC = () => {
                 to={link.path}
                 onClick={handleNavClick}
                 className={({ isActive }) =>
-                  `px-4 py-3 rounded-lg text-sm transition-all duration-150 ${
+                  `px-4 py-3 rounded-lg text-sm transition-all duration-150 min-h-[48px] flex items-center ${
                     isActive
                       ? 'bg-blue-600 text-white font-medium'
                       : 'text-body hover:bg-surface'
@@ -227,9 +229,9 @@ export const Header: React.FC = () => {
             {/* Dark Mode Toggle (Mobile) */}
             <button
               onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
-              className="w-full flex items-center space-x-3 px-4 py-3 text-sm text-body hover:bg-surface rounded-lg"
+              className="w-full flex items-center space-x-3 px-4 py-3 text-sm text-body hover:bg-surface rounded-lg min-h-[48px]"
             >
-              {resolvedTheme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+              {resolvedTheme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
               <span>Toggle Dark Mode</span>
             </button>
 
@@ -238,25 +240,25 @@ export const Header: React.FC = () => {
               <>
                 <button
                   onClick={handleProfileClick}
-                  className="w-full flex items-center space-x-3 px-4 py-3 text-sm text-body hover:bg-surface rounded-lg"
+                  className="w-full flex items-center space-x-3 px-4 py-3 text-sm text-body hover:bg-surface rounded-lg min-h-[48px]"
                 >
-                  <User className="w-4 h-4" />
+                  <User className="w-5 h-5" />
                   <span>Profile</span>
                 </button>
                 <button
                   onClick={handleLogout}
-                  className="w-full flex items-center space-x-3 px-4 py-3 text-sm text-red-600 hover:bg-red-50 rounded-lg"
+                  className="w-full flex items-center space-x-3 px-4 py-3 text-sm text-red-600 hover:bg-red-50 rounded-lg min-h-[48px]"
                 >
-                  <LogOut className="w-4 h-4" />
+                  <LogOut className="w-5 h-5" />
                   <span>Logout</span>
                 </button>
               </>
             ) : (
               <>
-                <NavLink to={ROUTES.LOGIN} onClick={handleNavClick}>
+                <NavLink to={ROUTES.LOGIN} onClick={handleNavClick} className="w-full">
                   <Button variant="outline" className="w-full">Login</Button>
                 </NavLink>
-                <NavLink to={ROUTES.REGISTER} onClick={handleNavClick}>
+                <NavLink to={ROUTES.REGISTER} onClick={handleNavClick} className="w-full">
                   <Button variant="primary" className="w-full">Sign Up</Button>
                 </NavLink>
               </>
