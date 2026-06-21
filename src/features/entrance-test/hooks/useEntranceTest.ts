@@ -1,6 +1,13 @@
 import { useState, useEffect, useCallback } from 'react';
-import type { EntranceTestQuestion, EntranceTestState, EntranceTestResult } from '../types/entrance-test.types';
+import type {
+  EntranceTestQuestion,
+  EntranceTestState,
+  EntranceTestResult,
+} from '../types/entrance-test.types';
 import entranceTestService from '../services/entrance-test.service';
+import { savePersonalizedPath } from '../utils/personalized-path.storage';
+import { useAuthStore } from '../../../store/auth.store';
+import { DEFAULT_SKILL_ID } from '../../learning-path/utils/roadmapMappers';
 
 const STORAGE_KEY = 'entrance-test-state';
 const initialTestState: EntranceTestState = {
@@ -14,8 +21,7 @@ function getSavedTestState(): EntranceTestState {
   try {
     const saved = localStorage.getItem(STORAGE_KEY);
     return saved ? JSON.parse(saved) : initialTestState;
-  } catch (e) {
-    console.error('Failed to load saved test state:', e);
+  } catch {
     return initialTestState;
   }
 }
@@ -25,8 +31,9 @@ export function useEntranceTest() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [testState, setTestState] = useState<EntranceTestState>(getSavedTestState);
+  const [lastResult, setLastResult] = useState<EntranceTestResult | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Save state to localStorage whenever it changes
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(testState));
   }, [testState]);
@@ -41,10 +48,9 @@ export function useEntranceTest() {
           setQuestions(fetchedQuestions);
         }
       })
-      .catch((err) => {
-        console.error(err);
+      .catch(() => {
         if (isMounted) {
-          setError('Failed to load questions');
+          setError('Failed to load questions. Please try again later.');
         }
       })
       .finally(() => {
@@ -58,13 +64,17 @@ export function useEntranceTest() {
     };
   }, []);
 
-  const selectAnswer = useCallback((questionId: string, answer: unknown) => {
-    setTestState((prev) => {
-      const newAnswers = { ...prev.answers, [questionId]: answer };
-      const progress = questions.length > 0 ? Object.keys(newAnswers).length / questions.length : 0;
-      return { ...prev, answers: newAnswers, progress };
-    });
-  }, [questions.length]);
+  const selectAnswer = useCallback(
+    (questionId: string, answer: unknown) => {
+      setTestState((prev) => {
+        const newAnswers = { ...prev.answers, [questionId]: answer };
+        const progress =
+          questions.length > 0 ? Object.keys(newAnswers).length / questions.length : 0;
+        return { ...prev, answers: newAnswers, progress };
+      });
+    },
+    [questions.length],
+  );
 
   const nextQuestion = useCallback(() => {
     if (testState.currentQuestionIndex < questions.length - 1) {
@@ -85,14 +95,42 @@ export function useEntranceTest() {
   }, [testState.currentQuestionIndex]);
 
   const submitTest = useCallback(async (): Promise<EntranceTestResult> => {
-    const result = await entranceTestService.submitTest(testState.answers);
-    setTestState((prev) => ({ ...prev, isCompleted: true }));
-    localStorage.removeItem(STORAGE_KEY);
-    return result;
+    setIsSubmitting(true);
+    try {
+      const result = await entranceTestService.submitTest(testState.answers);
+      setLastResult(result);
+      setTestState((prev) => ({ ...prev, isCompleted: true }));
+      localStorage.removeItem(STORAGE_KEY);
+
+      savePersonalizedPath({
+        skipToMilestoneId: result.skipToMilestoneId,
+        skillId: result.skillId || DEFAULT_SKILL_ID,
+        score: result.score,
+        totalQuestions: result.totalQuestions,
+        placementResult: result.placementResult,
+        personalizedPath: result.personalizedPath,
+        completedAt: Date.now(),
+      });
+
+      const { isAuthenticated } = useAuthStore.getState();
+      if (isAuthenticated && result.personalizedPath) {
+        await entranceTestService.syncPlacementTest({
+          skipToMilestoneId: result.skipToMilestoneId,
+          skillId: result.skillId || DEFAULT_SKILL_ID,
+          learningPath: result.personalizedPath.learningPath,
+          studyPlan: result.personalizedPath.studyPlan,
+        });
+      }
+
+      return result;
+    } finally {
+      setIsSubmitting(false);
+    }
   }, [testState.answers]);
 
   const resetTest = useCallback(() => {
     setTestState(initialTestState);
+    setLastResult(null);
     localStorage.removeItem(STORAGE_KEY);
   }, []);
 
@@ -101,6 +139,8 @@ export function useEntranceTest() {
     isLoading,
     error,
     testState,
+    lastResult,
+    isSubmitting,
     currentQuestion: questions[testState.currentQuestionIndex],
     selectAnswer,
     nextQuestion,
@@ -109,3 +149,5 @@ export function useEntranceTest() {
     resetTest,
   };
 }
+
+export default useEntranceTest;

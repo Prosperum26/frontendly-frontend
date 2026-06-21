@@ -61,7 +61,7 @@ const getLessonIcon = (title: string, size: number = 14) => {
 function getLessonLockState(
   milestone: Milestone,
   lessonIndex: number,
-): { isLocked: boolean; isActive: boolean } {
+): { isLocked: boolean; isActive: boolean; isAutoPassed: boolean } {
   const lessons = milestone.lessons || [];
   const lesson = lessons[lessonIndex];
   const isMilestoneLocked = milestone.status === "locked";
@@ -69,23 +69,30 @@ function getLessonLockState(
     milestone.status === "completed" || milestone.completed;
   const isMilestoneInProgress = milestone.status === "in_progress";
 
-  if (isMilestoneLocked) {
-    return { isLocked: true, isActive: false };
+  if (lesson.placementStatus === "auto_passed" || lesson.completed) {
+    return { isLocked: false, isActive: false, isAutoPassed: lesson.placementStatus === "auto_passed" };
   }
 
-  if (lesson.completed || isMilestoneCompleted) {
-    return { isLocked: false, isActive: false };
+  if (lesson.placementStatus === "locked" || lesson.isLocked || isMilestoneLocked) {
+    return { isLocked: true, isActive: false, isAutoPassed: false };
+  }
+
+  if (isMilestoneCompleted) {
+    return { isLocked: false, isActive: false, isAutoPassed: false };
   }
 
   if (isMilestoneInProgress) {
-    const firstIncomplete = lessons.findIndex((l) => !l.completed);
+    const firstIncomplete = lessons.findIndex(
+      (l) => !l.completed && l.placementStatus !== "auto_passed",
+    );
     return {
       isLocked: firstIncomplete !== -1 && lessonIndex > firstIncomplete,
       isActive: lessonIndex === firstIncomplete,
+      isAutoPassed: false,
     };
   }
 
-  return { isLocked: true, isActive: false };
+  return { isLocked: true, isActive: false, isAutoPassed: false };
 }
 
 export const MilestoneCard: React.FC<MilestoneCardProps> = ({ milestone }) => {
@@ -217,7 +224,7 @@ export const MilestoneCard: React.FC<MilestoneCardProps> = ({ milestone }) => {
 
       <div className="lessons-grid">
         {lessons.map((lesson, index) => {
-          const { isLocked: isLessonLocked, isActive: isLessonActive } =
+          const { isLocked: isLessonLocked, isActive: isLessonActive, isAutoPassed } =
             getLessonLockState(milestone, index);
 
           return (
@@ -235,7 +242,9 @@ export const MilestoneCard: React.FC<MilestoneCardProps> = ({ milestone }) => {
             >
               {/* Status indicator in top-right corner */}
               <div className="lesson-card-status-icon">
-                {lesson.completed ? (
+                {isAutoPassed ? (
+                  <CheckCircle2 size={14} className="lesson-status-auto-passed" />
+                ) : lesson.completed ? (
                   <CheckCircle2 size={14} className="lesson-status-done" />
                 ) : isLessonActive ? (
                   <div className="lesson-status-active-pulse" />
@@ -251,7 +260,12 @@ export const MilestoneCard: React.FC<MilestoneCardProps> = ({ milestone }) => {
               <div className="lesson-title">
                 {index + 1}. {lesson.title}
               </div>
-              {lesson.completed && (
+              {isAutoPassed && (
+                <div className="lesson-revisit-hint">
+                  <CheckCircle2 size={10} /> Mastered
+                </div>
+              )}
+              {lesson.completed && !isAutoPassed && (
                 <div className="lesson-revisit-hint">
                   <RotateCcw size={10} /> Revisit
                 </div>

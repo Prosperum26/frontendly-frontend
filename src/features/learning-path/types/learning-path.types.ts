@@ -17,6 +17,7 @@ export interface Lesson {
   completed: boolean;
   xpReward: number;
   isLocked: boolean;
+  placementStatus?: "auto_passed" | "required" | "locked" | null;
 }
 
 export interface Progress {
@@ -31,6 +32,7 @@ export interface ApiStage {
   icon: string;
   isCompleted: boolean;
   earnedStars: number;
+  placementStatus?: "auto_passed" | "required" | "locked" | null;
 }
 
 export interface ApiMilestone {
@@ -45,6 +47,8 @@ export interface ApiMilestone {
 export interface UserProgress {
   currentXp: number;
   streakDays: number;
+  placementTestCompleted?: boolean;
+  skipToMilestoneId?: string | null;
 }
 
 export interface Pagination {
@@ -62,6 +66,13 @@ export interface RoadmapResponse {
     skillTitle: string;
     userProgress: UserProgress;
     milestones: ApiMilestone[];
+    personalizedLearningPath?: Array<{
+      canonicalLessonId: string;
+      stageId: string;
+      exerciseId: string;
+      status: "auto_passed" | "required" | "locked";
+    }>;
+    studyPlan?: string[];
     pagination?: Pagination;
   };
 }
@@ -71,6 +82,7 @@ export interface RoadmapDto {
   skillTitle: string;
   milestones: Milestone[];
   userProgress: UserProgress;
+  studyPlan?: string[];
 }
 
 export interface DetailLesson {
@@ -78,7 +90,7 @@ export interface DetailLesson {
   title: string;
   description: string;
   type: "theory" | "liveClass" | "finalProject";
-  status: "completed" | "in_progress" | "locked";
+  status: "completed" | "in_progress" | "locked" | "auto_passed";
   duration: string;
   tags: string[];
   codePreview?: string;

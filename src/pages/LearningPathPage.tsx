@@ -6,6 +6,8 @@ import { VideoModule } from "../features/learning-path/components/VideoModule";
 import { MilestoneCard } from "../features/learning-path/components/MilestoneCard";
 import { useRoadmap } from "../features/learning-path/hooks/useRoadmap";
 import { DEFAULT_SKILL_ID } from "../features/learning-path/utils/roadmapMappers";
+import { StudyPlanPanel } from "../features/learning-path/components/StudyPlanPanel";
+import { getPersonalizedPath } from "../features/entrance-test/utils/personalized-path.storage";
 import { ROUTES } from "../constants/routes";
 import certificateIcon from "../assets/learning-path/certificate_icon.svg";
 import { ChevronLeft, ChevronRight, PlayCircle } from "lucide-react";
@@ -16,6 +18,10 @@ export const LearningPathPage: React.FC = () => {
   const { data, isLoading, error, refetch } = useRoadmap(DEFAULT_SKILL_ID);
   const milestones = useMemo(() => data?.milestones ?? [], [data?.milestones]);
   const skillTitle = data?.skillTitle;
+  const storedPath = getPersonalizedPath();
+  const studyPlan = data?.studyPlan?.length
+    ? data.studyPlan
+    : storedPath?.personalizedPath?.studyPlan ?? [];
 
   useEffect(() => {
     if (!isLoading && milestones.length > 0) {
@@ -211,6 +217,13 @@ export const LearningPathPage: React.FC = () => {
                   </div>
                 </div>
               </div>
+
+              <StudyPlanPanel
+                studyPlan={studyPlan}
+                score={storedPath?.score}
+                totalQuestions={storedPath?.totalQuestions}
+                level={storedPath?.placementResult?.level}
+              />
 
               {milestones.map((m) => (
                 <MilestoneCard key={m.id} milestone={m} />

@@ -15,6 +15,8 @@ export const EntranceTestPage: React.FC = () => {
     error,
     testState,
     currentQuestion,
+    lastResult,
+    isSubmitting,
     selectAnswer,
     nextQuestion,
     previousQuestion,
@@ -25,8 +27,6 @@ export const EntranceTestPage: React.FC = () => {
   const handleSubmit = async () => {
     try {
       await submitTest();
-      // TODO: Sync result with backend
-      navigate(ROUTES.LEARNING_PATH);
     } catch (err) {
       console.error('Failed to submit test:', err);
     }
@@ -54,14 +54,55 @@ export const EntranceTestPage: React.FC = () => {
     );
   }
 
-  if (testState.isCompleted) {
+  if (testState.isCompleted && lastResult) {
+    const { personalizedPath, placementResult, score, totalQuestions } = lastResult;
+
     return (
       <div className="entrance-test-page">
         <div className="entrance-test-container">
           <h1 className="text-3xl font-bold text-slate-900 mb-4">Test Completed!</h1>
-          <p className="text-slate-600 mb-8">
-            We are analyzing your results to create a personalized learning path.
+          <p className="text-slate-600 mb-4">
+            Score: {score}/{totalQuestions} — Level: {placementResult?.level ?? 'N/A'}
           </p>
+
+          {personalizedPath?.studyPlan && personalizedPath.studyPlan.length > 0 && (
+            <div className="entrance-test-study-plan mb-6">
+              <h2 className="text-lg font-semibold mb-2">Your Study Plan</h2>
+              <ul className="list-disc pl-5 space-y-1 text-slate-700">
+                {personalizedPath.studyPlan.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {personalizedPath?.learningPath && (
+            <div className="entrance-test-path-summary mb-6">
+              <h2 className="text-lg font-semibold mb-2">Lesson Overview</h2>
+              <div className="grid gap-2">
+                {personalizedPath.learningPath.map((lesson) => (
+                  <div
+                    key={lesson.canonicalLessonId}
+                    className={`flex justify-between text-sm p-2 rounded border ${
+                      lesson.status === 'auto_passed'
+                        ? 'bg-green-50 border-green-200'
+                        : lesson.status === 'locked'
+                          ? 'bg-slate-50 border-slate-200 opacity-60'
+                          : 'bg-blue-50 border-blue-200'
+                    }`}
+                  >
+                    <span>{lesson.title}</span>
+                    <span className="font-medium capitalize">
+                      {lesson.status === 'auto_passed' && '✓ Auto-passed'}
+                      {lesson.status === 'required' && '▶ Required'}
+                      {lesson.status === 'locked' && '🔒 Locked'}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           <Button onClick={() => navigate(ROUTES.LEARNING_PATH)}>Go to Learning Path</Button>
           <Button variant="secondary" className="mt-4" onClick={resetTest}>
             Retake Test
@@ -88,7 +129,6 @@ export const EntranceTestPage: React.FC = () => {
               {currentQuestion.question}
             </h2>
 
-            {/* Multiple Choice */}
             {(currentQuestion.type === 'multiple-choice' ||
               currentQuestion.type === 'single-choice') &&
               currentQuestion.options && (
@@ -128,9 +168,9 @@ export const EntranceTestPage: React.FC = () => {
           ) : (
             <Button
               onClick={handleSubmit}
-              disabled={!testState.answers[currentQuestion?.id]}
+              disabled={!testState.answers[currentQuestion?.id] || isSubmitting}
             >
-              Submit Test
+              {isSubmitting ? 'Submitting...' : 'Submit Test'}
             </Button>
           )}
         </div>

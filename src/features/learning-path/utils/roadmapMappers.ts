@@ -4,6 +4,8 @@ import type {
   Milestone,
   MilestoneDetail,
 } from "../types/learning-path.types";
+import type { StoredPersonalizedPath } from "../../entrance-test/types/entrance-test.types";
+import { getPersonalizedPath } from "../../entrance-test/utils/personalized-path.storage";
 
 export const DEFAULT_SKILL_ID = "frontend";
 
@@ -23,10 +25,43 @@ export function mapApiMilestonesToMilestones(
       title: stage.title,
       description: "",
       type: "theory" as const,
-      completed: stage.isCompleted,
+      completed: stage.isCompleted || stage.placementStatus === "auto_passed",
       xpReward: (stage.earnedStars || 0) * 50,
-      isLocked: false,
+      isLocked: stage.placementStatus === "locked",
+      placementStatus: stage.placementStatus ?? null,
     })),
+  }));
+}
+
+export function applyPersonalizedPathOverlay(
+  milestones: Milestone[],
+  storedPath?: StoredPersonalizedPath | null,
+): Milestone[] {
+  const pathData = storedPath ?? getPersonalizedPath();
+  const learningPath = pathData?.personalizedPath?.learningPath;
+  if (!learningPath?.length) return milestones;
+
+  const statusMap = new Map(
+    learningPath.map((lesson) => [
+      lesson.stageId || lesson.canonicalLessonId,
+      lesson.status,
+    ]),
+  );
+
+  return milestones.map((milestone) => ({
+    ...milestone,
+    lessons: milestone.lessons.map((lesson) => {
+      const placementStatus = statusMap.get(lesson.id);
+      if (!placementStatus) return lesson;
+
+      if (placementStatus === "auto_passed") {
+        return { ...lesson, completed: true, placementStatus, isLocked: false };
+      }
+      if (placementStatus === "locked") {
+        return { ...lesson, isLocked: true, placementStatus };
+      }
+      return { ...lesson, placementStatus, isLocked: false };
+    }),
   }));
 }
 
@@ -60,14 +95,19 @@ export function applyMilestoneUnlockRules(
 export function deriveStageStatus(
   milestoneStatus: Milestone["status"],
   stageIndex: number,
-  stages: { isCompleted: boolean }[],
+  stages: { isCompleted: boolean; placementStatus?: string | null }[],
 ): DetailLesson["status"] {
-  const completed = stages[stageIndex]?.isCompleted ?? false;
-  if (completed) return "completed";
-  if (milestoneStatus === "locked") return "locked";
+  const stage = stages[stageIndex];
+  const completed = stage?.isCompleted ?? false;
+  const placementStatus = stage?.placementStatus;
+
+  if (placementStatus === "auto_passed" || completed) return "auto_passed";
+  if (placementStatus === "locked" || milestoneStatus === "locked") return "locked";
   if (milestoneStatus === "completed") return "completed";
 
-  const firstIncomplete = stages.findIndex((s) => !s.isCompleted);
+  const firstIncomplete = stages.findIndex(
+    (s) => !s.isCompleted && s.placementStatus !== "auto_passed",
+  );
   if (firstIncomplete === -1) return "completed";
   if (stageIndex === firstIncomplete) return "in_progress";
   if (stageIndex < firstIncomplete) return "completed";
@@ -77,6 +117,7 @@ export function deriveStageStatus(
 export function milestoneToDetail(milestone: Milestone): MilestoneDetail {
   const stages = milestone.lessons.map((l) => ({
     isCompleted: l.completed,
+    placementStatus: l.placementStatus,
   }));
   const completedLessons = milestone.lessons.filter((l) => l.completed).length;
   const totalLessons = milestone.lessons.length;
@@ -88,7 +129,11 @@ export function milestoneToDetail(milestone: Milestone): MilestoneDetail {
     title: lesson.title,
     description: lesson.description,
     type: "theory",
-    status: lesson.isLocked ? "locked" : deriveStageStatus(milestone.status, index, stages),
+    status: lesson.placementStatus === "auto_passed"
+      ? "auto_passed"
+      : lesson.isLocked
+        ? "locked"
+        : deriveStageStatus(milestone.status, index, stages),
     duration: "",
     tags: [],
     order: index + 1,
@@ -108,4 +153,11 @@ export function milestoneToDetail(milestone: Milestone): MilestoneDetail {
       imageUrl: "",
     },
   };
+}
+
+export function resolveStudyPlan(
+  apiStudyPlan?: string[],
+): string[] {
+  if (apiStudyPlan?.length) return apiStudyPlan;
+  return getPersonalizedPath()?.personalizedPath?.studyPlan ?? [];
 }

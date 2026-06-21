@@ -275,3 +275,61 @@
     gap: 20px;
   }
 }
+
+.study-plan-panel {
+  margin-bottom: 28px;
+  padding: 20px 24px;
+  border-radius: 12px;
+  border: 1px solid #dbeafe;
+  background: linear-gradient(135deg, #eff6ff 0%, #f8fafc 100%);
+}
+
+.study-plan-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  color: #1e40af;
+}
+
+.study-plan-header h2 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.study-plan-summary {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 12px;
+  font-size: 0.875rem;
+  color: #475569;
+}
+
+.study-plan-list {
+  margin: 0 0 12px;
+  padding-left: 20px;
+  color: #334155;
+}
+
+.study-plan-list li {
+  margin-bottom: 6px;
+}
+
+.study-plan-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  font-size: 0.75rem;
+  color: #64748b;
+}
+
+.study-plan-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.lesson-status-auto-passed {
+  color: #16a34a;
+}

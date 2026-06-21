@@ -1,26 +1,9 @@
 import api from '../../../services/api';
-import type { EntranceTestQuestion, EntranceTestResult } from '../types/entrance-test.types';
-
-const FALLBACK_QUESTIONS: EntranceTestQuestion[] = [
-  {
-    id: 'html-semantics',
-    question: 'Which element should wrap the primary page navigation?',
-    type: 'single-choice',
-    options: ['nav', 'section', 'article', 'aside'],
-  },
-  {
-    id: 'css-layout',
-    question: 'Which CSS feature is best suited for a two-dimensional page layout?',
-    type: 'single-choice',
-    options: ['CSS Grid', 'line-height', 'z-index', 'text-transform'],
-  },
-  {
-    id: 'react-props',
-    question: 'In React, what is the usual way to pass data from a parent to a child component?',
-    type: 'single-choice',
-    options: ['Props', 'Cookies', 'LocalStorage', 'DOM attributes only'],
-  },
-];
+import type {
+  EntranceTestQuestion,
+  EntranceTestResult,
+  LearningPathLesson,
+} from '../types/entrance-test.types';
 
 function unwrap<T>(payload: T | { success: boolean; data: T }): T {
   if (payload && typeof payload === 'object' && 'data' in payload) {
@@ -31,28 +14,33 @@ function unwrap<T>(payload: T | { success: boolean; data: T }): T {
 
 export const entranceTestService = {
   async getQuestions(): Promise<EntranceTestQuestion[]> {
-    try {
-      const response = await api.get<
-        EntranceTestQuestion[] | { success: boolean; data: EntranceTestQuestion[] }
-      >('/entrance-test/questions');
-      return unwrap(response.data);
-    } catch {
-      return FALLBACK_QUESTIONS;
-    }
+    const response = await api.get<
+      EntranceTestQuestion[] | { success: boolean; data: EntranceTestQuestion[] }
+    >('/entrance-test/questions');
+    return unwrap(response.data);
   },
 
   async submitTest(answers: Record<string, unknown>): Promise<EntranceTestResult> {
-    try {
-      const response = await api.post<
-        EntranceTestResult | { success: boolean; data: EntranceTestResult }
-      >('/entrance-test/submit', { answers });
-      return unwrap(response.data);
-    } catch {
-      return {
-        skipToMilestoneId: Object.keys(answers).length >= FALLBACK_QUESTIONS.length ? 'm2' : 'm1',
-        skillId: 'frontend',
-      };
-    }
+    const response = await api.post<
+      EntranceTestResult | { success: boolean; data: EntranceTestResult }
+    >('/entrance-test/submit', { answers });
+    return unwrap(response.data);
+  },
+
+  async syncPlacementTest(payload: {
+    skipToMilestoneId: string;
+    skillId?: string;
+    learningPath?: LearningPathLesson[];
+    studyPlan?: string[];
+  }): Promise<{ placementTestCompleted: boolean; skipToMilestoneId: string; studyPlan: string[] }> {
+    const response = await api.post<
+      | { placementTestCompleted: boolean; skipToMilestoneId: string; studyPlan: string[] }
+      | {
+          success: boolean;
+          data: { placementTestCompleted: boolean; skipToMilestoneId: string; studyPlan: string[] };
+        }
+    >('/learning-content/sync-placement-test', payload);
+    return unwrap(response.data);
   },
 };
 
