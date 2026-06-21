@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useLayoutEffect } from 'react';
 import { NavLink, useNavigate, Link, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../../store/auth.store';
 import { authService } from '../../features/auth/services/auth.service';
@@ -14,7 +14,24 @@ export const Header: React.FC = () => {
   const location = useLocation();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+  const { setTheme, resolvedTheme } = useTheme();
+
+  // Fix hydration mismatch
+  useLayoutEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    // Return a placeholder that matches the structure to avoid layout shift
+    return (
+      <header className="bg-main-bg border-b border-border px-4 sm:px-6 py-3 flex items-center justify-between sticky top-0 z-50">
+        <div className="text-2xl font-bold text-blue-600">FrontEndly</div>
+        <div className="md:hidden w-8 h-8"></div>
+      </header>
+    );
+  }
 
   const navLinks = [
     { name: 'Home', path: ROUTES.HOME },
@@ -83,11 +100,11 @@ export const Header: React.FC = () => {
       <div className="hidden md:flex space-x-3 items-center">
         {/* Dark Mode Toggle */}
         <button
-          onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+          onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
           className="p-2 rounded-lg hover:bg-surface dark:hover:bg-surface transition-colors"
           aria-label="Toggle dark mode"
         >
-          {theme === 'dark' ? <Sun className="w-5 h-5 text-body" /> : <Moon className="w-5 h-5 text-body" />}
+          {resolvedTheme === 'dark' ? <Sun className="w-5 h-5 text-body" /> : <Moon className="w-5 h-5 text-body" />}
         </button>
 
         {isAuthenticated && currentUser ? (
@@ -209,10 +226,10 @@ export const Header: React.FC = () => {
 
             {/* Dark Mode Toggle (Mobile) */}
             <button
-              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+              onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
               className="w-full flex items-center space-x-3 px-4 py-3 text-sm text-body hover:bg-surface rounded-lg"
             >
-              {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+              {resolvedTheme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
               <span>Toggle Dark Mode</span>
             </button>
 

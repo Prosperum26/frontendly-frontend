@@ -111,4 +111,29 @@
     --color-warning-light: #78350f;
     --color-error: #f87171;
   }
+
+  .light {
+    color-scheme: light;
+    --color-main-bg: #ffffff;
+    --color-surface: #f8fafc;
+    --color-surface-raised: #f1f5f9;
+    --color-heading: #0f172a;
+    --color-body: #475569;
+    --color-muted: #64748b;
+    --color-subtle: #94a3b8;
+    --color-border: #e2e8f0;
+    --color-border-strong: #cbd5e1;
+    --color-primary: #2563eb;
+    --color-primary-hover: #1d4ed8;
+    --color-primary-light: #eff6ff;
+    --color-primary-border: #bfdbfe;
+    --color-success: #10b981;
+    --color-success-dark: #16a34a;
+    --color-success-darker: #15803d;
+    --color-success-light: #dcfce7;
+    --color-success-lighter: #f0fdf4;
+    --color-warning: #f59e0b;
+    --color-warning-light: #fef3c7;
+    --color-error: #ef4444;
+  }
 }
