@@ -175,8 +175,8 @@ export const ProfilePage: React.FC = () => {
         {/* 2. Stats Row */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           <div className="bg-main-bg p-6 rounded-2xl border border-border shadow-sm flex items-center gap-4">
-            <div className="w-12 h-12 rounded-xl bg-orange-50 flex items-center justify-center text-xl">
-              <Flame className="w-6 h-6 text-orange-500" />
+            <div className="w-12 h-12 rounded-xl bg-orange-50 dark:bg-orange-950/30 flex items-center justify-center text-xl">
+              <Flame className="w-6 h-6 text-orange-500 dark:text-orange-400" />
             </div>
             <div>
               <h3 className="text-2xl font-black">{userData?.stats?.streakDays || 0}</h3>
@@ -185,8 +185,8 @@ export const ProfilePage: React.FC = () => {
           </div>
 
           <div className="bg-main-bg p-6 rounded-2xl border border-border shadow-sm flex items-center gap-4">
-            <div className="w-12 h-12 rounded-xl bg-yellow-50 flex items-center justify-center text-xl">
-              <Star className="w-6 h-6 text-yellow-500" />
+            <div className="w-12 h-12 rounded-xl bg-yellow-50 dark:bg-yellow-950/30 flex items-center justify-center text-xl">
+              <Star className="w-6 h-6 text-yellow-500 dark:text-yellow-400" />
             </div>
             <div>
               <h3 className="text-2xl font-black">{userData?.xp || 0}</h3>
@@ -195,8 +195,8 @@ export const ProfilePage: React.FC = () => {
           </div>
 
           <div className="bg-main-bg p-6 rounded-2xl border border-border shadow-sm flex items-center gap-4">
-            <div className="w-12 h-12 rounded-xl bg-green-50 flex items-center justify-center text-xl">
-              <Target className="w-6 h-6 text-green-500" />
+            <div className="w-12 h-12 rounded-xl bg-green-50 dark:bg-green-950/30 flex items-center justify-center text-xl">
+              <Target className="w-6 h-6 text-green-500 dark:text-green-400" />
             </div>
             <div>
               <h3 className="text-2xl font-black">{userData?.stats?.coursesCompleted || 0}</h3>
@@ -205,8 +205,8 @@ export const ProfilePage: React.FC = () => {
           </div>
 
           <div className="bg-main-bg p-6 rounded-2xl border border-border shadow-sm flex items-center gap-4">
-            <div className="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center text-xl">
-              <Trophy className="w-6 h-6 text-blue-500" />
+            <div className="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-950/30 flex items-center justify-center text-xl">
+              <Trophy className="w-6 h-6 text-blue-500 dark:text-blue-400" />
             </div>
             <div>
               <h3 className="text-2xl font-black">{badges.length}</h3>
@@ -309,9 +309,9 @@ export const ProfilePage: React.FC = () => {
               activities.map((activity) => (
                 <div key={activity.id} className="p-5 flex items-start gap-4 hover:bg-surface/50 transition-colors">
                   <div className={`mt-1 p-2 rounded-lg ${
-                    activity.type === 'lesson_completed' ? 'bg-green-50 text-green-600' :
-                    activity.type === 'challenge_won' ? 'bg-blue-50 text-blue-600' :
-                    'bg-orange-50 text-orange-600'
+                    activity.type === 'lesson_completed' ? 'bg-green-50 dark:bg-green-950/30 text-green-600 dark:text-green-400' :
+                    activity.type === 'challenge_won' ? 'bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400' :
+                    'bg-orange-50 dark:bg-orange-950/30 text-orange-600 dark:text-orange-400'
                   }`}>
                     {activity.type === 'lesson_completed' ? <BookOpen className="w-4 h-4" /> :
                      activity.type === 'challenge_won' ? <Trophy className="w-4 h-4" /> :
@@ -321,7 +321,7 @@ export const ProfilePage: React.FC = () => {
                     <p className="text-sm text-heading font-bold leading-tight">{activity.description}</p>
                     <p className="text-xs text-muted mt-1 font-medium">{new Date(activity.timestamp).toLocaleString()}</p>
                   </div>
-                  <Link to="#" className="text-xs text-blue-600 font-bold hover:underline shrink-0">View Details</Link>
+                  <Link to="#" className="text-xs text-blue-600 dark:text-blue-400 font-bold hover:underline shrink-0">View Details</Link>
                 </div>
               ))
             )}
@@ -346,7 +346,7 @@ export const ProfilePage: React.FC = () => {
 
             {/* Logo / Header Card */}
             <div className="w-full flex justify-between items-center mb-6">
-              <span className="text-xs font-black tracking-widest text-blue-600 uppercase">Frontendly Card</span>
+              <span className="text-xs font-black tracking-widest text-blue-600 dark:text-blue-400 uppercase">Frontendly Card</span>
               <span className="text-xs font-bold text-body bg-surface px-2 py-1 rounded-md border border-border">Lv. {userData?.level || 1}</span>
             </div>
 
@@ -360,7 +360,7 @@ export const ProfilePage: React.FC = () => {
               <h2 className="text-2xl font-black mb-1 text-heading">
                 {userData?.username || userData?.name || 'Developer'}
               </h2>
-              <p className="text-blue-600 text-sm font-bold">{userData?.role === 'user' ? 'Frontend Student' : 'Frontend Master'}</p>
+              <p className="text-blue-600 dark:text-blue-400 text-sm font-bold">{userData?.role === 'user' ? 'Frontend Student' : 'Frontend Master'}</p>
             </div>
 
             {/* Personal Info */}
@@ -383,17 +383,17 @@ export const ProfilePage: React.FC = () => {
 
             {/* Stats Grid */}
             <div className="w-full grid grid-cols-3 gap-3 mb-6">
-              <div className="bg-blue-50/50 p-3 rounded-2xl text-center border border-blue-100">
-                <p className="text-[10px] text-blue-600 font-bold mb-1 uppercase tracking-wider">XP</p>
-                <p className="font-black text-blue-700">{userData?.xp || 0}</p>
+              <div className="bg-blue-50/50 dark:bg-blue-950/30 p-3 rounded-2xl text-center border border-blue-100 dark:border-blue-900/50">
+                <p className="text-[10px] text-blue-600 dark:text-blue-400 font-bold mb-1 uppercase tracking-wider">XP</p>
+                <p className="font-black text-blue-700 dark:text-blue-300">{userData?.xp || 0}</p>
               </div>
-              <div className="bg-orange-50/50 p-3 rounded-2xl text-center border border-orange-100">
-                <p className="text-[10px] text-orange-600 font-bold mb-1 uppercase tracking-wider">Streak</p>
-                <p className="font-black text-orange-700">{userData?.stats?.streakDays || 0}🔥</p>
+              <div className="bg-orange-50/50 dark:bg-orange-950/30 p-3 rounded-2xl text-center border border-orange-100 dark:border-orange-900/50">
+                <p className="text-[10px] text-orange-600 dark:text-orange-400 font-bold mb-1 uppercase tracking-wider">Streak</p>
+                <p className="font-black text-orange-700 dark:text-orange-300">{userData?.stats?.streakDays || 0}🔥</p>
               </div>
-              <div className="bg-yellow-50/50 p-3 rounded-2xl text-center border border-yellow-100">
-                <p className="text-[10px] text-yellow-600 font-bold mb-1 uppercase tracking-wider">Badges</p>
-                <p className="font-black text-yellow-700">{badges.length}🏆</p>
+              <div className="bg-yellow-50/50 dark:bg-yellow-950/30 p-3 rounded-2xl text-center border border-yellow-100 dark:border-yellow-900/50">
+                <p className="text-[10px] text-yellow-600 dark:text-yellow-400 font-bold mb-1 uppercase tracking-wider">Badges</p>
+                <p className="font-black text-yellow-700 dark:text-yellow-300">{badges.length}🏆</p>
               </div>
             </div>
 

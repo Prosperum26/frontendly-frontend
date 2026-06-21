@@ -149,6 +149,20 @@
   background: linear-gradient(135deg, var(--color-success-lighter) 0%, var(--color-success-light) 100%);
 }
 
+@media (prefers-color-scheme: dark) {
+  .lesson-card.is-active {
+    background: var(--color-primary-light);
+  }
+
+  .lesson-card.is-completed {
+    background: var(--color-success-light);
+  }
+
+  .milestone-progress-fill {
+    background: var(--color-primary);
+  }
+}
+
 .lesson-card.is-completed:hover {
   border-color: var(--color-success-dark);
   box-shadow: 0 4px 12px rgba(34, 197, 94, 0.18);

@@ -7,7 +7,7 @@ export const Footer: React.FC = () => {
     <footer className="bg-main-bg border-t border-border py-12 px-6">
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
         <div className="col-span-1 md:col-span-1">
-          <div className="text-xl font-bold text-blue-600 mb-2">FrontEndly</div>
+          <div className="text-xl font-bold text-blue-600 dark:text-blue-400 mb-2">FrontEndly</div>
           <p className="text-body mb-4 text-sm">Keep going, you're doing great!</p>
           <p className="text-xs text-muted">
             © 2026 FrontEndly. Built for developers by developers. <br />
@@ -22,7 +22,7 @@ export const Footer: React.FC = () => {
             <li>
               <Link
                 to={ROUTES.LEARNING_PATH}
-                className="text-blue-600 hover:text-blue-700 hover:underline transition-colors"
+                className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 hover:underline transition-colors"
               >
                 Learning Path
               </Link>
@@ -30,7 +30,7 @@ export const Footer: React.FC = () => {
             <li>
               <Link
                 to={ROUTES.LEARNING_PATH}
-                className="text-blue-600 hover:text-blue-700 hover:underline transition-colors"
+                className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 hover:underline transition-colors"
               >
                 HTML Mastery
               </Link>
@@ -38,7 +38,7 @@ export const Footer: React.FC = () => {
             <li>
               <Link
                 to={ROUTES.LEARNING_PATH}
-                className="text-blue-600 hover:text-blue-700 hover:underline transition-colors"
+                className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 hover:underline transition-colors"
               >
                 CSS Mastery
               </Link>
@@ -46,7 +46,7 @@ export const Footer: React.FC = () => {
             <li>
               <Link
                 to={ROUTES.LEARNING_PATH}
-                className="text-blue-600 hover:text-blue-700 hover:underline transition-colors"
+                className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 hover:underline transition-colors"
               >
                 JavaScript ES6+
               </Link>
@@ -61,7 +61,7 @@ export const Footer: React.FC = () => {
             <li>
               <Link
                 to={ROUTES.LEADERBOARD}
-                className="text-blue-600 hover:text-blue-700 hover:underline transition-colors"
+                className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 hover:underline transition-colors"
               >
                 Leaderboard
               </Link>
@@ -69,7 +69,7 @@ export const Footer: React.FC = () => {
             <li>
               <Link
                 to={ROUTES.CHALLENGE_LOBBY}
-                className="text-blue-600 hover:text-blue-700 hover:underline transition-colors"
+                className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 hover:underline transition-colors"
               >
                 Challenges
               </Link>
@@ -84,7 +84,7 @@ export const Footer: React.FC = () => {
             <li>
               <a
                 href="#"
-                className="text-blue-600 hover:text-blue-700 hover:underline transition-colors"
+                className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 hover:underline transition-colors"
               >
                 About Us
               </a>
@@ -92,7 +92,7 @@ export const Footer: React.FC = () => {
             <li>
               <a
                 href="#"
-                className="text-blue-600 hover:text-blue-700 hover:underline transition-colors"
+                className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 hover:underline transition-colors"
               >
                 Contact
               </a>

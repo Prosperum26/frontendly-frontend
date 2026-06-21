@@ -210,7 +210,6 @@ export const MilestoneCard: React.FC<MilestoneCardProps> = ({ milestone }) => {
         {isInProgress && (
           <span
             className="milestone-badge badge-progress"
-            style={{ backgroundColor: "#dbeafe", color: "#1e40af" }}
           >
             In Progress
           </span>
@@ -328,9 +327,6 @@ export const MilestoneCard: React.FC<MilestoneCardProps> = ({ milestone }) => {
               animate={{ width: `${progressPercent}%` }}
               transition={{ duration: 0.8, ease: "easeOut" }}
               className="milestone-progress-fill"
-              style={{
-                background: "linear-gradient(90deg, #2563eb, #60a5fa)",
-              }}
             />
           </div>
         </div>

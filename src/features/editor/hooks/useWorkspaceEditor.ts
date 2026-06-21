@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import type { EditorTab, WorkspaceEditorState, WorkspaceFiles } from '../types/editor.types';
 
 interface UseWorkspaceEditorOptions {
@@ -12,15 +12,14 @@ export function useWorkspaceEditor(
 ) {
   const { defaultTab = 'html', visibleTabs } = options;
   const [files, setFiles] = useState<WorkspaceFiles>(initialFiles);
-  const [activeTab, setActiveTabState] = useState<EditorTab>(defaultTab);
+  const [activeTabInternal, setActiveTabState] = useState<EditorTab>(defaultTab);
   const [isDirty, setIsDirty] = useState(false);
 
-  useEffect(() => {
-    if (!visibleTabs?.length) return;
-    if (!visibleTabs.includes(activeTab)) {
-      setActiveTabState(visibleTabs[0]);
-    }
-  }, [activeTab, visibleTabs]);
+  const activeTab = useMemo(() => {
+    if (!visibleTabs?.length) return activeTabInternal;
+    if (visibleTabs.includes(activeTabInternal)) return activeTabInternal;
+    return visibleTabs[0];
+  }, [activeTabInternal, visibleTabs]);
 
   const setActiveTab = useCallback((tab: EditorTab) => {
     setActiveTabState(tab);
