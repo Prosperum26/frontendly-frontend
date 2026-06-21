@@ -5,7 +5,8 @@ import { useAuthStore } from '../../store/auth.store';
 import { authService } from '../../features/auth/services/auth.service';
 import { ROUTES } from '../../constants/routes';
 import { Button } from '../Button/Button';
-import { ChevronDown, User, LogOut, Menu, X } from 'lucide-react';
+import { ChevronDown, User, LogOut, Menu, X, Moon, Sun } from 'lucide-react';
+import { useTheme } from 'next-themes';
 
 export const Header: React.FC = () => {
   const { isAuthenticated, currentUser, logout } = useAuthStore();
@@ -13,6 +14,7 @@ export const Header: React.FC = () => {
   const location = useLocation();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { theme, setTheme } = useTheme();
 
   const navLinks = [
     { name: 'Home', path: ROUTES.HOME },
@@ -45,17 +47,17 @@ export const Header: React.FC = () => {
   };
 
   return (
-    <header className="bg-white border-b border-gray-100 px-4 sm:px-6 py-3 flex items-center justify-between sticky top-0 z-50">
+    <header className="bg-main-bg border-b border-border px-4 sm:px-6 py-3 flex items-center justify-between sticky top-0 z-50">
       <Link to={ROUTES.HOME} className="text-2xl font-bold text-blue-600 hover:text-blue-700 transition-colors">
         FrontEndly
       </Link>
-      
+
       {/* Mobile Menu Button */}
       <button
         onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-        className="md:hidden p-2 rounded-lg hover:bg-slate-100 transition-colors"
+        className="md:hidden p-2 rounded-lg hover:bg-surface transition-colors"
       >
-        {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+        {mobileMenuOpen ? <X className="w-6 h-6 text-body" /> : <Menu className="w-6 h-6 text-body" />}
       </button>
 
       {/* Desktop Navigation */}
@@ -68,7 +70,7 @@ export const Header: React.FC = () => {
               `px-4 py-2 rounded-lg text-sm transition-all duration-150 ${
                 isActive
                   ? 'bg-blue-600 text-white font-medium shadow-sm'
-                  : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+                  : 'text-body hover:bg-surface hover:text-heading'
               }`
             }
           >
@@ -79,31 +81,46 @@ export const Header: React.FC = () => {
 
       {/* Desktop Auth Buttons */}
       <div className="hidden md:flex space-x-3 items-center">
+        {/* Dark Mode Toggle */}
+        <button
+          onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+          className="p-2 rounded-lg hover:bg-surface dark:hover:bg-surface transition-colors"
+          aria-label="Toggle dark mode"
+        >
+          {theme === 'dark' ? <Sun className="w-5 h-5 text-body" /> : <Moon className="w-5 h-5 text-body" />}
+        </button>
+
         {isAuthenticated && currentUser ? (
           <div className="relative">
             <button
               onClick={() => setDropdownOpen(!dropdownOpen)}
-              className="flex items-center space-x-2 p-2 rounded-lg hover:bg-slate-100 transition-colors"
+              className="flex items-center space-x-2 p-2 rounded-lg hover:bg-surface transition-colors"
             >
               <img
-                src={currentUser.avatar || currentUser.avatarUrl || `https://ui-avatars.com/api/?name=${currentUser.username || currentUser.name || 'User'}&background=0D8ABC&color=fff`}
+                src={
+                  currentUser.avatar ||
+                  currentUser.avatarUrl ||
+                  `https://ui-avatars.com/api/?name=${
+                    currentUser.username || currentUser.name || 'User'
+                  }&background=0D8ABC&color=fff`
+                }
                 alt={currentUser.username}
                 className="w-8 h-8 rounded-full object-cover"
               />
-              <ChevronDown className="w-4 h-4 text-slate-500" />
+              <ChevronDown className="w-4 h-4 text-muted" />
             </button>
 
             {/* Dropdown Menu */}
             {dropdownOpen && (
-              <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-slate-200 py-2 z-50">
+              <div className="absolute right-0 mt-2 w-48 bg-main-bg rounded-lg shadow-lg border border-border py-2 z-50">
                 <button
                   onClick={handleProfileClick}
-                  className="w-full flex items-center space-x-3 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 transition-colors"
+                  className="w-full flex items-center space-x-3 px-4 py-2 text-sm text-body hover:bg-surface transition-colors"
                 >
                   <User className="w-4 h-4" />
                   <span>Profile</span>
                 </button>
-                <div className="border-t border-slate-200 my-2"></div>
+                <div className="border-t border-border my-2"></div>
                 <button
                   onClick={handleLogout}
                   className="w-full flex items-center space-x-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
@@ -119,30 +136,48 @@ export const Header: React.FC = () => {
             {location.pathname === ROUTES.LOGIN ? (
               <>
                 {/* 1. If on Login page */}
-                <NavLink to={ROUTES.REGISTER} className="inline-block active:scale-95 transition-transform duration-150">
+                <NavLink
+                  to={ROUTES.REGISTER}
+                  className="inline-block active:scale-95 transition-transform duration-150"
+                >
                   <Button variant="outline">Sign Up</Button>
                 </NavLink>
-                <NavLink to={ROUTES.LEARNING_PATH} className="inline-block active:scale-95 transition-transform duration-150">
+                <NavLink
+                  to={ROUTES.LEARNING_PATH}
+                  className="inline-block active:scale-95 transition-transform duration-150"
+                >
                   <Button variant="primary">Start Learning</Button>
                 </NavLink>
               </>
             ) : location.pathname === ROUTES.REGISTER ? (
               <>
                 {/* 2. If on Register page */}
-                <NavLink to={ROUTES.LOGIN} className="inline-block active:scale-95 transition-transform duration-150">
+                <NavLink
+                  to={ROUTES.LOGIN}
+                  className="inline-block active:scale-95 transition-transform duration-150"
+                >
                   <Button variant="outline">Log in</Button>
                 </NavLink>
-                <NavLink to={ROUTES.LEARNING_PATH} className="inline-block active:scale-95 transition-transform duration-150">
+                <NavLink
+                  to={ROUTES.LEARNING_PATH}
+                  className="inline-block active:scale-95 transition-transform duration-150"
+                >
                   <Button variant="primary">Start Learning</Button>
                 </NavLink>
               </>
             ) : (
               <>
                 {/* 3. If on Home or other pages */}
-                <NavLink to={ROUTES.LOGIN} className="inline-block active:scale-95 transition-transform duration-150">
+                <NavLink
+                  to={ROUTES.LOGIN}
+                  className="inline-block active:scale-95 transition-transform duration-150"
+                >
                   <Button variant="outline">Login</Button>
                 </NavLink>
-                <NavLink to={ROUTES.REGISTER} className="inline-block active:scale-95 transition-transform duration-150">
+                <NavLink
+                  to={ROUTES.REGISTER}
+                  className="inline-block active:scale-95 transition-transform duration-150"
+                >
                   <Button variant="primary">Sign Up</Button>
                 </NavLink>
               </>
@@ -153,7 +188,7 @@ export const Header: React.FC = () => {
 
       {/* Mobile Menu */}
       {mobileMenuOpen && (
-        <div className="md:hidden absolute top-full left-0 right-0 bg-white border-b border-gray-100 shadow-lg z-50">
+        <div className="md:hidden absolute top-full left-0 right-0 bg-main-bg border-b border-border shadow-lg z-50">
           <nav className="flex flex-col p-4 space-y-2">
             {navLinks.map((link) => (
               <NavLink
@@ -164,19 +199,29 @@ export const Header: React.FC = () => {
                   `px-4 py-3 rounded-lg text-sm transition-all duration-150 ${
                     isActive
                       ? 'bg-blue-600 text-white font-medium'
-                      : 'text-slate-600 hover:bg-slate-50'
+                      : 'text-body hover:bg-surface'
                   }`
                 }
               >
                 {link.name}
               </NavLink>
             ))}
-            <div className="border-t border-slate-200 my-2"></div>
+
+            {/* Dark Mode Toggle (Mobile) */}
+            <button
+              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+              className="w-full flex items-center space-x-3 px-4 py-3 text-sm text-body hover:bg-surface rounded-lg"
+            >
+              {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+              <span>Toggle Dark Mode</span>
+            </button>
+
+            <div className="border-t border-border my-2"></div>
             {isAuthenticated && currentUser ? (
               <>
                 <button
                   onClick={handleProfileClick}
-                  className="w-full flex items-center space-x-3 px-4 py-3 text-sm text-slate-700 hover:bg-slate-50 rounded-lg"
+                  className="w-full flex items-center space-x-3 px-4 py-3 text-sm text-body hover:bg-surface rounded-lg"
                 >
                   <User className="w-4 h-4" />
                   <span>Profile</span>

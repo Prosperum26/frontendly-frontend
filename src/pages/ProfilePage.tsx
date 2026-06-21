@@ -6,8 +6,7 @@ import { profileService } from '../features/profile/services/profile.service';
 import { authService } from '../features/auth/services/auth.service';
 import type { UserProfile, Badge as BadgeType, ActivityLog } from '../features/profile/types/profile.types';
 import NetworkErrorCard from '../components/NetworkErrorCard';
-import { Share2, Flame, Star, Trophy, Zap, BookOpen } from 'lucide-react';
-import { Badge } from '../features/profile/components/Badge';
+import { Share2, Flame, Star, Trophy, Zap, BookOpen, Target } from 'lucide-react';
 import { EditProfileForm } from '../features/profile/components/EditProfileForm';
 import { AvatarUpload } from '../features/profile/components/AvatarUpload';
 import { CodingActivity } from '../features/profile/components/CodingActivity';
@@ -77,10 +76,10 @@ export const ProfilePage: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="bg-slate-50 min-h-screen py-8 font-sans text-slate-900 flex items-center justify-center">
+      <div className="bg-surface min-h-screen py-8 font-sans text-heading flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-slate-600">Loading profile...</p>
+          <p className="mt-4 text-body">Loading profile...</p>
         </div>
       </div>
     );
@@ -89,10 +88,10 @@ export const ProfilePage: React.FC = () => {
   const userData = (profileData || currentUser) as UserProfile;
 
   return (
-    <div className="bg-slate-50 min-h-screen py-8 font-sans text-slate-900">
+    <div className="bg-surface min-h-screen py-8 font-sans text-heading">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
         {/* 1. Header Card (User Info) */}
-        <div className="bg-white rounded-2xl p-8 border border-slate-200 shadow-sm">
+        <div className="bg-main-bg rounded-2xl p-8 border border-border shadow-sm">
           <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
             <AvatarUpload 
               currentAvatarUrl={userData?.avatarUrl || currentUser?.avatar}
@@ -109,7 +108,7 @@ export const ProfilePage: React.FC = () => {
               <p className="text-sm font-semibold text-blue-600 mt-1">
                 {userData?.role === 'user' ? 'Frontend Student' : 'Frontend Master'}
               </p>
-              <p className="text-sm text-slate-500 mt-1 italic">{userData?.email}</p>
+              <p className="text-sm text-muted mt-1 italic">{userData?.email}</p>
             </div>
 
             <div className="flex gap-3 w-full md:w-auto mt-4 md:mt-0">
@@ -121,7 +120,7 @@ export const ProfilePage: React.FC = () => {
               </button>
               <button 
                 onClick={() => setIsShareModalOpen(true)} 
-                className="flex items-center justify-center gap-2 border border-slate-300 text-slate-700 px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-slate-50 transition-colors"
+                className="flex items-center justify-center gap-2 border border-slate-300 text-body px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-surface transition-colors"
               >
                 <Share2 className="w-4 h-4" />
                 Share Profile
@@ -136,11 +135,11 @@ export const ProfilePage: React.FC = () => {
           </div>
 
           <div className="mt-8">
-            <div className="flex justify-between text-xs font-bold text-slate-500 mb-2">
+            <div className="flex justify-between text-xs font-bold text-muted mb-2">
               <span>XP Progress</span>
-              <span className="text-slate-900">{userData?.xp || 0} <span className="text-slate-400">/ {(userData?.level || 1) * 1000} XP</span></span>
+              <span className="text-heading">{userData?.xp || 0} <span className="text-muted">/ {(userData?.level || 1) * 1000} XP</span></span>
             </div>
-            <div className="h-2.5 w-full bg-slate-100 rounded-full overflow-hidden">
+            <div className="h-2.5 w-full bg-surface rounded-full overflow-hidden">
               <div 
                 className="h-full bg-blue-600 rounded-full" 
                 style={{ width: `${Math.min(((userData?.xp || 0) / ((userData?.level || 1) * 1000)) * 100, 100)}%` }}>
@@ -150,14 +149,14 @@ export const ProfilePage: React.FC = () => {
 
           {/* Edit Profile Form */}
           {isEditing && (
-            <div className="mt-4 bg-white p-6 rounded-xl border border-slate-100 shadow-sm">
+            <div className="mt-4 bg-main-bg p-6 rounded-xl border border-border shadow-sm">
               <div className="flex justify-between items-center mb-4">
-                <h3 style={{ color: '#0f172a' }} className="text-xl font-bold text-slate-900">
+                <h3 style={{ color: '#0f172a' }} className="text-xl font-bold text-heading">
                   Update Personal Details
                 </h3>
                 <button 
                   onClick={() => setIsEditing(false)}
-                  className="text-sm text-slate-400 hover:text-slate-600"
+                  className="text-sm text-muted hover:text-body"
                 >
                   Cancel
                 </button>
@@ -173,56 +172,44 @@ export const ProfilePage: React.FC = () => {
         <ProgressTrack />
 
         {/* 2. Stats Row */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* Day Streak Card */}
-          <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="bg-main-bg p-6 rounded-2xl border border-border shadow-sm flex items-center gap-4">
             <div className="w-12 h-12 rounded-xl bg-orange-50 flex items-center justify-center text-xl">
               <Flame className="w-6 h-6 text-orange-500" />
             </div>
             <div>
               <h3 className="text-2xl font-black">{userData?.stats?.streakDays || 0}</h3>
-              <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider mt-0.5">Day Streak</p>
+              <p className="text-xs text-muted font-semibold uppercase tracking-wider mt-0.5">Day Streak</p>
             </div>
           </div>
 
-          {/* Combined Card: Total XP + Courses with Progress Bar */}
-          <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
-            <div className="flex justify-between items-start w-full">
-              <div>
-                <h3 className="text-2xl font-black text-slate-900">{userData?.xp || 0} XP</h3>
-                <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider mt-0.5">Total XP</p>
-              </div>
-              <div className="text-right">
-                <p className="text-sm font-bold text-slate-800">
-                  {userData?.stats?.coursesCompleted || 0}/{userData?.stats?.totalCourses || 0}
-                </p>
-                <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider mt-0.5">Courses</p>
-              </div>
+          <div className="bg-main-bg p-6 rounded-2xl border border-border shadow-sm flex items-center gap-4">
+            <div className="w-12 h-12 rounded-xl bg-yellow-50 flex items-center justify-center text-xl">
+              <Star className="w-6 h-6 text-yellow-500" />
             </div>
-            
-            {/* Progress Bar (Fills based on completion percentage) */}
-            <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden mt-4">
-              <div 
-                className="bg-emerald-500 h-full rounded-full transition-all duration-300"
-                style={{
-                  width: `${
-                    userData?.stats?.totalCourses
-                      ? ((userData?.stats?.coursesCompleted || 0) / userData.stats.totalCourses) * 100
-                      : 0
-                  }%`
-                }}
-              />
+            <div>
+              <h3 className="text-2xl font-black">{userData?.xp || 0}</h3>
+              <p className="text-xs text-muted font-semibold uppercase tracking-wider mt-0.5">Total XP</p>
             </div>
           </div>
 
-          {/* Badges Card */}
-          <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
+          <div className="bg-main-bg p-6 rounded-2xl border border-border shadow-sm flex items-center gap-4">
+            <div className="w-12 h-12 rounded-xl bg-green-50 flex items-center justify-center text-xl">
+              <Target className="w-6 h-6 text-green-500" />
+            </div>
+            <div>
+              <h3 className="text-2xl font-black">{userData?.stats?.coursesCompleted || 0}</h3>
+              <p className="text-xs text-muted font-semibold uppercase tracking-wider mt-0.5">Courses</p>
+            </div>
+          </div>
+
+          <div className="bg-main-bg p-6 rounded-2xl border border-border shadow-sm flex items-center gap-4">
             <div className="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center text-xl">
               <Trophy className="w-6 h-6 text-blue-500" />
             </div>
             <div>
               <h3 className="text-2xl font-black">{badges.length}</h3>
-              <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider mt-0.5">Badges</p>
+              <p className="text-xs text-muted font-semibold uppercase tracking-wider mt-0.5">Badges</p>
             </div>
           </div>
         </div>
@@ -230,11 +217,11 @@ export const ProfilePage: React.FC = () => {
         {/* 3. Middle Grid: Radar, Badges, Heatmap */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Radar Chart Placeholder */}
-          <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-            <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider mb-6">Proficiency Radar</h3>
+          <div className="bg-main-bg p-6 rounded-2xl border border-border shadow-sm">
+            <h3 className="text-xs font-bold text-heading uppercase tracking-wider mb-6">Proficiency Radar</h3>
             <div className="relative w-full aspect-square flex flex-col items-center justify-center">
               {userData?.skills && userData.skills.length >= 3 ? (
-                <svg viewBox="0 0 100 100" className="w-full h-full max-w-[200px] text-slate-400">
+                <svg viewBox="0 0 100 100" className="w-full h-full max-w-[200px] text-muted">
                   <polygon points="50,10 90,80 10,80" fill="none" stroke="currentColor" strokeWidth="0.5" strokeDasharray="2,2" />
                   <polygon points="50,30 78,70 22,70" fill="none" stroke="currentColor" strokeWidth="0.5" strokeDasharray="2,2" />
                   <polygon points="50,50 65,60 35,60" fill="none" stroke="currentColor" strokeWidth="0.5" strokeDasharray="2,2" />
@@ -257,57 +244,71 @@ export const ProfilePage: React.FC = () => {
                     const p2 = `${50 + r2 * Math.cos(Math.PI / 6)},${50 + r2 * Math.sin(Math.PI / 6)}`;
                     const p3 = `${50 - r3 * Math.cos(Math.PI / 6)},${50 + r3 * Math.sin(Math.PI / 6)}`;
                     
-                    return <polygon points={`${p1} ${p2} ${p3}`} fill="rgba(37, 99, 235, 0.1)" stroke="#2563eb" strokeWidth="2" strokeLinejoin="round" />;
+                    return <polygon points={`${p1} ${p2} ${p3}`} fill="rgba(37, 99, 235, 0.1)" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />;
                   })()}
 
-                  <text x="50" y="5" fontSize="6" textAnchor="middle" fill="#64748b" fontWeight="bold">HTML</text>
-                  <text x="95" y="85" fontSize="6" textAnchor="middle" fill="#64748b" fontWeight="bold">CSS</text>
-                  <text x="5" y="85" fontSize="6" textAnchor="middle" fill="#64748b" fontWeight="bold">JS</text>
+                  <text x="50" y="5" fontSize="6" textAnchor="middle" fill="currentColor" fontWeight="bold">HTML</text>
+                  <text x="95" y="85" fontSize="6" textAnchor="middle" fill="currentColor" fontWeight="bold">CSS</text>
+                  <text x="5" y="85" fontSize="6" textAnchor="middle" fill="currentColor" fontWeight="bold">JS</text>
                 </svg>
               ) : (
                 <div className="text-center py-8">
-                  <div className="w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <div className="w-12 h-12 bg-surface rounded-full flex items-center justify-center mx-auto mb-3">
                     <Zap className="w-6 h-6 text-slate-300" />
                   </div>
-                  <p className="text-[10px] text-slate-400 font-medium px-4">Complete more lessons to see your proficiency radar</p>
+                  <p className="text-[10px] text-muted font-medium px-4">Complete more lessons to see your proficiency radar</p>
                 </div>
               )}
             </div>
           </div>
 
           {/* Badges Collection */}
-        <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-          <div className="flex justify-between items-center mb-6">
-            <h3 className="text-sm font-bold text-slate-900">Badge Collection</h3>
-            <div className="text-xs text-slate-500 font-semibold">
-              {badges.filter(b => b.earnedAt > 0).length}/{badges.length} Earned
+          <div className="bg-main-bg p-6 rounded-2xl border border-border shadow-sm">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-sm font-bold text-heading">Badge Collection</h3>
+              <a href="#" className="text-xs font-semibold text-blue-600 hover:underline">View all</a>
+            </div>
+            <div className="flex flex-col items-center justify-center min-h-[180px]">
+              {badges.length === 0 ? (
+                <div className="text-center">
+                  <div className="w-16 h-16 bg-surface rounded-2xl flex items-center justify-center mx-auto mb-4">
+                    <Trophy className="w-8 h-8 text-slate-300" />
+                  </div>
+                  <p className="text-xs text-muted font-medium px-6 text-center">No badges earned yet. Complete challenges to unlock them!</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-3 gap-y-6 gap-x-2 w-full">
+                  {badges.slice(0, 6).map((badge, idx) => (
+                    <div key={idx} className="flex flex-col items-center text-center">
+                      <div className="w-14 h-14 flex items-center justify-center mb-2 transition-all">
+                        <img src={badge.icon} alt={badge.name} className="w-full h-full object-contain dark:opacity-90 dark:brightness-95" />
+                      </div>
+                      <span className="text-[10px] font-semibold text-body line-clamp-1">{badge.name}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
-          <div className="grid grid-cols-4 md:grid-cols-5 gap-4 justify-items-center">
-            {badges.map((badge, idx) => (
-              <Badge key={badge.id || idx} badge={badge} size="md" />
-            ))}
-          </div>
-        </div>
 
           {/* Activity Heatmap */}
           <CodingActivity />
         </div>
 
         {/* 4. Recent Activity Feed */}
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm">
-          <div className="p-6 border-b border-slate-100">
+        <div className="bg-main-bg rounded-2xl border border-border shadow-sm">
+          <div className="p-6 border-b border-border">
             <h3 className="text-lg font-bold flex items-center gap-2">
               <Star className="w-5 h-5 text-blue-600" />
               Recent Achievements
             </h3>
           </div>
-          <div className="divide-y divide-slate-50">
+          <div className="divide-y divide-border">
             {activities.length === 0 ? (
-              <p className="p-6 text-center text-slate-400 text-sm italic">No recent activities</p>
+              <p className="p-6 text-center text-muted text-sm italic">No recent activities</p>
             ) : (
               activities.map((activity) => (
-                <div key={activity.id} className="p-5 flex items-start gap-4 hover:bg-slate-50/50 transition-colors">
+                <div key={activity.id} className="p-5 flex items-start gap-4 hover:bg-surface/50 transition-colors">
                   <div className={`mt-1 p-2 rounded-lg ${
                     activity.type === 'lesson_completed' ? 'bg-green-50 text-green-600' :
                     activity.type === 'challenge_won' ? 'bg-blue-50 text-blue-600' :
@@ -318,8 +319,8 @@ export const ProfilePage: React.FC = () => {
                      <Zap className="w-4 h-4" />}
                   </div>
                   <div className="flex-grow">
-                    <p className="text-sm text-slate-900 font-bold leading-tight">{activity.description}</p>
-                    <p className="text-xs text-slate-400 mt-1 font-medium">{new Date(activity.timestamp).toLocaleString()}</p>
+                    <p className="text-sm text-heading font-bold leading-tight">{activity.description}</p>
+                    <p className="text-xs text-muted mt-1 font-medium">{new Date(activity.timestamp).toLocaleString()}</p>
                   </div>
                   <Link to="#" className="text-xs text-blue-600 font-bold hover:underline shrink-0">View Details</Link>
                 </div>
@@ -332,12 +333,12 @@ export const ProfilePage: React.FC = () => {
       {/* Share Profile Modal */}
       {isShareModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4">
-          <div className="relative w-full max-w-sm bg-white rounded-3xl p-6 shadow-2xl border border-slate-200 animate-in zoom-in-95 duration-300">
+          <div className="relative w-full max-w-sm bg-main-bg rounded-3xl p-6 shadow-2xl border border-border animate-in zoom-in-95 duration-300">
             
             {/* Close Button */}
             <button 
               onClick={() => setIsShareModalOpen(false)}
-              className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 bg-slate-100 hover:bg-slate-200 p-1.5 rounded-full transition-colors"
+              className="absolute top-4 right-4 text-muted hover:text-body bg-surface hover:bg-surface p-1.5 rounded-full transition-colors"
             >
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
@@ -347,7 +348,7 @@ export const ProfilePage: React.FC = () => {
             {/* Logo / Header Card */}
             <div className="w-full flex justify-between items-center mb-6">
               <span className="text-xs font-black tracking-widest text-blue-600 uppercase">Frontendly Card</span>
-              <span className="text-xs font-bold text-slate-600 bg-slate-100 px-2 py-1 rounded-md border border-slate-200">Lv. {userData?.level || 1}</span>
+              <span className="text-xs font-bold text-body bg-surface px-2 py-1 rounded-md border border-border">Lv. {userData?.level || 1}</span>
             </div>
 
             {/* Avatar & Name */}
@@ -355,7 +356,7 @@ export const ProfilePage: React.FC = () => {
               <img 
                 src={userData?.avatarUrl || 'https://ui-avatars.com/api/?name=User&background=e2e8f0&color=475569'} 
                 alt="Avatar" 
-                className="w-24 h-24 object-cover rounded-full border-4 border-slate-50 shadow-sm mb-3"
+                className="w-24 h-24 object-cover rounded-full border-4 border-surface shadow-sm mb-3"
               />
               <h2 style={{ color: '#0f172a' }} className="text-2xl font-black mb-1">
                 {userData?.username || userData?.name || 'Developer'}
@@ -364,18 +365,18 @@ export const ProfilePage: React.FC = () => {
             </div>
 
             {/* Personal Info */}
-            <div className="bg-slate-50 rounded-2xl p-4 mb-6 border border-slate-100 space-y-3">
+            <div className="bg-surface rounded-2xl p-4 mb-6 border border-border space-y-3">
               <div className="flex justify-between items-center">
-                <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Email</span>
-                <span className="text-sm font-semibold text-slate-700">{userData?.email || 'N/A'}</span>
+                <span className="text-[11px] font-bold text-muted uppercase tracking-wider">Email</span>
+                <span className="text-sm font-semibold text-body">{userData?.email || 'N/A'}</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Phone</span>
-                <span className="text-sm font-semibold text-slate-700">{(userData as UserProfile)?.phoneNumber || 'N/A'}</span>
+                <span className="text-[11px] font-bold text-muted uppercase tracking-wider">Phone</span>
+                <span className="text-sm font-semibold text-body">{(userData as UserProfile)?.phoneNumber || 'N/A'}</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Date of Birth</span>
-                <span className="text-sm font-semibold text-slate-700">
+                <span className="text-[11px] font-bold text-muted uppercase tracking-wider">Date of Birth</span>
+                <span className="text-sm font-semibold text-body">
                   {(userData as UserProfile)?.dateOfBirth ? new Date((userData as UserProfile).dateOfBirth!).toLocaleDateString('en-GB') : 'N/A'}
                 </span>
               </div>

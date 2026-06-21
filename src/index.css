@@ -55,3 +55,60 @@
   --font-jetbrains: "JetBrains Mono", monospace;
   --font-roboto-mono: "Roboto Mono", monospace;
 }
+
+@layer base {
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-main-bg: #0f172a;
+      --color-surface: #1e293b;
+      --color-surface-raised: #334155;
+      --color-heading: #f8fafc;
+      --color-body: #cbd5e1;
+      --color-muted: #94a3b8;
+      --color-subtle: #64748b;
+
+      /* Tối ưu lại border để không bị chìm trên nền tối */
+      --color-border: #334155;
+      --color-border-strong: #475569;
+
+      --color-primary: #3b82f6;
+      --color-primary-hover: #60a5fa;
+      --color-primary-light: #1e3a8a;
+      --color-primary-border: #1e40af;
+      --color-success: #10b981;
+      --color-success-dark: #34d399;
+      --color-success-darker: #6ee7b7;
+      --color-success-light: #064e3b;
+      --color-success-lighter: #022c22;
+      --color-warning: #fbbf24;
+      --color-warning-light: #78350f;
+      --color-error: #f87171;
+    }
+  }
+
+  /* Gộp mã gọn gàng để tránh sửa code 2 nơi */
+  .dark {
+    color-scheme: dark;
+    --color-main-bg: #0f172a;
+    --color-surface: #1e293b;
+    --color-surface-raised: #334155;
+    --color-heading: #f8fafc;
+    --color-body: #cbd5e1;
+    --color-muted: #94a3b8;
+    --color-subtle: #64748b;
+    --color-border: #334155;
+    --color-border-strong: #475569;
+    --color-primary: #3b82f6;
+    --color-primary-hover: #60a5fa;
+    --color-primary-light: #1e3a8a;
+    --color-primary-border: #1e40af;
+    --color-success: #10b981;
+    --color-success-dark: #34d399;
+    --color-success-darker: #6ee7b7;
+    --color-success-light: #064e3b;
+    --color-success-lighter: #022c22;
+    --color-warning: #fbbf24;
+    --color-warning-light: #78350f;
+    --color-error: #f87171;
+  }
+}

@@ -3,14 +3,17 @@ import { GoogleOAuthProvider, GoogleLogin, type CredentialResponse } from '@reac
 import { useGoogleLogin } from '../hooks/useGoogleLogin';
 import { ENV } from '../../../config/env';
 import { Loader } from '../../../components/Loader/Loader';
+import { useTheme } from 'next-themes';
 
 export const GoogleButton: React.FC = () => {
   const { handleGoogleLogin, isLoading } = useGoogleLogin();
   const [error, setError] = useState<string | null>(null);
+  const { theme } = useTheme();
 
-  const isConfigured = ENV.GOOGLE_CLIENT_ID && 
-                      ENV.GOOGLE_CLIENT_ID !== 'your-google-client-id' && 
-                      ENV.GOOGLE_CLIENT_ID !== 'dummy_google_client_id';
+  const isConfigured =
+    ENV.GOOGLE_CLIENT_ID &&
+    ENV.GOOGLE_CLIENT_ID !== 'your-google-client-id' &&
+    ENV.GOOGLE_CLIENT_ID !== 'dummy_google_client_id';
 
   const handleGoogleError = () => {
     setError('Google login failed. Please try again.');
@@ -24,7 +27,7 @@ export const GoogleButton: React.FC = () => {
 
   if (!isConfigured) {
     return (
-      <div className="text-xs text-slate-400 italic border border-dashed border-slate-200 p-3 rounded-lg">
+      <div className="text-xs text-muted italic border border-dashed border-border p-3 rounded-lg">
         Google Login chưa được cấu hình Client ID.
       </div>
     );
@@ -34,7 +37,7 @@ export const GoogleButton: React.FC = () => {
     <GoogleOAuthProvider clientId={ENV.GOOGLE_CLIENT_ID}>
       <div className="w-full flex flex-col items-center gap-2">
         {isLoading ? (
-          <div className="w-full h-[40px] flex items-center justify-center border border-slate-300 rounded-md bg-white">
+          <div className="w-full h-[40px] flex items-center justify-center border border-border rounded-md bg-main-bg">
             <Loader size="sm" />
           </div>
         ) : (
@@ -43,15 +46,13 @@ export const GoogleButton: React.FC = () => {
             onError={handleGoogleError}
             useOneTap={false}
             type="standard"
-            theme="outline"
+            theme={theme === 'dark' ? 'filled_blue' : 'outline'}
             size="large"
             text="continue_with"
             shape="rectangular"
           />
         )}
-        {error && (
-          <p className="text-xs text-red-500">{error}</p>
-        )}
+        {error && <p className="text-xs text-red-500">{error}</p>}
       </div>
     </GoogleOAuthProvider>
   );
