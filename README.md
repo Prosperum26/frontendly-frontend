@@ -1,27 +1,21 @@
 # Frontendly Frontend
 
-Frontendly Frontend là app React/Vite cho nền tảng học frontend theo hướng gamified. App hiển thị landing/home, entrance test, learning path, lesson theory, workspace code editor, challenge catalog, profile, leaderboard, toast/notification và các luồng auth.
+React/Vite app cho nền tảng học frontend gamified: entrance test, personalized learning path, workspace editor, profile, leaderboard.
 
-Repo backend tương ứng nằm ở `../frontendly-backend`. Hai thư mục được xem như hai repo riêng trong workspace local.
+Backend repo: `../frontendly-backend`.
 
-## Chạy Local
+## Chạy local
 
 ```bash
 yarn install
 yarn dev
 ```
 
-App mặc định chạy ở `http://localhost:5173`.
+App: `http://localhost:5173` · API: `http://localhost:3000/api/v1`
 
-Backend local mặc định:
+Backend cần chạy trước (`yarn seed` + `yarn start:dev`).
 
-- API base: `http://localhost:3000/api/v1`
-- Socket URL: `http://localhost:3000`
-- Swagger: `http://localhost:3000/api-docs`
-
-## Env
-
-Tạo `.env` trong folder frontend:
+## Env (`.env`)
 
 ```env
 VITE_API_URL=http://localhost:3000/api/v1
@@ -29,225 +23,159 @@ VITE_SOCKET_URL=http://localhost:3000
 VITE_GOOGLE_CLIENT_ID=replace-with-google-client-id
 ```
 
-`VITE_API_URL` được dùng bởi Axios client ở `src/services/api.ts`. `VITE_SOCKET_URL` được giữ cho realtime/socket client nếu cần. Google login sẽ hiển thị trạng thái chưa cấu hình nếu client id là placeholder.
-
 ## Scripts
 
 ```bash
-yarn dev      # Vite dev server
-yarn build    # TypeScript build + Vite production build
-yarn lint     # ESLint
-yarn preview  # Preview production build
+yarn dev       # Vite dev server
+yarn build     # tsc + vite build
+yarn lint      # ESLint
+yarn preview   # preview production build
 ```
 
-## Tech Stack
+## Tech stack
 
-- React 19, TypeScript, Vite 8
-- React Router 7
-- TanStack Query 5
-- Zustand
-- Tailwind CSS 4
-- Monaco editor
-- Axios
-- Socket.IO client
-- next-themes
-- lucide-react
-- framer-motion
+React 19 · Vite 8 · TypeScript · React Router 7 · TanStack Query · Zustand · Tailwind CSS 4 · Monaco · next-themes · framer-motion
 
-## Cấu Trúc Chính
+## Routes
 
-```text
-src/
-├── components/      # UI dùng chung: Button, Card, Toast, ProtectedRoute...
-├── config/          # env, firebase, theme
-├── constants/       # routes, app constants, XP constants
-├── features/        # auth, learning-path, editor, challenge, entrance-test...
-├── hooks/           # hooks dùng chung
-├── layouts/         # AuthLayout, MainLayout, WorkspaceLayout
-├── pages/           # route-level pages
-├── services/        # Axios và Socket.IO client
-├── store/           # Zustand stores
-├── types/           # shared TypeScript types
-└── utils/           # helper functions
-```
+| Route | Mô tả |
+|-------|--------|
+| `/` | Home / landing |
+| `/entrance-test` | Bài test đầu vào (20 câu) |
+| `/learning-path` | Roadmap + study plan |
+| `/learning-path/milestone/:id/lesson/:lessonId` | Theory |
+| `/workspace/:exerciseId` | Code editor |
+| `/challenge/lobby` | Challenge catalog |
+| `/profile` | Profile + gamification |
+| `/leaderboard` | Bảng xếp hạng |
 
-## Route Chính
+## Features
 
-- `/`: home/landing.
-- `/entrance-test`: bài kiểm tra đầu vào.
-- `/learning-path`: roadmap tổng quan.
-- `/learning-path/milestone/:milestoneId`: chi tiết milestone.
-- `/learning-path/milestone/:milestoneId/lesson/:lessonId`: lesson theory.
-- `/learning-path/milestone/:milestoneId/lesson/:lessonId/complete`: completion screen.
-- `/workspace/:exerciseId`: Monaco workspace để làm bài tập.
-- `/challenge/lobby`: challenge catalog, tức danh sách bài tập code để người dùng chọn và mở vào workspace.
-- `/profile`: profile, protected.
-- `/leaderboard`: leaderboard.
-- `/login`, `/register`, `/forgot-password`, `/reset-password`: auth pages.
-- `/banned`: account banned page.
+### Entrance Test + Personalized Path
 
-Lưu ý: project không còn feature battle/matchmaking. Challenge chỉ là catalog bài tập code, không có room, match, battle realtime.
+1. User làm 20 câu → `POST /entrance-test/submit`
+2. Hiển thị score, level, study plan, lesson status (`auto_passed` / `required` / `locked`)
+3. Auth user: sync qua `POST /learning-content/sync-placement-test` (cấp XP)
+4. Guest: lưu path trong `localStorage` (`frontendly-personalized-path`)
 
-## Feature Hiện Có
-
-### Auth
-
-- Login/register bằng email/password.
-- Google login qua `@react-oauth/google`.
-- Forgot/reset password.
-- Session verification khi app boot.
-- Token lưu trong localStorage.
-- Protected route cho các trang cần login, workspace cho phép guest qua `allowGuest`.
-
-Các file quan trọng:
-
-- `src/features/auth/services/auth.service.ts`
-- `src/features/auth/hooks/useAuth.ts`
-- `src/features/auth/hooks/useGoogleLogin.ts`
-- `src/store/auth.store.ts`
-
-### Entrance Test
-
-- Page: `src/pages/EntranceTestPage.tsx`
-- Hook: `src/features/entrance-test/hooks/useEntranceTest.ts`
-- Service: `src/features/entrance-test/services/entrance-test.service.ts`
-
-Frontend gọi:
-
-- `GET /entrance-test/questions`
-- `POST /entrance-test/submit`
-
-Service có fallback local để frontend vẫn chạy được khi backend chưa bật. Kết quả trả về `skipToMilestoneId` và `skillId`.
+Files: `src/features/entrance-test/`, `src/pages/EntranceTestPage.tsx`
 
 ### Learning Path
 
-- Roadmap/milestone/lesson theory/progress summary.
-- Các page và component chính nằm trong `src/features/learning-path` và `src/pages/LearningPathPage.tsx`.
-- Guest progress được lưu qua `src/store/guest.store.ts`.
+- Roadmap từ `GET /roadmaps/:skillId` merge với personalized path
+- Study plan panel trên Learning Path page
+- Lesson icons: ✓ Mastered · ▶ Active · 🔒 Locked
 
-Frontend phụ thuộc các endpoint:
+Files: `src/features/learning-path/`, `src/pages/LearningPathPage.tsx`
 
-- `/roadmaps/:skillId`
-- `/stages/:stageId/theory`
-- `/stages/:stageId/complete`
-- `/stages/:stageId/unlock-practice`
-- `/stages/:stageId/practices`
-- `/learning-content/skills`
-- `/learning-content/progress/summary`
+### Gamification
+
+- SideBar + ProfilePage: XP, level, streak, badges từ `/users/me`, `/users/progress`
+- Entrance test: hiển thị XP earned khi auto-pass
+- Hook: `src/features/gamification/hooks/useGamificationProfile.ts`
+
+### Dark mode
+
+- Toggle: Header (Sun/Moon icon)
+- Provider: `next-themes` trong `App.tsx` (`storageKey: frontendly-theme`)
+- Design tokens: `src/index.css` — `--color-main-bg`, `--color-surface`, `--color-heading`, ...
+- Class `.dark` / `.light` trên `<html>`
+
+Tất cả page chính dùng CSS variables, không hardcode màu light-only.
 
 ### Workspace Editor
 
-- Page wrapper: `src/pages/workspace/WorkspacePage.tsx`
-- Compatibility page: `src/pages/WorkspacePage.tsx`
-- Monaco editor components: `src/features/editor/components`
-- Service contract: `src/features/editor/services/editor.service.ts`
-- Types: `src/features/editor/types/editor.types.ts`
+Monaco editor 4 file (html/css/js/jsx), submit tới `/exercises/:id/:userId/submit`.
 
-Workspace hỗ trợ 4 file:
+## Cấu trúc
 
-- `html`
-- `css`
-- `js`
-- `jsx`
-
-Frontend đọc exercise từ backend và map các field:
-
-- `html_content`, `css_content`, `js_content`, `jsx_content`
-- `evaluation_config`
-- `requirements`
-- `restrictions`
-- `target_design` hoặc `target_designs`
-- `navigation`
-
-Submit gửi:
-
-```ts
-{
-  editorContent: {
-    html: string,
-    css: string,
-    js: string,
-    jsx: string
-  }
-}
+```text
+src/
+├── components/       # Button, Card, Header, Toast...
+├── features/
+│   ├── auth/
+│   ├── entrance-test/
+│   ├── learning-path/
+│   ├── editor/
+│   ├── gamification/
+│   ├── profile/
+│   └── challenge/
+├── pages/
+├── services/api.ts   # Axios client
+├── store/            # Zustand (auth, guest, roadmap)
+└── index.css         # Design tokens + dark mode
 ```
 
-Response evaluator được map về:
+## Deploy — Vercel
 
-- lint errors cho HTML/CSS/JS/JSX
-- requirement results
-- visual results
-- behavior results
-- `match_percentage`
-- `isCompleted`
+### Bước 1: Import project
 
-### Challenge Catalog
+1. [vercel.com](https://vercel.com) → **Add New Project** → import GitHub repo frontend
+2. Framework: **Vite**
+3. Build: `yarn build` · Output: `dist`
 
-- Page: `src/pages/ChallengeLobbyPage.tsx`
-- Service: `src/features/challenge/services/challenge.service.ts`
-- Type: `src/features/challenge/types/challenge.types.ts`
+### Bước 2: Environment Variables
 
-Challenge là danh sách bài tập code. Card challenge trỏ tới `/workspace/:exerciseId`.
+| Variable | Production value |
+|----------|------------------|
+| `VITE_API_URL` | `https://<your-backend>.onrender.com/api/v1` |
+| `VITE_SOCKET_URL` | `https://<your-backend>.onrender.com` |
+| `VITE_GOOGLE_CLIENT_ID` | Google OAuth client ID |
 
-Frontend gọi:
+### Bước 3: Deploy
 
-- `GET /challenge/exercises`
+Vercel tự deploy mỗi push lên `main`. File `vercel.json` đã cấu hình SPA rewrite.
 
-Service có fallback catalog local nếu backend chưa sẵn sàng. Không có battle, room, matchmaking, live standings hoặc match result trong scope hiện tại.
+## CI/CD (GitHub Actions)
 
-### Profile, Gamification, Leaderboard
+Workflow: `.github/workflows/ci.yml`
 
-- Profile page: `src/pages/ProfilePage.tsx`
-- Profile types/components nằm trong `src/features/profile`
-- Gamification types nằm trong `src/features/gamification`
-- Leaderboard page: `src/pages/LeaderboardPage.tsx`
+| Trigger | Jobs |
+|---------|------|
+| push/PR `main`, `develop` | `yarn lint` → `yarn build` |
 
-Các endpoint chính:
+Vercel có thể kết nối GitHub để auto-deploy song song với CI.
 
-- `/users/me`
-- `/users/me/password`
-- `/users/me/avatar`
-- `/users/progress`
-- `/users/badges`
-- `/users/activity`
-- `/users/activity/stats`
-- `/users/streak`
-- `/users/learning-progress`
-- `/leaderboard`
-- `/leaderboard/:userId/rank`
+## Luồng deploy end-to-end
 
-## Backend API App Đang Phụ Thuộc
+```text
+Developer push main
+    │
+    ├─► GitHub Actions (backend): lint → build → Render deploy hook
+    │
+    ├─► GitHub Actions (frontend): lint → build
+    │
+    └─► Vercel: auto deploy frontend
+              │
+              ▼
+    User browser ──► Vercel (SPA) ──► Render API (NestJS + MongoDB)
+```
 
-Tất cả endpoint bên dưới nằm dưới `VITE_API_URL`, mặc định là `http://localhost:3000/api/v1`.
+**Checklist production:**
 
-- Auth: `/auth/register`, `/auth/login`, `/auth/google`, `/auth/refresh-token`, `/auth/logout`, `/auth/logout-all`, `/auth/forgot-password`, `/auth/reset-password`.
-- User/profile: `/users/me`, `/users/me/password`, `/users/me/avatar`, `/users/progress`, `/users/badges`, `/users/activity`, `/users/activity/stats`, `/users/streak`, `/users/learning-progress`.
-- Entrance test: `/entrance-test/questions`, `/entrance-test/submit`.
-- Learning path: `/roadmaps/:skillId`, `/stages/:stageId/theory`, `/stages/:stageId/complete`, `/stages/:stageId/unlock-practice`, `/stages/:stageId/practices`, `/learning-content/skills`, `/learning-content/progress/summary`.
-- Exercises/workspace: `/exercises/:exerciseId/:userId`, `/exercises/:exerciseId/:userId/submit`, `/lp-exercises/:exerciseId/submit`.
-- Challenges: `/challenge/exercises`.
-- Leaderboard: `/leaderboard`, `/leaderboard/:userId/rank`.
+1. MongoDB Atlas (hoặc Render MongoDB) → set `DB_URI` trên Render
+2. Render backend deploy + `yarn seed`
+3. Set `CORS_ORIGINS` = URL Vercel frontend
+4. Vercel frontend deploy + env vars
+5. Google OAuth: thêm redirect URIs cho cả local + production
 
-## Note
+## Trạng thái kiểm tra
 
-- Ưu tiên giữ contract frontend/backend đồng bộ trong `features/editor/types/editor.types.ts` và backend `src/editor/db_schemas/exercise_schema.ts`.
-- Nếu thêm field exercise mới, cập nhật cả backend schema, DTO/response, frontend type, service mapper và UI nếu cần.
-- Challenge không phải battle. Không thêm lại room/matchmaking/realtime battle nếu không có yêu cầu rõ.
-- Workspace có draft persistence trong localStorage; khi đổi `WorkspaceFiles`, nhớ cập nhật draft validation.
-- `ToastContext.tsx` chỉ export provider để tuân thủ `react-refresh/only-export-components`; hook nằm ở `useToast.ts`.
-- Frontend hiện chưa có test suite. Quality gate chính là `yarn lint` và `yarn build`.
-- Bundle chính vẫn tương đối lớn do Monaco/workspace chưa được code-split; nên xử lý nếu tối ưu performance.
+```
+yarn lint   ✅
+yarn build  ✅
+```
 
-## Trạng Thái Kiểm Tra
+## API phụ thuộc
 
-Lần kiểm tra gần nhất trong workspace ngày 2026-06-21:
+Chi tiết đầy đủ: xem `../frontendly-backend/README.md`.
 
-- `yarn lint`: pass.
-- `yarn build`: pass.
+Các endpoint frontend gọi trực tiếp:
 
-## Việc Nên Làm Tiếp
-
-- Code-split route nặng, ưu tiên workspace/Monaco.
-- Bổ sung smoke/e2e cho auth, entrance test, learning path, challenge catalog và workspace submit.
-- Chuẩn hóa lại một số text tiếng Việt còn bị mojibake trong UI cũ.
-- Rà file trùng phiên bản, ví dụ `src/pages/WorkspacePage.tsx` và `src/pages/workspace/WorkspacePage.tsx`.
+- Auth: `/auth/*`
+- User: `/users/me`, `/users/progress`, `/users/badges`, `/users/activity`
+- Entrance: `/entrance-test/questions`, `/entrance-test/submit`
+- Learning: `/roadmaps/:skillId`, `/stages/:stageId/*`, `/learning-content/sync-placement-test`
+- Exercises: `/exercises/:id/:userId`, `/exercises/:id/:userId/submit`
+- Challenge: `/challenge/exercises`
+- Leaderboard: `/leaderboard`

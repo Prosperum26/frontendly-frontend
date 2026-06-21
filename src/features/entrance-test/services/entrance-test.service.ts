@@ -32,7 +32,13 @@ export const entranceTestService = {
     skillId?: string;
     learningPath?: LearningPathLesson[];
     studyPlan?: string[];
-  }): Promise<{ placementTestCompleted: boolean; skipToMilestoneId: string; studyPlan: string[] }> {
+  }): Promise<{
+    placementTestCompleted: boolean;
+    skipToMilestoneId: string;
+    studyPlan: string[];
+    xpEarned?: number;
+    autoPassedCount?: number;
+  }> {
     const response = await api.post<
       | { placementTestCompleted: boolean; skipToMilestoneId: string; studyPlan: string[] }
       | {

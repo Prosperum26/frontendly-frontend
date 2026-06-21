@@ -278,23 +278,7 @@ export const MilestoneCard: React.FC<MilestoneCardProps> = ({ milestone }) => {
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: 10, scale: 0.95 }}
                     transition={{ duration: 0.15 }}
-                    style={{
-                      position: "absolute",
-                      bottom: "125%",
-                      left: "50%",
-                      transform: "translateX(-50%)",
-                      width: "240px",
-                      backgroundColor: "#1e293b",
-                      color: "#ffffff",
-                      padding: "12px",
-                      borderRadius: "8px",
-                      boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.3)",
-                      fontSize: "12px",
-                      zIndex: 100,
-                      textAlign: "center",
-                      border: "1px solid #334155",
-                      cursor: "default",
-                    }}
+                    className="lesson-lock-tooltip"
                     onClick={(e) => e.stopPropagation()}
                   >
                     <div
@@ -308,40 +292,17 @@ export const MilestoneCard: React.FC<MilestoneCardProps> = ({ milestone }) => {
                     </div>
                     <button
                       type="button"
+                      className="lesson-lock-tooltip-btn"
                       onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
                         setActiveTooltipLessonId(null);
                         handleScrollToActiveStage();
                       }}
-                      style={{
-                        backgroundColor: "#0284c7",
-                        color: "#ffffff",
-                        border: "none",
-                        padding: "6px 12px",
-                        borderRadius: "6px",
-                        fontSize: "11px",
-                        fontWeight: "700",
-                        cursor: "pointer",
-                        marginTop: "6px",
-                        width: "100%",
-                      }}
                     >
                       Continue Current Lesson
                     </button>
-                    <div
-                      style={{
-                        position: "absolute",
-                        top: "100%",
-                        left: "50%",
-                        marginLeft: "-6px",
-                        width: "0",
-                        height: "0",
-                        borderLeft: "6px solid transparent",
-                        borderRight: "6px solid transparent",
-                        borderTop: "6px solid #1e293b",
-                      }}
-                    />
+                    <div className="lesson-lock-tooltip-arrow" />
                   </motion.div>
                 )}
               </AnimatePresence>

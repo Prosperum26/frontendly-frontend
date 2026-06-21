@@ -5,14 +5,85 @@
   justify-content: center;
   align-items: center;
   padding: 24px;
-  background-color: #f8fafc;
+  background-color: var(--color-surface);
+  color: var(--color-heading);
 }
 
 .entrance-test-container {
   width: 100%;
   max-width: 800px;
-  background: white;
+  background: var(--color-main-bg);
   padding: 48px;
   border-radius: 16px;
+  border: 1px solid var(--color-border);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.entrance-test-subtitle {
+  color: var(--color-body);
+}
+
+.entrance-test-xp-summary {
+  padding: 16px;
+  border-radius: 12px;
+  background: var(--color-success-lighter);
+  border: 1px solid var(--color-success-light);
+}
+
+.entrance-test-xp-line {
+  margin: 0 0 6px;
+  color: var(--color-body);
+}
+
+.entrance-test-xp-line:last-child {
+  margin-bottom: 0;
+}
+
+.entrance-test-study-plan,
+.entrance-test-path-summary {
+  color: var(--color-heading);
+}
+
+.entrance-test-path-item {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.875rem;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--color-border);
+}
+
+.entrance-test-path-item.is-auto-passed {
+  background: var(--color-success-lighter);
+  border-color: var(--color-success-light);
+}
+
+.entrance-test-path-item.is-locked {
+  background: var(--color-surface);
+  opacity: 0.7;
+}
+
+.entrance-test-path-item.is-required {
+  background: var(--color-primary-light);
+  border-color: var(--color-primary-border);
+}
+
+.entrance-test-option {
+  width: 100%;
+  text-align: left;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  border: 2px solid var(--color-border);
+  background: var(--color-main-bg);
+  color: var(--color-heading);
+  transition: all 0.2s ease;
+}
+
+.entrance-test-option:hover {
+  border-color: var(--color-primary);
+}
+
+.entrance-test-option.is-selected {
+  border-color: var(--color-primary);
+  background: var(--color-primary-light);
 }

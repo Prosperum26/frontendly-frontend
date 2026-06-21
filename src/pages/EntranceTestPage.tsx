@@ -16,6 +16,8 @@ export const EntranceTestPage: React.FC = () => {
     testState,
     currentQuestion,
     lastResult,
+    xpEarned,
+    autoPassedCount,
     isSubmitting,
     selectAnswer,
     nextQuestion,
@@ -37,7 +39,7 @@ export const EntranceTestPage: React.FC = () => {
       <div className="entrance-test-page">
         <div className="entrance-test-container">
           <Loader />
-          <p className="text-slate-600 mt-4">Loading questions...</p>
+          <p className="entrance-test-subtitle mt-4">Loading questions...</p>
         </div>
       </div>
     );
@@ -47,7 +49,7 @@ export const EntranceTestPage: React.FC = () => {
     return (
       <div className="entrance-test-page">
         <div className="entrance-test-container">
-          <div className="text-red-600 font-bold mb-4">{error}</div>
+          <div className="mb-4 font-bold text-[var(--color-error)]">{error}</div>
           <Button onClick={() => window.location.reload()}>Try Again</Button>
         </div>
       </div>
@@ -60,15 +62,26 @@ export const EntranceTestPage: React.FC = () => {
     return (
       <div className="entrance-test-page">
         <div className="entrance-test-container">
-          <h1 className="text-3xl font-bold text-slate-900 mb-4">Test Completed!</h1>
-          <p className="text-slate-600 mb-4">
+          <h1 className="mb-4 text-3xl font-bold">Test Completed!</h1>
+          <p className="entrance-test-subtitle mb-4">
             Score: {score}/{totalQuestions} — Level: {placementResult?.level ?? 'N/A'}
           </p>
 
+          {(autoPassedCount > 0 || xpEarned > 0) && (
+            <div className="entrance-test-xp-summary mb-4">
+              <p className="entrance-test-xp-line">
+                Auto-passed lessons: <strong>{autoPassedCount}</strong>
+              </p>
+              <p className="entrance-test-xp-line">
+                XP earned: <strong>+{xpEarned}</strong>
+              </p>
+            </div>
+          )}
+
           {personalizedPath?.studyPlan && personalizedPath.studyPlan.length > 0 && (
             <div className="entrance-test-study-plan mb-6">
-              <h2 className="text-lg font-semibold mb-2">Your Study Plan</h2>
-              <ul className="list-disc pl-5 space-y-1 text-slate-700">
+              <h2 className="mb-2 text-lg font-semibold">Your Study Plan</h2>
+              <ul className="list-disc space-y-1 pl-5">
                 {personalizedPath.studyPlan.map((item) => (
                   <li key={item}>{item}</li>
                 ))}
@@ -78,17 +91,17 @@ export const EntranceTestPage: React.FC = () => {
 
           {personalizedPath?.learningPath && (
             <div className="entrance-test-path-summary mb-6">
-              <h2 className="text-lg font-semibold mb-2">Lesson Overview</h2>
+              <h2 className="mb-2 text-lg font-semibold">Lesson Overview</h2>
               <div className="grid gap-2">
                 {personalizedPath.learningPath.map((lesson) => (
                   <div
                     key={lesson.canonicalLessonId}
-                    className={`flex justify-between text-sm p-2 rounded border ${
+                    className={`entrance-test-path-item ${
                       lesson.status === 'auto_passed'
-                        ? 'bg-green-50 border-green-200'
+                        ? 'is-auto-passed'
                         : lesson.status === 'locked'
-                          ? 'bg-slate-50 border-slate-200 opacity-60'
-                          : 'bg-blue-50 border-blue-200'
+                          ? 'is-locked'
+                          : 'is-required'
                     }`}
                   >
                     <span>{lesson.title}</span>
@@ -116,18 +129,16 @@ export const EntranceTestPage: React.FC = () => {
     <div className="entrance-test-page">
       <div className="entrance-test-container">
         <div className="mb-8">
-          <h1 className="text-2xl font-bold text-slate-900 mb-4">Entrance Test</h1>
+          <h1 className="mb-4 text-2xl font-bold">Entrance Test</h1>
           <ProgressBar value={testState.progress * 100} />
-          <div className="text-sm text-slate-500 mt-2">
+          <div className="entrance-test-subtitle mt-2 text-sm">
             Question {testState.currentQuestionIndex + 1} of {questions.length}
           </div>
         </div>
 
         {currentQuestion && (
           <div className="mb-8">
-            <h2 className="text-xl font-semibold text-slate-800 mb-6">
-              {currentQuestion.question}
-            </h2>
+            <h2 className="mb-6 text-xl font-semibold">{currentQuestion.question}</h2>
 
             {(currentQuestion.type === 'multiple-choice' ||
               currentQuestion.type === 'single-choice') &&
@@ -137,10 +148,8 @@ export const EntranceTestPage: React.FC = () => {
                     <button
                       key={idx}
                       type="button"
-                      className={`w-full text-left p-4 rounded-lg border-2 transition-all ${
-                        testState.answers[currentQuestion.id] === option
-                          ? 'border-blue-600 bg-blue-50'
-                          : 'border-slate-200 hover:border-blue-400'
+                      className={`entrance-test-option ${
+                        testState.answers[currentQuestion.id] === option ? 'is-selected' : ''
                       }`}
                       onClick={() => selectAnswer(currentQuestion.id, option)}
                     >

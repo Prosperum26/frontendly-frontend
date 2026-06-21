@@ -66,7 +66,7 @@
   position: relative;
   width: 100%;
   aspect-ratio: 16/9;
-  background: #0f172a;
+  background: var(--color-heading);
 }
 
 .vm-video-poster {
@@ -154,12 +154,12 @@
 }
 
 .vm-meta-blue {
-  background: #dbeafe;
+  background: var(--color-primary-light);
   color: var(--color-primary);
 }
 
 .vm-meta-yellow {
-  background: #fef3c7;
+  background: var(--color-warning-light);
   color: var(--color-warning);
 }
 
@@ -168,7 +168,7 @@
   justify-content: space-between;
   align-items: center;
   padding-top: 16px;
-  border-top: 1px solid #e2e8f0;
+  border-top: 1px solid var(--color-border);
 }
 
 .vm-actions-left {
@@ -181,7 +181,7 @@
   align-items: center;
   gap: 6px;
   padding: 8px 14px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-border);
   border-radius: 8px;
   background: var(--color-main-bg);
   color: var(--color-body);
@@ -193,7 +193,7 @@
 }
 .vm-action-btn:hover {
   background: var(--color-surface);
-  border-color: #cbd5e1;
+  border-color: var(--color-border-strong);
   color: var(--color-heading);
 }
 
@@ -201,7 +201,7 @@
   padding: 8px 20px;
   border: none;
   border-radius: 8px;
-  background: #f1f5f9;
+  background: var(--color-surface-raised);
   color: var(--color-body);
   font-size: 13px;
   font-weight: 600;
@@ -210,6 +210,6 @@
   font-family: var(--font-inter);
 }
 .vm-close-btn:hover {
-  background: #e2e8f0;
+  background: var(--color-border);
   color: var(--color-heading);
 }

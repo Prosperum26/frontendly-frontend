@@ -73,5 +73,9 @@ export interface StoredPersonalizedPath {
   totalQuestions: number;
   placementResult?: PlacementResult;
   personalizedPath?: PersonalizedPathResult;
+  xpEarned?: number;
+  autoPassedCount?: number;
   completedAt: number;
 }
+
+export const PLACEMENT_XP_PER_AUTO_PASSED_LESSON = 75;

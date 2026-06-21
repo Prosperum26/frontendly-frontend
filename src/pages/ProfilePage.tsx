@@ -102,7 +102,7 @@ export const ProfilePage: React.FC = () => {
             
             <div className="flex-grow">
               <div className="flex items-center gap-2">
-                <h1 className="text-2xl font-bold" style={{ color: '#000000', opacity: 1 }}>
+                <h1 className="text-2xl font-bold text-heading">
                   {userData?.username || userData?.name || 'User'}
                 </h1>
               </div>
@@ -152,7 +152,7 @@ export const ProfilePage: React.FC = () => {
           {isEditing && (
             <div className="mt-4 bg-main-bg p-6 rounded-xl border border-border shadow-sm">
               <div className="flex justify-between items-center mb-4">
-                <h3 style={{ color: '#0f172a' }} className="text-xl font-bold text-heading">
+                <h3 className="text-xl font-bold text-heading">
                   Update Personal Details
                 </h3>
                 <button 
@@ -357,7 +357,7 @@ export const ProfilePage: React.FC = () => {
                 alt="Avatar" 
                 className="w-24 h-24 object-cover rounded-full border-4 border-surface shadow-sm mb-3"
               />
-              <h2 style={{ color: '#0f172a' }} className="text-2xl font-black mb-1">
+              <h2 className="text-2xl font-black mb-1 text-heading">
                 {userData?.username || userData?.name || 'Developer'}
               </h2>
               <p className="text-blue-600 text-sm font-bold">{userData?.role === 'user' ? 'Frontend Student' : 'Frontend Master'}</p>

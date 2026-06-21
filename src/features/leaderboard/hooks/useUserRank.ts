@@ -3,30 +3,41 @@ import { leaderboardService } from '../services/leaderboard.service';
 
 export const useUserRank = (userId?: string) => {
   const [data, setData] = useState<number | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!userId) {
-      setLoading(false);
       return;
     }
+
+    let cancelled = false;
 
     const loadRank = async () => {
       try {
         setLoading(true);
         setError(null);
         const rankData = await leaderboardService.fetchUserRank(userId);
-        setData(rankData);
+        if (!cancelled) {
+          setData(rankData);
+        }
       } catch (err) {
         console.error('Failed to load user rank:', err);
-        setError('Failed to load user rank');
+        if (!cancelled) {
+          setError('Failed to load user rank');
+        }
       } finally {
-        setLoading(false);
+        if (!cancelled) {
+          setLoading(false);
+        }
       }
     };
 
-    loadRank();
+    void loadRank();
+
+    return () => {
+      cancelled = true;
+    };
   }, [userId]);
 
   return { data, loading, error };
