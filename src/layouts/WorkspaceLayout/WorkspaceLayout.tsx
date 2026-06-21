@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
-import { WorkspaceNav } from '../../pages/workspace/WorkspaceNav';
+import { Header } from '../../components/Header/Header';
 import { ROUTES } from '../../constants/routes';
 import '../../pages/workspace/workspace.css';
 
@@ -41,7 +41,7 @@ export const WorkspaceLayout: React.FC = () => {
 
   return (
     <div className="workspace-shell">
-      <WorkspaceNav />
+      <Header />
       <Outlet />
     </div>
   );

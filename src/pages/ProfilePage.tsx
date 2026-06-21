@@ -11,6 +11,7 @@ import { EditProfileForm } from '../features/profile/components/EditProfileForm'
 import { AvatarUpload } from '../features/profile/components/AvatarUpload';
 import { CodingActivity } from '../features/profile/components/CodingActivity';
 import { ProgressTrack } from '../features/profile/components/ProgressTrack';
+import { Badge } from '../features/profile/components/Badge';
 
 export const ProfilePage: React.FC = () => {
   const { currentUser, logout } = useAuthStore();
@@ -279,11 +280,9 @@ export const ProfilePage: React.FC = () => {
               ) : (
                 <div className="grid grid-cols-3 gap-y-6 gap-x-2 w-full">
                   {badges.slice(0, 6).map((badge, idx) => (
-                    <div key={idx} className="flex flex-col items-center text-center">
-                      <div className="w-14 h-14 flex items-center justify-center mb-2 transition-all">
-                        <img src={badge.icon} alt={badge.name} className="w-full h-full object-contain dark:opacity-90 dark:brightness-95" />
-                      </div>
-                      <span className="text-[10px] font-semibold text-body line-clamp-1">{badge.name}</span>
+                    <div key={`profile-badge-${String(badge.id || idx)}`} className="flex flex-col items-center text-center">
+                      <Badge badge={badge} size="lg" />
+                      <span className="text-[10px] font-semibold text-body line-clamp-1 mt-2">{badge.name}</span>
                     </div>
                   ))}
                 </div>

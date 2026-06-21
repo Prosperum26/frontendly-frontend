@@ -24,11 +24,11 @@ export const Podium: React.FC<PodiumProps> = ({ topThree }) => {
         return (
           <div key={entry.id} className="flex flex-col items-center gap-3 flex-1">
             <div className="flex flex-col items-center">
-              <span className="text-3xl font-bold text-slate-800">#{placeNumber}</span>
-              <Avatar src={entry.avatar} alt={entry.username} size="xl" className="border-4 border-white shadow-md" />
-              <span className="mt-2 font-semibold text-slate-800 text-center">{entry.username}</span>
-              <div className="text-sm text-slate-600">
-                <span className="font-semibold text-indigo-600">Level {entry.level}</span> • {entry.xp} XP
+              <span className="text-3xl font-bold text-slate-800 dark:text-slate-200">#{placeNumber}</span>
+              <Avatar src={entry.avatar} alt={entry.username} size="xl" className="border-4 border-white dark:border-slate-800 shadow-md" />
+              <span className="mt-2 font-semibold text-slate-800 dark:text-slate-200 text-center">{entry.username}</span>
+              <div className="text-sm text-slate-600 dark:text-slate-400">
+                <span className="font-semibold text-indigo-600 dark:text-indigo-400">Level {entry.level}</span> • {entry.xp} XP
               </div>
             </div>
             <div className={`w-full ${heights[index]} rounded-t-3xl ${colors[index]} shadow-lg flex items-end justify-center pb-4`}>

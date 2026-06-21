@@ -138,9 +138,9 @@ interface ChallengeCardProps {
 const ChallengeCard: React.FC<ChallengeCardProps> = ({ challenge }) => {
   // Difficulty colors
   const difficultyColors: Record<ChallengeExercise['difficulty'], string> = {
-    easy: 'bg-success-light text-success-darker',
-    medium: 'bg-warning-light text-amber-800',
-    hard: 'bg-red-100 text-error',
+    easy: 'bg-success-light dark:bg-success-darker/30 text-success-darker dark:text-success-light',
+    medium: 'bg-warning-light dark:bg-warning/30 text-amber-800 dark:text-amber-200',
+    hard: 'bg-red-100 dark:bg-red-900/30 text-error dark:text-red-400',
   };
 
   return (
@@ -179,7 +179,7 @@ const ChallengeCard: React.FC<ChallengeCardProps> = ({ challenge }) => {
             {challenge.tags.map((tag) => (
               <span
                 key={tag}
-                className="text-xs bg-surface text-muted px-2 py-1 rounded"
+                className="text-xs bg-surface dark:bg-surface-raised text-muted px-2 py-1 rounded"
               >
                 {tag}
               </span>

@@ -214,8 +214,8 @@ export const SideBar: React.FC<SideBarProps> = ({ className = "" }) => {
                 <span className="stat-label">Badges Earned</span>
                 <div className="badges-list flex flex-wrap gap-2">
                   {badgesData.map((badge, idx) => (
-                    <BadgeComponent key={badge.id || idx} badge={badge} size="sm" />
-                  ))}
+            <BadgeComponent key={`badge-${String(badge.id || idx)}`} badge={badge} size="sm" />
+          ))}
                 </div>
               </div>
             </>

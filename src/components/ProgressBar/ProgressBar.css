@@ -7,19 +7,19 @@
 .progress-bar-label {
   font-size: 0.75rem;
   font-weight: 500;
-  color: #6b7280;
+  color: var(--color-muted);
 }
 
 .progress-bar {
   width: 100%;
   height: 0.5rem;
-  background-color: #e5e7eb;
+  background-color: var(--color-surface-raised);
   border-radius: 9999px;
   overflow: hidden;
 }
 
 .progress-bar-fill {
   height: 100%;
-  background-color: #6366f1;
+  background-color: var(--color-primary);
   transition: width 0.3s ease-out;
 }
