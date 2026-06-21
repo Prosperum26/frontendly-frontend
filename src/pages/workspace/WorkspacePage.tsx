@@ -78,8 +78,6 @@ interface WorkspaceToastState {
 }
 
 const WorkspacePageContent: React.FC<WorkspacePageContentProps> = ({ exercise }) => {
-  const currentUser = useAuthStore((s) => s.currentUser);
-  const userId = currentUser?.id || 'guest';
   const navigate = useNavigate();
 
   const queryParams = new URLSearchParams(window.location.search);
