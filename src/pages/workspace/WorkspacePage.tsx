@@ -26,12 +26,10 @@ import '../../features/editor/components/editor-ui.css';
 
 export const WorkspacePage: React.FC = () => {
   const { exerciseId } = useParams<{ exerciseId: string }>();
-  const currentUser = useAuthStore((s) => s.currentUser);
-  const userId = currentUser?.id || 'guest';
 
   const { data: exercise, isLoading, error } = useQuery<ExerciseDefinition>({
-    queryKey: ['exercise', exerciseId, userId],
-    queryFn: () => editorService.getExercise(exerciseId!, userId),
+    queryKey: ['exercise', exerciseId],
+    queryFn: () => editorService.getExercise(exerciseId!),
     enabled: !!exerciseId,
   });
 
@@ -198,7 +196,6 @@ const WorkspacePageContent: React.FC<WorkspacePageContentProps> = ({ exercise })
     try {
       const result = await editorService.submitWorkspace(
         exercise.id,
-        userId,
         files,
         exercise.requirements
       );
@@ -238,7 +235,7 @@ const WorkspacePageContent: React.FC<WorkspacePageContentProps> = ({ exercise })
     } finally {
       setIsSubmitting(false);
     }
-  }, [exercise.id, exercise.requirements, files, showToast, stageId, userId]);
+  }, [exercise.id, exercise.requirements, files, showToast, stageId]);
 
   const handleReset = useCallback(() => {
     reset();

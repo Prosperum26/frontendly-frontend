@@ -19,9 +19,9 @@ function getResponseData<T>(payload: T | { success: boolean; data: T }): T {
 }
 
 export const editorService = {
-  async getExercise(exerciseId: string, userId: string): Promise<ExerciseDefinition> {
+  async getExercise(exerciseId: string): Promise<ExerciseDefinition> {
     const response = await api.get<{ success: boolean; data: BackendExerciseResponse }>(
-      `/exercises/${exerciseId}/${userId}`
+      `/exercises/${exerciseId}`
     );
     const data = getResponseData(response.data);
     const targetDesigns = data.target_designs ?? (data.target_design ? [data.target_design] : []);
@@ -62,12 +62,11 @@ export const editorService = {
 
   async submitWorkspace(
     exerciseId: string,
-    userId: string,
     files: WorkspaceFiles,
     requirements: ExerciseRequirement[]
   ): Promise<EvaluationResult> {
     const response = await api.post<{ success: boolean; data: BackendSubmitResponse }>(
-      `/exercises/${exerciseId}/${userId}/submit`,
+      `/exercises/${exerciseId}/submit`,
       {
         editorContent: {
           html: files.html,
