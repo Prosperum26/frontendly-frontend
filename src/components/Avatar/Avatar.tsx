@@ -5,7 +5,7 @@ import './Avatar.css';
 export interface AvatarProps {
   src?: string;
   alt?: string;
-  size?: 'sm' | 'md' | 'lg';
+  size?: 'sm' | 'md' | 'lg' | 'xl';
   className?: string;
   fallback?: string;
 }
@@ -22,7 +22,7 @@ export const Avatar: React.FC<AvatarProps> = ({
       {src ? (
         <img src={src} alt={alt} className="avatar-image" />
       ) : (
-        <span className="avatar-fallback">{fallback || '?'}</span>
+        <span className="avatar-fallback">{fallback || alt?.[0]?.toUpperCase() || '?'}</span>
       )}
     </div>
   );

@@ -1,17 +1,26 @@
 import { useState, useEffect } from 'react';
 import { leaderboardService } from '../services/leaderboard.service';
 
-export const useUserRank = (userId: string) => {
-  const [rank, setRank] = useState<number | null>(null);
+export const useUserRank = (userId?: string) => {
+  const [data, setData] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (!userId) {
+      setLoading(false);
+      return;
+    }
+
     const loadRank = async () => {
       try {
-        const data = await leaderboardService.fetchUserRank(userId);
-        setRank(data);
-      } catch (error) {
-        console.error('Failed to load user rank:', error);
+        setLoading(true);
+        setError(null);
+        const rankData = await leaderboardService.fetchUserRank(userId);
+        setData(rankData);
+      } catch (err) {
+        console.error('Failed to load user rank:', err);
+        setError('Failed to load user rank');
       } finally {
         setLoading(false);
       }
@@ -20,7 +29,7 @@ export const useUserRank = (userId: string) => {
     loadRank();
   }, [userId]);
 
-  return { rank, loading };
+  return { data, loading, error };
 };
 
 export default useUserRank;
