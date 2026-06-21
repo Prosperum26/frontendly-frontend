@@ -11,10 +11,20 @@ import type {
   VisualEvaluationResult,
 } from '../types/editor.types';
 
+function getResponseData<T>(payload: T | { success: boolean; data: T }): T {
+  if (payload && typeof payload === 'object' && 'data' in payload) {
+    return (payload as { data: T }).data;
+  }
+  return payload as T;
+}
+
 export const editorService = {
   async getExercise(exerciseId: string, userId: string): Promise<ExerciseDefinition> {
-    const response = await api.get<{ success: boolean; data: BackendExerciseResponse }>(`/exercises/${exerciseId}/${userId}`);
-    const data = response.data.data;
+    const response = await api.get<{ success: boolean; data: BackendExerciseResponse }>(
+      `/exercises/${exerciseId}/${userId}`
+    );
+    const data = getResponseData(response.data);
+    const targetDesigns = data.target_designs ?? (data.target_design ? [data.target_design] : []);
 
     return {
       id: data.id,
@@ -25,9 +35,10 @@ export const editorService = {
       objective: data.title,
       estimatedTime: '20 min',
       topicTags: [data.module.split(':')[0]],
-      targetImageUrl: data.target_designs && data.target_designs.length > 0 ? data.target_designs[0].url : '',
-      targetDesigns: data.target_designs,
+      targetImageUrl: targetDesigns[0]?.url ?? '',
+      targetDesigns,
       evaluationConfig: data.evaluation_config,
+      restrictions: data.restrictions ?? [],
       requirements: (data.requirements || []).map((req) => ({
         id: req.id,
         label: req.text,
@@ -37,13 +48,14 @@ export const editorService = {
         ? {
             prev: data.navigation.prev,
             next: data.navigation.next,
-            currentMilestoneId: data.navigation.currentMilestoneId
+            currentMilestoneId: data.navigation.currentMilestoneId,
           }
         : undefined,
       starterFiles: {
         html: data.html_content || '',
         css: data.css_content || '',
         js: data.js_content || '',
+        jsx: data.jsx_content || '',
       },
     };
   },
@@ -54,51 +66,64 @@ export const editorService = {
     files: WorkspaceFiles,
     requirements: ExerciseRequirement[]
   ): Promise<EvaluationResult> {
-    const response = await api.post<{ success: boolean; data: BackendSubmitResponse }>(`/exercises/${exerciseId}/${userId}/submit`, {
-      editorContent: {
-        html: files.html,
-        css: files.css,
-        js: files.js,
-      },
-    });
-    const data = response.data.data;
+    const response = await api.post<{ success: boolean; data: BackendSubmitResponse }>(
+      `/exercises/${exerciseId}/${userId}/submit`,
+      {
+        editorContent: {
+          html: files.html,
+          css: files.css,
+          js: files.js,
+          jsx: files.jsx || '',
+        },
+      }
+    );
+    const data = getResponseData(response.data);
 
-    // Check lint errors
     const lint = data.lint_errors;
     const hasLintErrors =
       (lint?.html_err?.length ?? 0) > 0 ||
       (lint?.css_err?.length ?? 0) > 0 ||
-      (lint?.js_err?.length ?? 0) > 0;
+      (lint?.js_err?.length ?? 0) > 0 ||
+      (lint?.jsx_err?.length ?? 0) > 0;
 
     let output = '';
     if (hasLintErrors && lint) {
-      output += '⚠️ LỖI CÚ PHÁP (Lint ERRORS):\n';
+      output += 'Lint errors:\n';
       lint.html_err?.forEach((err) => {
-        output += `[HTML] Dòng ${err.line}: ${err.message}\n`;
+        output += `[HTML] Line ${err.line}: ${err.message}\n`;
       });
       lint.css_err?.forEach((err) => {
-        output += `[CSS] Dòng ${err.line}: ${err.message}\n`;
+        output += `[CSS] Line ${err.line}: ${err.message}\n`;
       });
       lint.js_err?.forEach((err) => {
-        output += `[JS] Dòng ${err.line}: ${err.message}\n`;
+        output += `[JS] Line ${err.line}: ${err.message}\n`;
       });
-      output += '\nVui lòng sửa tất cả lỗi cú pháp trước khi tiếp tục.';
+      lint.jsx_err?.forEach((err) => {
+        output += `[JSX] Line ${err.line}: ${err.message}\n`;
+      });
+      output += '\nFix all lint errors before continuing.';
     } else {
       const evaluationResults = data.requirementResult || data.evaluationResults || [];
-      const passedCount = evaluationResults.filter((r) => r.passed).length;
+      const passedCount = evaluationResults.filter((result) => result.passed).length;
       const totalCount = evaluationResults.length;
-      output = `Kết quả chấm điểm: Đạt ${passedCount}/${totalCount} yêu cầu (${data.match_percentage}%).\n`;
-      if (data.isCompleted) {
-        output += '🎉 Chúc mừng! Bạn đã hoàn thành xuất sắc tất cả yêu cầu bài tập!';
-      } else {
-        output += '❌ Một số yêu cầu chưa đạt. Hãy kiểm tra danh sách yêu cầu bên trái và thử lại.';
+      output = `Evaluation result: ${passedCount}/${totalCount} requirements passed (${data.match_percentage ?? 0}%).\n`;
+      output += data.isCompleted
+        ? 'Great work. Your solution meets all requirements.'
+        : 'Some requirements are still failing. Review the checklist and try again.';
+
+      if (data.behavior_results && data.behavior_results.totalTests > 0) {
+        output += `\nBehavior tests: ${data.behavior_results.passedTests}/${data.behavior_results.totalTests} passed.`;
+      }
+      if (data.behavior_results?.errors) {
+        output += `\n${data.behavior_results.errors}`;
       }
     }
 
-    // Map evaluationResults to criteria
     const evaluationResults = data.requirementResult || data.evaluationResults || [];
     const criteria = requirements.map((req) => {
-      const res = evaluationResults.find((r: BackendRequirementResult) => r.requirementId === req.id);
+      const res = evaluationResults.find(
+        (result: BackendRequirementResult) => result.requirementId === req.id
+      );
       return {
         id: req.id,
         label: req.label,
@@ -106,16 +131,15 @@ export const editorService = {
       };
     });
 
-    // Map lint errors
     const lintResult: LintEvaluationResult | undefined = lint
       ? {
           html: lint.html_err || [],
           css: lint.css_err || [],
           js: lint.js_err || [],
+          jsx: lint.jsx_err || [],
         }
       : undefined;
 
-    // Map visual results
     const visualResult: VisualEvaluationResult[] | undefined = data.visual_results;
 
     return {

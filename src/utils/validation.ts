@@ -12,7 +12,7 @@ export const validationRules = {
     errorMessage: 'Username must be between 3-30 characters and contain only letters, numbers, and underscores',
   },
   avatarUrl: {
-    pattern: /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/,
+    pattern: /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/,
     errorMessage: 'Avatar URL must be a valid URL',
   },
   password: {

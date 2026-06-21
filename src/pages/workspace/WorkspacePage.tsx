@@ -238,7 +238,7 @@ const WorkspacePageContent: React.FC<WorkspacePageContentProps> = ({ exercise })
     } finally {
       setIsSubmitting(false);
     }
-  }, [exercise.id, exercise.requirements, files, showToast, userId]);
+  }, [exercise.id, exercise.requirements, files, showToast, stageId, userId]);
 
   const handleReset = useCallback(() => {
     reset();

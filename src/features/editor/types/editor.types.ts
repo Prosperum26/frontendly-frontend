@@ -26,6 +26,11 @@ export interface ExerciseRequirement {
   done?: boolean;
 }
 
+export interface ExerciseRestriction {
+  rule: string;
+  message: string;
+}
+
 export interface ExerciseNavigation {
   type: string;
   id: string;
@@ -45,6 +50,7 @@ export interface ExerciseDefinition {
   targetImageUrl?: string;
   targetDesigns?: TargetDesign[];
   evaluationConfig?: EvaluationConfig;
+  restrictions?: ExerciseRestriction[];
   requirements: ExerciseRequirement[];
   starterFiles: WorkspaceFiles;
   navigation?: {
@@ -72,6 +78,7 @@ export interface LintEvaluationResult {
   html: Array<{ line: number; message: string }>;
   css: Array<{ line: number; message: string }>;
   js: Array<{ line: number; message: string }>;
+  jsx: Array<{ line: number; message: string }>;
 }
 
 export interface EvaluationResult {
@@ -100,6 +107,7 @@ export interface EvaluationConfig {
   lint: boolean;
   requirements: boolean;
   visual: boolean;
+  behavior?: boolean;
 }
 
 export interface TargetDesign {
@@ -122,8 +130,10 @@ export interface BackendExerciseResponse {
   title: string;
   level?: 'easy' | 'medium' | 'hard';
   description: string;
+  target_design?: TargetDesign;
   target_designs?: TargetDesign[];
   evaluation_config?: EvaluationConfig;
+  restrictions?: ExerciseRestriction[];
   requirements?: Array<{
     id: string;
     text: string;
@@ -131,6 +141,7 @@ export interface BackendExerciseResponse {
   html_content?: string;
   css_content?: string;
   js_content?: string;
+  jsx_content?: string;
   navigation?: {
     prev: BackendNavigation | null;
     next: BackendNavigation | null;
@@ -151,15 +162,24 @@ export interface BackendVisualResult {
   diffImageUrl?: string;
 }
 
+export interface BackendBehaviorResult {
+  passed: boolean;
+  totalTests: number;
+  passedTests: number;
+  errors?: string;
+}
+
 export interface BackendSubmitResponse {
   lint_errors?: {
     html_err?: Array<{ line: number; message: string }>;
     css_err?: Array<{ line: number; message: string }>;
     js_err?: Array<{ line: number; message: string }>;
+    jsx_err?: Array<{ line: number; message: string }>;
   };
   requirementResult?: BackendRequirementResult[];
   evaluationResults?: BackendRequirementResult[];
   visual_results?: BackendVisualResult[];
+  behavior_results?: BackendBehaviorResult | null;
   match_percentage?: number;
   isCompleted: boolean;
 }

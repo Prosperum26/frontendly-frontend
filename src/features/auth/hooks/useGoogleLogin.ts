@@ -1,5 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 import type { CredentialResponse } from '@react-oauth/google';
+import { AxiosError } from 'axios';
 import { authService } from '../services/auth.service';
 import { useAuthStore } from '../../../store/auth.store';
 import { useNavigate } from 'react-router-dom';
@@ -65,14 +66,15 @@ export const useGoogleLogin = () => {
         navigate(ROUTES.HOME);
       }, 1500);
     },
-    onError: (error: any) => {
-      if (error.response?.status === 401) {
+    onError: (error: unknown) => {
+      if (error instanceof AxiosError && error.response?.status === 401) {
         addToast('Unauthorized', 'Invalid Google credentials. Please try again.', 'error');
         logout();
-      } else if (error.response?.status === 429) {
-        const retryAfter = error.response?.data?.retryAfter || 15;
+      } else if (error instanceof AxiosError && error.response?.status === 429) {
+        const retryAfter =
+          (error.response?.data as { retryAfter?: number } | undefined)?.retryAfter || 15;
         addToast('Too Many Attempts', `Too many login attempts. Please try again in ${retryAfter} minutes.`, 'alert');
-      } else if (error.response?.status === 403) {
+      } else if (error instanceof AxiosError && error.response?.status === 403) {
         addToast('Account Banned', 'Your account has been banned. Please contact support.', 'error');
         logout();
         window.location.href = '/banned';

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { AxiosError } from 'axios';
 import { useAuthStore } from '../../../store/auth.store';
 import { authService } from '../services/auth.service';
 import type { LoginCredentials, RegisterCredentials } from '../types/auth.types';
@@ -48,9 +49,10 @@ export const useAuth = () => {
       setTimeout(() => {
         navigate(ROUTES.HOME);
       }, 1500);
-    } catch (error: any) {
-      if (error.response?.status === 429) {
-        const retryAfter = error.response?.data?.retryAfter || 15;
+    } catch (error: unknown) {
+      if (error instanceof AxiosError && error.response?.status === 429) {
+        const retryAfter =
+          (error.response?.data as { retryAfter?: number } | undefined)?.retryAfter || 15;
         addToast('Too Many Attempts', `Too many login attempts. Please try again in ${retryAfter} minutes.`, 'alert');
       } else {
         addToast('Login Failed', 'Invalid login credentials. Please check your email or password and try again.', 'error');

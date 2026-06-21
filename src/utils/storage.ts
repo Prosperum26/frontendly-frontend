@@ -1,13 +1,13 @@
 export type StorageType = 'cookie' | 'localStorage' | 'sessionStorage';
 
 export const guestProgressStorage = {
-  get(key: string, type: StorageType): any {
+  get<T = unknown>(key: string, type: StorageType): T | null {
     if (type === 'cookie') {
       const value = `; ${document.cookie}`;
       const parts = value.split(`; ${key}=`);
       if (parts.length === 2) {
         try {
-          return JSON.parse(decodeURIComponent(parts.pop()?.split(';').shift() || ''));
+          return JSON.parse(decodeURIComponent(parts.pop()?.split(';').shift() || '')) as T;
         } catch {
           return null;
         }
@@ -17,7 +17,7 @@ export const guestProgressStorage = {
     if (type === 'sessionStorage') {
       const val = sessionStorage.getItem(key);
       try {
-        return val ? JSON.parse(val) : null;
+        return val ? (JSON.parse(val) as T) : null;
       } catch {
         return null;
       }
@@ -25,13 +25,13 @@ export const guestProgressStorage = {
     // Default to localStorage
     const val = localStorage.getItem(key);
     try {
-      return val ? JSON.parse(val) : null;
+      return val ? (JSON.parse(val) as T) : null;
     } catch {
       return null;
     }
   },
 
-  set(key: string, value: any, type: StorageType): void {
+  set(key: string, value: unknown, type: StorageType): void {
     const strValue = JSON.stringify(value);
     if (type === 'cookie') {
       const date = new Date();

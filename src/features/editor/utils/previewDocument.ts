@@ -28,12 +28,13 @@ export function validatePreviewFiles(files: WorkspaceFiles): string[] {
   const hasHtml = files.html.trim().length > 0;
   const hasCss = files.css.trim().length > 0;
   const hasJs = files.js.trim().length > 0;
+  const hasJsx = (files.jsx || '').trim().length > 0;
 
-  if (!hasHtml && !hasCss && !hasJs) {
-    errors.push('Document is empty. Add HTML, CSS, or JS before running the preview.');
+  if (!hasHtml && !hasCss && !hasJs && !hasJsx) {
+    errors.push('Document is empty. Add HTML, CSS, JS, or JSX before running the preview.');
   }
 
-  if ((hasCss || hasJs) && !hasHtml) {
+  if ((hasCss || hasJs) && !hasHtml && !hasJsx) {
     errors.push('CSS or JS is present, but the HTML document is empty.');
   }
 

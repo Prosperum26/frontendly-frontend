@@ -1,6 +1,6 @@
 import React from 'react';
 import { AnimatePresence } from 'framer-motion';
-import { useToast } from './ToastContext';
+import { useToast } from './useToast';
 import { Toast } from './Toast';
 
 export const ToastContainer: React.FC = () => {

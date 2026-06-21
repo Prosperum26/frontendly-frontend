@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
+import { GoogleOAuthProvider, GoogleLogin, type CredentialResponse } from '@react-oauth/google';
 import { useGoogleLogin } from '../hooks/useGoogleLogin';
 import { ENV } from '../../../config/env';
 import { Loader } from '../../../components/Loader/Loader';
@@ -17,7 +17,7 @@ export const GoogleButton: React.FC = () => {
     console.error('Google Login Failed');
   };
 
-  const handleSuccess = (credentialResponse: any) => {
+  const handleSuccess = (credentialResponse: CredentialResponse) => {
     setError(null);
     handleGoogleLogin(credentialResponse);
   };

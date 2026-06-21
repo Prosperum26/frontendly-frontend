@@ -26,7 +26,8 @@ function safeReadDraft(exerciseId: string): WorkspaceDraft | null {
       draft.exerciseId !== exerciseId ||
       typeof draft.files?.html !== 'string' ||
       typeof draft.files?.css !== 'string' ||
-      typeof draft.files?.js !== 'string'
+      typeof draft.files?.js !== 'string' ||
+      (draft.files.jsx !== undefined && typeof draft.files.jsx !== 'string')
     ) {
       return null;
     }

@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { X } from 'lucide-react';
 import { cn } from '../../utils/cn';
-import type { ToastType } from './ToastContext';
+import type { ToastType } from './toast-context-value';
 
 export interface ToastProps {
   title: string;
