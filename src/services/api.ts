@@ -15,12 +15,10 @@ const api = axios.create({
 let isRefreshing = false;
 let refreshSubscribers: ((token: string) => void)[] = [];
 
-// Định nghĩa cấu trúc lỗi trả về để thay thế `any`
 interface ErrorResponseData {
   message?: string;
 }
 
-// Request interceptor to attach JWT
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('accessToken');
@@ -29,21 +27,20 @@ api.interceptors.request.use(
     }
     return config;
   },
-  (error) => Promise.reject(error)
+  (error) => Promise.reject(error),
 );
 
-// Response interceptor for 401 handling with silent refresh
 api.interceptors.response.use(
   (response) => response,
   async (error: AxiosError) => {
-    const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
+    const originalRequest = error.config as InternalAxiosRequestConfig & {
+      _retry?: boolean;
+    };
 
-    // Handle 403 Forbidden - Only redirect to /banned if it's an actual ban
     if (error.response?.status === 403) {
-      // Check if it's a ban error (Đã thay thế `any` bằng `ErrorResponseData`)
-      const isBanError = 
-        (error.response?.data as ErrorResponseData)?.message?.toLowerCase().includes('banned');
-      
+      const data = error.response.data as ErrorResponseData;
+      const isBanError = data.message?.toLowerCase().includes('banned');
+
       if (isBanError) {
         localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');
@@ -52,10 +49,8 @@ api.interceptors.response.use(
       return Promise.reject(error);
     }
 
-    // Handle 401 Unauthorized - Try silent refresh
     if (error.response?.status === 401 && !originalRequest._retry) {
       if (isRefreshing) {
-        // Wait for the refresh to complete
         return new Promise((resolve) => {
           refreshSubscribers.push((token: string) => {
             originalRequest.headers.Authorization = `Bearer ${token}`;
@@ -79,15 +74,12 @@ api.interceptors.response.use(
         localStorage.setItem('accessToken', accessToken);
         localStorage.setItem('refreshToken', newRefreshToken);
 
-        // Retry all pending requests with new token
         refreshSubscribers.forEach((callback) => callback(accessToken));
         refreshSubscribers = [];
 
-        // Retry the original request
         originalRequest.headers.Authorization = `Bearer ${accessToken}`;
         return api(originalRequest);
       } catch (refreshError) {
-        // Refresh failed - clear tokens and redirect to login
         localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');
 
@@ -102,7 +94,7 @@ api.interceptors.response.use(
     }
 
     return Promise.reject(error);
-  }
+  },
 );
 
 export default api;

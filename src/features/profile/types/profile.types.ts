@@ -16,12 +16,11 @@ export interface UserProfile {
   dateOfBirth?: string;
   bio?: string;
   joinedAt?: number;
-  // THÊM vào interface UserProfile
-lastPhoneUpdatedAt?: Date | string;
+  lastPhoneUpdatedAt?: Date | string;
   stats?: {
     streakDays?: number;
     coursesCompleted?: number;
-    totalCourses?: number; // ĐÃ THÊM: Để fix lỗi totalCourses trong ProfilePage
+    totalCourses?: number;
     totalLearningTime?: number;
     lastActiveAt?: Date;
   };
@@ -36,7 +35,7 @@ lastPhoneUpdatedAt?: Date | string;
     earnedAt: Date;
   }>;
   badges?: Array<{
-    badgeId: string; // ĐÃ SỬA: Thay any thành string
+    badgeId: string;
     earnedAt: Date;
   }>;
   stage_progress?: {
@@ -47,7 +46,7 @@ lastPhoneUpdatedAt?: Date | string;
     lastAccessedAt?: Date;
   };
 }
-// ... (Badge và ActivityLog giữ nguyên)
+
 export interface Badge {
   id: string;
   name: string;

@@ -1,32 +1,33 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider } from 'next-themes';
-import MainLayout from './layouts/MainLayout';
-import AuthLayout from './layouts/AuthLayout';
-import WorkspaceLayout from './layouts/WorkspaceLayout';
-import HomePage from './pages/HomePage';
-import LearningPathPage from './pages/LearningPathPage';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { ToastContainer, ToastProvider } from './components/Toast';
+import { ProtectedRoute } from './components/ProtectedRoute/ProtectedRoute';
+import { ROUTES, workspacePath } from './constants/routes';
+import { useSessionVerification } from './features/auth/hooks/useSessionVerification';
 import {
-  MilestoneDetailPage,
-  TheoryPage,
   LessonComplete,
   MilestoneCompletePage,
+  MilestoneDetailPage,
+  TheoryPage,
 } from './features/learning-path';
-import WorkspacePage from './pages/WorkspacePage';
-import ChallengeLobbyPage from './pages/ChallengeLobbyPage';
+import AuthLayout from './layouts/AuthLayout';
+import MainLayout from './layouts/MainLayout';
+import WorkspaceLayout from './layouts/WorkspaceLayout';
+import BannedPage from './pages/BannedPage';
 import ChallengeBattlePage from './pages/ChallengeBattlePage';
-import ProfilePage from './pages/ProfilePage';
+import ChallengeLobbyPage from './pages/ChallengeLobbyPage';
+import EntranceTestPage from './pages/EntranceTestPage';
+import ForgotPasswordPage from './pages/ForgotPasswordPage';
+import HomePage from './pages/HomePage';
 import LeaderboardPage from './pages/LeaderboardPage';
+import LearningPathPage from './pages/LearningPathPage';
 import LoginPage from './pages/LoginPage';
 import NotFoundPage from './pages/NotFoundPage';
-import BannedPage from './pages/BannedPage';
-import { ProtectedRoute } from './components/ProtectedRoute/ProtectedRoute';
-import { useSessionVerification } from './features/auth/hooks/useSessionVerification';
-import { ROUTES, workspacePath } from './constants/routes';
-import ForgotPasswordPage from './pages/ForgotPasswordPage';
+import ProfilePage from './pages/ProfilePage';
 import RegisterPage from './pages/RegisterPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
-import { ToastProvider, ToastContainer } from './components/Toast';
+import WorkspacePage from './pages/WorkspacePage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -38,7 +39,6 @@ const queryClient = new QueryClient({
 });
 
 function App() {
-  // Verify session on app load
   useSessionVerification();
 
   return (
@@ -47,10 +47,8 @@ function App() {
         <ToastProvider>
           <Router>
             <Routes>
-              {/* Banned route */}
               <Route path={ROUTES.BANNED} element={<BannedPage />} />
 
-              {/* Auth routes */}
               <Route element={<AuthLayout />}>
                 <Route path={ROUTES.LOGIN} element={<LoginPage />} />
                 <Route path={ROUTES.REGISTER} element={<RegisterPage />} />
@@ -58,18 +56,12 @@ function App() {
                 <Route path={ROUTES.RESET_PASSWORD} element={<ResetPasswordPage />} />
               </Route>
 
-              {/* Main app routes */}
               <Route element={<MainLayout />}>
                 <Route path={ROUTES.HOME} element={<HomePage />} />
+                <Route path={ROUTES.ENTRANCE_TEST} element={<EntranceTestPage />} />
                 <Route path={ROUTES.LEARNING_PATH} element={<LearningPathPage />} />
-                <Route
-                  path={ROUTES.MILESTONE_DETAIL}
-                  element={<MilestoneDetailPage />}
-                />
-                <Route
-                  path={ROUTES.CHALLENGE_LOBBY}
-                  element={<ChallengeLobbyPage />}
-                />
+                <Route path={ROUTES.MILESTONE_DETAIL} element={<MilestoneDetailPage />} />
+                <Route path={ROUTES.CHALLENGE_LOBBY} element={<ChallengeLobbyPage />} />
                 <Route
                   path={ROUTES.PROFILE}
                   element={
@@ -81,22 +73,17 @@ function App() {
                 <Route path={ROUTES.LEADERBOARD} element={<LeaderboardPage />} />
               </Route>
 
-              {/* Standalone learning pages (own full-screen header) */}
               <Route path={ROUTES.LESSON_THEORY} element={<TheoryPage />} />
               <Route path={ROUTES.LESSON_COMPLETE} element={<LessonComplete />} />
-              <Route
-                path={ROUTES.MILESTONE_COMPLETE}
-                element={<MilestoneCompletePage />}
-              />
+              <Route path={ROUTES.MILESTONE_COMPLETE} element={<MilestoneCompletePage />} />
 
-              {/* Workspace routes */}
               <Route element={<WorkspaceLayout />}>
                 <Route
                   path={ROUTES.WORKSPACE}
                   element={
-                    <ProtectedRoute allowGuest={true}>
-                    <WorkspacePage />
-                  </ProtectedRoute>
+                    <ProtectedRoute allowGuest>
+                      <WorkspacePage />
+                    </ProtectedRoute>
                   }
                 />
                 <Route
@@ -113,10 +100,7 @@ function App() {
                 />
               </Route>
 
-              {/* Default redirect */}
               <Route path="/" element={<Navigate to={ROUTES.HOME} replace />} />
-
-              {/* 404 */}
               <Route path="*" element={<NotFoundPage />} />
             </Routes>
           </Router>

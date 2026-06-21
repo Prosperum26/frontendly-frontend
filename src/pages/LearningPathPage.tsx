@@ -1,10 +1,12 @@
 import React, { useEffect, useMemo } from "react";
+import { Link } from "react-router-dom";
 import "./LearningPathPage.css";
 import { SideBar } from "../features/learning-path/components/SideBar";
 import { VideoModule } from "../features/learning-path/components/VideoModule";
 import { MilestoneCard } from "../features/learning-path/components/MilestoneCard";
 import { useRoadmap } from "../features/learning-path/hooks/useRoadmap";
 import { DEFAULT_SKILL_ID } from "../features/learning-path/utils/roadmapMappers";
+import { ROUTES } from "../constants/routes";
 import certificateIcon from "../assets/learning-path/certificate_icon.svg";
 import { ChevronLeft, ChevronRight, PlayCircle } from "lucide-react";
 
@@ -50,6 +52,12 @@ export const LearningPathPage: React.FC = () => {
             <h1 className="learning-path-title">
               {skillTitle || "React.js Learning Path"}
             </h1>
+            <Link 
+              to={ROUTES.ENTRANCE_TEST} 
+              className="ml-4 px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-bold hover:bg-green-700 transition-colors"
+            >
+              Take Entrance Test
+            </Link>
           </div>
 
           <p className="learning-path-desc">
