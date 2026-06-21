@@ -4,7 +4,7 @@ import type {
   MilestoneDetail,
   UserProgress,
 } from "../types/learning-path.types";
-import { milestoneToDetail } from "../utils/roadmapMappers";
+import { milestoneToDetail, DEFAULT_SKILL_ID } from "../utils/roadmapMappers";
 
 interface RoadmapState {
   skillId: string;
@@ -26,7 +26,7 @@ interface RoadmapState {
 }
 
 export const useRoadmapStore = create<RoadmapState>((set, get) => ({
-  skillId: "react",
+  skillId: DEFAULT_SKILL_ID,
   skillTitle: "",
   milestones: [],
   userProgress: null,
