@@ -1,10 +1,30 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import type { EditorTab, WorkspaceEditorState, WorkspaceFiles } from '../types/editor.types';
 
-export function useWorkspaceEditor(initialFiles: WorkspaceFiles) {
+interface UseWorkspaceEditorOptions {
+  defaultTab?: EditorTab;
+  visibleTabs?: EditorTab[];
+}
+
+export function useWorkspaceEditor(
+  initialFiles: WorkspaceFiles,
+  options: UseWorkspaceEditorOptions = {},
+) {
+  const { defaultTab = 'html', visibleTabs } = options;
   const [files, setFiles] = useState<WorkspaceFiles>(initialFiles);
-  const [activeTab, setActiveTab] = useState<EditorTab>('html');
+  const [activeTab, setActiveTabState] = useState<EditorTab>(defaultTab);
   const [isDirty, setIsDirty] = useState(false);
+
+  useEffect(() => {
+    if (!visibleTabs?.length) return;
+    if (!visibleTabs.includes(activeTab)) {
+      setActiveTabState(visibleTabs[0]);
+    }
+  }, [activeTab, visibleTabs]);
+
+  const setActiveTab = useCallback((tab: EditorTab) => {
+    setActiveTabState(tab);
+  }, []);
 
   const setFile = useCallback((tab: EditorTab, value: string) => {
     setFiles((prev) => {
@@ -16,15 +36,18 @@ export function useWorkspaceEditor(initialFiles: WorkspaceFiles) {
 
   const reset = useCallback(() => {
     setFiles(initialFiles);
-    setActiveTab('html');
+    setActiveTabState(defaultTab);
     setIsDirty(false);
-  }, [initialFiles]);
+  }, [defaultTab, initialFiles]);
 
-  const replaceFiles = useCallback((nextFiles: WorkspaceFiles, dirty = true) => {
-    setFiles(nextFiles);
-    setActiveTab('html');
-    setIsDirty(dirty);
-  }, []);
+  const replaceFiles = useCallback(
+    (nextFiles: WorkspaceFiles, dirty = true) => {
+      setFiles(nextFiles);
+      setActiveTabState(defaultTab);
+      setIsDirty(dirty);
+    },
+    [defaultTab],
+  );
 
   const state: WorkspaceEditorState = { files, activeTab, isDirty };
 

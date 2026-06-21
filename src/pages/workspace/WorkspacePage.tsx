@@ -20,6 +20,7 @@ import { useDraftPersistence } from '../../features/editor/hooks/useDraftPersist
 import { useWorkspaceEditor } from '../../features/editor/hooks/useWorkspaceEditor';
 import { editorService } from '../../features/editor/services/editor.service';
 import { validatePreviewFiles } from '../../features/editor/utils/previewDocument';
+import { pickDefaultTab, resolveEditorTabs } from '../../features/editor/utils/resolveEditorTabs';
 import { useAuthStore } from '../../store/auth.store';
 import { useGuestStore } from '../../store/guest.store';
 import '../../features/editor/components/editor-ui.css';
@@ -79,13 +80,15 @@ interface WorkspaceToastState {
 
 const WorkspacePageContent: React.FC<WorkspacePageContentProps> = ({ exercise }) => {
   const navigate = useNavigate();
+  const editorTabs = resolveEditorTabs(exercise);
+  const defaultTab = pickDefaultTab(editorTabs);
 
   const queryParams = new URLSearchParams(window.location.search);
   const stageId = queryParams.get('stageId') || exercise.id.replace('exercise_', '');
   const milestoneId = queryParams.get('milestoneId') || exercise.navigation?.currentMilestoneId || '';
 
   const { files, activeTab, isDirty, setActiveTab, setFile, replaceFiles, reset } =
-    useWorkspaceEditor(exercise.starterFiles);
+    useWorkspaceEditor(exercise.starterFiles, { defaultTab, visibleTabs: editorTabs });
 
   const [consoleMessage, setConsoleMessage] = useState(
     'Run or submit your code to see results here.'
@@ -317,6 +320,7 @@ const WorkspacePageContent: React.FC<WorkspacePageContentProps> = ({ exercise })
             files={files}
             previewFiles={previewFiles}
             activeTab={activeTab}
+            visibleTabs={editorTabs}
             isConsoleOpen={isConsoleOpen}
             previewRefreshKey={previewRefreshKey}
             consoleMessage={consoleMessage}

@@ -7,7 +7,7 @@ export const MainLayout: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col font-inter">
       <Header />
-      <main className="w-full min-h-[917px] flex-grow flex items-center justify-center bg-surface p-6">
+      <main className="w-full min-h-[917px] flex-grow flex flex-col bg-surface">
         <Outlet />
       </main>
       <Footer />

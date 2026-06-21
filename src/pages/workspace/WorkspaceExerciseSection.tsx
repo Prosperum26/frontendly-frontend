@@ -1,9 +1,55 @@
 import React, { useMemo, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import type { EvaluationCriterion, ExerciseDefinition } from '../../features/editor/types/editor.types';
+import { editorService } from '../../features/editor/services/editor.service';
 
 export interface WorkspaceExerciseSectionProps {
   exercise: ExerciseDefinition;
   criteria?: EvaluationCriterion[];
+}
+
+function TargetDesignPreview({
+  imageUrl,
+  isLoading,
+  hasError,
+  width,
+  height,
+}: {
+  imageUrl?: string | null;
+  isLoading: boolean;
+  hasError: boolean;
+  width?: number;
+  height?: number;
+}) {
+  if (isLoading) {
+    return (
+      <div className="workspace-target__loading" aria-busy="true" aria-label="Loading target design">
+        <div className="workspace-target__loading-spinner" />
+        <span>Rendering reference design…</span>
+      </div>
+    );
+  }
+
+  if (hasError || !imageUrl) {
+    return (
+      <div className="workspace-target__placeholder" role="img" aria-label="Target design unavailable">
+        <div className="workspace-target__placeholder-bar" />
+        <div className="workspace-target__placeholder-cell" />
+        <div className="workspace-target__placeholder-cell" />
+        <p className="workspace-target__placeholder-note">Reference preview unavailable</p>
+      </div>
+    );
+  }
+
+  return (
+    <img
+      className="workspace-target__image"
+      src={imageUrl}
+      alt="Target design — match your output to this layout"
+      width={width}
+      height={height}
+    />
+  );
 }
 
 export const WorkspaceExerciseSection: React.FC<WorkspaceExerciseSectionProps> = ({
@@ -12,6 +58,20 @@ export const WorkspaceExerciseSection: React.FC<WorkspaceExerciseSectionProps> =
 }) => {
   const [expanded, setExpanded] = useState(true);
   const [targetExpanded, setTargetExpanded] = useState(false);
+
+  const {
+    data: targetPreviewUrl,
+    isLoading: targetLoading,
+    isError: targetError,
+  } = useQuery({
+    queryKey: ['target-preview', exercise.id],
+    queryFn: () => editorService.fetchTargetPreview(exercise.id),
+    staleTime: 5 * 60 * 1000,
+    retry: 1,
+  });
+
+  const targetImageUrl = targetPreviewUrl ?? exercise.targetImageUrl;
+  const targetDesign = exercise.targetDesigns?.[0];
 
   const evaluatedRequirements = useMemo(() => {
     if (!criteria) return exercise.requirements;
@@ -23,11 +83,13 @@ export const WorkspaceExerciseSection: React.FC<WorkspaceExerciseSectionProps> =
   }, [criteria, exercise.requirements]);
 
   const targetPreview = (
-    <div className="workspace-target__placeholder" role="img" aria-label="Target design preview">
-      <div className="workspace-target__placeholder-bar" />
-      <div className="workspace-target__placeholder-cell" />
-      <div className="workspace-target__placeholder-cell" />
-    </div>
+    <TargetDesignPreview
+      imageUrl={targetImageUrl}
+      isLoading={targetLoading}
+      hasError={targetError}
+      width={targetDesign?.width}
+      height={targetDesign?.height}
+    />
   );
 
   return (
@@ -133,21 +195,15 @@ export const WorkspaceExerciseSection: React.FC<WorkspaceExerciseSectionProps> =
                   className="workspace-target__expand"
                   aria-label="Open target design preview"
                   onClick={() => setTargetExpanded(true)}
+                  disabled={targetLoading}
                 >
                   <span aria-hidden />
                 </button>
               </div>
-              <div className="workspace-target__image-wrap">
-                {exercise.targetImageUrl ? (
-                  <img
-                    className="workspace-target__image"
-                    src={exercise.targetImageUrl}
-                    alt="Target design"
-                  />
-                ) : (
-                  targetPreview
-                )}
-              </div>
+              <p className="workspace-target__hint">
+                Match your live preview to this reference layout.
+              </p>
+              <div className="workspace-target__image-wrap">{targetPreview}</div>
             </aside>
           </div>
         </div>
@@ -178,17 +234,7 @@ export const WorkspaceExerciseSection: React.FC<WorkspaceExerciseSectionProps> =
                 x
               </button>
             </div>
-            <div className="workspace-target-modal__body">
-              {exercise.targetImageUrl ? (
-                <img
-                  className="workspace-target-modal__image"
-                  src={exercise.targetImageUrl}
-                  alt="Target design"
-                />
-              ) : (
-                targetPreview
-              )}
-            </div>
+            <div className="workspace-target-modal__body">{targetPreview}</div>
           </div>
         </div>
       )}

@@ -49,6 +49,7 @@ export interface ExerciseDefinition {
   topicTags?: string[];
   targetImageUrl?: string;
   targetDesigns?: TargetDesign[];
+  editorFiles?: EditorTab[];
   evaluationConfig?: EvaluationConfig;
   restrictions?: ExerciseRestriction[];
   requirements: ExerciseRequirement[];
@@ -114,7 +115,7 @@ export interface TargetDesign {
   deviceType: string;
   width: number;
   height: number;
-  url: string;
+  url?: string;
 }
 
 export interface BackendNavigation {
@@ -142,6 +143,13 @@ export interface BackendExerciseResponse {
   css_content?: string;
   js_content?: string;
   jsx_content?: string;
+  tags?: string[];
+  code_test?: {
+    html?: string;
+    css?: string;
+    js?: string;
+    jsx?: string;
+  };
   navigation?: {
     prev: BackendNavigation | null;
     next: BackendNavigation | null;

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Eye } from 'lucide-react';
+import { BookOpen, Code2, Trophy, Users } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import NetworkErrorCard from '../components/NetworkErrorCard';
 import { ROUTES } from '../constants/routes';
@@ -137,7 +137,7 @@ interface LandingPageProps {
 const LandingPage: React.FC<LandingPageProps> = ({ isOffline, navigate }) => {
   return (
     <div className="w-full flex-grow flex flex-col bg-surface font-sans">
-      <main className="flex-grow flex flex-col items-center">
+      <main className="flex-grow flex flex-col">
         {isOffline ? (
           <div className="w-full flex-grow flex items-center justify-center p-4 sm:p-6 mt-12">
             <NetworkErrorCard
@@ -147,165 +147,162 @@ const LandingPage: React.FC<LandingPageProps> = ({ isOffline, navigate }) => {
           </div>
         ) : (
           <div className="w-full">
-            <section className="w-full max-w-7xl mx-auto px-4 sm:px-8 pt-16 sm:pt-20 pb-20 sm:pb-24 grid lg:grid-cols-2 gap-10 sm:gap-16 items-center">
-              <div className="flex flex-col space-y-6 sm:space-y-8 z-10">
-                <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black text-heading leading-[1.1] tracking-tight">
-                  Code the Web <br />
-                  <span className="text-blue-600">your way.</span>
-                </h1>
-                <p className="text-body font-medium leading-relaxed max-w-lg text-sm sm:text-base md:text-lg">
-                  With FrontEndly, you can learn Frontend programming in a simple,
-                  easy-to-understand way. The code editor and live server features allow
-                  you to program and run projects in real time without complex setup.
-                </p>
-                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-2">
-                  <Link
-                    to={ROUTES.ENTRANCE_TEST}
-                    className="px-6 sm:px-8 py-3 sm:py-4 bg-green-600 text-white rounded-lg text-center text-sm font-bold hover:bg-green-700 transition-colors shadow-lg shadow-green-600/30 min-h-[48px] flex items-center justify-center"
-                  >
-                    Take Entrance Test
-                  </Link>
-                  <Link
-                    to={ROUTES.LEARNING_PATH}
-                    className="px-6 sm:px-8 py-3 sm:py-4 bg-blue-600 text-white rounded-lg text-center text-sm font-bold hover:bg-blue-700 transition-colors shadow-lg shadow-blue-600/30 min-h-[48px] flex items-center justify-center"
-                  >
-                    Start Learning!
-                  </Link>
-                  <Link
-                    to={ROUTES.CHALLENGE_LOBBY}
-                    className="px-6 sm:px-8 py-3 sm:py-4 bg-purple-600 text-white rounded-lg text-center text-sm font-bold hover:bg-purple-700 transition-colors shadow-lg shadow-purple-600/30 min-h-[48px] flex items-center justify-center"
-                  >
-                    Practice Coding
-                  </Link>
-                  <Link
-                    to={ROUTES.REGISTER}
-                    className="px-6 sm:px-8 py-3 sm:py-4 bg-main-bg text-heading border border-border rounded-lg text-center text-sm font-bold hover:bg-surface transition-colors shadow-sm min-h-[48px] flex items-center justify-center"
-                  >
-                    Sign Up
-                  </Link>
-                </div>
-              </div>
-
-              <div className="relative mt-8 lg:mt-0 w-full max-w-lg mx-auto lg:ml-auto select-none">
-                <div className="bg-[#1e1e2e] rounded-xl shadow-2xl overflow-hidden border border-slate-800">
-                  <div className="bg-[#181825] px-4 py-3 flex items-center justify-between border-b border-slate-700/50">
-                    <div className="flex space-x-2">
-                      <div className="w-3 h-3 rounded-full bg-red-500" />
-                      <div className="w-3 h-3 rounded-full bg-yellow-500" />
-                      <div className="w-3 h-3 rounded-full bg-green-500" />
-                    </div>
-                    <div className="text-[10px] text-slate-500 font-mono tracking-wider">
-                      index.html
-                    </div>
+            <section className="border-b border-border bg-main-bg">
+              <div className="max-w-7xl mx-auto px-4 sm:px-8 py-14 sm:py-20">
+                <div className="max-w-3xl">
+                  <p className="text-sm font-semibold uppercase tracking-wider text-blue-600 mb-4">
+                    Frontend learning platform
+                  </p>
+                  <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-heading leading-tight tracking-tight mb-5">
+                    Learn HTML, CSS, JavaScript &amp; React by building real projects
+                  </h1>
+                  <p className="text-body text-base sm:text-lg leading-relaxed mb-8 max-w-2xl">
+                    FrontEndly guides you through structured milestones with theory lessons,
+                    hands-on coding exercises, and instant feedback — no local setup required.
+                  </p>
+                  <div className="flex flex-col sm:flex-row flex-wrap gap-3">
+                    <Link
+                      to={ROUTES.REGISTER}
+                      className="px-6 py-3 bg-blue-600 text-white rounded-lg text-sm font-semibold hover:bg-blue-700 transition-colors text-center"
+                    >
+                      Create free account
+                    </Link>
+                    <Link
+                      to={ROUTES.LEARNING_PATH}
+                      className="px-6 py-3 bg-main-bg text-heading border border-border rounded-lg text-sm font-semibold hover:bg-surface transition-colors text-center"
+                    >
+                      Browse learning path
+                    </Link>
+                    <Link
+                      to={ROUTES.ENTRANCE_TEST}
+                      className="px-6 py-3 text-blue-600 text-sm font-semibold hover:underline text-center"
+                    >
+                      Take entrance test
+                    </Link>
                   </div>
-                  <div className="p-4 sm:p-6 font-mono text-xs sm:text-sm leading-relaxed overflow-x-auto text-slate-300">
-                    <div>
-                      <span className="text-pink-400">&lt;div</span>{' '}
-                      <span className="text-green-300">class</span>=
-                      <span className="text-yellow-300">"hero"</span>
-                      <span className="text-pink-400">&gt;</span>
-                    </div>
-                    <div className="pl-4">
-                      <span className="text-pink-400">&lt;h1&gt;</span>Hello World
-                      <span className="text-pink-400">&lt;/h1&gt;</span>
-                    </div>
-                    <div className="pl-4">
-                      <span className="text-pink-400">&lt;p&gt;</span>Start your journey.
-                      <span className="text-pink-400">&lt;/p&gt;</span>
-                    </div>
-                    <div className="pl-4">
-                      <span className="text-pink-400">&lt;button&gt;</span>
-                    </div>
-                    <div className="pl-8">Click Me</div>
-                    <div className="pl-4">
-                      <span className="text-pink-400">&lt;/button&gt;</span>
-                    </div>
-                    <div>
-                      <span className="text-pink-400">&lt;/div&gt;</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="absolute -bottom-10 -right-4 sm:-right-10 bg-main-bg p-4 sm:p-5 rounded-xl shadow-[0_20px_50px_-12px_rgba(0,0,0,0.15)] border border-border w-48 sm:w-64 z-20">
-                  <div className="flex items-center gap-2 mb-3 sm:mb-4">
-                    <Eye className="w-4 h-4 text-blue-600" />
-                    <span className="text-[10px] font-bold text-slate-500 tracking-widest uppercase">
-                      Live Preview
-                    </span>
-                  </div>
-                  <div className="w-full h-8 sm:h-10 bg-surface rounded-lg mb-2 sm:mb-3 flex items-center justify-center">
-                    <div className="w-12 sm:w-16 h-2 sm:h-3 bg-[#1e1b4b] rounded-full opacity-90" />
-                  </div>
-                  <button className="w-full bg-[#1e1b4b] text-white text-xs font-bold py-2 sm:py-2.5 rounded-lg hover:bg-blue-900 transition-colors uppercase tracking-wider min-h-[40px]">
-                    Interact
-                  </button>
                 </div>
               </div>
             </section>
 
-            <section className="w-full bg-main-bg pt-16 sm:pt-24 pb-20 sm:pb-32 border-t border-border">
-              <div className="max-w-7xl mx-auto px-4 sm:px-8">
-                <div className="text-center mb-10 sm:mb-16">
-                  <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-heading mb-3 sm:mb-4 tracking-tight">
-                    Master the Core Technologies
-                  </h2>
-                  <p className="text-xs sm:text-sm md:text-base text-muted font-medium">
-                    Build a rock-solid foundation with structured learning paths designed
-                    for the modern web.
-                  </p>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
-                  {[
-                    {
-                      label: 'HTML',
-                      title: 'HTML5 Mastery',
-                      text: 'Semantic architecture, accessibility standards, and SEO-friendly structure for modern applications.',
-                      color: '#d97706',
-                      bg: '#ffedd5',
-                    },
-                    {
-                      label: 'CSS',
-                      title: 'Modern CSS',
-                      text: 'Flexbox, Grid, animations, and responsive design patterns using Tailwind CSS and native CSS3.',
-                      color: '#4f46e5',
-                      bg: '#e0e7ff',
-                    },
-                    {
-                      label: 'JS',
-                      title: 'JavaScript ES6+',
-                      text: 'Functional programming, async/await, and DOM manipulation for interactive web experiences.',
-                      color: '#0ea5e9',
-                      bg: '#e0f2fe',
-                    },
-                  ].map((item) => (
-                    <div
-                      key={item.label}
-                      className="group bg-main-bg rounded-xl p-6 sm:p-8 border-t-2 border-border shadow-sm transition-all duration-300 hover:-translate-y-2 flex flex-col h-full cursor-pointer"
-                      style={{ borderTopColor: item.color }}
-                    >
-                      <div
-                        className="w-10 h-10 rounded-lg flex items-center justify-center mb-5 sm:mb-6 transition-transform duration-300 group-hover:scale-110"
-                        style={{ backgroundColor: item.bg }}
-                      >
-                        <span className="text-[10px] font-black" style={{ color: item.color }}>
-                          {item.label}
-                        </span>
-                      </div>
-                      <h3 className="text-lg sm:text-xl font-bold text-heading mb-2 sm:mb-3">{item.title}</h3>
-                      <p className="text-xs sm:text-sm text-muted leading-relaxed font-medium mb-6 sm:mb-8 flex-grow">
-                        {item.text}
-                      </p>
-                      <Link
-                        to={ROUTES.LEARNING_PATH}
-                        className="font-bold text-xs sm:text-sm flex items-center gap-2 hover:underline w-fit"
-                        style={{ color: item.color }}
-                      >
-                        Start Path <span className="transition-transform duration-300 group-hover:translate-x-1.5">-&gt;</span>
-                      </Link>
+            <section className="max-w-7xl mx-auto px-4 sm:px-8 py-14 sm:py-16">
+              <h2 className="text-xl sm:text-2xl font-bold text-heading mb-8">
+                How FrontEndly works
+              </h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                {[
+                  {
+                    icon: BookOpen,
+                    step: '1',
+                    title: 'Read theory',
+                    text: 'Short lessons explain concepts before you write any code.',
+                  },
+                  {
+                    icon: Code2,
+                    step: '2',
+                    title: 'Code in browser',
+                    text: 'Open exercises in the built-in editor with a live preview panel.',
+                  },
+                  {
+                    icon: Trophy,
+                    step: '3',
+                    title: 'Pass checks',
+                    text: 'Submit to validate requirements, lint rules, and visual design.',
+                  },
+                  {
+                    icon: Users,
+                    step: '4',
+                    title: 'Track progress',
+                    text: 'Earn XP, unlock badges, and climb the leaderboard.',
+                  },
+                ].map((item) => (
+                  <div
+                    key={item.step}
+                    className="rounded-xl border border-border bg-main-bg p-5 sm:p-6"
+                  >
+                    <div className="flex items-center gap-3 mb-3">
+                      <span className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-50 text-blue-600 text-sm font-bold">
+                        {item.step}
+                      </span>
+                      <item.icon className="h-5 w-5 text-muted" aria-hidden />
                     </div>
-                  ))}
+                    <h3 className="font-semibold text-heading mb-2">{item.title}</h3>
+                    <p className="text-sm text-muted leading-relaxed">{item.text}</p>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            <section className="bg-main-bg border-y border-border">
+              <div className="max-w-7xl mx-auto px-4 sm:px-8 py-14 sm:py-16">
+                <div className="grid lg:grid-cols-2 gap-10 items-start">
+                  <div>
+                    <h2 className="text-xl sm:text-2xl font-bold text-heading mb-4">
+                      Structured curriculum
+                    </h2>
+                    <p className="text-muted text-sm sm:text-base leading-relaxed mb-6">
+                      Three milestones take you from your first React component to styling,
+                      events, and conditional rendering — each with theory and practice stages.
+                    </p>
+                    <ul className="space-y-3 text-sm text-body">
+                      <li className="flex gap-2">
+                        <span className="text-blue-600 font-bold">M1</span>
+                        React fundamentals — components, JSX, createRoot
+                      </li>
+                      <li className="flex gap-2">
+                        <span className="text-blue-600 font-bold">M2</span>
+                        Styling, events, CSS modules, conditional UI
+                      </li>
+                      <li className="flex gap-2">
+                        <span className="text-blue-600 font-bold">M3</span>
+                        Advanced patterns and capstone projects
+                      </li>
+                    </ul>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    {[
+                      { label: 'HTML', color: '#d97706', bg: '#ffedd5' },
+                      { label: 'CSS', color: '#4f46e5', bg: '#e0e7ff' },
+                      { label: 'JS', color: '#0ea5e9', bg: '#e0f2fe' },
+                    ].map((item) => (
+                      <Link
+                        key={item.label}
+                        to={ROUTES.LEARNING_PATH}
+                        className="rounded-xl border border-border p-5 text-center hover:border-blue-300 transition-colors"
+                      >
+                        <div
+                          className="mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-lg text-xs font-black"
+                          style={{ backgroundColor: item.bg, color: item.color }}
+                        >
+                          {item.label}
+                        </div>
+                        <span className="text-sm font-semibold text-heading">{item.label}</span>
+                      </Link>
+                    ))}
+                  </div>
                 </div>
+              </div>
+            </section>
+
+            <section className="max-w-7xl mx-auto px-4 sm:px-8 py-14 sm:py-16 text-center">
+              <h2 className="text-xl sm:text-2xl font-bold text-heading mb-3">
+                Ready to start coding?
+              </h2>
+              <p className="text-muted text-sm sm:text-base mb-6 max-w-lg mx-auto">
+                Jump into the learning path or try a challenge exercise — no install needed.
+              </p>
+              <div className="flex flex-col sm:flex-row justify-center gap-3">
+                <Link
+                  to={ROUTES.LEARNING_PATH}
+                  className="px-6 py-3 bg-blue-600 text-white rounded-lg text-sm font-semibold hover:bg-blue-700 transition-colors"
+                >
+                  Start learning
+                </Link>
+                <Link
+                  to={ROUTES.CHALLENGE_LOBBY}
+                  className="px-6 py-3 border border-border rounded-lg text-sm font-semibold text-heading hover:bg-main-bg transition-colors"
+                >
+                  Practice coding
+                </Link>
               </div>
             </section>
           </div>

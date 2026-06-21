@@ -11,6 +11,7 @@ export interface WorkspacePanelsProps {
   files: WorkspaceFiles;
   previewFiles: WorkspaceFiles;
   activeTab: EditorTab;
+  visibleTabs?: EditorTab[];
   isConsoleOpen?: boolean;
   previewRefreshKey?: number;
   consoleMessage?: string;
@@ -22,6 +23,7 @@ export const WorkspacePanels: React.FC<WorkspacePanelsProps> = ({
   files,
   previewFiles,
   activeTab,
+  visibleTabs,
   isConsoleOpen = false,
   previewRefreshKey = 0,
   consoleMessage,
@@ -75,6 +77,7 @@ export const WorkspacePanels: React.FC<WorkspacePanelsProps> = ({
           <CodeEditor
             activeTab={activeTab}
             files={files}
+            visibleTabs={visibleTabs}
             onTabChange={onTabChange}
             onChange={onFileChange}
           />

@@ -1,4 +1,5 @@
 import api from '../../../services/api';
+import { resolveEditorFilesFromBackend } from '../utils/resolveEditorFiles';
 import type {
   EvaluationResult,
   WorkspaceFiles,
@@ -25,6 +26,7 @@ export const editorService = {
     );
     const data = getResponseData(response.data);
     const targetDesigns = data.target_designs ?? (data.target_design ? [data.target_design] : []);
+    const editorFiles = resolveEditorFilesFromBackend(data);
 
     return {
       id: data.id,
@@ -34,9 +36,10 @@ export const editorService = {
       description: data.description,
       objective: data.title,
       estimatedTime: '20 min',
-      topicTags: [data.module.split(':')[0]],
+      topicTags: [data.module.split(':')[0], ...(data.tags ?? [])],
       targetImageUrl: targetDesigns[0]?.url ?? '',
       targetDesigns,
+      editorFiles,
       evaluationConfig: data.evaluation_config,
       restrictions: data.restrictions ?? [],
       requirements: (data.requirements || []).map((req) => ({
@@ -58,6 +61,15 @@ export const editorService = {
         jsx: data.jsx_content || '',
       },
     };
+  },
+
+  async fetchTargetPreview(exerciseId: string): Promise<string | null> {
+    const response = await api.get<{
+      success: boolean;
+      data: { imageUrl: string | null };
+    }>(`/exercises/${exerciseId}/target-preview`);
+    const data = getResponseData(response.data);
+    return data.imageUrl;
   },
 
   async submitWorkspace(

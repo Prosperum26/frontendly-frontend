@@ -20,6 +20,7 @@ const MONACO_LANGUAGE: Record<EditorTab, string> = {
 export interface CodeEditorProps {
   activeTab: EditorTab;
   files: WorkspaceFiles;
+  visibleTabs?: EditorTab[];
   onTabChange: (tab: EditorTab) => void;
   onChange: (tab: EditorTab, value: string) => void;
 }
@@ -27,13 +28,18 @@ export interface CodeEditorProps {
 export const CodeEditor: React.FC<CodeEditorProps> = ({
   activeTab,
   files,
+  visibleTabs,
   onTabChange,
   onChange,
 }) => {
+  const tabs = visibleTabs?.length
+    ? TAB_CONFIG.filter((tab) => visibleTabs.includes(tab.id))
+    : TAB_CONFIG;
+
   return (
     <div className="code-editor">
       <div className="code-editor__tabs" role="tablist" aria-label="Source files">
-        {TAB_CONFIG.map((tab) => (
+        {tabs.map((tab) => (
           <button
             key={tab.id}
             type="button"
