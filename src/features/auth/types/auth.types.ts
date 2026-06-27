@@ -117,6 +117,7 @@ export interface RegisterCredentials {
 
 export interface GoogleLoginCredentials {
   idToken: string;
+  rememberMe?: boolean;
 }
 
 export interface ResetPasswordData {

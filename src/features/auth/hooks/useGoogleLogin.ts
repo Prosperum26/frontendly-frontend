@@ -8,7 +8,7 @@ import { ROUTES } from '../../../constants/routes';
 import { useToast } from '../../../components/Toast';
 import { syncGuestProgress } from '../../../store/guest.store';
 
-export const useGoogleLogin = () => {
+export const useGoogleLogin = (rememberMe: boolean = false) => {
   const { setAuth, logout, isAuthenticated } = useAuthStore();
   const navigate = useNavigate();
   const { addToast } = useToast();
@@ -20,6 +20,7 @@ export const useGoogleLogin = () => {
       }
       const response = await authService.googleLogin({
         idToken: credentialResponse.credential,
+        rememberMe,
       });
       return response;
     },

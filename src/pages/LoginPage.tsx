@@ -108,6 +108,7 @@ export const LoginPage: React.FC = () => {
                   <input
                     type="email"
                     required
+                    autoComplete="username"
                     value={email}
                     onChange={(e) => { setEmail(e.target.value); setIsError(false); }}
                     placeholder="developer@devedu.com"
@@ -130,6 +131,7 @@ export const LoginPage: React.FC = () => {
                   <input
                     type="password"
                     required
+                    autoComplete="current-password"
                     value={password}
                     onChange={(e) => { setPassword(e.target.value); setIsError(false); }}
                     placeholder="••••••••"
@@ -164,7 +166,7 @@ export const LoginPage: React.FC = () => {
             </div>
 
             <div className="mt-6 flex justify-center">
-              <GoogleButton />
+              <GoogleButton rememberMe={rememberMe} />
             </div>
           </div>
         )}

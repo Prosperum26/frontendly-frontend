@@ -5,8 +5,12 @@ import { ENV } from '../../../config/env';
 import { Loader } from '../../../components/Loader/Loader';
 import { useTheme } from 'next-themes';
 
-export const GoogleButton: React.FC = () => {
-  const { handleGoogleLogin, isLoading } = useGoogleLogin();
+interface GoogleButtonProps {
+  rememberMe?: boolean;
+}
+
+export const GoogleButton: React.FC<GoogleButtonProps> = ({ rememberMe = false }) => {
+  const { handleGoogleLogin, isLoading } = useGoogleLogin(rememberMe);
   const [error, setError] = useState<string | null>(null);
   const { theme } = useTheme();
 
