@@ -7,6 +7,9 @@ import { authService } from '../features/auth/services/auth.service';
 import NetworkErrorCard from '../components/NetworkErrorCard';
 import { GoogleButton } from '../features/auth/components/GoogleButton';
 import Header from '../components/Header/Header';
+import { RetakeTestModal } from '../components/RetakeTestModal/RetakeTestModal';
+import { hasCompletedEntranceTest } from '../features/entrance-test/utils/personalized-path.storage';
+import { ROUTES } from '../constants/routes';
 
 export const LoginPage: React.FC = () => {
   const [email, setEmail] = useState<string>('');
@@ -15,6 +18,7 @@ export const LoginPage: React.FC = () => {
   const [isError, setIsError] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [showRetakeModal, setShowRetakeModal] = useState(false);
   const setAuth = useAuthStore((state) => state.setAuth);
   const previousRoute = useAuthStore((state) => state.previousRoute);
   const setPreviousRoute = useAuthStore((state) => state.setPreviousRoute);
@@ -60,10 +64,23 @@ export const LoginPage: React.FC = () => {
         console.error('Error syncing guest progress:', syncErr);
       }
       
-      // Redirect to previous route if set, otherwise go to profile
-      const redirectPath = previousRoute || '/profile';
-      setPreviousRoute(null);
-      navigate(redirectPath, { replace: true });
+      if (previousRoute === ROUTES.ENTRANCE_TEST) {
+        const hasCompleted = hasCompletedEntranceTest();
+        setPreviousRoute(null);
+        
+        if (hasCompleted) {
+          // Show retake modal if user has completed test before
+          setShowRetakeModal(true);
+        } else {
+          // Navigate directly to entrance test if first time
+          navigate(ROUTES.ENTRANCE_TEST, { replace: true });
+        }
+      } else {
+        // Redirect to previous route if set, otherwise go to profile
+        const redirectPath = previousRoute || '/profile';
+        setPreviousRoute(null);
+        navigate(redirectPath, { replace: true });
+      }
     } catch (error: unknown) {
       setIsError(true);
       const err = error as { response?: { data?: { message?: string } } };
@@ -75,6 +92,7 @@ export const LoginPage: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-main-bg font-sans relative">
+      <RetakeTestModal isOpen={showRetakeModal} onClose={() => setShowRetakeModal(false)} />
       {isError && !isOffline && (
         <div className="absolute top-20 right-8 bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-md shadow-md max-w-sm flex items-start z-50">
           <div>
