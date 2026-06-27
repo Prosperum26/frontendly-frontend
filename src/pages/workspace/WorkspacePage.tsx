@@ -12,7 +12,7 @@ import type {
   EditorTab,
   EvaluationCriterion,
   ExerciseDefinition,
-  WorkspaceFiles,
+  EditorFile,
   EvaluationResult as EditorEvaluationResult,
 } from '../../features/editor/types/editor.types';
 import { useDebounce } from '../../hooks/useDebounce';
@@ -104,7 +104,7 @@ const WorkspacePageContent: React.FC<WorkspacePageContentProps> = ({ exercise })
   const [previewRefreshKey, setPreviewRefreshKey] = useState(0);
   const lastSubmitAtRef = useRef(0);
   const [forcedPreview, setForcedPreview] = useState<{
-    files: WorkspaceFiles;
+    files: EditorFile[];
     editVersion: number;
   } | null>(null);
   const debouncedFiles = useDebounce(files, 350);

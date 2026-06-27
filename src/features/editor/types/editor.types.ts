@@ -140,6 +140,7 @@ export interface BackendCodeTest {
   css: string;
   js: string;
   jsx: string;
+  files?: EditorFile[];
 }
 
 export interface BackendNavigation {

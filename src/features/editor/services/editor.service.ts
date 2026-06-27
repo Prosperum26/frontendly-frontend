@@ -27,17 +27,8 @@ export const editorService = {
     const data = getResponseData(response.data);
     const targetDesigns: TargetDesign[] = data.target_design ? [data.target_design] : [];
 
-    // Determine starter files: use starter_files if available, otherwise fall back to old fields
-    let starterFiles: EditorFile[] = data.starter_files;
-    if (!starterFiles || starterFiles.length === 0) {
-      // Convert old format to new
-      const files: EditorFile[] = [];
-      if (data.html_content?.trim()) files.push({ filename: 'index.html', language: 'html', content: data.html_content });
-      if (data.css_content?.trim()) files.push({ filename: 'styles.css', language: 'css', content: data.css_content });
-      if (data.js_content?.trim()) files.push({ filename: 'script.js', language: 'js', content: data.js_content });
-      if (data.jsx_content?.trim()) files.push({ filename: 'App.jsx', language: 'jsx', content: data.jsx_content });
-      starterFiles = files;
-    }
+    // Use starter_files from the new multi-file schema
+    const starterFiles: EditorFile[] = data.starter_files || [];
 
     const editorFiles = starterFiles.map(f => f.filename);
 

@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState } from 'react';
-import type { EditorTab, WorkspaceEditorState, EditorFile } from '../types/editor.types';
+import type { WorkspaceEditorState, EditorFile } from '../types/editor.types';
 
 interface UseWorkspaceEditorOptions {
   defaultTab?: string; // filename
@@ -32,9 +32,9 @@ export function useWorkspaceEditor(
       if (prev[index].content === value) return prev;
       const newFiles = [...prev];
       newFiles[index] = { ...newFiles[index], content: value };
+      setIsDirty(true);
       return newFiles;
-    };
-    setIsDirty(true);
+    });
   }, []);
 
   const reset = useCallback(() => {
