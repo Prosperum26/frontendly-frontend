@@ -5,6 +5,7 @@ import { authService } from '../features/auth/services/auth.service';
 import NetworkErrorCard from '../components/NetworkErrorCard';
 import { GoogleButton } from '../features/auth/components/GoogleButton';
 import Header from '../components/Header/Header';
+import { EntranceTestChoiceModal } from '../components/EntranceTestChoiceModal/EntranceTestChoiceModal';
 
 export const RegisterPage: React.FC = () => {
   const [name, setName] = useState('');
@@ -22,6 +23,7 @@ export const RegisterPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [progress, setProgress] = useState(0);
   const [isProgressComplete, setIsProgressComplete] = useState(false);
+  const [showChoiceModal, setShowChoiceModal] = useState(false);
   const [isOffline, setIsOffline] = useState(!navigator.onLine);
   const navigate = useNavigate();
 
@@ -48,14 +50,14 @@ export const RegisterPage: React.FC = () => {
           clearInterval(interval);
           setIsProgressComplete(true);
           setTimeout(() => {
-            navigate('/login');
+            setShowChoiceModal(true);
           }, 1500);
         }
         setProgress(currentProgress);
       }, 40);
       return () => clearInterval(interval);
     }
-  }, [isVerified, navigate]);
+  }, [isVerified]);
 
   const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   const isLengthValid = password.length >= 8 && password.length <= 32;
@@ -92,6 +94,7 @@ export const RegisterPage: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-main-bg font-sans relative">
+      <EntranceTestChoiceModal isOpen={showChoiceModal} onClose={() => setShowChoiceModal(false)} />
       <Header />
 
       <main className="flex-grow flex flex-col items-center justify-center p-6 my-8">
