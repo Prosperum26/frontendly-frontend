@@ -282,7 +282,7 @@
 
 .tp-main-body {
   flex: 1;
-  padding: 40px 48px;
+  padding: 40px 48px 120px 48px;
   overflow-y: auto;
   background-color: var(--color-main-bg);
   display: flex;
@@ -638,6 +638,7 @@
   line-height: 1.6;
   color: var(--color-body);
   margin: 0;
+  text-align: justify;
 }
 
 .tp-theory-contentHtml h2 {

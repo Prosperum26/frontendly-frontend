@@ -329,10 +329,10 @@ export const TheoryPage: React.FC = () => {
                         color: "#78350f",
                         margin: 0,
                         fontSize: "13px",
+                        textAlign: "justify",
                       }}
-                    >
-                      {theoryData.proTips}
-                    </p>
+                      dangerouslySetInnerHTML={{ __html: theoryData.proTips }}
+                    />
                   </div>
                 )}
 
@@ -353,7 +353,7 @@ export const TheoryPage: React.FC = () => {
                           marginBottom: "12px",
                         }}
                       >
-                        Reference Links
+                        Support Pages
                       </h3>
                       <ul
                         style={{
