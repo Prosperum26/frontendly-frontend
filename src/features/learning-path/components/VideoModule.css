@@ -25,13 +25,11 @@
   border-radius: 16px;
   width: 90%;
   max-width: 720px;
-  max-height: 90vh;
-  display: flex;
-  flex-direction: column;
   box-shadow: 0 25px 60px rgba(0, 0, 0, 0.3);
-  overflow-y: auto;
-  overflow-x: hidden;
+  overflow: hidden;
   animation: vm-slide-up 0.3s ease;
+  scale: 1;
+  transition: scale 0.2s ease;
 }
 
 @keyframes vm-slide-up {
@@ -170,38 +168,12 @@
 
 .vm-footer {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
   padding-top: 16px;
   border-top: 1px solid var(--color-border);
   gap: 16px;
   flex-wrap: wrap;
-}
-
-.vm-actions-left {
-  display: flex;
-  gap: 8px;
-}
-
-.vm-action-btn {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 14px;
-  border: 1px solid var(--color-border);
-  border-radius: 8px;
-  background: var(--color-main-bg);
-  color: var(--color-body);
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  font-family: var(--font-inter);
-}
-.vm-action-btn:hover {
-  background: var(--color-surface);
-  border-color: var(--color-border-strong);
-  color: var(--color-heading);
 }
 
 .vm-close-btn {
@@ -228,16 +200,26 @@
   .vm-title {
     font-size: 18px;
   }
-  .vm-actions-left {
-    width: 100%;
-    justify-content: space-between;
-  }
-  .vm-action-btn {
-    flex: 1;
-    justify-content: center;
-  }
   .vm-close-btn {
     width: 100%;
     margin-top: 8px;
+  }
+}
+
+@media (max-height: 700px) {
+  .vm-modal-content {
+    scale: 0.85;
+  }
+}
+
+@media (max-height: 600px) {
+  .vm-modal-content {
+    scale: 0.75;
+  }
+}
+
+@media (max-height: 500px) {
+  .vm-modal-content {
+    scale: 0.6;
   }
 }
