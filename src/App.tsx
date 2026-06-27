@@ -5,6 +5,8 @@ import { ToastContainer, ToastProvider } from './components/Toast';
 import { ProtectedRoute } from './components/ProtectedRoute/ProtectedRoute';
 import { ROUTES, workspacePath } from './constants/routes';
 import { useSessionVerification } from './features/auth/hooks/useSessionVerification';
+import ContactPage from './pages/ContactPage';
+import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 import {
   LessonComplete,
   MilestoneCompletePage,
@@ -58,6 +60,8 @@ function App() {
                 <Route path={ROUTES.REGISTER} element={<RegisterPage />} />
                 <Route path={ROUTES.FORGOT_PASSWORD} element={<ForgotPasswordPage />} />
                 <Route path={ROUTES.RESET_PASSWORD} element={<ResetPasswordPage />} />
+                <Route path={ROUTES.CONTACT} element={<ContactPage />} />
+<Route path={ROUTES.PRIVACY} element={<PrivacyPolicyPage />} />
               </Route>
 
               <Route element={<MainLayout />}>
