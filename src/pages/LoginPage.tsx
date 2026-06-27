@@ -16,6 +16,8 @@ export const LoginPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const setAuth = useAuthStore((state) => state.setAuth);
+  const previousRoute = useAuthStore((state) => state.previousRoute);
+  const setPreviousRoute = useAuthStore((state) => state.setPreviousRoute);
   const navigate = useNavigate();
 
   const [isOffline, setIsOffline] = useState(!navigator.onLine);
@@ -58,7 +60,10 @@ export const LoginPage: React.FC = () => {
         console.error('Error syncing guest progress:', syncErr);
       }
       
-      navigate('/profile', { replace: true });
+      // Redirect to previous route if set, otherwise go to profile
+      const redirectPath = previousRoute || '/profile';
+      setPreviousRoute(null);
+      navigate(redirectPath, { replace: true });
     } catch (error: unknown) {
       setIsError(true);
       const err = error as { response?: { data?: { message?: string } } };

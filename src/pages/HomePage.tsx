@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { BookOpen, Code2, Trophy, Users } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import NetworkErrorCard from '../components/NetworkErrorCard';
+import { AuthRequiredModal } from '../components/AuthRequiredModal/AuthRequiredModal';
 import { ROUTES } from '../constants/routes';
 import type { User } from '../features/auth/types/auth.types';
 import { leaderboardService } from '../features/leaderboard/services/leaderboard.service';
@@ -135,8 +136,15 @@ interface LandingPageProps {
 }
 
 const LandingPage: React.FC<LandingPageProps> = ({ isOffline, navigate }) => {
+  const [showAuthModal, setShowAuthModal] = useState(false);
+
+  const handleEntranceTestClick = () => {
+    setShowAuthModal(true);
+  };
+
   return (
     <div className="w-full flex-grow flex flex-col bg-surface font-sans">
+      <AuthRequiredModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
       <main className="flex-grow flex flex-col">
         {isOffline ? (
           <div className="w-full flex-grow flex items-center justify-center p-4 sm:p-6 mt-12">
@@ -173,12 +181,12 @@ const LandingPage: React.FC<LandingPageProps> = ({ isOffline, navigate }) => {
                     >
                       Browse learning path
                     </Link>
-                    <Link
-                      to={ROUTES.ENTRANCE_TEST}
+                    <button
+                      onClick={handleEntranceTestClick}
                       className="px-6 py-3 text-blue-600 text-sm font-semibold hover:underline text-center"
                     >
                       Take entrance test
-                    </Link>
+                    </button>
                   </div>
                 </div>
               </div>

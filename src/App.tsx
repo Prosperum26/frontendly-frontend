@@ -62,7 +62,14 @@ function App() {
 
               <Route element={<MainLayout />}>
                 <Route path={ROUTES.HOME} element={<HomePage />} />
-                <Route path={ROUTES.ENTRANCE_TEST} element={<EntranceTestPage />} />
+                <Route
+                  path={ROUTES.ENTRANCE_TEST}
+                  element={
+                    <ProtectedRoute>
+                      <EntranceTestPage />
+                    </ProtectedRoute>
+                  }
+                />
                 <Route path={ROUTES.LEARNING_PATH} element={<LearningPathPage />} />
                 <Route path={ROUTES.MILESTONE_DETAIL} element={<MilestoneDetailPage />} />
                 <Route path={ROUTES.CHALLENGE_LOBBY} element={<ChallengeLobbyPage />} />
