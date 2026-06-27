@@ -25,8 +25,12 @@
   border-radius: 16px;
   width: 90%;
   max-width: 720px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
   box-shadow: 0 25px 60px rgba(0, 0, 0, 0.3);
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
   animation: vm-slide-up 0.3s ease;
 }
 
@@ -119,6 +123,7 @@
   align-items: flex-start;
   gap: 24px;
   margin-bottom: 20px;
+  flex-wrap: wrap;
 }
 
 .vm-title {
@@ -169,6 +174,8 @@
   align-items: center;
   padding-top: 16px;
   border-top: 1px solid var(--color-border);
+  gap: 16px;
+  flex-wrap: wrap;
 }
 
 .vm-actions-left {
@@ -212,4 +219,25 @@
 .vm-close-btn:hover {
   background: var(--color-border);
   color: var(--color-heading);
+}
+
+@media (max-width: 640px) {
+  .vm-body {
+    padding: 16px 20px;
+  }
+  .vm-title {
+    font-size: 18px;
+  }
+  .vm-actions-left {
+    width: 100%;
+    justify-content: space-between;
+  }
+  .vm-action-btn {
+    flex: 1;
+    justify-content: center;
+  }
+  .vm-close-btn {
+    width: 100%;
+    margin-top: 8px;
+  }
 }
