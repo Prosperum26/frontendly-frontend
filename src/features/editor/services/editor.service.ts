@@ -10,6 +10,7 @@ import type {
   BackendRequirementResult,
   LintEvaluationResult,
   VisualEvaluationResult,
+  TargetDesign,
 } from '../types/editor.types';
 
 function getResponseData<T>(payload: T | { success: boolean; data: T }): T {
@@ -25,51 +26,44 @@ export const editorService = {
       `/exercises/${exerciseId}`
     );
     const data = getResponseData(response.data);
-    const targetDesigns = data.target_designs ?? (data.target_design ? [data.target_design] : []);
+    const targetDesigns: TargetDesign[] = data.target_design ? [data.target_design] : [];
     const editorFiles = resolveEditorFilesFromBackend(data);
 
     return {
       id: data.id,
       practiceLabel: data.module,
       title: data.title,
-      level: data.level || 'easy',
+      level: data.level,
       description: data.description,
-      objective: data.title,
       estimatedTime: '20 min',
-      topicTags: [data.module.split(':')[0], ...(data.tags ?? [])],
-      targetImageUrl: targetDesigns[0]?.url ?? '',
+      topicTags: [data.module.split(':')[0], ...data.tags],
+      targetImageUrl: data.target_url,
       targetDesigns,
       editorFiles,
       evaluationConfig: data.evaluation_config,
-      restrictions: data.restrictions ?? [],
-      requirements: (data.requirements || []).map((req) => ({
+      requirements: data.requirements.map((req) => ({
         id: req.id,
         label: req.text,
         done: false,
       })),
       navigation: data.navigation
         ? {
-            prev: data.navigation.prev,
-            next: data.navigation.next,
-            currentMilestoneId: data.navigation.currentMilestoneId,
+            prev: data.navigation.prev
+              ? { ...data.navigation.prev, milestoneId: undefined }
+              : null,
+            next: data.navigation.next
+              ? { ...data.navigation.next, milestoneId: undefined }
+              : null,
+            currentMilestoneId: undefined,
           }
         : undefined,
       starterFiles: {
-        html: data.html_content || '',
-        css: data.css_content || '',
-        js: data.js_content || '',
-        jsx: data.jsx_content || '',
+        html: data.html_content,
+        css: data.css_content,
+        js: data.js_content,
+        jsx: data.jsx_content,
       },
     };
-  },
-
-  async fetchTargetPreview(exerciseId: string): Promise<string | null> {
-    const response = await api.get<{
-      success: boolean;
-      data: { imageUrl: string | null };
-    }>(`/exercises/${exerciseId}/target-preview`);
-    const data = getResponseData(response.data);
-    return data.imageUrl;
   },
 
   async submitWorkspace(
@@ -114,10 +108,10 @@ export const editorService = {
       });
       output += '\nFix all lint errors before continuing.';
     } else {
-      const evaluationResults = data.requirementResult || data.evaluationResults || [];
+      const evaluationResults = data.requirementResult;
       const passedCount = evaluationResults.filter((result) => result.passed).length;
       const totalCount = evaluationResults.length;
-      output = `Evaluation result: ${passedCount}/${totalCount} requirements passed (${data.match_percentage ?? 0}%).\n`;
+      output = `Evaluation result: ${passedCount}/${totalCount} requirements passed (${data.match_percentage}%).\n`;
       output += data.isCompleted
         ? 'Great work. Your solution meets all requirements.'
         : 'Some requirements are still failing. Review the checklist and try again.';
@@ -130,7 +124,7 @@ export const editorService = {
       }
     }
 
-    const evaluationResults = data.requirementResult || data.evaluationResults || [];
+    const evaluationResults = data.requirementResult;
     const criteria = requirements.map((req) => {
       const res = evaluationResults.find(
         (result: BackendRequirementResult) => result.requirementId === req.id
@@ -142,15 +136,7 @@ export const editorService = {
       };
     });
 
-    const lintResult: LintEvaluationResult | undefined = lint
-      ? {
-          html: lint.html_err || [],
-          css: lint.css_err || [],
-          js: lint.js_err || [],
-          jsx: lint.jsx_err || [],
-        }
-      : undefined;
-
+    const lintResult: LintEvaluationResult | undefined = lint;
     const visualResult: VisualEvaluationResult[] | undefined = data.visual_results;
 
     return {

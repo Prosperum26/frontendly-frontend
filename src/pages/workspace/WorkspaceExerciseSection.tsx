@@ -1,7 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
 import type { EvaluationCriterion, ExerciseDefinition } from '../../features/editor/types/editor.types';
-import { editorService } from '../../features/editor/services/editor.service';
 
 export interface WorkspaceExerciseSectionProps {
   exercise: ExerciseDefinition;
@@ -10,27 +8,14 @@ export interface WorkspaceExerciseSectionProps {
 
 function TargetDesignPreview({
   imageUrl,
-  isLoading,
-  hasError,
   width,
   height,
 }: {
   imageUrl?: string | null;
-  isLoading: boolean;
-  hasError: boolean;
   width?: number;
   height?: number;
 }) {
-  if (isLoading) {
-    return (
-      <div className="workspace-target__loading" aria-busy="true" aria-label="Loading target design">
-        <div className="workspace-target__loading-spinner" />
-        <span>Rendering reference design…</span>
-      </div>
-    );
-  }
-
-  if (hasError || !imageUrl) {
+  if (!imageUrl) {
     return (
       <div className="workspace-target__placeholder" role="img" aria-label="Target design unavailable">
         <div className="workspace-target__placeholder-bar" />
@@ -59,18 +44,7 @@ export const WorkspaceExerciseSection: React.FC<WorkspaceExerciseSectionProps> =
   const [expanded, setExpanded] = useState(true);
   const [targetExpanded, setTargetExpanded] = useState(false);
 
-  const {
-    data: targetPreviewUrl,
-    isLoading: targetLoading,
-    isError: targetError,
-  } = useQuery({
-    queryKey: ['target-preview', exercise.id],
-    queryFn: () => editorService.fetchTargetPreview(exercise.id),
-    staleTime: 5 * 60 * 1000,
-    retry: 1,
-  });
-
-  const targetImageUrl = targetPreviewUrl ?? exercise.targetImageUrl;
+  const targetImageUrl = exercise.targetImageUrl;
   const targetDesign = exercise.targetDesigns?.[0];
 
   const evaluatedRequirements = useMemo(() => {
@@ -85,8 +59,6 @@ export const WorkspaceExerciseSection: React.FC<WorkspaceExerciseSectionProps> =
   const targetPreview = (
     <TargetDesignPreview
       imageUrl={targetImageUrl}
-      isLoading={targetLoading}
-      hasError={targetError}
       width={targetDesign?.width}
       height={targetDesign?.height}
     />
@@ -195,7 +167,6 @@ export const WorkspaceExerciseSection: React.FC<WorkspaceExerciseSectionProps> =
                   className="workspace-target__expand"
                   aria-label="Open target design preview"
                   onClick={() => setTargetExpanded(true)}
-                  disabled={targetLoading}
                 >
                   <span aria-hidden />
                 </button>

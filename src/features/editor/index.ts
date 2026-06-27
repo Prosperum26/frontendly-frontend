@@ -15,7 +15,6 @@ export type {
   EvaluationResult,
   ExerciseDefinition,
   ExerciseRequirement,
-  TestCase,
   WorkspaceEditorState,
   WorkspaceFiles,
 } from './types/editor.types';

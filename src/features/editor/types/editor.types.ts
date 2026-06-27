@@ -20,15 +20,12 @@ export interface EditorState {
   isDirty: boolean;
 }
 
+// --- Frontend-only types ---
+
 export interface ExerciseRequirement {
   id: string;
   label: string;
   done?: boolean;
-}
-
-export interface ExerciseRestriction {
-  rule: string;
-  message: string;
 }
 
 export interface ExerciseNavigation {
@@ -44,14 +41,12 @@ export interface ExerciseDefinition {
   title: string;
   level: 'easy' | 'medium' | 'hard';
   description: string;
-  objective?: string;
   estimatedTime?: string;
   topicTags?: string[];
   targetImageUrl?: string;
   targetDesigns?: TargetDesign[];
   editorFiles?: EditorTab[];
   evaluationConfig?: EvaluationConfig;
-  restrictions?: ExerciseRestriction[];
   requirements: ExerciseRequirement[];
   starterFiles: WorkspaceFiles;
   navigation?: {
@@ -72,20 +67,20 @@ export interface VisualEvaluationResult {
   deviceType: string;
   passed: boolean;
   matchPercentage: number;
-  diffImageUrl?: string;
+  level_of_complete: string;
+  diffImageUrl: string | null;
 }
 
 export interface LintEvaluationResult {
-  html: Array<{ line: number; message: string }>;
-  css: Array<{ line: number; message: string }>;
-  js: Array<{ line: number; message: string }>;
-  jsx: Array<{ line: number; message: string }>;
+  html_err?: { line: number; message: string }[];
+  css_err?: { line: number; message: string }[];
+  js_err?: { line: number; message: string }[];
+  jsx_err?: { line: number; message: string }[];
 }
 
 export interface EvaluationResult {
   passed: boolean;
   output: string;
-  error?: string;
   executionTime: number;
   criteria?: EvaluationCriterion[];
   lint?: LintEvaluationResult;
@@ -93,101 +88,112 @@ export interface EvaluationResult {
   matchPercentage?: number;
 }
 
-export interface WorkspaceSubmitRequest {
-  exerciseId: string;
-  files: WorkspaceFiles;
-}
-
-export interface TestCase {
-  id: string;
-  input: string;
-  expectedOutput: string;
-}
-
 export interface EvaluationConfig {
   lint: boolean;
   requirements: boolean;
   visual: boolean;
-  behavior?: boolean;
+  behavior: boolean;
 }
 
 export interface TargetDesign {
   deviceType: string;
   width: number;
   height: number;
-  url?: string;
+}
+
+// --- Backend-matching types ---
+
+export interface BackendExerciseRequirement {
+  id: string;
+  text: string;
+  selector?: string;
+  type?: 'exist' | 'count' | 'content' | 'attribute' | 'hook' | 'prop' | '';
+  type_check?: 'behavior' | 'others';
+  expectedValue?: string;
+}
+
+export interface BackendRestrictionDetail {
+  rule: string;
+  message: string;
+}
+
+export interface BackendTargetDesign {
+  deviceType: string;
+  width: number;
+  height: number;
+}
+
+export interface BackendEvaluationConfig {
+  lint: boolean;
+  requirements: boolean;
+  visual: boolean;
+  behavior: boolean;
+}
+
+export interface BackendCodeTest {
+  html: string;
+  css: string;
+  js: string;
+  jsx: string;
 }
 
 export interface BackendNavigation {
   type: string;
   id: string;
   slug?: string;
-  milestoneId?: string;
 }
 
 export interface BackendExerciseResponse {
   id: string;
   module: string;
   title: string;
-  level?: 'easy' | 'medium' | 'hard';
+  level: 'easy' | 'medium' | 'hard';
   description: string;
-  target_design?: TargetDesign;
-  target_designs?: TargetDesign[];
-  evaluation_config?: EvaluationConfig;
-  restrictions?: ExerciseRestriction[];
-  requirements?: Array<{
-    id: string;
-    text: string;
-  }>;
-  html_content?: string;
-  css_content?: string;
-  js_content?: string;
-  jsx_content?: string;
-  tags?: string[];
-  code_test?: {
-    html?: string;
-    css?: string;
-    js?: string;
-    jsx?: string;
-  };
-  navigation?: {
+  evaluation_config: BackendEvaluationConfig;
+  restrictions: BackendRestrictionDetail[];
+  tags: string[];
+  html_content: string;
+  css_content: string;
+  js_content: string;
+  jsx_content: string;
+  target_design: BackendTargetDesign;
+  target_url: string;
+  code_test: BackendCodeTest | null;
+  test_script: string;
+  requirements: BackendExerciseRequirement[];
+  navigation: {
     prev: BackendNavigation | null;
     next: BackendNavigation | null;
-    currentMilestoneId?: string;
-  };
+  } | null;
+  created_at: Date;
+  updated_at: Date;
 }
 
 export interface BackendRequirementResult {
   requirementId: string;
   passed: boolean;
-  message?: string;
 }
 
 export interface BackendVisualResult {
   deviceType: string;
   passed: boolean;
   matchPercentage: number;
-  diffImageUrl?: string;
+  level_of_complete: string;
+  diffImageUrl: string | null;
 }
 
 export interface BackendBehaviorResult {
   passed: boolean;
   totalTests: number;
   passedTests: number;
-  errors?: string;
+  errors: string;
 }
 
 export interface BackendSubmitResponse {
-  lint_errors?: {
-    html_err?: Array<{ line: number; message: string }>;
-    css_err?: Array<{ line: number; message: string }>;
-    js_err?: Array<{ line: number; message: string }>;
-    jsx_err?: Array<{ line: number; message: string }>;
-  };
-  requirementResult?: BackendRequirementResult[];
-  evaluationResults?: BackendRequirementResult[];
+  isCompleted: boolean;
+  match_percentage: number;
+  lint_errors: LintEvaluationResult;
+  requirementResult: BackendRequirementResult[];
   visual_results?: BackendVisualResult[];
   behavior_results?: BackendBehaviorResult | null;
-  match_percentage?: number;
-  isCompleted: boolean;
 }
