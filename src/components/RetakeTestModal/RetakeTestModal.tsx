@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { X, AlertTriangle } from 'lucide-react';
 import { ROUTES } from '../../constants/routes';
+import { clearPersonalizedPath } from '../../features/entrance-test/utils/personalized-path.storage';
 
 interface RetakeTestModalProps {
   isOpen: boolean;
@@ -15,6 +16,8 @@ export const RetakeTestModal: React.FC<RetakeTestModalProps> = ({
   const navigate = useNavigate();
 
   const handleContinue = () => {
+    // Clear previous personalized path to reset progress
+    clearPersonalizedPath();
     onClose();
     navigate(ROUTES.ENTRANCE_TEST);
   };
