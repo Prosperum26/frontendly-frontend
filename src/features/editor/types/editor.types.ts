@@ -1,15 +1,20 @@
-export type EditorTab = 'html' | 'css' | 'js' | 'jsx';
+export type EditorLanguage = 'html' | 'css' | 'js' | 'jsx';
+
+export interface EditorFile {
+  filename: string;
+  language: EditorLanguage;
+  content: string;
+}
+
+export type EditorTab = EditorLanguage | string; // Can be filename or language
 
 export interface WorkspaceFiles {
-  html: string;
-  css: string;
-  js: string;
-  jsx?: string;
+  files: EditorFile[];
 }
 
 export interface WorkspaceEditorState {
-  files: WorkspaceFiles;
-  activeTab: EditorTab;
+  files: EditorFile[];
+  activeTab: string; // filename
   isDirty: boolean;
 }
 
@@ -45,10 +50,10 @@ export interface ExerciseDefinition {
   topicTags?: string[];
   targetImageUrl?: string;
   targetDesigns?: TargetDesign[];
-  editorFiles?: EditorTab[];
+  editorFiles?: string[]; // filenames
   evaluationConfig?: EvaluationConfig;
   requirements: ExerciseRequirement[];
-  starterFiles: WorkspaceFiles;
+  starterFiles: EditorFile[];
   navigation?: {
     prev: ExerciseNavigation | null;
     next: ExerciseNavigation | null;
@@ -152,13 +157,14 @@ export interface BackendExerciseResponse {
   evaluation_config: BackendEvaluationConfig;
   restrictions: BackendRestrictionDetail[];
   tags: string[];
-  html_content: string;
-  css_content: string;
-  js_content: string;
-  jsx_content: string;
+  html_content?: string; // Deprecated
+  css_content?: string; // Deprecated
+  js_content?: string; // Deprecated
+  jsx_content?: string; // Deprecated
+  starter_files: EditorFile[];
   target_design: BackendTargetDesign;
   target_url: string;
-  code_test: BackendCodeTest | null;
+  code_test: (BackendCodeTest & { files?: EditorFile[] }) | null;
   test_script: string;
   requirements: BackendExerciseRequirement[];
   navigation: {

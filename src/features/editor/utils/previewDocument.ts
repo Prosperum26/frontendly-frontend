@@ -1,4 +1,4 @@
-import type { WorkspaceFiles } from '../types/editor.types';
+import type { EditorFile } from '../types/editor.types';
 
 export function buildPreviewHtml(html: string, css: string, js: string): string {
   return `<!DOCTYPE html>
@@ -19,23 +19,26 @@ ${js}
 </html>`;
 }
 
-export function buildPreviewDocument(files: WorkspaceFiles): string {
-  return buildPreviewHtml(files.html, files.css, files.js);
+export function buildPreviewDocument(files: EditorFile[]): string {
+  let html = '';
+  let css = '';
+  let js = '';
+
+  files.forEach(f => {
+    if (f.language === 'html') html = f.content;
+    if (f.language === 'css') css = f.content;
+    if (f.language === 'js') js = f.content;
+  });
+
+  return buildPreviewHtml(html, css, js);
 }
 
-export function validatePreviewFiles(files: WorkspaceFiles): string[] {
+export function validatePreviewFiles(files: EditorFile[]): string[] {
   const errors: string[] = [];
-  const hasHtml = files.html.trim().length > 0;
-  const hasCss = files.css.trim().length > 0;
-  const hasJs = files.js.trim().length > 0;
-  const hasJsx = (files.jsx || '').trim().length > 0;
+  const hasContent = files.some(f => f.content.trim().length > 0);
 
-  if (!hasHtml && !hasCss && !hasJs && !hasJsx) {
-    errors.push('Document is empty. Add HTML, CSS, JS, or JSX before running the preview.');
-  }
-
-  if ((hasCss || hasJs) && !hasHtml && !hasJsx) {
-    errors.push('CSS or JS is present, but the HTML document is empty.');
+  if (!hasContent) {
+    errors.push('Document is empty. Add content before running the preview.');
   }
 
   return errors;

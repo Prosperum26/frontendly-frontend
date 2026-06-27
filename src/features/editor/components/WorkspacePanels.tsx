@@ -4,19 +4,19 @@ import { CodeEditor } from './CodeEditor';
 import { LivePreview } from './LivePreview';
 import { ResultConsole } from './ResultConsole';
 import { PanelResizeHandle } from './PanelResizeHandle';
-import type { EditorTab, WorkspaceFiles } from '../types/editor.types';
+import type { EditorFile } from '../types/editor.types';
 import './editor-ui.css';
 
 export interface WorkspacePanelsProps {
-  files: WorkspaceFiles;
-  previewFiles: WorkspaceFiles;
-  activeTab: EditorTab;
-  visibleTabs?: EditorTab[];
+  files: EditorFile[];
+  previewFiles: EditorFile[];
+  activeTab: string;
+  visibleTabs?: string[];
   isConsoleOpen?: boolean;
   previewRefreshKey?: number;
   consoleMessage?: string;
-  onTabChange: (tab: EditorTab) => void;
-  onFileChange: (tab: EditorTab, value: string) => void;
+  onTabChange: (tab: string) => void;
+  onFileChange: (filename: string, value: string) => void;
 }
 
 export const WorkspacePanels: React.FC<WorkspacePanelsProps> = ({

@@ -12,6 +12,8 @@ export { buildPreviewDocument } from './utils/previewDocument';
 export type {
   EditorState,
   EditorTab,
+  EditorLanguage,
+  EditorFile,
   EvaluationResult,
   ExerciseDefinition,
   ExerciseRequirement,
