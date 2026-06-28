@@ -92,7 +92,7 @@ export const ProfilePage: React.FC = () => {
     <div className="bg-surface min-h-screen py-8 font-sans text-heading">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
         {/* 1. Header Card (User Info) */}
-        <div className="bg-main-bg rounded-2xl p-8 border border-border shadow-sm">
+        <div className="bg-main-bg rounded-2xl p-8 border border-border shadow-sm dark:bg-surface dark:border-border">
           <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
             <AvatarUpload 
               currentAvatarUrl={userData?.avatarUrl || currentUser?.avatar}
@@ -102,33 +102,33 @@ export const ProfilePage: React.FC = () => {
             
             <div className="flex-grow">
               <div className="flex items-center gap-2">
-                <h1 className="text-2xl font-bold text-heading">
+                <h1 className="text-2xl font-bold text-heading dark:text-heading">
                   {userData?.username || userData?.name || 'User'}
                 </h1>
               </div>
-              <p className="text-sm font-semibold text-blue-600 mt-1">
+              <p className="text-sm font-semibold text-blue-600 mt-1 dark:text-blue-400">
                 {userData?.role === 'user' ? 'Frontend Student' : 'Frontend Master'}
               </p>
-              <p className="text-sm text-muted mt-1 italic">{userData?.email}</p>
+              <p className="text-sm text-muted mt-1 italic dark:text-muted">{userData?.email}</p>
             </div>
 
             <div className="flex gap-3 w-full md:w-auto mt-4 md:mt-0">
               <button 
                 onClick={() => setIsEditing(true)} 
-                className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold"
+                className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
               >
                 Edit Profile
               </button>
               <button 
                 onClick={() => setIsShareModalOpen(true)} 
-                className="flex items-center justify-center gap-2 border border-slate-300 text-body px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-surface transition-colors"
+                className="flex items-center justify-center gap-2 border border-border text-body px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-surface transition-colors dark:border-border dark:text-slate-200 dark:hover:bg-slate-700"
               >
                 <Share2 className="w-4 h-4" />
                 Share Profile
               </button>
               <button 
                 onClick={handleLogout}
-                className="flex items-center justify-center gap-2 border border-red-300 text-red-700 px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-red-50 transition-colors"
+                className="flex items-center justify-center gap-2 border border-red-300 text-red-700 px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-red-50 transition-colors dark:border-red-800 dark:text-red-400 dark:hover:bg-red-900/20"
               >
                 Logout
               </button>
@@ -136,13 +136,13 @@ export const ProfilePage: React.FC = () => {
           </div>
 
           <div className="mt-8">
-            <div className="flex justify-between text-xs font-bold text-muted mb-2">
+            <div className="flex justify-between text-xs font-bold text-muted mb-2 dark:text-muted">
               <span>XP Progress</span>
-              <span className="text-heading">{userData?.xp || 0} <span className="text-muted">/ {(userData?.level || 1) * 1000} XP</span></span>
+              <span className="text-heading dark:text-slate-200">{userData?.xp || 0} <span className="text-muted dark:text-muted">/ {(userData?.level || 1) * 1000} XP</span></span>
             </div>
-            <div className="h-2.5 w-full bg-surface rounded-full overflow-hidden">
+            <div className="h-2.5 w-full bg-surface rounded-full overflow-hidden dark:bg-slate-700">
               <div 
-                className="h-full bg-blue-600 rounded-full" 
+                className="h-full bg-blue-600 rounded-full dark:bg-blue-500" 
                 style={{ width: `${Math.min(((userData?.xp || 0) / ((userData?.level || 1) * 1000)) * 100, 100)}%` }}>
               </div>
             </div>
@@ -150,14 +150,14 @@ export const ProfilePage: React.FC = () => {
 
           {/* Edit Profile Form */}
           {isEditing && (
-            <div className="mt-4 bg-main-bg p-6 rounded-xl border border-border shadow-sm">
+            <div className="mt-4 bg-main-bg p-6 rounded-xl border border-border shadow-sm dark:bg-slate-800 dark:border-border">
               <div className="flex justify-between items-center mb-4">
-                <h3 className="text-xl font-bold text-heading">
+                <h3 className="text-xl font-bold text-heading dark:text-heading">
                   Update Personal Details
                 </h3>
                 <button 
                   onClick={() => setIsEditing(false)}
-                  className="text-sm text-muted hover:text-body"
+                  className="text-sm text-muted hover:text-body dark:text-muted dark:hover:text-slate-200"
                 >
                   Cancel
                 </button>
@@ -174,43 +174,43 @@ export const ProfilePage: React.FC = () => {
 
         {/* 2. Stats Row */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div className="bg-main-bg p-6 rounded-2xl border border-border shadow-sm flex items-center gap-4">
+          <div className="bg-main-bg p-6 rounded-2xl border border-border shadow-sm flex items-center gap-4 dark:bg-surface dark:border-border">
             <div className="w-12 h-12 rounded-xl bg-orange-50 dark:bg-orange-950/30 flex items-center justify-center text-xl">
               <Flame className="w-6 h-6 text-orange-500 dark:text-orange-400" />
             </div>
             <div>
-              <h3 className="text-2xl font-black">{userData?.stats?.streakDays || 0}</h3>
-              <p className="text-xs text-muted font-semibold uppercase tracking-wider mt-0.5">Day Streak</p>
+              <h3 className="text-2xl font-black text-heading dark:text-slate-200">{userData?.stats?.streakDays || 0}</h3>
+              <p className="text-xs text-muted font-semibold uppercase tracking-wider mt-0.5 dark:text-muted">Day Streak</p>
             </div>
           </div>
 
-          <div className="bg-main-bg p-6 rounded-2xl border border-border shadow-sm flex items-center gap-4">
+          <div className="bg-main-bg p-6 rounded-2xl border border-border shadow-sm flex items-center gap-4 dark:bg-surface dark:border-border">
             <div className="w-12 h-12 rounded-xl bg-yellow-50 dark:bg-yellow-950/30 flex items-center justify-center text-xl">
               <Star className="w-6 h-6 text-yellow-500 dark:text-yellow-400" />
             </div>
             <div>
-              <h3 className="text-2xl font-black">{userData?.xp || 0}</h3>
-              <p className="text-xs text-muted font-semibold uppercase tracking-wider mt-0.5">Total XP</p>
+              <h3 className="text-2xl font-black text-heading dark:text-slate-200">{userData?.xp || 0}</h3>
+              <p className="text-xs text-muted font-semibold uppercase tracking-wider mt-0.5 dark:text-muted">Total XP</p>
             </div>
           </div>
 
-          <div className="bg-main-bg p-6 rounded-2xl border border-border shadow-sm flex items-center gap-4">
+          <div className="bg-main-bg p-6 rounded-2xl border border-border shadow-sm flex items-center gap-4 dark:bg-surface dark:border-border">
             <div className="w-12 h-12 rounded-xl bg-green-50 dark:bg-green-950/30 flex items-center justify-center text-xl">
               <Target className="w-6 h-6 text-green-500 dark:text-green-400" />
             </div>
             <div>
-              <h3 className="text-2xl font-black">{userData?.stats?.coursesCompleted || 0}</h3>
-              <p className="text-xs text-muted font-semibold uppercase tracking-wider mt-0.5">Courses</p>
+              <h3 className="text-2xl font-black text-heading dark:text-slate-200">{userData?.stats?.coursesCompleted || 0}</h3>
+              <p className="text-xs text-muted font-semibold uppercase tracking-wider mt-0.5 dark:text-muted">Courses</p>
             </div>
           </div>
 
-          <div className="bg-main-bg p-6 rounded-2xl border border-border shadow-sm flex items-center gap-4">
+          <div className="bg-main-bg p-6 rounded-2xl border border-border shadow-sm flex items-center gap-4 dark:bg-surface dark:border-border">
             <div className="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-950/30 flex items-center justify-center text-xl">
               <Trophy className="w-6 h-6 text-blue-500 dark:text-blue-400" />
             </div>
             <div>
-              <h3 className="text-2xl font-black">{badges.length}</h3>
-              <p className="text-xs text-muted font-semibold uppercase tracking-wider mt-0.5">Badges</p>
+              <h3 className="text-2xl font-black text-heading dark:text-slate-200">{badges.length}</h3>
+              <p className="text-xs text-muted font-semibold uppercase tracking-wider mt-0.5 dark:text-muted">Badges</p>
             </div>
           </div>
         </div>
@@ -218,8 +218,8 @@ export const ProfilePage: React.FC = () => {
         {/* 3. Middle Grid: Radar, Badges, Heatmap */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Radar Chart Placeholder */}
-          <div className="bg-main-bg p-6 rounded-2xl border border-border shadow-sm">
-            <h3 className="text-xs font-bold text-heading uppercase tracking-wider mb-6">Proficiency Radar</h3>
+          <div className="bg-main-bg p-6 rounded-2xl border border-border shadow-sm dark:bg-surface dark:border-border">
+            <h3 className="text-xs font-bold text-heading uppercase tracking-wider mb-6 dark:text-heading">Proficiency Radar</h3>
             <div className="relative w-full aspect-square flex flex-col items-center justify-center">
               {userData?.skills && userData.skills.length >= 3 ? (
                 <svg viewBox="0 0 100 100" className="w-full h-full max-w-[200px] text-muted">
@@ -254,35 +254,35 @@ export const ProfilePage: React.FC = () => {
                 </svg>
               ) : (
                 <div className="text-center py-8">
-                  <div className="w-12 h-12 bg-surface rounded-full flex items-center justify-center mx-auto mb-3">
-                    <Zap className="w-6 h-6 text-slate-300" />
+                  <div className="w-12 h-12 bg-surface rounded-full flex items-center justify-center mx-auto mb-3 dark:bg-slate-700">
+                    <Zap className="w-6 h-6 text-slate-300 dark:text-slate-500" />
                   </div>
-                  <p className="text-[10px] text-muted font-medium px-4">Complete more lessons to see your proficiency radar</p>
+                  <p className="text-[10px] text-muted font-medium px-4 dark:text-muted">Complete more lessons to see your proficiency radar</p>
                 </div>
               )}
             </div>
           </div>
 
           {/* Badges Collection */}
-          <div className="bg-main-bg p-6 rounded-2xl border border-border shadow-sm">
+          <div className="bg-main-bg p-6 rounded-2xl border border-border shadow-sm dark:bg-surface dark:border-border">
             <div className="flex justify-between items-center mb-6">
-              <h3 className="text-sm font-bold text-heading">Badge Collection</h3>
-              <a href="#" className="text-xs font-semibold text-blue-600 hover:underline">View all</a>
+              <h3 className="text-sm font-bold text-heading dark:text-heading">Badge Collection</h3>
+              <a href="#" className="text-xs font-semibold text-blue-600 hover:underline dark:text-blue-400">View all</a>
             </div>
             <div className="flex flex-col items-center justify-center min-h-[180px]">
               {badges.length === 0 ? (
                 <div className="text-center">
-                  <div className="w-16 h-16 bg-surface rounded-2xl flex items-center justify-center mx-auto mb-4">
-                    <Trophy className="w-8 h-8 text-slate-300" />
+                  <div className="w-16 h-16 bg-surface rounded-2xl flex items-center justify-center mx-auto mb-4 dark:bg-slate-700">
+                    <Trophy className="w-8 h-8 text-slate-300 dark:text-slate-500" />
                   </div>
-                  <p className="text-xs text-muted font-medium px-6 text-center">No badges earned yet. Complete challenges to unlock them!</p>
+                  <p className="text-xs text-muted font-medium px-6 text-center dark:text-muted">No badges earned yet. Complete challenges to unlock them!</p>
                 </div>
               ) : (
                 <div className="grid grid-cols-3 gap-y-6 gap-x-2 w-full">
                   {badges.slice(0, 6).map((badge, idx) => (
                     <div key={`profile-badge-${String(badge.id || idx)}`} className="flex flex-col items-center text-center">
                       <Badge badge={badge} size="lg" />
-                      <span className="text-[10px] font-semibold text-body line-clamp-1 mt-2">{badge.name}</span>
+                      <span className="text-[10px] font-semibold text-body line-clamp-1 mt-2 dark:text-slate-200">{badge.name}</span>
                     </div>
                   ))}
                 </div>
@@ -295,19 +295,19 @@ export const ProfilePage: React.FC = () => {
         </div>
 
         {/* 4. Recent Activity Feed */}
-        <div className="bg-main-bg rounded-2xl border border-border shadow-sm">
-          <div className="p-6 border-b border-border">
-            <h3 className="text-lg font-bold flex items-center gap-2">
-              <Star className="w-5 h-5 text-blue-600" />
+        <div className="bg-main-bg rounded-2xl border border-border shadow-sm dark:bg-surface dark:border-border">
+          <div className="p-6 border-b border-border dark:border-border">
+            <h3 className="text-lg font-bold flex items-center gap-2 text-heading dark:text-heading">
+              <Star className="w-5 h-5 text-blue-600 dark:text-blue-400" />
               Recent Achievements
             </h3>
           </div>
-          <div className="divide-y divide-border">
+          <div className="divide-y divide-border dark:border-border">
             {activities.length === 0 ? (
-              <p className="p-6 text-center text-muted text-sm italic">No recent activities</p>
+              <p className="p-6 text-center text-muted text-sm italic dark:text-muted">No recent activities</p>
             ) : (
               activities.map((activity) => (
-                <div key={activity.id} className="p-5 flex items-start gap-4 hover:bg-surface/50 transition-colors">
+                <div key={activity.id} className="p-5 flex items-start gap-4 hover:bg-surface/50 transition-colors dark:hover:bg-slate-700/50">
                   <div className={`mt-1 p-2 rounded-lg ${
                     activity.type === 'lesson_completed' ? 'bg-green-50 dark:bg-green-950/30 text-green-600 dark:text-green-400' :
                     activity.type === 'challenge_won' ? 'bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400' :
@@ -318,8 +318,8 @@ export const ProfilePage: React.FC = () => {
                      <Zap className="w-4 h-4" />}
                   </div>
                   <div className="flex-grow">
-                    <p className="text-sm text-heading font-bold leading-tight">{activity.description}</p>
-                    <p className="text-xs text-muted mt-1 font-medium">{new Date(activity.timestamp).toLocaleString()}</p>
+                    <p className="text-sm text-heading font-bold leading-tight dark:text-slate-200">{activity.description}</p>
+                    <p className="text-xs text-muted mt-1 font-medium dark:text-muted">{new Date(activity.timestamp).toLocaleString()}</p>
                   </div>
                   <Link to="#" className="text-xs text-blue-600 dark:text-blue-400 font-bold hover:underline shrink-0">View Details</Link>
                 </div>
@@ -331,13 +331,13 @@ export const ProfilePage: React.FC = () => {
 
       {/* Share Profile Modal */}
       {isShareModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4">
-          <div className="relative w-full max-w-sm bg-main-bg rounded-3xl p-6 shadow-2xl border border-border animate-in zoom-in-95 duration-300">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4 dark:bg-black/60">
+          <div className="relative w-full max-w-sm bg-main-bg rounded-3xl p-6 shadow-2xl border border-border animate-in zoom-in-95 duration-300 dark:bg-surface dark:border-border">
             
             {/* Close Button */}
             <button 
               onClick={() => setIsShareModalOpen(false)}
-              className="absolute top-4 right-4 text-muted hover:text-body bg-surface hover:bg-surface p-1.5 rounded-full transition-colors"
+              className="absolute top-4 right-4 text-muted hover:text-body bg-surface hover:bg-surface p-1.5 rounded-full transition-colors dark:text-muted dark:hover:text-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600"
             >
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
@@ -347,7 +347,7 @@ export const ProfilePage: React.FC = () => {
             {/* Logo / Header Card */}
             <div className="w-full flex justify-between items-center mb-6">
               <span className="text-xs font-black tracking-widest text-blue-600 dark:text-blue-400 uppercase">Frontendly Card</span>
-              <span className="text-xs font-bold text-body bg-surface px-2 py-1 rounded-md border border-border">Lv. {userData?.level || 1}</span>
+              <span className="text-xs font-bold text-body bg-surface px-2 py-1 rounded-md border border-border dark:text-slate-200 dark:bg-slate-700 dark:border-slate-600">Lv. {userData?.level || 1}</span>
             </div>
 
             {/* Avatar & Name */}
@@ -355,27 +355,27 @@ export const ProfilePage: React.FC = () => {
               <img 
                 src={userData?.avatarUrl || 'https://ui-avatars.com/api/?name=User&background=e2e8f0&color=475569'} 
                 alt="Avatar" 
-                className="w-24 h-24 object-cover rounded-full border-4 border-surface shadow-sm mb-3"
+                className="w-24 h-24 object-cover rounded-full border-4 border-surface shadow-sm mb-3 dark:border-slate-700"
               />
-              <h2 className="text-2xl font-black mb-1 text-heading">
+              <h2 className="text-2xl font-black mb-1 text-heading dark:text-heading">
                 {userData?.username || userData?.name || 'Developer'}
               </h2>
               <p className="text-blue-600 dark:text-blue-400 text-sm font-bold">{userData?.role === 'user' ? 'Frontend Student' : 'Frontend Master'}</p>
             </div>
 
             {/* Personal Info */}
-            <div className="bg-surface rounded-2xl p-4 mb-6 border border-border space-y-3">
+            <div className="bg-surface rounded-2xl p-4 mb-6 border border-border space-y-3 dark:bg-slate-700 dark:border-slate-600">
               <div className="flex justify-between items-center">
-                <span className="text-[11px] font-bold text-muted uppercase tracking-wider">Email</span>
-                <span className="text-sm font-semibold text-body">{userData?.email || 'N/A'}</span>
+                <span className="text-[11px] font-bold text-muted uppercase tracking-wider dark:text-muted">Email</span>
+                <span className="text-sm font-semibold text-body dark:text-slate-200">{userData?.email || 'N/A'}</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-[11px] font-bold text-muted uppercase tracking-wider">Phone</span>
-                <span className="text-sm font-semibold text-body">{(userData as UserProfile)?.phoneNumber || 'N/A'}</span>
+                <span className="text-[11px] font-bold text-muted uppercase tracking-wider dark:text-muted">Phone</span>
+                <span className="text-sm font-semibold text-body dark:text-slate-200">{(userData as UserProfile)?.phoneNumber || 'N/A'}</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-[11px] font-bold text-muted uppercase tracking-wider">Date of Birth</span>
-                <span className="text-sm font-semibold text-body">
+                <span className="text-[11px] font-bold text-muted uppercase tracking-wider dark:text-muted">Date of Birth</span>
+                <span className="text-sm font-semibold text-body dark:text-slate-200">
                   {(userData as UserProfile)?.dateOfBirth ? new Date((userData as UserProfile).dateOfBirth!).toLocaleDateString('en-GB') : 'N/A'}
                 </span>
               </div>

@@ -39,29 +39,29 @@ export const CodingActivity = () => {
   }, []);
 
   const getColorClass = (count: number) => {
-    if (count === 0) return 'bg-slate-100';
-    if (count <= 2) return 'bg-blue-200';
-    if (count <= 4) return 'bg-blue-400';
-    return 'bg-blue-600';
+    if (count === 0) return 'bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-slate-600';
+    if (count <= 2) return 'bg-green-200 dark:bg-green-900/60 border border-green-300 dark:border-green-800';
+    if (count <= 4) return 'bg-green-400 dark:bg-green-700 border border-green-500 dark:border-green-600';
+    return 'bg-green-600 dark:bg-green-500 border border-green-700 dark:border-green-400';
   };
 
   return (
-    <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between h-full"> 
+    <div className="bg-main-bg p-6 rounded-2xl border border-border shadow-sm flex flex-col justify-between h-full dark:bg-surface dark:border-border"> 
       <div className="flex justify-between items-center mb-4">
-        <h3 className="text-sm font-bold text-slate-900">Coding Activity</h3>
-        <span className="text-xs font-medium text-slate-400">Last 3 months</span>
+        <h3 className="text-sm font-bold text-heading dark:text-heading">Coding Activity</h3>
+        <span className="text-xs font-medium text-muted dark:text-muted">Last 3 months</span>
       </div>
 
       <div className="flex flex-wrap gap-1.5">
         {loading 
           ? Array.from({ length: 90 }).map((_, i) => (
-              <div key={`skel-${i}`} className="w-4 h-4 rounded-sm bg-slate-100 animate-pulse" />
+              <div key={`skel-${i}`} className="w-4 h-4 rounded-sm bg-surface dark:bg-slate-800 animate-pulse" />
             ))
           : activityData.map((day, index) => (
               <div
                 key={index}
                 title={`${day.date}: ${day.count} activities`}
-                className={`w-4 h-4 rounded-sm ${getColorClass(day.count)} transition-all hover:ring-2 hover:ring-slate-300 cursor-help`}
+                className={`w-4 h-4 rounded-sm ${getColorClass(day.count)} transition-all hover:ring-2 hover:ring-border dark:hover:ring-slate-600 cursor-help`}
               />
             ))
         }
