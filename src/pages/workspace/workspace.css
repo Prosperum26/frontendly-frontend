@@ -175,6 +175,194 @@ body:has(.workspace-shell) {
   }
 }
 
+@media (max-width: 768px) {
+  .workspace-main {
+    padding: 10px;
+    gap: 10px;
+  }
+
+  .workspace-exercise-panel__header {
+    padding: 10px 14px;
+    gap: 10px;
+  }
+
+  .workspace-exercise-panel__body {
+    padding: 14px;
+  }
+
+  .workspace-exercise-panel__summary-title {
+    font-size: 15px;
+  }
+
+  .workspace-exercise-panel__toggle {
+    padding: 5px 10px;
+    font-size: 12px;
+  }
+
+  .workspace-exercise__desc {
+    font-size: 13px;
+    line-height: 20px;
+  }
+
+  .workspace-requirements {
+    padding: 14px;
+  }
+
+  .workspace-requirements__title {
+    font-size: 18px;
+  }
+
+  .workspace-requirements__item {
+    font-size: 13px;
+    line-height: 20px;
+  }
+
+  .workspace-target {
+    padding: 10px;
+  }
+
+  .workspace-coding {
+    min-height: calc(100svh - 180px);
+    height: calc(100svh - 180px);
+  }
+
+  .workspace-footer {
+    height: 60px;
+    padding: 0 10px;
+  }
+
+  .workspace-footer__back,
+  .workspace-footer__next {
+    height: 36px;
+    font-size: 12px;
+    padding: 0 12px;
+  }
+
+  .workspace-footer__next {
+    padding: 8px 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .workspace-main {
+    padding: 6px;
+    gap: 6px;
+  }
+
+  .workspace-exercise-panel__header {
+    padding: 8px 10px;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .workspace-exercise-panel__toggle {
+    width: 100%;
+    justify-content: center;
+    padding: 4px 8px;
+    font-size: 11px;
+  }
+
+  .workspace-exercise-panel__body {
+    padding: 10px;
+  }
+
+  .workspace-exercise-panel__summary-title {
+    font-size: 14px;
+  }
+
+  .workspace-exercise__desc {
+    font-size: 12px;
+    line-height: 18px;
+  }
+
+  .workspace-exercise__meta-pill {
+    font-size: 11px;
+    padding: 0 6px;
+    min-height: 22px;
+  }
+
+  .workspace-requirements {
+    padding: 10px;
+  }
+
+  .workspace-requirements__title {
+    font-size: 16px;
+  }
+
+  .workspace-requirements__item {
+    font-size: 12px;
+    line-height: 18px;
+    gap: 8px;
+  }
+
+  .workspace-requirements__check {
+    width: 16px;
+    height: 16px;
+  }
+
+  .workspace-requirements__check--done {
+    width: 18px;
+    height: 18px;
+  }
+
+  .workspace-target {
+    padding: 8px;
+  }
+
+  .workspace-target__label {
+    font-size: 10px;
+  }
+
+  .workspace-target__expand {
+    width: 26px;
+    height: 26px;
+  }
+
+  .workspace-coding {
+    min-height: calc(100svh - 160px);
+    height: calc(100svh - 160px);
+  }
+
+  .workspace-footer {
+    height: 44px;
+    padding: 0 6px;
+  }
+
+  .workspace-footer__inner {
+    gap: 6px;
+  }
+
+  .workspace-footer__back,
+  .workspace-footer__next {
+    height: 28px;
+    font-size: 9px;
+    padding: 0 6px;
+  }
+
+  .workspace-footer__next {
+    padding: 4px 6px;
+  }
+
+  .workspace-target-modal {
+    padding: 12px;
+  }
+
+  .workspace-target-modal__panel {
+    width: calc(100vw - 24px);
+    max-height: calc(100svh - 24px);
+  }
+
+  .workspace-target-modal__header {
+    padding: 10px 12px;
+    font-size: 14px;
+  }
+
+  .workspace-target-modal__body {
+    padding: 12px;
+    min-height: 250px;
+  }
+}
+
 .workspace-exercise__intro {
   display: flex;
   flex-direction: column;
@@ -548,6 +736,18 @@ body:has(.workspace-shell) {
   flex: 1 1 auto;
   min-height: 640px;
   overflow: hidden;
+}
+
+@media (max-width: 768px) {
+  .workspace-coding--editor .editor-panels {
+    min-height: 400px;
+  }
+}
+
+@media (max-width: 480px) {
+  .workspace-coding--editor .editor-panels {
+    min-height: 350px;
+  }
 }
 
 /* —— Footer —— */

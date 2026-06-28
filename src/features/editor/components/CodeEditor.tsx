@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Editor from '@monaco-editor/react';
 import type { EditorTab, WorkspaceFiles } from '../types/editor.types';
 import './editor-ui.css';
@@ -32,6 +32,17 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
   onTabChange,
   onChange,
 }) => {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   const tabs = visibleTabs?.length
     ? TAB_CONFIG.filter((tab) => visibleTabs.includes(tab.id))
     : TAB_CONFIG;
@@ -67,15 +78,23 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
           onChange={(value) => onChange(activeTab, value ?? '')}
           options={{
             minimap: { enabled: false },
-            fontSize: 14,
+            fontSize: isMobile ? 12 : 14,
             fontFamily: "'JetBrains Mono', ui-monospace, monospace",
-            lineHeight: 28,
+            lineHeight: isMobile ? 20 : 28,
             wordWrap: 'on',
             automaticLayout: true,
             scrollBeyondLastLine: true,
-            padding: { top: 16 },
+            padding: { top: isMobile ? 8 : 16 },
             tabSize: 2,
             insertSpaces: true,
+            // Mobile-friendly options
+            contextmenu: true,
+            quickSuggestions: true,
+            suggestOnTriggerCharacters: true,
+            acceptSuggestionOnEnter: 'on',
+            tabCompletion: 'on',
+            formatOnPaste: true,
+            formatOnType: true,
           }}
         />
       </div>
