@@ -5,7 +5,7 @@ import { ROUTES } from '../../constants/routes';
 
 export const FinalCTA: React.FC = () => {
   return (
-    <section className="py-20 bg-gradient-to-br from-blue-600 via-purple-600 to-blue-700 dark:from-blue-500 dark:via-purple-500 dark:to-blue-600 text-white relative overflow-hidden">
+    <section className="py-20 bg-gradient-to-br from-cyan-600 via-blue-600 to-cyan-700 dark:from-cyan-500 dark:via-blue-500 dark:to-cyan-600 text-white relative overflow-hidden">
       {/* Animated background */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_30%_50%,rgba(255,255,255,0.1),transparent_50%)] animate-pulse" />

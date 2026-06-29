@@ -18,11 +18,11 @@ const iconMap: Record<string, React.ElementType> = {
 
 export const GamificationSection: React.FC = () => {
   return (
-    <section className="py-20 bg-gradient-to-br from-slate-50 via-blue-50/50 to-purple-50/50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
+    <section className="py-20 bg-gradient-to-br from-slate-50 via-cyan-50/50 to-blue-50/50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center mb-16">
-          <div className="inline-flex items-center gap-2 bg-purple-100 dark:bg-purple-500/20 text-purple-700 dark:text-purple-300 px-4 py-2 rounded-full text-sm font-semibold mb-4 border border-purple-200 dark:border-purple-500/30">
+          <div className="inline-flex items-center gap-2 bg-cyan-100 dark:bg-cyan-500/20 text-cyan-700 dark:text-cyan-300 px-4 py-2 rounded-full text-sm font-semibold mb-4 border border-cyan-200 dark:border-cyan-500/30">
             <Sparkles className="w-4 h-4" />
             <span>Gamified Learning</span>
           </div>
@@ -41,7 +41,7 @@ export const GamificationSection: React.FC = () => {
             return (
               <div
                 key={index}
-                className="group bg-white dark:bg-slate-800/80 backdrop-blur-sm rounded-2xl p-6 border-2 border-slate-200 dark:border-slate-700 hover:border-blue-300 dark:hover:border-blue-500 transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-blue-500/10 dark:hover:shadow-blue-500/20 cursor-pointer"
+                className="group bg-white dark:bg-slate-800/80 backdrop-blur-sm rounded-2xl p-6 border-2 border-slate-200 dark:border-slate-700 hover:border-cyan-300 dark:hover:border-cyan-500 transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-cyan-500/10 dark:hover:shadow-cyan-500/20 cursor-pointer"
               >
                 <div
                   className="w-14 h-14 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300"
@@ -61,7 +61,7 @@ export const GamificationSection: React.FC = () => {
         </div>
 
         {/* Highlight Banner */}
-        <div className="mt-16 bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-500 dark:to-purple-500 rounded-3xl p-8 md:p-12 text-white relative overflow-hidden shadow-xl shadow-blue-500/20 dark:shadow-blue-500/40">
+        <div className="mt-16 bg-gradient-to-r from-cyan-600 to-blue-600 dark:from-cyan-500 dark:to-blue-500 rounded-3xl p-8 md:p-12 text-white relative overflow-hidden shadow-xl shadow-cyan-500/20 dark:shadow-cyan-500/40">
           <div className="absolute inset-0 opacity-10">
             <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_30%_50%,rgba(255,255,255,0.3),transparent_50%)]" />
           </div>

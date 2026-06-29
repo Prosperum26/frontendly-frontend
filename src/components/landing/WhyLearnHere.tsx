@@ -41,10 +41,10 @@ export const WhyLearnHere: React.FC = () => {
             return (
               <div
                 key={index}
-                className="group bg-gradient-to-br from-blue-50 to-purple-50 dark:from-slate-800 dark:to-slate-800 rounded-2xl p-6 hover:scale-105 hover:shadow-xl hover:shadow-blue-500/10 dark:hover:shadow-blue-500/20 transition-all duration-300 cursor-pointer border-2 border-slate-200 dark:border-slate-700 hover:border-blue-300 dark:hover:border-blue-500"
+                className="group bg-gradient-to-br from-cyan-50 to-blue-50 dark:from-slate-800 dark:to-slate-800 rounded-2xl p-6 hover:scale-105 hover:shadow-xl hover:shadow-cyan-500/10 dark:hover:shadow-cyan-500/20 transition-all duration-300 cursor-pointer border-2 border-slate-200 dark:border-slate-700 hover:border-cyan-300 dark:hover:border-cyan-500"
               >
                 <div className="w-14 h-14 bg-white dark:bg-slate-700 rounded-xl flex items-center justify-center mb-4 shadow-sm group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300">
-                  <Icon className="w-7 h-7 text-blue-600 dark:text-blue-400" />
+                  <Icon className="w-7 h-7 text-cyan-600 dark:text-cyan-400" />
                 </div>
                 <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">
                   {feature.title}
@@ -58,7 +58,7 @@ export const WhyLearnHere: React.FC = () => {
         </div>
 
         {/* Bottom Banner */}
-        <div className="mt-16 text-center bg-gradient-to-r from-gray-50 to-blue-50 dark:from-slate-800 dark:to-slate-800 rounded-3xl p-8 md:p-12 border border-slate-200 dark:border-slate-700">
+        <div className="mt-16 text-center bg-gradient-to-r from-gray-50 to-cyan-50 dark:from-slate-800 dark:to-slate-800 rounded-3xl p-8 md:p-12 border border-slate-200 dark:border-slate-700">
           <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">
             Ready to Transform Your Career?
           </h3>

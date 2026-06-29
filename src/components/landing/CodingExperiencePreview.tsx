@@ -36,7 +36,7 @@ export const CodingExperiencePreview: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center mb-16">
-          <div className="inline-flex items-center gap-2 bg-blue-500/20 text-blue-300 px-4 py-2 rounded-full text-sm font-semibold mb-4 border border-blue-500/30">
+          <div className="inline-flex items-center gap-2 bg-cyan-500/20 text-cyan-300 px-4 py-2 rounded-full text-sm font-semibold mb-4 border border-cyan-500/30">
             <Code2 className="w-4 h-4" />
             <span>Interactive Coding</span>
           </div>
@@ -78,7 +78,7 @@ export const CodingExperiencePreview: React.FC = () => {
                   {currentLine < codeLines.length - 1 && (
                     <div className="animate-pulse">
                       <span className="text-purple-400">{currentLine + 2}</span>
-                      <span className="ml-4 text-blue-400 dark:text-blue-500">|</span>
+                      <span className="ml-4 text-cyan-400 dark:text-cyan-500">|</span>
                     </div>
                   )}
                 </pre>
@@ -129,7 +129,7 @@ export const CodingExperiencePreview: React.FC = () => {
           <div className="text-center mt-8">
             <Link
               to={ROUTES.REGISTER}
-              className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-xl font-bold text-lg hover:shadow-2xl hover:shadow-blue-500/25 transition-all duration-300 hover:scale-105"
+              className="inline-flex items-center gap-2 bg-gradient-to-r from-cyan-600 to-blue-600 text-white px-8 py-4 rounded-xl font-bold text-lg hover:shadow-2xl hover:shadow-cyan-500/25 transition-all duration-300 hover:scale-105"
             >
               <Play className="w-5 h-5" />
               <span>Try It Yourself</span>
