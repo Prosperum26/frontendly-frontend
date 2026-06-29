@@ -7,6 +7,7 @@ import { ROUTES, workspacePath } from './constants/routes';
 import { useSessionVerification } from './features/auth/hooks/useSessionVerification';
 import ContactPage from './pages/ContactPage';
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
+import TermsPage from './pages/TermsPage';
 import {
   LessonComplete,
   MilestoneCompletePage,
@@ -61,7 +62,8 @@ function App() {
                 <Route path={ROUTES.FORGOT_PASSWORD} element={<ForgotPasswordPage />} />
                 <Route path={ROUTES.RESET_PASSWORD} element={<ResetPasswordPage />} />
                 <Route path={ROUTES.CONTACT} element={<ContactPage />} />
-<Route path={ROUTES.PRIVACY} element={<PrivacyPolicyPage />} />
+                <Route path={ROUTES.PRIVACY} element={<PrivacyPolicyPage />} />
+                <Route path={ROUTES.TERMS} element={<TermsPage />} />
               </Route>
 
               <Route element={<MainLayout />}>

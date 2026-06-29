@@ -6,6 +6,7 @@ import NetworkErrorCard from '../components/NetworkErrorCard';
 import { GoogleButton } from '../features/auth/components/GoogleButton';
 import Header from '../components/Header/Header';
 import { EntranceTestChoiceModal } from '../components/EntranceTestChoiceModal/EntranceTestChoiceModal';
+import { ROUTES } from '../constants/routes';
 
 export const RegisterPage: React.FC = () => {
   const [name, setName] = useState('');
@@ -222,7 +223,7 @@ export const RegisterPage: React.FC = () => {
                       className="mt-1 h-4 w-4 text-blue-600 border-slate-300 rounded focus:ring-blue-500"
                     />
                     <label htmlFor="terms" className="ml-2 block text-xs text-muted leading-normal font-medium">
-                      I agree to the <a href="#" className="text-blue-600 font-bold hover:underline">Terms of Service</a> and <a href="#" className="text-blue-600 font-bold hover:underline">Privacy Policy</a> of FrontEndly.
+                      I agree to the <Link to={ROUTES.TERMS} className="text-blue-600 font-bold hover:underline">Terms of Service</Link> and <Link to={ROUTES.PRIVACY} className="text-blue-600 font-bold hover:underline">Privacy Policy</Link> of FrontEndly.
                     </label>
                   </div>
 

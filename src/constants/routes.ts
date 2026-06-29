@@ -19,6 +19,7 @@ export const ROUTES = {
   NOT_FOUND: '/404',
   CONTACT: '/contact',
   PRIVACY: '/privacy',
+  TERMS: '/terms',
 } as const;
 
 export function workspacePath(exerciseId: string): string {
