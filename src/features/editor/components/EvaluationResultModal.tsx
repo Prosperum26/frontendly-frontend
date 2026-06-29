@@ -67,17 +67,19 @@ export const EvaluationResultModal: React.FC<EvaluationResultModalProps> = ({
               <h3 className="evaluation-section__title">
                 <span
                   className={
-                    (lint?.html.length ?? 0) +
-                      (lint?.css.length ?? 0) +
-                      (lint?.js.length ?? 0) ===
+                    (lint?.html_err?.length ?? 0) +
+                      (lint?.css_err?.length ?? 0) +
+                      (lint?.js_err?.length ?? 0) +
+                      (lint?.jsx_err?.length ?? 0) ===
                     0
                       ? 'evaluation-status--success'
                       : 'evaluation-status--error'
                   }
                 >
-                  {(lint?.html.length ?? 0) +
-                    (lint?.css.length ?? 0) +
-                    (lint?.js.length ?? 0) ===
+                  {(lint?.html_err?.length ?? 0) +
+                    (lint?.css_err?.length ?? 0) +
+                    (lint?.js_err?.length ?? 0) +
+                    (lint?.jsx_err?.length ?? 0) ===
                   0
                     ? '✓'
                     : '✗'}
@@ -85,16 +87,17 @@ export const EvaluationResultModal: React.FC<EvaluationResultModalProps> = ({
                 Kiểm tra cú pháp (Lint)
               </h3>
               {lint &&
-                ((lint?.html.length ?? 0) +
-                  (lint?.css.length ?? 0) +
-                  (lint?.js.length ?? 0) >
+                ((lint?.html_err?.length ?? 0) +
+                  (lint?.css_err?.length ?? 0) +
+                  (lint?.js_err?.length ?? 0) +
+                  (lint?.jsx_err?.length ?? 0) >
                   0) && (
                   <div className="lint-errors">
-                    {lint.html.length > 0 && (
+                    {lint.html_err && lint.html_err.length > 0 && (
                       <div className="lint-errors__group">
                         <h4 className="lint-errors__group-title">HTML</h4>
                         <ul className="lint-errors__list">
-                          {lint.html.map((err, i) => (
+                          {lint.html_err.map((err, i) => (
                             <li key={i} className="lint-errors__item">
                               <span className="lint-errors__line">Dòng {err.line}:</span>{' '}
                               {err.message}
@@ -103,11 +106,11 @@ export const EvaluationResultModal: React.FC<EvaluationResultModalProps> = ({
                         </ul>
                       </div>
                     )}
-                    {lint.css.length > 0 && (
+                    {lint.css_err && lint.css_err.length > 0 && (
                       <div className="lint-errors__group">
                         <h4 className="lint-errors__group-title">CSS</h4>
                         <ul className="lint-errors__list">
-                          {lint.css.map((err, i) => (
+                          {lint.css_err.map((err, i) => (
                             <li key={i} className="lint-errors__item">
                               <span className="lint-errors__line">Dòng {err.line}:</span>{' '}
                               {err.message}
@@ -116,11 +119,24 @@ export const EvaluationResultModal: React.FC<EvaluationResultModalProps> = ({
                         </ul>
                       </div>
                     )}
-                    {lint.js.length > 0 && (
+                    {lint.js_err && lint.js_err.length > 0 && (
                       <div className="lint-errors__group">
                         <h4 className="lint-errors__group-title">JavaScript</h4>
                         <ul className="lint-errors__list">
-                          {lint.js.map((err, i) => (
+                          {lint.js_err.map((err, i) => (
+                            <li key={i} className="lint-errors__item">
+                              <span className="lint-errors__line">Dòng {err.line}:</span>{' '}
+                              {err.message}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                    {lint.jsx_err && lint.jsx_err.length > 0 && (
+                      <div className="lint-errors__group">
+                        <h4 className="lint-errors__group-title">JSX</h4>
+                        <ul className="lint-errors__list">
+                          {lint.jsx_err.map((err, i) => (
                             <li key={i} className="lint-errors__item">
                               <span className="lint-errors__line">Dòng {err.line}:</span>{' '}
                               {err.message}
@@ -200,6 +216,11 @@ export const EvaluationResultModal: React.FC<EvaluationResultModalProps> = ({
                       >
                         {vResult.matchPercentage.toFixed(0)}%
                       </span>
+                      {vResult.level_of_complete && (
+                        <span className="visual-result__level">
+                          ({vResult.level_of_complete})
+                        </span>
+                      )}
                     </div>
                     {vResult.diffImageUrl && (
                       <div className="visual-result__diff">

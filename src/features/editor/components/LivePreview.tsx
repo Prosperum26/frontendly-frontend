@@ -1,10 +1,10 @@
 import React, { useCallback, useMemo } from 'react';
-import type { WorkspaceFiles } from '../types/editor.types';
+import type { EditorFile } from '../types/editor.types';
 import { buildPreviewDocument } from '../utils/previewDocument';
 import './editor-ui.css';
 
 export interface LivePreviewProps {
-  files: WorkspaceFiles;
+  files: EditorFile[];
   refreshKey?: number;
 }
 

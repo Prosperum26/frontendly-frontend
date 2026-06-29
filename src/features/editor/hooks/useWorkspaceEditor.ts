@@ -1,18 +1,18 @@
 import { useCallback, useMemo, useState } from 'react';
-import type { EditorTab, WorkspaceEditorState, WorkspaceFiles } from '../types/editor.types';
+import type { WorkspaceEditorState, EditorFile } from '../types/editor.types';
 
 interface UseWorkspaceEditorOptions {
-  defaultTab?: EditorTab;
-  visibleTabs?: EditorTab[];
+  defaultTab?: string; // filename
+  visibleTabs?: string[]; // filenames
 }
 
 export function useWorkspaceEditor(
-  initialFiles: WorkspaceFiles,
+  initialFiles: EditorFile[],
   options: UseWorkspaceEditorOptions = {},
 ) {
-  const { defaultTab = 'html', visibleTabs } = options;
-  const [files, setFiles] = useState<WorkspaceFiles>(initialFiles);
-  const [activeTabInternal, setActiveTabState] = useState<EditorTab>(defaultTab);
+  const { defaultTab = initialFiles[0]?.filename || 'App.jsx', visibleTabs } = options;
+  const [files, setFiles] = useState<EditorFile[]>(initialFiles);
+  const [activeTabInternal, setActiveTabState] = useState<string>(defaultTab);
   const [isDirty, setIsDirty] = useState(false);
 
   const activeTab = useMemo(() => {
@@ -21,31 +21,35 @@ export function useWorkspaceEditor(
     return visibleTabs[0];
   }, [activeTabInternal, visibleTabs]);
 
-  const setActiveTab = useCallback((tab: EditorTab) => {
+  const setActiveTab = useCallback((tab: string) => {
     setActiveTabState(tab);
   }, []);
 
-  const setFile = useCallback((tab: EditorTab, value: string) => {
+  const setFile = useCallback((filename: string, value: string) => {
     setFiles((prev) => {
-      if (prev[tab] === value) return prev;
-      return { ...prev, [tab]: value };
+      const index = prev.findIndex(f => f.filename === filename);
+      if (index === -1) return prev;
+      if (prev[index].content === value) return prev;
+      const newFiles = [...prev];
+      newFiles[index] = { ...newFiles[index], content: value };
+      setIsDirty(true);
+      return newFiles;
     });
-    setIsDirty(true);
   }, []);
 
   const reset = useCallback(() => {
     setFiles(initialFiles);
-    setActiveTabState(defaultTab);
+    setActiveTabState(initialFiles[0]?.filename || 'App.jsx');
     setIsDirty(false);
-  }, [defaultTab, initialFiles]);
+  }, [initialFiles]);
 
   const replaceFiles = useCallback(
-    (nextFiles: WorkspaceFiles, dirty = true) => {
+    (nextFiles: EditorFile[], dirty = true) => {
       setFiles(nextFiles);
-      setActiveTabState(defaultTab);
+      setActiveTabState(nextFiles[0]?.filename || 'App.jsx');
       setIsDirty(dirty);
     },
-    [defaultTab],
+    [],
   );
 
   const state: WorkspaceEditorState = { files, activeTab, isDirty };

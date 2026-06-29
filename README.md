@@ -32,6 +32,13 @@ yarn lint      # ESLint
 yarn preview   # preview production build
 ```
 
+## Trạng thái kiểm tra
+
+```
+yarn lint   ✅
+yarn build  ✅
+```
+
 ## Tech stack
 
 React 19 · Vite 8 · TypeScript · React Router 7 · TanStack Query · Zustand · Tailwind CSS 4 · Monaco · next-themes · framer-motion
