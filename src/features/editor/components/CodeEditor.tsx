@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Editor from '@monaco-editor/react';
 import type { EditorFile } from '../types/editor.types';
 import './editor-ui.css';
@@ -38,6 +38,19 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
   onTabChange,
   onChange,
 }) => {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   const tabs = visibleTabs?.length ? visibleTabs : files.map(f => f.filename);
   const activeFile = files.find(f => f.filename === activeTab);
 
