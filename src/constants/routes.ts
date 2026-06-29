@@ -17,6 +17,8 @@ export const ROUTES = {
   RESET_PASSWORD: '/reset-password',
   BANNED: '/banned',
   NOT_FOUND: '/404',
+  CONTACT: '/contact',
+  PRIVACY: '/privacy',
 } as const;
 
 export function workspacePath(exerciseId: string): string {

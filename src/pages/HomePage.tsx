@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { BookOpen, Code2, Trophy, Users } from 'lucide-react';
+import { BookOpen, Code2, Trophy, Users, Play, Terminal, Swords, Flame, ArrowRight } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import NetworkErrorCard from '../components/NetworkErrorCard';
 import { AuthRequiredModal } from '../components/AuthRequiredModal/AuthRequiredModal';
 import { ROUTES } from '../constants/routes';
 import type { User } from '../features/auth/types/auth.types';
 import { leaderboardService } from '../features/leaderboard/services/leaderboard.service';
-import { Badge } from '../features/profile/components/Badge';
 import { profileService } from '../features/profile/services/profile.service';
 import type {
   Badge as BadgeType,
@@ -30,100 +29,193 @@ interface DashboardProps {
 
 const Dashboard: React.FC<DashboardProps> = ({
   profileData,
-  badgesData,
-  userRank,
   learningProgress,
   profileLoading,
-  badgesLoading,
-  rankLoading,
+  userRank,
   progressLoading,
   currentUser,
 }) => {
-  const loading = profileLoading || badgesLoading || rankLoading || progressLoading;
+  const loading = profileLoading || progressLoading;
   const user = profileData || currentUser;
   const streakDays =
     profileData?.streakDays ?? profileData?.stats?.streakDays ?? currentUser?.stats?.streakDays ?? 0;
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-surface flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto" />
+      <div className="flex items-center justify-center min-h-[calc(100vh-64px)] bg-surface">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-surface">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
-        <div className="mb-6 sm:mb-8">
-          <h1 className="text-2xl sm:text-3xl font-bold text-heading">
-            Welcome to your Frontend journey, {user?.username || user?.name || 'User'}!
-          </h1>
-        </div>
-
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
-          <div className="bg-main-bg rounded-xl p-4 sm:p-6 shadow-sm border border-border">
-            <p className="text-xs sm:text-sm text-muted mb-1 sm:mb-2">XP EARNED</p>
-            <p className="text-xl sm:text-2xl font-bold text-blue-600">{user?.xp || 0}</p>
+    <div className="min-h-screen bg-surface flex flex-col flex-grow">
+      <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 py-6 sm:py-10 space-y-6 sm:space-y-8">
+        
+        {/* 1. Header & Lời chào */}
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 bg-main-bg p-6 sm:p-8 rounded-2xl border border-border shadow-sm">
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-black text-heading mb-2">
+              Welcome back, {user?.username || user?.name || 'Developer'}!
+            </h1>
+            <p className="text-body text-sm sm:text-base">Ready to write some code today?</p>
           </div>
-          <div className="bg-main-bg rounded-xl p-4 sm:p-6 shadow-sm border border-border">
-            <p className="text-xs sm:text-sm text-muted mb-1 sm:mb-2">DAY STREAK</p>
-            <p className="text-xl sm:text-2xl font-bold text-orange-500">{streakDays}</p>
-          </div>
-          <div className="bg-main-bg rounded-xl p-4 sm:p-6 shadow-sm border border-border">
-            <p className="text-xs sm:text-sm text-muted mb-1 sm:mb-2">MODULES</p>
-            <p className="text-xl sm:text-2xl font-bold text-green-600">{user?.level || 0}</p>
-          </div>
-          <div className="bg-main-bg rounded-xl p-4 sm:p-6 shadow-sm border border-border">
-            <p className="text-xs sm:text-sm text-muted mb-1 sm:mb-2">RANK</p>
-            <p className="text-xl sm:text-2xl font-bold text-purple-600">
-              {userRank ? `#${userRank}` : '---'}
-            </p>
-          </div>
-        </div>
-
-        <div className="bg-main-bg rounded-xl p-4 sm:p-6 shadow-sm mb-6 sm:mb-8 border border-border">
-          <h2 className="text-lg sm:text-xl font-bold text-heading mb-3 sm:mb-4">Current Progress</h2>
-          {learningProgress && (
+          <div className="flex items-center gap-3 bg-orange-50/50 px-5 py-2.5 rounded-xl border border-orange-100">
+            <Flame className="w-6 h-6 text-orange-500" />
             <div>
-              <div className="flex justify-between mb-2">
-                <span className="font-medium text-body text-sm sm:text-base">
-                  {learningProgress.currentMilestone || 'Learning Path'}
-                </span>
-                <span className="text-xs sm:text-sm text-muted">
-                  {learningProgress.completionPercentage || 0}%
-                </span>
+              <p className="text-[10px] font-bold text-orange-600 uppercase tracking-wider">Current Streak</p>
+              <p className="font-black text-orange-700 text-lg leading-tight">{streakDays} Days</p>
+            </div>
+          </div>
+        </div>
+
+        {/* 2. Main Grid (Bệ phóng hành động) */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
+          
+          {/* Cột trái (Trọng tâm: Học & Code) - Chiếm 2/3 */}
+          <div className="lg:col-span-2 space-y-6 sm:space-y-8">
+            
+            {/* Tiếp tục lộ trình */}
+            <div className="bg-main-bg rounded-2xl border border-border p-6 sm:p-8 shadow-sm">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center">
+                  <Play className="w-5 h-5 text-primary" />
+                </div>
+                <div>
+                  <h2 className="text-lg font-bold text-heading">Resume Learning</h2>
+                  <p className="text-sm text-muted">Pick up exactly where you left off</p>
+                </div>
               </div>
-              <div className="w-full bg-surface-raised rounded-full h-2">
-                <div
-                  className="bg-blue-600 h-2 rounded-full"
-                  style={{ width: `${learningProgress.completionPercentage || 0}%` }}
-                />
+
+              {learningProgress ? (
+                <div className="bg-surface-raised rounded-xl p-5 border border-border">
+                  <div className="flex justify-between items-end mb-3">
+                    <div>
+                      <span className="text-xs font-bold text-primary uppercase tracking-wider block mb-1">
+                        Current Milestone
+                      </span>
+                      <span className="font-bold text-heading">
+                        {learningProgress.currentMilestone || 'Starting your journey'}
+                      </span>
+                    </div>
+                    <span className="text-sm font-bold text-muted">
+                      {learningProgress.completionPercentage || 0}%
+                    </span>
+                  </div>
+                  
+                  <div className="w-full bg-border/50 rounded-full h-2.5 mb-5 overflow-hidden">
+                    <div
+                      className="bg-primary h-full rounded-full transition-all duration-500"
+                      style={{ width: `${learningProgress.completionPercentage || 0}%` }}
+                    />
+                  </div>
+                  
+                  <Link
+                    to={ROUTES.LEARNING_PATH}
+                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-primary text-white px-6 py-2.5 rounded-lg font-semibold hover:bg-primary-hover transition-colors"
+                  >
+                    Continue <ArrowRight className="w-4 h-4" />
+                  </Link>
+                </div>
+              ) : (
+                <div className="text-center py-6 bg-surface-raised rounded-xl border border-border border-dashed">
+                  <p className="text-muted text-sm mb-4">You haven't started any lessons yet.</p>
+                  <Link
+                    to={ROUTES.LEARNING_PATH}
+                    className="inline-block bg-primary text-white px-6 py-2.5 rounded-lg font-semibold hover:bg-primary-hover transition-colors"
+                  >
+                    Browse Curriculum
+                  </Link>
+                </div>
+              )}
+            </div>
+
+            {/* Quick Workspace */}
+            <div className="bg-main-bg rounded-2xl border border-border p-6 sm:p-8 shadow-sm">
+               <div className="flex items-center gap-3 mb-6">
+                <div className="w-10 h-10 rounded-lg bg-slate-50 flex items-center justify-center">
+                  <Terminal className="w-5 h-5 text-slate-600" />
+                </div>
+                <div>
+                  <h2 className="text-lg font-bold text-heading">Quick Workspace</h2>
+                  <p className="text-sm text-muted">Experiment with code freely</p>
+                </div>
               </div>
-              <Link
-                to={ROUTES.LEARNING_PATH}
-                className="mt-2 inline-block text-xs sm:text-sm text-blue-600 font-medium hover:underline"
-              >
-                Continue Learning
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {/* Thẻ tạo mới */}
+                <Link to={'#'} className="group flex flex-col items-center justify-center p-6 bg-surface-raised border border-border border-dashed rounded-xl hover:bg-slate-50 transition-colors">
+                  <div className="w-8 h-8 rounded-full bg-white border border-border flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                    <span className="text-slate-400 font-bold text-xl leading-none">+</span>
+                  </div>
+                  <span className="text-sm font-semibold text-heading">New Sandbox</span>
+                </Link>
+                {/* Sandbox gần đây (Mock) */}
+                <div className="p-5 bg-surface-raised border border-border rounded-xl flex flex-col justify-between">
+                  <div>
+                    <h3 className="font-semibold text-heading text-sm mb-1">Flexbox Layout Test</h3>
+                    <p className="text-xs text-muted">Edited 2 hours ago</p>
+                  </div>
+                  <Link to={'#'} className="text-primary text-xs font-bold mt-4 hover:underline flex items-center gap-1">
+                    Open Editor <ArrowRight className="w-3 h-3" />
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Cột phải (Khám phá & Thử thách) - Chiếm 1/3 */}
+          <div className="space-y-6 sm:space-y-8">
+            
+            {/* Daily Quests */}
+            <div className="bg-main-bg rounded-2xl border border-border p-6 shadow-sm">
+               <div className="flex items-center gap-3 mb-5">
+                <div className="w-10 h-10 rounded-lg bg-green-50 flex items-center justify-center">
+                  <Swords className="w-5 h-5 text-green-600" />
+                </div>
+                <h2 className="text-lg font-bold text-heading">Daily Quests</h2>
+              </div>
+              
+              <div className="space-y-3">
+                <div className="p-4 bg-surface-raised rounded-xl border border-border flex justify-between items-center gap-3">
+                  <div>
+                    <p className="text-sm font-bold text-heading mb-0.5">Complete 1 Lesson</p>
+                    <p className="text-xs text-green-600 font-bold">+50 XP</p>
+                  </div>
+                  <div className="w-6 h-6 rounded-full border-2 border-border" />
+                </div>
+                <div className="p-4 bg-surface-raised rounded-xl border border-border flex justify-between items-center gap-3">
+                  <div>
+                    <p className="text-sm font-bold text-heading mb-0.5">Win a Code Battle</p>
+                    <p className="text-xs text-green-600 font-bold">+100 XP</p>
+                  </div>
+                  <div className="w-6 h-6 rounded-full border-2 border-border" />
+                </div>
+              </div>
+              <Link to={ROUTES.CHALLENGE_LOBBY} className="block text-center text-sm font-semibold text-primary mt-4 hover:underline">
+                Enter Challenge Lobby
               </Link>
             </div>
-          )}
-        </div>
 
-        <div className="bg-main-bg rounded-xl p-4 sm:p-6 shadow-sm mb-6 sm:mb-8 border border-border">
-          <h2 className="text-lg sm:text-xl font-bold text-heading mb-3 sm:mb-4">Badge Collection</h2>
-          {badgesData && badgesData.length > 0 ? (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 sm:gap-4 mb-4 justify-items-center">
-              {badgesData.map((badge, idx) => (
-                <Badge key={badge.id || idx} badge={badge} size="lg" />
-              ))}
+            {/* Mini Leaderboard (Thay cho Rank tĩnh) */}
+            <div className="bg-main-bg rounded-2xl border border-border p-6 shadow-sm">
+               <div className="flex items-center gap-3 mb-5">
+                <div className="w-10 h-10 rounded-lg bg-yellow-50 flex items-center justify-center">
+                  <Trophy className="w-5 h-5 text-yellow-600" />
+                </div>
+                <h2 className="text-lg font-bold text-heading">Current Standing</h2>
+              </div>
+              <div className="text-center p-6 bg-surface-raised rounded-xl border border-border mb-4">
+                <p className="text-xs font-bold text-muted uppercase tracking-wider mb-2">Your Rank</p>
+                <p className="text-4xl font-black text-heading">
+                  {userRank ? `#${userRank}` : 'Unranked'}
+                </p>
+              </div>
+              <Link to={'#'} className="w-full block text-center bg-surface-raised border border-border text-heading px-4 py-2.5 rounded-lg text-sm font-semibold hover:bg-slate-50 transition-colors">
+                View Leaderboard
+              </Link>
             </div>
-          ) : (
-            <p className="text-muted text-sm sm:text-base">No badges yet. Complete lessons to unlock badges!</p>
-          )}
-          <Link to={ROUTES.PROFILE} className="text-blue-600 font-medium text-sm sm:text-base hover:underline">
-            View Profile
-          </Link>
+
+          </div>
         </div>
       </div>
     </div>
