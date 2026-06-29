@@ -20,7 +20,6 @@ import { GamificationSection } from '../components/landing/GamificationSection';
 import { WhyLearnHere } from '../components/landing/WhyLearnHere';
 import { CodingExperiencePreview } from '../components/landing/CodingExperiencePreview';
 import { PlatformStats } from '../components/landing/PlatformStats';
-import { TestimonialsSection } from '../components/landing/TestimonialsSection';
 import { FinalCTA } from '../components/landing/FinalCTA';
 
 interface DashboardProps {
@@ -257,7 +256,6 @@ const LandingPage: React.FC<LandingPageProps> = ({ isOffline, navigate }) => {
             <WhyLearnHere />
             <CodingExperiencePreview />
             <PlatformStats />
-            <TestimonialsSection />
             <FinalCTA />
           </div>
         )}

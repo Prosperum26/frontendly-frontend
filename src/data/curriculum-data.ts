@@ -139,36 +139,6 @@ export const gamificationFeatures = [
   }
 ];
 
-export const testimonials = [
-  {
-    name: "Sarah Chen",
-    username: "@sarahcodes",
-    level: 15,
-    avatar: "SC",
-    xp: 2500,
-    review: "FrontEndly made learning React so much easier than tutorials. The hands-on exercises really helped me understand the concepts.",
-    color: "#3b82f6"
-  },
-  {
-    name: "Alex Rivera",
-    username: "@alexdev",
-    level: 22,
-    avatar: "AR",
-    xp: 4200,
-    review: "The structured curriculum and instant feedback are game-changers. I went from beginner to job-ready in 3 months!",
-    color: "#10b981"
-  },
-  {
-    name: "Jordan Kim",
-    username: "@jkim",
-    level: 8,
-    avatar: "JK",
-    xp: 1200,
-    review: "Love the gamification aspect! The XP system and badges keep me motivated to learn every day.",
-    color: "#8b5cf6"
-  }
-];
-
 export const whyLearnHere = [
   {
     title: "Structured Curriculum",
