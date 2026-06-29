@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { BookOpen, Code2, Trophy, Users, Play, Terminal, Swords, Flame, ArrowRight } from 'lucide-react';
+import { Trophy, Play, Terminal, Swords, Flame, ArrowRight } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import NetworkErrorCard from '../components/NetworkErrorCard';
 import { AuthRequiredModal } from '../components/AuthRequiredModal/AuthRequiredModal';
@@ -14,6 +14,14 @@ import type {
   UserProfile,
 } from '../features/profile/types/profile.types';
 import { useAuthStore } from '../store/auth.store';
+import { HeroSection } from '../components/landing/HeroSection';
+import { CurriculumPreview } from '../components/landing/CurriculumPreview';
+import { GamificationSection } from '../components/landing/GamificationSection';
+import { WhyLearnHere } from '../components/landing/WhyLearnHere';
+import { CodingExperiencePreview } from '../components/landing/CodingExperiencePreview';
+import { PlatformStats } from '../components/landing/PlatformStats';
+import { TestimonialsSection } from '../components/landing/TestimonialsSection';
+import { FinalCTA } from '../components/landing/FinalCTA';
 
 interface DashboardProps {
   profileData: UserProfile | undefined;
@@ -230,10 +238,6 @@ interface LandingPageProps {
 const LandingPage: React.FC<LandingPageProps> = ({ isOffline, navigate }) => {
   const [showAuthModal, setShowAuthModal] = useState(false);
 
-  const handleEntranceTestClick = () => {
-    setShowAuthModal(true);
-  };
-
   return (
     <div className="w-full flex-grow flex flex-col bg-surface font-sans">
       <AuthRequiredModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
@@ -247,164 +251,14 @@ const LandingPage: React.FC<LandingPageProps> = ({ isOffline, navigate }) => {
           </div>
         ) : (
           <div className="w-full">
-            <section className="border-b border-border bg-main-bg">
-              <div className="max-w-7xl mx-auto px-4 sm:px-8 py-14 sm:py-20">
-                <div className="max-w-3xl">
-                  <p className="text-sm font-semibold uppercase tracking-wider text-blue-600 mb-4">
-                    Frontend learning platform
-                  </p>
-                  <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-heading leading-tight tracking-tight mb-5">
-                    Learn HTML, CSS, JavaScript &amp; React by building real projects
-                  </h1>
-                  <p className="text-body text-base sm:text-lg leading-relaxed mb-8 max-w-2xl">
-                    FrontEndly guides you through structured milestones with theory lessons,
-                    hands-on coding exercises, and instant feedback — no local setup required.
-                  </p>
-                  <div className="flex flex-col sm:flex-row flex-wrap gap-3">
-                    <Link
-                      to={ROUTES.REGISTER}
-                      className="px-6 py-3 bg-blue-600 text-white rounded-lg text-sm font-semibold hover:bg-blue-700 transition-colors text-center"
-                    >
-                      Create free account
-                    </Link>
-                    <Link
-                      to={ROUTES.LEARNING_PATH}
-                      className="px-6 py-3 bg-main-bg text-heading border border-border rounded-lg text-sm font-semibold hover:bg-surface transition-colors text-center"
-                    >
-                      Browse learning path
-                    </Link>
-                    <button
-                      onClick={handleEntranceTestClick}
-                      className="px-6 py-3 text-blue-600 text-sm font-semibold hover:underline text-center"
-                    >
-                      Take entrance test
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </section>
-
-            <section className="max-w-7xl mx-auto px-4 sm:px-8 py-14 sm:py-16">
-              <h2 className="text-xl sm:text-2xl font-bold text-heading mb-8">
-                How FrontEndly works
-              </h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                {[
-                  {
-                    icon: BookOpen,
-                    step: '1',
-                    title: 'Read theory',
-                    text: 'Short lessons explain concepts before you write any code.',
-                  },
-                  {
-                    icon: Code2,
-                    step: '2',
-                    title: 'Code in browser',
-                    text: 'Open exercises in the built-in editor with a live preview panel.',
-                  },
-                  {
-                    icon: Trophy,
-                    step: '3',
-                    title: 'Pass checks',
-                    text: 'Submit to validate requirements, lint rules, and visual design.',
-                  },
-                  {
-                    icon: Users,
-                    step: '4',
-                    title: 'Track progress',
-                    text: 'Earn XP, unlock badges, and climb the leaderboard.',
-                  },
-                ].map((item) => (
-                  <div
-                    key={item.step}
-                    className="rounded-xl border border-border bg-main-bg p-5 sm:p-6"
-                  >
-                    <div className="flex items-center gap-3 mb-3">
-                      <span className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-50 text-blue-600 text-sm font-bold">
-                        {item.step}
-                      </span>
-                      <item.icon className="h-5 w-5 text-muted" aria-hidden />
-                    </div>
-                    <h3 className="font-semibold text-heading mb-2">{item.title}</h3>
-                    <p className="text-sm text-muted leading-relaxed">{item.text}</p>
-                  </div>
-                ))}
-              </div>
-            </section>
-
-            <section className="bg-main-bg border-y border-border">
-              <div className="max-w-7xl mx-auto px-4 sm:px-8 py-14 sm:py-16">
-                <div className="grid lg:grid-cols-2 gap-10 items-start">
-                  <div>
-                    <h2 className="text-xl sm:text-2xl font-bold text-heading mb-4">
-                      Structured curriculum
-                    </h2>
-                    <p className="text-muted text-sm sm:text-base leading-relaxed mb-6">
-                      Three milestones take you from your first React component to styling,
-                      events, and conditional rendering — each with theory and practice stages.
-                    </p>
-                    <ul className="space-y-3 text-sm text-body">
-                      <li className="flex gap-2">
-                        <span className="text-blue-600 font-bold">M1</span>
-                        React fundamentals — components, JSX, createRoot
-                      </li>
-                      <li className="flex gap-2">
-                        <span className="text-blue-600 font-bold">M2</span>
-                        Styling, events, CSS modules, conditional UI
-                      </li>
-                      <li className="flex gap-2">
-                        <span className="text-blue-600 font-bold">M3</span>
-                        Advanced patterns and capstone projects
-                      </li>
-                    </ul>
-                  </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    {[
-                      { label: 'HTML', color: '#d97706', bg: '#ffedd5' },
-                      { label: 'CSS', color: '#4f46e5', bg: '#e0e7ff' },
-                      { label: 'JS', color: '#0ea5e9', bg: '#e0f2fe' },
-                    ].map((item) => (
-                      <Link
-                        key={item.label}
-                        to={ROUTES.LEARNING_PATH}
-                        className="rounded-xl border border-border p-5 text-center hover:border-blue-300 transition-colors"
-                      >
-                        <div
-                          className="mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-lg text-xs font-black"
-                          style={{ backgroundColor: item.bg, color: item.color }}
-                        >
-                          {item.label}
-                        </div>
-                        <span className="text-sm font-semibold text-heading">{item.label}</span>
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </section>
-
-            <section className="max-w-7xl mx-auto px-4 sm:px-8 py-14 sm:py-16 text-center">
-              <h2 className="text-xl sm:text-2xl font-bold text-heading mb-3">
-                Ready to start coding?
-              </h2>
-              <p className="text-muted text-sm sm:text-base mb-6 max-w-lg mx-auto">
-                Jump into the learning path or try a challenge exercise — no install needed.
-              </p>
-              <div className="flex flex-col sm:flex-row justify-center gap-3">
-                <Link
-                  to={ROUTES.LEARNING_PATH}
-                  className="px-6 py-3 bg-blue-600 text-white rounded-lg text-sm font-semibold hover:bg-blue-700 transition-colors"
-                >
-                  Start learning
-                </Link>
-                <Link
-                  to={ROUTES.CHALLENGE_LOBBY}
-                  className="px-6 py-3 border border-border rounded-lg text-sm font-semibold text-heading hover:bg-main-bg transition-colors"
-                >
-                  Practice coding
-                </Link>
-              </div>
-            </section>
+            <HeroSection />
+            <CurriculumPreview />
+            <GamificationSection />
+            <WhyLearnHere />
+            <CodingExperiencePreview />
+            <PlatformStats />
+            <TestimonialsSection />
+            <FinalCTA />
           </div>
         )}
       </main>
