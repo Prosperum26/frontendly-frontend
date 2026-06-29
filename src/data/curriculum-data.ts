@@ -115,8 +115,8 @@ export const gamificationFeatures = [
   },
   {
     icon: "Challenge",
-    title: "Daily Challenges",
-    description: "Take on daily coding challenges for bonus XP",
+    title: "Coding Challenges",
+    description: "Test your skills with interactive coding challenges",
     color: "#ef4444"
   },
   {
