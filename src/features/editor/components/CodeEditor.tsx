@@ -56,28 +56,30 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
 
   return (
     <div className="code-editor">
-      <div className="code-editor__tabs" role="tablist" aria-label="Source files">
-        {tabs.map((filename) => {
-          const { dotClass, dot } = getDotInfo(filename);
-          return (
-            <button
-              key={filename}
-              type="button"
-              role="tab"
-              aria-selected={activeTab === filename}
-              className={
-                activeTab === filename ? 'code-editor__tab code-editor__tab--active' : 'code-editor__tab'
-              }
-              onClick={() => onTabChange(filename)}
-            >
-              <span className={`code-editor__tab-dot ${dotClass}`} aria-hidden>
-                {dot}
-              </span>
-              {filename}
-            </button>
-          );
-        })}
-      </div>
+      {tabs.length > 0 && (
+        <div className="code-editor__tabs" role="tablist" aria-label="Source files">
+          {tabs.map((filename) => {
+            const { dotClass, dot } = getDotInfo(filename);
+            return (
+              <button
+                key={filename}
+                type="button"
+                role="tab"
+                aria-selected={activeTab === filename}
+                className={
+                  activeTab === filename ? 'code-editor__tab code-editor__tab--active' : 'code-editor__tab'
+                }
+                onClick={() => onTabChange(filename)}
+              >
+                <span className={`code-editor__tab-dot ${dotClass}`} aria-hidden>
+                  {dot}
+                </span>
+                {filename}
+              </button>
+            );
+          })}
+        </div>
+      )}
       <div className="code-editor__surface">
         <Editor
           height="100%"

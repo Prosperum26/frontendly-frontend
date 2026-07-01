@@ -25,10 +25,29 @@ export const editorService = {
       `/exercises/${exerciseId}`
     );
     const data = getResponseData(response.data);
+
     const targetDesigns: TargetDesign[] = data.target_design ? [data.target_design] : [];
 
     // Use starter_files from the new multi-file schema
     const starterFiles: EditorFile[] = data.starter_files || [];
+
+    // Fallback to deprecated fields if starter_files is empty
+    if (starterFiles.length === 0) {
+      const fallbackFiles: EditorFile[] = [];
+      if (data.html_content) {
+        fallbackFiles.push({ filename: 'index.html', language: 'html', content: data.html_content });
+      }
+      if (data.css_content) {
+        fallbackFiles.push({ filename: 'index.css', language: 'css', content: data.css_content });
+      }
+      if (data.js_content) {
+        fallbackFiles.push({ filename: 'index.js', language: 'js', content: data.js_content });
+      }
+      if (data.jsx_content) {
+        fallbackFiles.push({ filename: 'App.jsx', language: 'jsx', content: data.jsx_content });
+      }
+      starterFiles.push(...fallbackFiles);
+    }
 
     const editorFiles = starterFiles.map(f => f.filename);
 
