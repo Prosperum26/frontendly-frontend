@@ -10,8 +10,8 @@ export const ActivityFeed: React.FC<ActivityFeedProps> = ({ activities }) => {
     <div className="activity-feed">
       <h3>Recent Activity</h3>
       <ul>
-        {activities.map((activity) => (
-          <li key={activity.id}>
+        {activities.map((activity, index) => (
+          <li key={typeof activity.id === 'string' ? activity.id : `activity-${index}`}>
             <p>{activity.description}</p>
             <span>{new Date(activity.timestamp).toLocaleDateString()}</span>
           </li>

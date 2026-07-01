@@ -10,8 +10,8 @@ export const BadgeCollection: React.FC<BadgeCollectionProps> = ({ badges }) => {
     <div className="badge-collection">
       <h3>Badges</h3>
       <div className="badges-grid">
-        {badges.map((badge) => (
-          <div key={badge.id} className="badge-item">
+        {badges.map((badge, idx) => (
+          <div key={typeof badge.id === 'string' ? badge.id : `badge-${idx}`} className="badge-item">
             <div className="badge-icon">{badge.icon}</div>
             <p>{badge.name}</p>
           </div>

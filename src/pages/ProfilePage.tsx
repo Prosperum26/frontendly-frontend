@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/auth.store';
 import { profileService } from '../features/profile/services/profile.service';
 import { authService } from '../features/auth/services/auth.service';
-import type { UserProfile, Badge as BadgeType, ActivityLog } from '../features/profile/types/profile.types';
+import type { UserProfile, Badge as BadgeType, ActivityLog, LearningProgress } from '../features/profile/types/profile.types';
 import NetworkErrorCard from '../components/NetworkErrorCard';
 import { Share2, Flame, Star, Trophy, Zap, BookOpen, Target } from 'lucide-react';
 import { EditProfileForm } from '../features/profile/components/EditProfileForm';
@@ -19,6 +19,7 @@ export const ProfilePage: React.FC = () => {
   const [profileData, setProfileData] = useState<UserProfile | null>(null);
   const [badges, setBadges] = useState<BadgeType[]>([]);
   const [activities, setActivities] = useState<ActivityLog[]>([]);
+  const [learningProgress, setLearningProgress] = useState<LearningProgress | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isOffline, setIsOffline] = useState(!navigator.onLine);
   const [isEditing, setIsEditing] = useState(false);
@@ -43,14 +44,16 @@ export const ProfilePage: React.FC = () => {
       
       setIsLoading(true);
       try {
-        const [profile, badgeList, activityList] = await Promise.all([
+        const [profile, badgeList, activityList, progress] = await Promise.all([
           profileService.fetchProfile(),
           profileService.fetchBadges(),
           profileService.fetchActivity(),
+          profileService.fetchLearningProgress(),
         ]);
         setProfileData(profile);
         setBadges(Array.isArray(badgeList) ? badgeList : []);
         setActivities(Array.isArray(activityList) ? activityList : []);
+        setLearningProgress(progress);
       } catch (error) {
         console.error('Failed to fetch profile data:', error);
       } finally {
@@ -171,6 +174,49 @@ export const ProfilePage: React.FC = () => {
         </div>
 
         <ProgressTrack />
+
+        {/* Learning Progress */}
+        {learningProgress && (
+          <div className="bg-main-bg rounded-2xl border border-border p-6 shadow-sm dark:bg-surface dark:border-border">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center">
+                <Target className="w-5 h-5 text-primary" />
+              </div>
+              <div>
+                <h2 className="text-lg font-bold text-heading dark:text-heading">Learning Progress</h2>
+                <p className="text-sm text-muted dark:text-muted">Track your course completion</p>
+              </div>
+            </div>
+
+            <div className="bg-surface-raised rounded-xl p-5 border border-border dark:bg-slate-800 dark:border-slate-700">
+              <div className="flex justify-between items-end mb-3">
+                <div>
+                  <span className="text-xs font-bold text-primary uppercase tracking-wider block mb-1">
+                    Current Milestone
+                  </span>
+                  <span className="font-bold text-heading dark:text-slate-200">
+                    {learningProgress.currentMilestone || 'Starting your journey'}
+                  </span>
+                </div>
+                <span className="text-sm font-bold text-muted dark:text-muted">
+                  {learningProgress.completionPercentage || 0}%
+                </span>
+              </div>
+              
+              <div className="w-full bg-border/50 rounded-full h-2.5 mb-3 overflow-hidden dark:bg-slate-700">
+                <div
+                  className="bg-primary h-full rounded-full transition-all duration-500"
+                  style={{ width: `${learningProgress.completionPercentage || 0}%` }}
+                />
+              </div>
+              
+              <div className="flex justify-between text-xs text-muted dark:text-muted">
+                <span>{learningProgress.completedLessons || 0} lessons completed</span>
+                <span>{learningProgress.totalLessons || 0} total lessons</span>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* 2. Stats Row */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -306,8 +352,8 @@ export const ProfilePage: React.FC = () => {
             {activities.length === 0 ? (
               <p className="p-6 text-center text-muted text-sm italic dark:text-muted">No recent activities</p>
             ) : (
-              activities.map((activity) => (
-                <div key={activity.id} className="p-5 flex items-start gap-4 hover:bg-surface/50 transition-colors dark:hover:bg-slate-700/50">
+              activities.map((activity, index) => (
+                <div key={typeof activity.id === 'string' ? activity.id : `activity-${index}-${Date.now()}`} className="p-5 flex items-start gap-4 hover:bg-surface/50 transition-colors dark:hover:bg-slate-700/50">
                   <div className={`mt-1 p-2 rounded-lg ${
                     activity.type === 'lesson_completed' ? 'bg-green-50 dark:bg-green-950/30 text-green-600 dark:text-green-400' :
                     activity.type === 'challenge_won' ? 'bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400' :

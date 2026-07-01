@@ -8,11 +8,13 @@ import { ROUTES } from '../constants/routes';
 import type { User } from '../features/auth/types/auth.types';
 import { leaderboardService } from '../features/leaderboard/services/leaderboard.service';
 import { profileService } from '../features/profile/services/profile.service';
+import { challengeService } from '../features/challenge';
 import type {
   Badge as BadgeType,
   LearningProgress,
   UserProfile,
 } from '../features/profile/types/profile.types';
+import type { ChallengeExercise } from '../features/challenge';
 import { useAuthStore } from '../store/auth.store';
 import { HeroSection } from '../components/landing/HeroSection';
 import { CurriculumPreview } from '../components/landing/CurriculumPreview';
@@ -27,10 +29,12 @@ interface DashboardProps {
   badgesData: BadgeType[] | undefined;
   userRank: number | null | undefined;
   learningProgress: LearningProgress | undefined;
+  challenges: ChallengeExercise[] | undefined;
   profileLoading: boolean;
   badgesLoading: boolean;
   rankLoading: boolean;
   progressLoading: boolean;
+  challengesLoading: boolean;
   currentUser: User | null;
 }
 
@@ -41,6 +45,8 @@ const Dashboard: React.FC<DashboardProps> = ({
   userRank,
   progressLoading,
   currentUser,
+  challenges,
+  challengesLoading,
 }) => {
   const loading = profileLoading || progressLoading;
   const user = profileData || currentUser;
@@ -173,33 +179,65 @@ const Dashboard: React.FC<DashboardProps> = ({
           {/* Cột phải (Khám phá & Thử thách) - Chiếm 1/3 */}
           <div className="space-y-6 sm:space-y-8">
             
-            {/* Daily Quests */}
+            {/* Challenges */}
             <div className="bg-main-bg rounded-2xl border border-border p-6 shadow-sm">
                <div className="flex items-center gap-3 mb-5">
                 <div className="w-10 h-10 rounded-lg bg-green-50 flex items-center justify-center">
                   <Swords className="w-5 h-5 text-green-600" />
                 </div>
-                <h2 className="text-lg font-bold text-heading">Daily Quests</h2>
+                <h2 className="text-lg font-bold text-heading">Challenges</h2>
               </div>
               
-              <div className="space-y-3">
-                <div className="p-4 bg-surface-raised rounded-xl border border-border flex justify-between items-center gap-3">
-                  <div>
-                    <p className="text-sm font-bold text-heading mb-0.5">Complete 1 Lesson</p>
-                    <p className="text-xs text-green-600 font-bold">+50 XP</p>
-                  </div>
-                  <div className="w-6 h-6 rounded-full border-2 border-border" />
+              {challengesLoading ? (
+                <div className="space-y-3">
+                  {[1, 2].map((i) => (
+                    <div key={i} className="p-4 bg-surface-raised rounded-xl border border-border animate-pulse">
+                      <div className="h-4 bg-slate-200 rounded mb-2 w-3/4" />
+                      <div className="h-3 bg-slate-200 rounded w-1/2" />
+                    </div>
+                  ))}
                 </div>
-                <div className="p-4 bg-surface-raised rounded-xl border border-border flex justify-between items-center gap-3">
-                  <div>
-                    <p className="text-sm font-bold text-heading mb-0.5">Win a Code Battle</p>
-                    <p className="text-xs text-green-600 font-bold">+100 XP</p>
-                  </div>
-                  <div className="w-6 h-6 rounded-full border-2 border-border" />
+              ) : challenges && challenges.length > 0 ? (
+                <div className="space-y-3">
+                  {challenges.slice(0, 3).map((challenge) => (
+                    <Link
+                      key={challenge.id}
+                      to={`/workspace/${challenge.id}`}
+                      className="block p-4 bg-surface-raised rounded-xl border border-border hover:bg-slate-50 transition-colors"
+                    >
+                      <div className="flex justify-between items-start gap-3">
+                        <div className="flex-grow">
+                          <p className="text-sm font-bold text-heading mb-1">{challenge.title}</p>
+                          <p className="text-xs text-muted line-clamp-2">{challenge.description}</p>
+                          <div className="flex gap-2 mt-2">
+                            {challenge.tags?.slice(0, 2).map((tag) => (
+                              <span
+                                key={tag}
+                                className="text-xs bg-slate-100 dark:bg-slate-700 text-muted px-2 py-0.5 rounded"
+                              >
+                                {tag}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                        <span className={`text-xs font-bold px-2 py-1 rounded ${
+                          challenge.difficulty === 'easy' ? 'bg-green-100 text-green-700' :
+                          challenge.difficulty === 'medium' ? 'bg-yellow-100 text-yellow-700' :
+                          'bg-red-100 text-red-700'
+                        }`}>
+                          {challenge.difficulty}
+                        </span>
+                      </div>
+                    </Link>
+                  ))}
                 </div>
-              </div>
+              ) : (
+                <div className="text-center py-6 bg-surface-raised rounded-xl border border-border border-dashed">
+                  <p className="text-muted text-sm mb-4">No challenges available</p>
+                </div>
+              )}
               <Link to={ROUTES.CHALLENGE_LOBBY} className="block text-center text-sm font-semibold text-primary mt-4 hover:underline">
-                Enter Challenge Lobby
+                View All Challenges
               </Link>
             </div>
 
@@ -309,16 +347,24 @@ export const HomePage: React.FC = () => {
     enabled: isAuthenticated,
   });
 
+  const { data: challenges, isLoading: challengesLoading } = useQuery({
+    queryKey: ['challenges'],
+    queryFn: () => challengeService.getChallenges(),
+    enabled: isAuthenticated,
+  });
+
   return isAuthenticated && currentUser ? (
     <Dashboard
       profileData={profileData}
       badgesData={badgesData}
       userRank={userRank}
       learningProgress={learningProgress}
+      challenges={challenges}
       profileLoading={profileLoading}
       badgesLoading={badgesLoading}
       rankLoading={rankLoading}
       progressLoading={progressLoading}
+      challengesLoading={challengesLoading}
       currentUser={currentUser}
     />
   ) : (

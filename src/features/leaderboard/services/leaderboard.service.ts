@@ -29,8 +29,10 @@ export const leaderboardService = {
     }
   },
 
-  async fetchUserRank(userId: string): Promise<number> {
-    const response = await api.get<{ success: boolean; data: { rank: number } }>(`/leaderboard/${userId}/rank`);
+  async fetchUserRank(userId: string | Record<string, unknown>): Promise<number> {
+    // Handle case where userId might be an object
+    const userIdStr = typeof userId === 'string' ? userId : String(userId);
+    const response = await api.get<{ success: boolean; data: { rank: number } }>(`/leaderboard/${userIdStr}/rank`);
     return response.data.data.rank;
   },
 };
