@@ -80,7 +80,14 @@ function App() {
                 />
                 <Route path={ROUTES.LEARNING_PATH} element={<LearningPathPage />} />
                 <Route path={ROUTES.MILESTONE_DETAIL} element={<MilestoneDetailPage />} />
-                <Route path={ROUTES.CHALLENGE_LOBBY} element={<ChallengeLobbyPage />} />
+                <Route
+                  path={ROUTES.CHALLENGE_LOBBY}
+                  element={
+                    <ProtectedRoute>
+                      <ChallengeLobbyPage />
+                    </ProtectedRoute>
+                  }
+                />
                 <Route
                   path={ROUTES.PROFILE}
                   element={

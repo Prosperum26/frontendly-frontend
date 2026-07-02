@@ -32,7 +32,11 @@ export const useAuth = () => {
       }
       
       setAuth(true, updatedUser ?? null);
-      
+
+      // Clear guest progress - users start fresh after login
+      const { useGuestStore } = await import('../../../store/guest.store');
+      useGuestStore.getState().clearProgress();
+
       addToast('Login Successful', 'You have been successfully logged in.', 'success');
       
       // Show daily check-in toast if applicable

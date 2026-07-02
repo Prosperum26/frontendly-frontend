@@ -5,7 +5,7 @@ import api from '../services/api';
 const GUEST_THEORY_KEY = 'guest_viewed_theories';
 const GUEST_COMPLETED_KEY = 'guest_completed_lessons';
 const GUEST_STORAGE_TYPE_KEY = 'guest_storage_type';
-export const MAX_GUEST_LESSONS = 2;
+export const MAX_GUEST_LESSONS = 1; // Guest only allowed to try lesson s1
 
 function getStoredStorageType(): StorageType {
   try {
