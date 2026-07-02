@@ -4,6 +4,8 @@ import { Plus, Trash2, Clock, FileCode } from 'lucide-react';
 import { SandboxStorageService } from '../features/sandbox/services/sandboxStorage.service';
 import type { Sandbox } from '../features/sandbox/types/sandbox.types';
 import { Toast, type ToastType } from '../components/Toast';
+import { ROUTES } from '../constants/routes';
+import { useAuthStore } from '../store/auth.store';
 
 interface ToastState {
   id: number;
@@ -14,6 +16,7 @@ interface ToastState {
 
 export const SandboxListPage: React.FC = () => {
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuthStore();
   const [sandboxes, setSandboxes] = useState<Sandbox[]>([]);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [newSandboxName, setNewSandboxName] = useState('');
@@ -45,6 +48,11 @@ export const SandboxListPage: React.FC = () => {
   }, [toast]);
 
   const handleCreateSandbox = () => {
+    if (!isAuthenticated) {
+      navigate(ROUTES.LOGIN);
+      return;
+    }
+
     if (!newSandboxName.trim()) {
       showToast({
         type: 'error',
@@ -189,14 +197,14 @@ export const SandboxListPage: React.FC = () => {
 
       {showCreateModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl p-6 w-full max-w-md">
+          <div className="bg-main-bg dark:bg-surface rounded-2xl p-6 w-full max-w-md border border-border">
             <h2 className="text-xl font-bold text-heading mb-4">Create New Sandbox</h2>
             <input
               type="text"
               value={newSandboxName}
               onChange={(e) => setNewSandboxName(e.target.value)}
               placeholder="Enter sandbox name..."
-              className="w-full px-4 py-2.5 border border-border rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+              className="w-full px-4 py-2.5 border border-border rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent bg-surface dark:bg-surface-raised text-heading"
               autoFocus
               onKeyDown={(e) => {
                 if (e.key === 'Enter') handleCreateSandbox();
@@ -223,7 +231,7 @@ export const SandboxListPage: React.FC = () => {
 
       {showDeleteConfirm && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl p-6 w-full max-w-md">
+          <div className="bg-main-bg dark:bg-surface rounded-2xl p-6 w-full max-w-md border border-border">
             <h2 className="text-xl font-bold text-heading mb-2">Delete Sandbox?</h2>
             <p className="text-muted mb-6">
               Are you sure you want to delete this sandbox? This action cannot be undone.

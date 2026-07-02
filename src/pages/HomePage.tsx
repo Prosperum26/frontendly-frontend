@@ -55,10 +55,13 @@ const Dashboard: React.FC<DashboardProps> = ({
   const streakDays =
     profileData?.streakDays ?? profileData?.stats?.streakDays ?? currentUser?.stats?.streakDays ?? 0;
   const [recentSandboxes, setRecentSandboxes] = useState<Sandbox[]>([]);
+  const { isAuthenticated } = useAuthStore();
 
   useEffect(() => {
-    setRecentSandboxes(SandboxStorageService.getAllSandboxes().slice(0, 2));
-  }, []);
+    if (isAuthenticated) {
+      setRecentSandboxes(SandboxStorageService.getAllSandboxes().slice(0, 2));
+    }
+  }, [isAuthenticated]);
 
   if (loading) {
     return (
@@ -163,7 +166,10 @@ const Dashboard: React.FC<DashboardProps> = ({
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {/* Thẻ tạo mới */}
-                <Link to={ROUTES.SANDBOX_LIST} className="group flex flex-col items-center justify-center p-6 bg-surface-raised border border-border border-dashed rounded-xl hover:bg-slate-50 transition-colors">
+                <Link 
+                  to={isAuthenticated ? ROUTES.SANDBOX_LIST : ROUTES.LOGIN} 
+                  className="group flex flex-col items-center justify-center p-6 bg-surface-raised border border-border border-dashed rounded-xl hover:bg-slate-50 transition-colors"
+                >
                   <div className="w-8 h-8 rounded-full bg-white border border-border flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
                     <span className="text-slate-400 font-bold text-xl leading-none">+</span>
                   </div>
