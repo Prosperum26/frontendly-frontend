@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Plus, Trash2, Clock, FileCode } from 'lucide-react';
 import { SandboxStorageService } from '../features/sandbox/services/sandboxStorage.service';
@@ -22,17 +22,19 @@ export const SandboxListPage: React.FC = () => {
   const [newSandboxName, setNewSandboxName] = useState('');
   const [toast, setToast] = useState<ToastState | null>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
-
-  useEffect(() => {
-    loadSandboxes();
-  }, []);
+  const toastIdCounter = useRef(0);
 
   const loadSandboxes = () => {
     setSandboxes(SandboxStorageService.getAllSandboxes());
   };
 
+  useEffect(() => {
+    loadSandboxes();
+  }, []);
+
   const showToast = (nextToast: Omit<ToastState, 'id'>) => {
-    setToast({ ...nextToast, id: Date.now() });
+    toastIdCounter.current += 1;
+    setToast({ ...nextToast, id: toastIdCounter.current });
   };
 
   useEffect(() => {
@@ -88,17 +90,22 @@ export const SandboxListPage: React.FC = () => {
     });
   };
 
-  const formatTimeAgo = (timestamp: number) => {
-    const seconds = Math.floor((Date.now() - timestamp) / 1000);
-    
-    if (seconds < 60) return 'Just now';
-    if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`;
-    if (seconds < 86400) return `${Math.floor(seconds / 3600)}h ago`;
-    return `${Math.floor(seconds / 86400)}d ago`;
-  };
-
   const canCreateMore = SandboxStorageService.canCreateSandbox();
   const sandboxCount = SandboxStorageService.getSandboxCount();
+
+  // Calculate time ago for all sandboxes once to avoid impure function in render
+  const sandboxesWithTimeAgo = useMemo(() => {
+    return sandboxes.map(sandbox => ({
+      ...sandbox,
+      timeAgo: (() => {
+        const seconds = Math.floor((Date.now() - sandbox.updatedAt) / 1000);
+        if (seconds < 60) return 'Just now';
+        if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`;
+        if (seconds < 86400) return `${Math.floor(seconds / 3600)}h ago`;
+        return `${Math.floor(seconds / 86400)}d ago`;
+      })()
+    }));
+  }, [sandboxes]);
 
   return (
     <>
@@ -131,7 +138,7 @@ export const SandboxListPage: React.FC = () => {
             {sandboxCount}/5 sandboxes used
           </div>
 
-          {sandboxes.length === 0 ? (
+          {sandboxesWithTimeAgo.length === 0 ? (
             <div className="text-center py-16 bg-main-bg rounded-2xl border border-border border-dashed">
               <FileCode className="w-16 h-16 text-muted mx-auto mb-4" />
               <h3 className="text-xl font-bold text-heading mb-2">No sandboxes yet</h3>
@@ -146,7 +153,7 @@ export const SandboxListPage: React.FC = () => {
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {sandboxes.map((sandbox) => (
+              {sandboxesWithTimeAgo.map((sandbox) => (
                 <div
                   key={sandbox.id}
                   className="bg-main-bg rounded-2xl border border-border p-6 hover:border-primary/50 transition-colors cursor-pointer group"
@@ -159,7 +166,7 @@ export const SandboxListPage: React.FC = () => {
                       </h3>
                       <div className="flex items-center gap-2 text-xs text-muted">
                         <Clock className="w-3 h-3" />
-                        <span>Edited {formatTimeAgo(sandbox.updatedAt)}</span>
+                        <span>Edited {sandbox.timeAgo}</span>
                       </div>
                     </div>
                     <button

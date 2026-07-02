@@ -1,9 +1,19 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Play, Sparkles, Code2 } from 'lucide-react';
 import { ROUTES } from '../../constants/routes';
 
 export const HeroSection: React.FC = () => {
+  // Generate random positions once to avoid impure function in render
+  const symbolPositions = useMemo(() => {
+    return ['<', '>', '{', '}', '()', '[]', '//', '=>'].map((symbol, i) => ({
+      symbol,
+      left: Math.random() * 100,
+      top: Math.random() * 100,
+      animationDelay: i * 0.5,
+      animationDuration: 3 + Math.random() * 2
+    }));
+  }, []);
   return (
     <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden bg-gradient-to-br from-slate-50 via-cyan-50/50 to-blue-50/50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
       {/* Animated background elements */}
@@ -15,18 +25,18 @@ export const HeroSection: React.FC = () => {
 
       {/* Floating code symbols */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {['<', '>', '{', '}', '()', '[]', '//', '=>'].map((symbol, i) => (
+        {symbolPositions.map((pos, i) => (
           <div
             key={i}
             className="absolute text-cyan-300/30 dark:text-cyan-400/30 font-mono text-2xl animate-float"
             style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              animationDelay: `${i * 0.5}s`,
-              animationDuration: `${3 + Math.random() * 2}s`
+              left: `${pos.left}%`,
+              top: `${pos.top}%`,
+              animationDelay: `${pos.animationDelay}s`,
+              animationDuration: `${pos.animationDuration}s`
             }}
           >
-            {symbol}
+            {pos.symbol}
           </div>
         ))}
       </div>

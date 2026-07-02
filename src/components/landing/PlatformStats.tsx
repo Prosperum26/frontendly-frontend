@@ -1,12 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { curriculumData } from '../../data/curriculum-data';
 import { BookOpen, Code2, Award, Clock } from 'lucide-react';
 
 export const PlatformStats: React.FC = () => {
   const [animateStats, setAnimateStats] = useState(false);
+  const hasMounted = useRef(false);
 
   useEffect(() => {
-    setAnimateStats(true);
+    if (!hasMounted.current) {
+      setAnimateStats(true);
+      hasMounted.current = true;
+    }
   }, []);
 
   const stats = [

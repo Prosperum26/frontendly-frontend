@@ -441,7 +441,7 @@ export const ProfilePage: React.FC = () => {
             <div className="space-y-2">
               {activities.slice(0, 5).map((activity, index) => (
                 <div 
-                  key={typeof activity.id === 'string' ? activity.id : `activity-${index}-${Date.now()}`} 
+                  key={typeof activity.id === 'string' ? activity.id : `activity-${index}`} 
                   className="flex items-start gap-4 p-3 rounded-lg hover:bg-surface-raised dark:hover:bg-slate-800/50 transition-colors group"
                 >
                   <div className={`mt-0.5 p-2 rounded-lg ${

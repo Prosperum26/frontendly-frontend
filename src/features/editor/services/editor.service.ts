@@ -46,7 +46,7 @@ export const editorService = {
       if (data.jsx_content) {
         fallbackFiles.push({ filename: 'App.jsx', language: 'jsx', content: data.jsx_content });
       }
-      starterFiles.push(...fallbackFiles);
+      starterFiles = [...starterFiles, ...fallbackFiles];
     }
 
     // For exercises with JSX but no HTML/CSS, add default HTML/CSS for live preview
@@ -55,19 +55,25 @@ export const editorService = {
     const hasCss = starterFiles.some(f => f.language === 'css');
     
     if (hasJsx && !hasHtml) {
-      starterFiles.unshift({ 
+      starterFiles = [{ 
         filename: 'index.html', 
         language: 'html', 
         content: '<!DOCTYPE html>\n<html lang="en">\n<head>\n  <meta charset="UTF-8">\n  <title>Document</title>\n</head>\n<body>\n  <div id="root"></div>\n</body>\n</html>' 
-      });
+      }, ...starterFiles];
     }
     
     if (hasJsx && !hasCss) {
-      starterFiles.splice(1, 0, { 
+      const cssFile: EditorFile = { 
         filename: 'index.css', 
         language: 'css', 
         content: 'body { margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; background: radial-gradient(circle at top, #1e293b, #0f172a); font-family: \'Segoe UI\', Roboto, Helvetica, Arial, sans-serif; }\n.root-card { background: rgba(255, 255, 255, 0.03); padding: 50px 70px; border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.1); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6); backdrop-filter: blur(10px); text-align: center; }\nh1 { color: #61dafb; font-size: 38px; margin: 0 0 16px 0; font-weight: 700; letter-spacing: -0.5px; text-shadow: 0 0 20px rgba(97, 218, 251, 0.3); }\np { color: #94a3b8; font-size: 20px; margin: 0; font-weight: 500; }' 
-      });
+      };
+      const htmlIndex = starterFiles.findIndex(f => f.filename === 'index.html');
+      if (htmlIndex >= 0) {
+        starterFiles = [...starterFiles.slice(0, htmlIndex + 1), cssFile, ...starterFiles.slice(htmlIndex + 1)];
+      } else {
+        starterFiles = [cssFile, ...starterFiles];
+      }
     }
 
     const editorFiles = starterFiles.map(f => f.filename);

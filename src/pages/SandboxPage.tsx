@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Play, RotateCcw, Trash2, Save } from 'lucide-react';
 import { SandboxPanels } from '../features/sandbox/components/SandboxPanels';
@@ -29,6 +29,7 @@ export const SandboxPage: React.FC = () => {
   const [isSaving, setIsSaving] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const debouncedFiles = useDebounce(files, 500);
+  const hasLoadedSandbox = useRef(false);
 
   useEffect(() => {
     if (!sandboxId) {
@@ -42,9 +43,13 @@ export const SandboxPage: React.FC = () => {
       return;
     }
 
-    setSandbox(loadedSandbox);
-    setFiles(loadedSandbox.files);
-    setActiveFile(loadedSandbox.files[0]?.name || 'index.html');
+    // Only set state if sandboxId changed or first load
+    if (!hasLoadedSandbox.current) {
+      setSandbox(loadedSandbox);
+      setFiles(loadedSandbox.files);
+      setActiveFile(loadedSandbox.files[0]?.name || 'index.html');
+      hasLoadedSandbox.current = true;
+    }
   }, [sandboxId, navigate]);
 
   // Auto-save debounced files

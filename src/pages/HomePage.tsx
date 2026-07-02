@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Trophy, Play, Terminal, Swords, Flame, ArrowRight } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
@@ -56,12 +56,22 @@ const Dashboard: React.FC<DashboardProps> = ({
     profileData?.streakDays ?? profileData?.stats?.streakDays ?? currentUser?.stats?.streakDays ?? 0;
   const [recentSandboxes, setRecentSandboxes] = useState<Sandbox[]>([]);
   const { isAuthenticated } = useAuthStore();
+  const hasLoadedSandboxes = useRef(false);
 
   useEffect(() => {
-    if (isAuthenticated) {
+    if (isAuthenticated && !hasLoadedSandboxes.current) {
       setRecentSandboxes(SandboxStorageService.getAllSandboxes().slice(0, 2));
+      hasLoadedSandboxes.current = true;
     }
   }, [isAuthenticated]);
+
+  // Calculate time ago once to avoid impure function in render
+  const sandboxTimeAgo = useMemo(() => {
+    return recentSandboxes.map(sandbox => ({
+      ...sandbox,
+      timeAgo: Math.floor((Date.now() - sandbox.updatedAt) / 3600000)
+    }));
+  }, [recentSandboxes]);
 
   if (loading) {
     return (
@@ -176,13 +186,13 @@ const Dashboard: React.FC<DashboardProps> = ({
                   <span className="text-sm font-semibold text-heading">New Sandbox</span>
                 </Link>
                 {/* Sandbox gần đây */}
-                {recentSandboxes.length > 0 ? (
-                  recentSandboxes.map((sandbox) => (
+                {sandboxTimeAgo.length > 0 ? (
+                  sandboxTimeAgo.map((sandbox) => (
                     <div key={sandbox.id} className="p-5 bg-surface-raised border border-border rounded-xl flex flex-col justify-between">
                       <div>
                         <h3 className="font-semibold text-heading text-sm mb-1">{sandbox.name}</h3>
                         <p className="text-xs text-muted">
-                          Edited {Math.floor((Date.now() - sandbox.updatedAt) / 3600000)}h ago
+                          Edited {sandbox.timeAgo}h ago
                         </p>
                       </div>
                       <Link to={`/sandbox/${sandbox.id}`} className="text-primary text-xs font-bold mt-4 hover:underline flex items-center gap-1">
