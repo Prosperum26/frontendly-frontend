@@ -49,23 +49,6 @@ export const editorService = {
       starterFiles.push(...fallbackFiles);
     }
 
-    // If code_test exists and has HTML/CSS, add them to starterFiles for live preview
-    if (data.code_test) {
-      const codeTestFiles: EditorFile[] = [];
-      if (data.code_test.html) {
-        codeTestFiles.push({ filename: 'index.html', language: 'html', content: data.code_test.html });
-      }
-      if (data.code_test.css) {
-        codeTestFiles.push({ filename: 'index.css', language: 'css', content: data.code_test.css });
-      }
-      if (codeTestFiles.length > 0) {
-        // Add codeTest files at the beginning, but don't duplicate existing files
-        const existingFilenames = new Set(starterFiles.map(f => f.filename));
-        const uniqueCodeTestFiles = codeTestFiles.filter(f => !existingFilenames.has(f.filename));
-        starterFiles = [...uniqueCodeTestFiles, ...starterFiles];
-      }
-    }
-
     // For exercises with JSX but no HTML/CSS, add default HTML/CSS for live preview
     const hasJsx = starterFiles.some(f => f.language === 'jsx');
     const hasHtml = starterFiles.some(f => f.language === 'html');
