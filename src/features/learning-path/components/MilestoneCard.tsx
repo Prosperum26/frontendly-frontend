@@ -229,7 +229,7 @@ export const MilestoneCard: React.FC<MilestoneCardProps> = ({ milestone }) => {
           return (
             <motion.div
               key={lesson.id}
-              className={`lesson-card ${isLessonActive ? "is-active" : ""} ${lesson.completed ? "is-completed" : ""} ${isLessonLocked ? "is-locked-stage" : ""}`}
+              className={`lesson-card ${isLessonActive ? "is-active" : ""} ${lesson.completed && isAutoPassed ? "is-completed-auto" : lesson.completed ? "is-completed-manual" : ""} ${isLessonLocked ? "is-locked-stage" : ""}`}
               whileHover={!isLessonLocked ? { scale: 1.03, y: -2 } : {}}
               transition={{ duration: 0.2 }}
               onClick={(e) => handleLessonClick(e, lesson.id, isLessonLocked)}
@@ -260,7 +260,7 @@ export const MilestoneCard: React.FC<MilestoneCardProps> = ({ milestone }) => {
                 {index + 1}. {lesson.title}
               </div>
               {isAutoPassed && (
-                <div className="lesson-revisit-hint">
+                <div className="lesson-revisit-hint hint-auto-passed">
                   <CheckCircle2 size={10} /> Mastered
                 </div>
               )}

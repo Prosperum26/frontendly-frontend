@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Share2, Bookmark, Clock, Star, Play, X } from "lucide-react";
+import { Clock, Star, Play, X } from "lucide-react";
 import "./VideoModule.css";
 
 interface VideoModuleProps {
@@ -81,14 +81,7 @@ export const VideoModule: React.FC<VideoModuleProps> = ({
           </div>
 
           <div className="vm-footer">
-            <div className="vm-actions-left">
-              <button className="vm-action-btn">
-                <Share2 size={16} /> Share Path
-              </button>
-              <button className="vm-action-btn">
-                <Bookmark size={16} /> Save for Later
-              </button>
-            </div>
+            <div className="vm-actions-left"></div>
             <button className="vm-close-btn" onClick={handleCloseModal}>
               Close
             </button>

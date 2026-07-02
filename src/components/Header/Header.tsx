@@ -36,6 +36,7 @@ export const Header: React.FC = () => {
   const navLinks = [
     { name: 'Home', path: ROUTES.HOME },
     { name: 'Learn', path: ROUTES.LEARNING_PATH },
+    { name: 'Sandbox', path: ROUTES.SANDBOX_LIST },
     { name: 'Challenge', path: ROUTES.CHALLENGE_LOBBY },
     { name: 'Leaderboard', path: ROUTES.LEADERBOARD },
   ];

@@ -17,8 +17,17 @@ export const ROUTES = {
   RESET_PASSWORD: '/reset-password',
   BANNED: '/banned',
   NOT_FOUND: '/404',
+  CONTACT: '/contact',
+  PRIVACY: '/privacy',
+  TERMS: '/terms',
+  SANDBOX_LIST: '/sandbox',
+  SANDBOX: '/sandbox/:sandboxId',
 } as const;
 
 export function workspacePath(exerciseId: string): string {
   return `/workspace/${exerciseId}`;
+}
+
+export function sandboxPath(sandboxId: string): string {
+  return `/sandbox/${sandboxId}`;
 }

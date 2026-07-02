@@ -53,7 +53,6 @@ export const TheoryPage: React.FC = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [lessonId]);
 
-
   useEffect(() => {
     const fetchTheory = async () => {
       if (!stageId) return;
@@ -65,9 +64,7 @@ export const TheoryPage: React.FC = () => {
       } catch (err: unknown) {
         console.error("Error fetching stage theory:", err);
         const message =
-          err instanceof Error
-            ? err.message
-            : "Failed to load theory content.";
+          err instanceof Error ? err.message : "Failed to load theory content.";
         setError(message);
         setTheoryData(null);
       } finally {
@@ -332,10 +329,10 @@ export const TheoryPage: React.FC = () => {
                         color: "#78350f",
                         margin: 0,
                         fontSize: "13px",
+                        textAlign: "justify",
                       }}
-                    >
-                      {theoryData.proTips}
-                    </p>
+                      dangerouslySetInnerHTML={{ __html: theoryData.proTips }}
+                    />
                   </div>
                 )}
 
@@ -356,7 +353,7 @@ export const TheoryPage: React.FC = () => {
                           marginBottom: "12px",
                         }}
                       >
-                        Reference Links
+                        Support Pages
                       </h3>
                       <ul
                         style={{
@@ -415,9 +412,7 @@ export const TheoryPage: React.FC = () => {
           disabled={isUnlocking}
           style={{ opacity: isUnlocking ? 0.6 : 1 }}
         >
-          <span>
-            {isUnlocking ? "Unlocking..." : "CONTINUE TO PRACTICE"}
-          </span>
+          <span>{isUnlocking ? "Unlocking..." : "CONTINUE TO PRACTICE"}</span>
           <ArrowLeft size={16} className="tp-arrow-right-icon" />
         </button>
         {unlockMessage && (

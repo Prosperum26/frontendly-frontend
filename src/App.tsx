@@ -5,6 +5,9 @@ import { ToastContainer, ToastProvider } from './components/Toast';
 import { ProtectedRoute } from './components/ProtectedRoute/ProtectedRoute';
 import { ROUTES, workspacePath } from './constants/routes';
 import { useSessionVerification } from './features/auth/hooks/useSessionVerification';
+import ContactPage from './pages/ContactPage';
+import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
+import TermsPage from './pages/TermsPage';
 import {
   LessonComplete,
   MilestoneCompletePage,
@@ -26,6 +29,8 @@ import NotFoundPage from './pages/NotFoundPage';
 import ProfilePage from './pages/ProfilePage';
 import RegisterPage from './pages/RegisterPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
+import SandboxListPage from './pages/SandboxListPage';
+import SandboxPage from './pages/SandboxPage';
 import WorkspacePage from './pages/WorkspacePage';
 
 const queryClient = new QueryClient({
@@ -58,14 +63,31 @@ function App() {
                 <Route path={ROUTES.REGISTER} element={<RegisterPage />} />
                 <Route path={ROUTES.FORGOT_PASSWORD} element={<ForgotPasswordPage />} />
                 <Route path={ROUTES.RESET_PASSWORD} element={<ResetPasswordPage />} />
+                <Route path={ROUTES.CONTACT} element={<ContactPage />} />
+                <Route path={ROUTES.PRIVACY} element={<PrivacyPolicyPage />} />
+                <Route path={ROUTES.TERMS} element={<TermsPage />} />
               </Route>
 
               <Route element={<MainLayout />}>
                 <Route path={ROUTES.HOME} element={<HomePage />} />
-                <Route path={ROUTES.ENTRANCE_TEST} element={<EntranceTestPage />} />
+                <Route
+                  path={ROUTES.ENTRANCE_TEST}
+                  element={
+                    <ProtectedRoute>
+                      <EntranceTestPage />
+                    </ProtectedRoute>
+                  }
+                />
                 <Route path={ROUTES.LEARNING_PATH} element={<LearningPathPage />} />
                 <Route path={ROUTES.MILESTONE_DETAIL} element={<MilestoneDetailPage />} />
-                <Route path={ROUTES.CHALLENGE_LOBBY} element={<ChallengeLobbyPage />} />
+                <Route
+                  path={ROUTES.CHALLENGE_LOBBY}
+                  element={
+                    <ProtectedRoute>
+                      <ChallengeLobbyPage />
+                    </ProtectedRoute>
+                  }
+                />
                 <Route
                   path={ROUTES.PROFILE}
                   element={
@@ -75,6 +97,14 @@ function App() {
                   }
                 />
                 <Route path={ROUTES.LEADERBOARD} element={<LeaderboardPage />} />
+                <Route
+                  path={ROUTES.SANDBOX_LIST}
+                  element={
+                    <ProtectedRoute>
+                      <SandboxListPage />
+                    </ProtectedRoute>
+                  }
+                />
               </Route>
 
               <Route path={ROUTES.LESSON_THEORY} element={<TheoryPage />} />
@@ -87,6 +117,14 @@ function App() {
                   element={
                     <ProtectedRoute allowGuest>
                       <WorkspacePage />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path={ROUTES.SANDBOX}
+                  element={
+                    <ProtectedRoute>
+                      <SandboxPage />
                     </ProtectedRoute>
                   }
                 />

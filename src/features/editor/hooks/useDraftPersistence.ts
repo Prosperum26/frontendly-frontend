@@ -1,14 +1,14 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import type { WorkspaceFiles } from '../types/editor.types';
+import type { EditorFile } from '../types/editor.types';
 
 export interface WorkspaceDraft {
-  version: 1;
+  version: 2;
   exerciseId: string;
-  files: WorkspaceFiles;
+  files: EditorFile[];
   updatedAt: number;
 }
 
-const DRAFT_VERSION = 1;
+const DRAFT_VERSION = 2;
 const SAVE_DELAY_MS = 1000;
 
 function getDraftKey(exerciseId: string): string {
@@ -24,11 +24,19 @@ function safeReadDraft(exerciseId: string): WorkspaceDraft | null {
     if (
       draft.version !== DRAFT_VERSION ||
       draft.exerciseId !== exerciseId ||
-      typeof draft.files?.html !== 'string' ||
-      typeof draft.files?.css !== 'string' ||
-      typeof draft.files?.js !== 'string' ||
-      (draft.files.jsx !== undefined && typeof draft.files.jsx !== 'string')
+      !Array.isArray(draft.files)
     ) {
+      return null;
+    }
+
+    // Validate each file in the array
+    const validFiles = draft.files.every(file => 
+      typeof file.filename === 'string' &&
+      typeof file.language === 'string' &&
+      typeof file.content === 'string'
+    );
+
+    if (!validFiles) {
       return null;
     }
 
@@ -38,7 +46,7 @@ function safeReadDraft(exerciseId: string): WorkspaceDraft | null {
   }
 }
 
-function safeWriteDraft(exerciseId: string, files: WorkspaceFiles): void {
+function safeWriteDraft(exerciseId: string, files: EditorFile[]): void {
   try {
     const draft: WorkspaceDraft = {
       version: DRAFT_VERSION,
@@ -63,7 +71,7 @@ function safeClearDraft(exerciseId: string): void {
 
 export function useDraftPersistence(
   exerciseId: string,
-  files: WorkspaceFiles,
+  files: EditorFile[],
   options: { enabled?: boolean; isDirty?: boolean } = {}
 ) {
   const { enabled = true, isDirty = false } = options;

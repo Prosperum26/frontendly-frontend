@@ -12,10 +12,11 @@ export { buildPreviewDocument } from './utils/previewDocument';
 export type {
   EditorState,
   EditorTab,
+  EditorLanguage,
+  EditorFile,
   EvaluationResult,
   ExerciseDefinition,
   ExerciseRequirement,
-  TestCase,
   WorkspaceEditorState,
   WorkspaceFiles,
 } from './types/editor.types';

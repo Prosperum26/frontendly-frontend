@@ -1,13 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { Flame, Trophy, Star } from "lucide-react";
+import { Flame, Trophy, Star, User } from "lucide-react";
 import api from "../../../services/api";
 import "./SideBar.css";
 import { useAuthStore } from "../../../store/auth.store";
 import { Badge as BadgeComponent } from "../../profile/components/Badge";
 import type { Badge as ProfileBadge } from "../../profile/types/profile.types";
-
-const DEFAULT_AVATAR =
-  "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80";
 
 import type { UserData, ProgressResponse } from "../types/apiResponses";
 
@@ -48,8 +45,12 @@ export const SideBar: React.FC<SideBarProps> = ({ className = "" }) => {
       try {
         const [userRes, progressRes, badgesRes] = await Promise.all([
           api.get<{ success: boolean; data: MeApiData }>("/users/me"),
-          api.get<{ success: boolean; data: ProgressResponse }>("/users/progress"),
-          api.get<{ success: boolean; data: ProfileBadge[] | BadgesApiData }>("/users/badges"),
+          api.get<{ success: boolean; data: ProgressResponse }>(
+            "/users/progress",
+          ),
+          api.get<{ success: boolean; data: ProfileBadge[] | BadgesApiData }>(
+            "/users/badges",
+          ),
         ]);
 
         const rawUser = userRes?.data?.data ?? {};
@@ -59,10 +60,11 @@ export const SideBar: React.FC<SideBarProps> = ({ className = "" }) => {
           avatarUrl: rawUser.avatarUrl || "",
           totalXp: rawUser.xp ?? 0,
           currentLevel: rawUser.level ?? 1,
-          userTitle: rawUser.role === "user" ? "Frontend Student" : "Frontend Master",
+          userTitle:
+            rawUser.role === "user" ? "Frontend Student" : "Frontend Master",
         });
 
-        const pData = progressRes?.data?.data ?? {} as ProgressResponse;
+        const pData = progressRes?.data?.data ?? ({} as ProgressResponse);
         setProgressData(pData);
 
         const badgesRaw = badgesRes?.data?.data;
@@ -108,7 +110,6 @@ export const SideBar: React.FC<SideBarProps> = ({ className = "" }) => {
 
   const displayName = userData?.name;
   const userTitle = userData?.userTitle;
-  const avatarUrl = userData?.avatarUrl || DEFAULT_AVATAR;
 
   const currentXp = progressData?.xp ?? 0;
   const maxXp = progressData?.xpToNextLevel ?? 0;
@@ -150,7 +151,7 @@ export const SideBar: React.FC<SideBarProps> = ({ className = "" }) => {
                 lineHeight: 1.6,
               }}
             >
-              Đăng nhập để xem tiến trình học tập của bạn
+              Please log in to view your learning progress.
             </div>
           ) : error ? (
             <div
@@ -166,7 +167,18 @@ export const SideBar: React.FC<SideBarProps> = ({ className = "" }) => {
             <>
               <div className="profile-info">
                 <div className="avatar-wrapper">
-                  <img src={avatarUrl} alt={displayName} className="avatar" />
+                  {userData?.avatarUrl ? (
+                    <img
+                      src={userData.avatarUrl}
+                      alt={displayName}
+                      className="avatar"
+                    />
+                  ) : (
+                    <div className="avatar avatar-fallback">
+                      <User size={32} />
+                    </div>
+                  )}
+
                   <div className="level-badge">
                     <Star size={10} fill="white" stroke="white" />
                   </div>
@@ -214,8 +226,12 @@ export const SideBar: React.FC<SideBarProps> = ({ className = "" }) => {
                 <span className="stat-label">Badges Earned</span>
                 <div className="badges-list flex flex-wrap gap-2">
                   {badgesData.map((badge, idx) => (
-            <BadgeComponent key={`badge-${String(badge.id || idx)}`} badge={badge} size="sm" />
-          ))}
+                    <BadgeComponent
+                      key={`badge-${String(badge.id || idx)}`}
+                      badge={badge}
+                      size="sm"
+                    />
+                  ))}
                 </div>
               </div>
             </>

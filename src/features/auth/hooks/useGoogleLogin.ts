@@ -6,7 +6,6 @@ import { useAuthStore } from '../../../store/auth.store';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../../../constants/routes';
 import { useToast } from '../../../components/Toast';
-import { syncGuestProgress } from '../../../store/guest.store';
 
 export const useGoogleLogin = () => {
   const { setAuth, logout, isAuthenticated } = useAuthStore();
@@ -42,12 +41,9 @@ export const useGoogleLogin = () => {
       
       setAuth(true, updatedUser ?? null);
 
-      // Sync guest progress
-      try {
-        await syncGuestProgress();
-      } catch (syncErr) {
-        console.error('Error syncing guest progress on Google login:', syncErr);
-      }
+      // Clear guest progress - users start fresh after login
+      const { useGuestStore } = await import('../../../store/guest.store');
+      useGuestStore.getState().clearProgress();
 
       addToast('Login Successful', 'You have been successfully logged in.', 'success');
       

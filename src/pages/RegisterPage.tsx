@@ -5,6 +5,8 @@ import { authService } from '../features/auth/services/auth.service';
 import NetworkErrorCard from '../components/NetworkErrorCard';
 import { GoogleButton } from '../features/auth/components/GoogleButton';
 import Header from '../components/Header/Header';
+import { EntranceTestChoiceModal } from '../components/EntranceTestChoiceModal/EntranceTestChoiceModal';
+import { ROUTES } from '../constants/routes';
 
 export const RegisterPage: React.FC = () => {
   const [name, setName] = useState('');
@@ -14,7 +16,9 @@ export const RegisterPage: React.FC = () => {
   const [agreeTerms, setAgreeTerms] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [isPasswordFocused, setIsPasswordFocused] = useState(false);
+  const [isPasswordBlurred, setIsPasswordBlurred] = useState(false);
+  const [isEmailBlurred, setIsEmailBlurred] = useState(false);
+  const [isConfirmPasswordBlurred, setIsConfirmPasswordBlurred] = useState(false);
   const [showCaptcha, setShowCaptcha] = useState(false);
   const [isVerified, setIsVerified] = useState(false);
   const [backendError, setBackendError] = useState(false);
@@ -22,6 +26,7 @@ export const RegisterPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [progress, setProgress] = useState(0);
   const [isProgressComplete, setIsProgressComplete] = useState(false);
+  const [showChoiceModal, setShowChoiceModal] = useState(false);
   const [isOffline, setIsOffline] = useState(!navigator.onLine);
   const navigate = useNavigate();
 
@@ -48,14 +53,14 @@ export const RegisterPage: React.FC = () => {
           clearInterval(interval);
           setIsProgressComplete(true);
           setTimeout(() => {
-            navigate('/login');
+            setShowChoiceModal(true);
           }, 1500);
         }
         setProgress(currentProgress);
       }, 40);
       return () => clearInterval(interval);
     }
-  }, [isVerified, navigate]);
+  }, [isVerified]);
 
   const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   const isLengthValid = password.length >= 8 && password.length <= 32;
@@ -92,6 +97,7 @@ export const RegisterPage: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-main-bg font-sans relative">
+      <EntranceTestChoiceModal isOpen={showChoiceModal} onClose={() => setShowChoiceModal(false)} />
       <Header />
 
       <main className="flex-grow flex flex-col items-center justify-center p-6 my-8">
@@ -137,12 +143,10 @@ export const RegisterPage: React.FC = () => {
                       required
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
+                      onBlur={() => setIsEmailBlurred(true)}
                       placeholder="john@example.com"
                       className={`w-full px-4 py-2.5 border rounded-lg text-sm bg-surface/50 focus:outline-none focus:border-blue-500 focus:bg-main-bg ${email && !isEmailValid ? 'border-red-400 text-red-500 bg-red-50/20' : 'border-border'}`}
                     />
-                    {email && !isEmailValid && (
-                      <p className="text-xs text-red-500 mt-1.5">Invalid email format</p>
-                    )}
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -154,8 +158,7 @@ export const RegisterPage: React.FC = () => {
                           required
                           value={password}
                           onChange={(e) => setPassword(e.target.value)}
-                          onFocus={() => setIsPasswordFocused(true)}
-                          onBlur={() => setIsPasswordFocused(false)}
+                          onBlur={() => setIsPasswordBlurred(true)}
                           placeholder="••••••••"
                           className={`w-full pl-4 pr-10 py-2.5 border rounded-lg text-sm bg-surface/50 focus:outline-none focus:border-blue-500 focus:bg-main-bg ${password && !isPasswordValid ? 'border-red-400 text-red-500 bg-red-50/20' : 'border-border'}`}
                         />
@@ -176,9 +179,6 @@ export const RegisterPage: React.FC = () => {
                           )}
                         </button>
                       </div>
-                      {password && !isPasswordValid && (
-                        <p className="text-xs text-red-500 mt-1.5">Invalid password</p>
-                      )}
                     </div>
 
                     <div>
@@ -189,6 +189,7 @@ export const RegisterPage: React.FC = () => {
                           required
                           value={confirmPassword}
                           onChange={(e) => setConfirmPassword(e.target.value)}
+                          onBlur={() => setIsConfirmPasswordBlurred(true)}
                           placeholder="••••••••"
                           className={`w-full pl-4 pr-10 py-2.5 border rounded-lg text-sm bg-surface/50 focus:outline-none focus:border-blue-500 focus:bg-main-bg ${confirmPassword && password !== confirmPassword ? 'border-red-400 text-red-500 bg-red-50/20' : 'border-border'}`}
                         />
@@ -209,9 +210,6 @@ export const RegisterPage: React.FC = () => {
                           )}
                         </button>
                       </div>
-                      {confirmPassword && password !== confirmPassword && (
-                        <p className="text-xs text-red-500 mt-1.5">Passwords do not match</p>
-                      )}
                     </div>
                   </div>
 
@@ -225,7 +223,7 @@ export const RegisterPage: React.FC = () => {
                       className="mt-1 h-4 w-4 text-blue-600 border-slate-300 rounded focus:ring-blue-500"
                     />
                     <label htmlFor="terms" className="ml-2 block text-xs text-muted leading-normal font-medium">
-                      I agree to the <a href="#" className="text-blue-600 font-bold hover:underline">Terms of Service</a> and <a href="#" className="text-blue-600 font-bold hover:underline">Privacy Policy</a> of FrontEndly.
+                      I agree to the <Link to={ROUTES.TERMS} className="text-blue-600 font-bold hover:underline">Terms of Service</Link> and <Link to={ROUTES.PRIVACY} className="text-blue-600 font-bold hover:underline">Privacy Policy</Link> of FrontEndly.
                     </label>
                   </div>
 
@@ -249,39 +247,54 @@ export const RegisterPage: React.FC = () => {
                 </div>
               </div>
 
-              {(isPasswordFocused || password) && (
-                <div className="w-full md:w-[280px] bg-red-50/60 border border-red-200 rounded-xl p-5 md:absolute md:-right-[300px] md:top-[180px] transition-all duration-200 shadow-lg shadow-red-100/50">
-                  <h3 className="text-xs font-bold !text-heading uppercase tracking-wider mb-4">YÊU CẦU MẬT KHẨU:</h3>
-                  <ul className="space-y-2.5 text-xs font-semibold">
-                    <li className={`flex items-center gap-2.5 ${isLengthValid ? 'text-emerald-600' : 'text-rose-500'}`}>
-                      <span className="text-sm">{isLengthValid ? '●' : '○'}</span> 8 to 32 characters
+              {/* Password Requirements Popup */}
+              {isPasswordBlurred && password && !isPasswordValid && (
+                <div className="fixed top-20 right-4 z-50 bg-main-bg border border-border rounded-lg p-4 shadow-lg max-w-xs dark:bg-surface dark:border-border">
+                  <h3 className="text-xs font-bold uppercase tracking-wider mb-3 text-heading dark:text-heading">Password Requirements:</h3>
+                  <ul className="space-y-2 text-xs">
+                    <li className={`flex items-center gap-2 ${isLengthValid ? 'text-green-600 dark:text-green-400' : 'text-red-500 dark:text-red-400'}`}>
+                      <span className="text-sm">{isLengthValid ? '✓' : '✗'}</span> 8 to 32 characters
                     </li>
-                    <li className={`flex items-center gap-2.5 ${hasUppercase ? 'text-emerald-600' : 'text-rose-500'}`}>
-                      <span className="text-sm">{hasUppercase ? '●' : '○'}</span> At least one uppercase letter
+                    <li className={`flex items-center gap-2 ${hasUppercase ? 'text-green-600 dark:text-green-400' : 'text-red-500 dark:text-red-400'}`}>
+                      <span className="text-sm">{hasUppercase ? '✓' : '✗'}</span> At least one uppercase letter
                     </li>
-                    <li className={`flex items-center gap-2.5 ${hasLowercase ? 'text-emerald-600' : 'text-rose-500'}`}>
-                      <span className="text-sm">{hasLowercase ? '●' : '○'}</span> At least one lowercase letter
+                    <li className={`flex items-center gap-2 ${hasLowercase ? 'text-green-600 dark:text-green-400' : 'text-red-500 dark:text-red-400'}`}>
+                      <span className="text-sm">{hasLowercase ? '✓' : '✗'}</span> At least one lowercase letter
                     </li>
-                    <li className={`flex items-center gap-2.5 ${hasNumber ? 'text-emerald-600' : 'text-rose-500'}`}>
-                      <span className="text-sm">{hasNumber ? '●' : '○'}</span> At least one number
+                    <li className={`flex items-center gap-2 ${hasNumber ? 'text-green-600 dark:text-green-400' : 'text-red-500 dark:text-red-400'}`}>
+                      <span className="text-sm">{hasNumber ? '✓' : '✗'}</span> At least one number
                     </li>
                   </ul>
+                </div>
+              )}
+
+              {/* Email Validation Popup */}
+              {isEmailBlurred && email && !isEmailValid && (
+                <div className="fixed top-20 right-4 z-50 bg-main-bg border border-border rounded-lg p-4 shadow-lg max-w-xs dark:bg-surface dark:border-border">
+                  <p className="text-xs text-red-500 dark:text-red-400">Invalid email format</p>
+                </div>
+              )}
+
+              {/* Confirm Password Mismatch Popup */}
+              {isConfirmPasswordBlurred && confirmPassword && password !== confirmPassword && (
+                <div className="fixed top-20 right-4 z-50 bg-main-bg border border-border rounded-lg p-4 shadow-lg max-w-xs dark:bg-surface dark:border-border">
+                  <p className="text-xs text-red-500 dark:text-red-400">Passwords do not match</p>
                 </div>
               )}
             </div>
           </>
         ) : backendError ? (
           <div className="w-full flex flex-col items-center justify-center animate-in fade-in duration-200">
-            <div className="w-full max-w-md bg-main-bg rounded-xl shadow-lg border border-border p-8 md:p-10 text-center">
-              <div className="mx-auto w-16 h-16 bg-red-100 rounded-2xl flex items-center justify-center text-red-600 mb-6">
+            <div className="w-full max-w-md bg-main-bg rounded-xl shadow-lg border border-border p-8 md:p-10 text-center dark:bg-surface dark:border-border">
+              <div className="mx-auto w-16 h-16 bg-red-100 rounded-2xl flex items-center justify-center text-red-600 mb-6 dark:bg-red-900/30 dark:text-red-400">
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                   <circle cx="12" cy="12" r="10" />
                   <line x1="12" y1="8" x2="12" y2="12" />
                   <line x1="12" y1="16" x2="12.01" y2="16" />
                 </svg>
               </div>
-              <h2 className="text-2xl md:text-3xl font-bold !text-heading mb-3">Xác minh thất bại</h2>
-              <p className="text-sm text-red-500 mb-8 leading-relaxed font-medium">
+              <h2 className="text-2xl md:text-3xl font-bold !text-heading mb-3 dark:text-heading">Verification Failed</h2>
+              <p className="text-sm text-red-500 mb-8 leading-relaxed font-medium dark:text-red-400">
                 {errorMessage || 'Please try again. An error occurred during the verification of your technical information.'}
               </p>
               <div className="space-y-3">
@@ -293,7 +306,7 @@ export const RegisterPage: React.FC = () => {
                 </button>
                 <button
                   onClick={() => setShowCaptcha(false)}
-                  className="w-full bg-white border border-slate-300 text-body font-bold py-3.5 rounded-lg hover:bg-surface transition-colors"
+                  className="w-full bg-white border border-slate-300 text-body font-bold py-3.5 rounded-lg hover:bg-surface transition-colors dark:bg-surface dark:border-border dark:text-heading dark:hover:bg-main-bg"
                 >
                   Go Back
                 </button>
@@ -302,33 +315,33 @@ export const RegisterPage: React.FC = () => {
           </div>
         ) : !isVerified ? (
           <div className="w-full flex flex-col items-center justify-center animate-in fade-in duration-200">
-            <h2 className="text-2xl md:text-3xl font-bold !text-heading mb-3">Xác minh bạn không phải là robot 🤖</h2>
-            <p className="text-sm text-slate-500 mb-8 text-center px-4 font-medium">Chúng tôi cần đảm bảo bạn là người thật để bảo mật tài khoản</p>
+            <h2 className="text-2xl md:text-3xl font-bold !text-heading mb-3 dark:text-heading">Verify you're not a robot 🤖</h2>
+            <p className="text-sm text-slate-500 mb-8 text-center px-4 font-medium dark:text-muted">We need to ensure you're a real person to secure your account</p>
 
-            <div className="w-full max-w-md bg-main-bg rounded-xl shadow-lg border border-border p-6 md:p-8">
-              <div className="border border-slate-300 bg-surface rounded-lg p-5 flex items-center justify-between mb-8">
+            <div className="w-full max-w-md bg-main-bg rounded-xl shadow-lg border border-border p-6 md:p-8 dark:bg-surface dark:border-border">
+              <div className="border border-slate-300 bg-surface rounded-lg p-5 flex items-center justify-between mb-8 dark:border-border dark:bg-main-bg">
                 <div className="flex items-center gap-4">
-                  <input type="checkbox" className="w-6 h-6 border-2 border-slate-300 rounded-md cursor-pointer" />
-                  <span className="text-sm font-semibold !text-heading">Tôi không phải là người máy</span>
+                  <input type="checkbox" className="w-6 h-6 border-2 border-slate-300 rounded-md cursor-pointer dark:border-border" />
+                  <span className="text-sm font-semibold !text-heading dark:text-heading">I'm not a robot</span>
                 </div>
                 <div className="flex flex-col items-center">
-                  <svg className="w-8 h-8 text-blue-500" viewBox="0 0 24 24" fill="currentColor">
+                  <svg className="w-8 h-8 text-blue-500 dark:text-blue-400" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M21.5 12a9.5 9.5 0 10-19 0 9.5 9.5 0 0019 0zM12 4.5A7.5 7.5 0 114.5 12 7.5 7.5 0 0112 4.5m-3.5 6a1 1 0 100 2 1 1 0 000-2m7 0a1 1 0 100 2 1 1 0 000-2m-3.5 3.5a3 3 0 01-2.5-1.5l1.5-1a1.5 1.5 0 002 0l1.5 1a3 3 0 01-2.5 1.5z" />
                   </svg>
-                  <span className="text-[9px] text-muted font-bold mt-1">reCAPTCHA</span>
-                  <div className="text-[8px] text-muted mt-0.5 font-medium"><a href="#" className="hover:underline">Bảo mật</a> - <a href="#" className="hover:underline">Điều khoản</a></div>
+                  <span className="text-[9px] text-muted font-bold mt-1 dark:text-muted">reCAPTCHA</span>
+                  <div className="text-[8px] text-muted mt-0.5 font-medium dark:text-muted"><a href="#" className="hover:underline">Privacy</a> - <a href="#" className="hover:underline">Terms</a></div>
                 </div>
               </div>
 
-              <div className="bg-blue-50/50 border border-blue-100 rounded-lg p-5 mb-8 flex items-start gap-4">
-                <svg className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+              <div className="bg-blue-50/50 border border-blue-100 rounded-lg p-5 mb-8 flex items-start gap-4 dark:bg-blue-900/20 dark:border-blue-800">
+                <svg className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5 dark:text-blue-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                   <circle cx="12" cy="12" r="10" />
                   <line x1="12" y1="16" x2="12" y2="12" />
                   <line x1="12" y1="8" x2="12.01" y2="8" />
                 </svg>
                 <div>
-                  <h4 className="text-sm font-bold !text-heading">Vì sao tôi thấy thông báo này?</h4>
-                  <p className="text-xs text-slate-500 mt-1.5 leading-relaxed font-medium">Chúng tôi phát hiện thấy các hoạt động truy cập không bình thường từ mạng của bạn. Vui lòng xác nhận để tiếp tục.</p>
+                  <h4 className="text-sm font-bold !text-heading dark:text-heading">Why am I seeing this?</h4>
+                  <p className="text-xs text-slate-500 mt-1.5 leading-relaxed font-medium dark:text-muted">We detected unusual activity from your network. Please confirm to continue.</p>
                 </div>
               </div>
 
@@ -343,7 +356,7 @@ export const RegisterPage: React.FC = () => {
                 <button
                   onClick={() => setShowCaptcha(false)}
                   disabled={isLoading}
-                  className="w-full bg-main-bg border border-slate-300 text-body font-bold py-3.5 rounded-lg hover:bg-surface transition-colors disabled:opacity-50"
+                  className="w-full bg-main-bg border border-slate-300 text-body font-bold py-3.5 rounded-lg hover:bg-surface transition-colors disabled:opacity-50 dark:bg-surface dark:border-border dark:text-heading dark:hover:bg-main-bg"
                 >
                   Back to Home
                 </button>

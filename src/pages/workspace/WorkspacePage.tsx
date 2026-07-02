@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import './workspace.css';
 import { WorkspaceExerciseSection } from './WorkspaceExerciseSection';
@@ -12,7 +12,7 @@ import type {
   EditorTab,
   EvaluationCriterion,
   ExerciseDefinition,
-  WorkspaceFiles,
+  EditorFile,
   EvaluationResult as EditorEvaluationResult,
 } from '../../features/editor/types/editor.types';
 import { useDebounce } from '../../hooks/useDebounce';
@@ -79,13 +79,11 @@ interface WorkspaceToastState {
 }
 
 const WorkspacePageContent: React.FC<WorkspacePageContentProps> = ({ exercise }) => {
-  const navigate = useNavigate();
   const editorTabs = resolveEditorTabs(exercise);
   const defaultTab = pickDefaultTab(editorTabs);
 
   const queryParams = new URLSearchParams(window.location.search);
   const stageId = queryParams.get('stageId') || exercise.id.replace('exercise_', '');
-  const milestoneId = queryParams.get('milestoneId') || exercise.navigation?.currentMilestoneId || '';
 
   const { files, activeTab, isDirty, setActiveTab, setFile, replaceFiles, reset } =
     useWorkspaceEditor(exercise.starterFiles, { defaultTab, visibleTabs: editorTabs });
@@ -104,7 +102,7 @@ const WorkspacePageContent: React.FC<WorkspacePageContentProps> = ({ exercise })
   const [previewRefreshKey, setPreviewRefreshKey] = useState(0);
   const lastSubmitAtRef = useRef(0);
   const [forcedPreview, setForcedPreview] = useState<{
-    files: WorkspaceFiles;
+    files: EditorFile[];
     editVersion: number;
   } | null>(null);
   const debouncedFiles = useDebounce(files, 350);
@@ -338,13 +336,60 @@ const WorkspacePageContent: React.FC<WorkspacePageContentProps> = ({ exercise })
           isOpen={isModalOpen}
           onClose={() => {
             setIsModalOpen(false);
-            if (isCompleted && milestoneId && stageId) {
-              navigate(`/learning-path/milestone/${milestoneId}/lesson/${stageId}/complete`);
-            }
           }}
           evaluationResult={evaluationResult}
           exercise={exercise}
         />
+      )}
+      {isCompleted && (
+        <div className="completion-popup" style={{
+          position: 'fixed',
+          top: '20px',
+          right: '20px',
+          background: '#10b981',
+          color: '#fff',
+          padding: '16px 24px',
+          borderRadius: '12px',
+          boxShadow: '0 10px 25px rgba(0, 0, 0, 0.15)',
+          zIndex: 1000,
+          display: 'flex',
+          alignItems: 'center',
+          gap: '12px',
+          animation: 'slideIn 0.3s ease-out'
+        }}>
+          <span style={{ fontSize: '24px' }}>🎉</span>
+          <div>
+            <div style={{ fontWeight: 700, fontSize: '16px' }}>Exercise Completed!</div>
+            <div style={{ fontSize: '14px', opacity: 0.9 }}>Great work! You've passed all requirements.</div>
+          </div>
+          <button
+            onClick={() => setIsCompleted(false)}
+            style={{
+              background: 'rgba(255, 255, 255, 0.2)',
+              border: 'none',
+              color: '#fff',
+              padding: '8px 16px',
+              borderRadius: '6px',
+              cursor: 'pointer',
+              fontWeight: 600,
+              fontSize: '14px'
+            }}
+          >
+            Dismiss
+          </button>
+          <style>{`
+            @keyframes slideIn {
+              from {
+                transform: translateX(100%);
+                opacity: 0;
+              }
+              to {
+                transform: translateX(0);
+                opacity: 1;
+              }
+            }
+          `}</style>
+        </div>
       )}
     </>
   );

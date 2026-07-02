@@ -63,6 +63,9 @@ export interface ActivityLog {
 }
 
 export interface LearningProgress {
-  currentMilestone?: string;
-  completionPercentage?: number;
+  totalLessons: number;
+  completedLessons: number;
+  completionPercentage: number;
+  currentMilestone: string;
+  isUnlocked: boolean;
 }

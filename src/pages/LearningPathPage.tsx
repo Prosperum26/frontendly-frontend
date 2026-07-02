@@ -1,5 +1,4 @@
-import React, { useEffect, useMemo } from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useMemo, useState } from "react";
 import "./LearningPathPage.css";
 import { SideBar } from "../features/learning-path/components/SideBar";
 import { VideoModule } from "../features/learning-path/components/VideoModule";
@@ -11,10 +10,14 @@ import { getPersonalizedPath } from "../features/entrance-test/utils/personalize
 import { ROUTES } from "../constants/routes";
 import certificateIcon from "../assets/learning-path/certificate_icon.svg";
 import { ChevronLeft, ChevronRight, PlayCircle } from "lucide-react";
+import { AuthRequiredModal } from "../components/AuthRequiredModal/AuthRequiredModal";
+import { useAuthStore } from "../store/auth.store";
 
 export const LearningPathPage: React.FC = () => {
   const [isModuleOpen, setIsModuleOpen] = React.useState<boolean>(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = React.useState<boolean>(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const { isAuthenticated } = useAuthStore();
   const { data, isLoading, error, refetch } = useRoadmap(DEFAULT_SKILL_ID);
   const milestones = useMemo(() => data?.milestones ?? [], [data?.milestones]);
   const skillTitle = data?.skillTitle;
@@ -22,6 +25,14 @@ export const LearningPathPage: React.FC = () => {
   const studyPlan = data?.studyPlan?.length
     ? data.studyPlan
     : storedPath?.personalizedPath?.studyPlan ?? [];
+
+  const handleEntranceTestClick = () => {
+    if (isAuthenticated) {
+      window.location.href = ROUTES.ENTRANCE_TEST;
+    } else {
+      setShowAuthModal(true);
+    }
+  };
 
   useEffect(() => {
     if (!isLoading && milestones.length > 0) {
@@ -37,6 +48,7 @@ export const LearningPathPage: React.FC = () => {
 
   return (
     <div className={`learning-path-wrapper ${isSidebarCollapsed ? "sidebar-collapsed" : ""}`}>
+      <AuthRequiredModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
       <SideBar className={isSidebarCollapsed ? "collapsed" : ""} />
       
       <button 
@@ -58,12 +70,12 @@ export const LearningPathPage: React.FC = () => {
             <h1 className="learning-path-title">
               {skillTitle || "React.js Learning Path"}
             </h1>
-            <Link 
-              to={ROUTES.ENTRANCE_TEST} 
+            <button
+              onClick={handleEntranceTestClick}
               className="ml-4 px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-bold hover:bg-green-700 transition-colors"
             >
               Take Entrance Test
-            </Link>
+            </button>
           </div>
 
           <p className="learning-path-desc">
@@ -73,83 +85,24 @@ export const LearningPathPage: React.FC = () => {
 
         <section className="learning-path-section">
           {isLoading && (
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                gap: "20px",
-              }}
-            >
+            <div className="flex flex-col gap-5">
               {[1, 2, 3].map((key) => (
                 <div
                   key={key}
-                  style={{
-                    padding: "24px",
-                    borderRadius: "12px",
-                    backgroundColor: "#f8fafc",
-                    border: "1px solid #f1f5f9",
-                    opacity: 0.7,
-                    pointerEvents: "none",
-                  }}
+                  className="p-6 rounded-xl bg-slate-50 border border-slate-100 opacity-70 pointer-events-none"
                 >
-                  <div
-                    style={{
-                      display: "flex",
-                      gap: "16px",
-                      alignItems: "center",
-                      marginBottom: "20px",
-                    }}
-                  >
-                    <div
-                      style={{
-                        width: "36px",
-                        height: "36px",
-                        borderRadius: "12px",
-                        backgroundColor: "#cbd5e1",
-                      }}
-                    />
-                    <div
-                      style={{
-                        display: "flex",
-                        flexDirection: "column",
-                        gap: "8px",
-                        flex: 1,
-                      }}
-                    >
-                      <div
-                        style={{
-                          width: "80px",
-                          height: "10px",
-                          backgroundColor: "#cbd5e1",
-                          borderRadius: "4px",
-                        }}
-                      />
-                      <div
-                        style={{
-                          width: "200px",
-                          height: "16px",
-                          backgroundColor: "#cbd5e1",
-                          borderRadius: "4px",
-                        }}
-                      />
+                  <div className="flex gap-4 items-center mb-5">
+                    <div className="w-9 h-9 rounded-lg bg-slate-300" />
+                    <div className="flex flex-col gap-2 flex-1">
+                      <div className="w-20 h-2.5 bg-slate-300 rounded" />
+                      <div className="w-50 h-4 bg-slate-300 rounded" />
                     </div>
                   </div>
-                  <div
-                    style={{
-                      display: "grid",
-                      gridTemplateColumns:
-                        "repeat(auto-fill, minmax(180px, 1fr))",
-                      gap: "12px",
-                    }}
-                  >
+                  <div className="grid grid-cols-[repeat(auto-fill,minmax(180px,1fr))] gap-3">
                     {[1, 2, 3, 4].map((i) => (
                       <div
                         key={i}
-                        style={{
-                          height: "56px",
-                          borderRadius: "8px",
-                          backgroundColor: "#e2e8f0",
-                        }}
+                        className="h-14 rounded-lg bg-slate-200"
                       />
                     ))}
                   </div>
@@ -159,15 +112,8 @@ export const LearningPathPage: React.FC = () => {
           )}
 
           {error && (
-            <div
-              style={{
-                color: "#b91c1c",
-                padding: "20px",
-                background: "#fee2e2",
-                borderRadius: "8px",
-              }}
-            >
-              <p style={{ margin: "0 0 12px" }}>
+            <div className="text-red-700 p-5 bg-red-100 rounded-lg">
+              <p className="mb-3">
                 {error instanceof Error
                   ? error.message
                   : "Không thể tải lộ trình học."}
@@ -175,15 +121,7 @@ export const LearningPathPage: React.FC = () => {
               <button
                 type="button"
                 onClick={() => refetch()}
-                style={{
-                  padding: "8px 16px",
-                  borderRadius: "6px",
-                  border: "none",
-                  background: "#dc2626",
-                  color: "#fff",
-                  cursor: "pointer",
-                  fontWeight: 600,
-                }}
+                className="px-4 py-2 rounded-md border-none bg-red-600 text-white cursor-pointer font-semibold hover:bg-red-700 transition-colors"
               >
                 Thử lại
               </button>
