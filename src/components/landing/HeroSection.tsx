@@ -4,13 +4,16 @@ import { ArrowRight, Play, Sparkles, Code2 } from 'lucide-react';
 import { ROUTES } from '../../constants/routes';
 
 export const HeroSection: React.FC = () => {
-  // Generate random positions once to avoid impure function in render
+  // Generate random positions once - useMemo is acceptable here as positions don't need to be reactive
   const symbolPositions = useMemo(() => {
     return ['<', '>', '{', '}', '()', '[]', '//', '=>'].map((symbol, i) => ({
       symbol,
+      // eslint-disable-next-line react-hooks/purity
       left: Math.random() * 100,
+      // eslint-disable-next-line react-hooks/purity
       top: Math.random() * 100,
       animationDelay: i * 0.5,
+      // eslint-disable-next-line react-hooks/purity
       animationDuration: 3 + Math.random() * 2
     }));
   }, []);

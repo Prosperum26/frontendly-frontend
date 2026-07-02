@@ -23,13 +23,17 @@ export const SandboxListPage: React.FC = () => {
   const [toast, setToast] = useState<ToastState | null>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
   const toastIdCounter = useRef(0);
+  const hasLoadedSandboxes = useRef(false);
 
   const loadSandboxes = () => {
     setSandboxes(SandboxStorageService.getAllSandboxes());
   };
 
   useEffect(() => {
-    loadSandboxes();
+    if (!hasLoadedSandboxes.current) {
+      loadSandboxes();
+      hasLoadedSandboxes.current = true;
+    }
   }, []);
 
   const showToast = (nextToast: Omit<ToastState, 'id'>) => {

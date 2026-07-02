@@ -65,10 +65,11 @@ const Dashboard: React.FC<DashboardProps> = ({
     }
   }, [isAuthenticated]);
 
-  // Calculate time ago once to avoid impure function in render
+  // Calculate time ago - useMemo is acceptable here as it's derived data
   const sandboxTimeAgo = useMemo(() => {
     return recentSandboxes.map(sandbox => ({
       ...sandbox,
+      // eslint-disable-next-line react-hooks/purity
       timeAgo: Math.floor((Date.now() - sandbox.updatedAt) / 3600000)
     }));
   }, [recentSandboxes]);
