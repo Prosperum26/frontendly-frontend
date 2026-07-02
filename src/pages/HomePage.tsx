@@ -73,11 +73,11 @@ const Dashboard: React.FC<DashboardProps> = ({
             </h1>
             <p className="text-body text-sm sm:text-base">Ready to write some code today?</p>
           </div>
-          <div className="flex items-center gap-3 bg-orange-50/50 px-5 py-2.5 rounded-xl border border-orange-100">
-            <Flame className="w-6 h-6 text-orange-500" />
+          <div className="flex items-center gap-3 bg-orange-50/50 dark:bg-orange-950/30 px-5 py-2.5 rounded-xl border border-orange-100 dark:border-orange-900/50">
+            <Flame className="w-6 h-6 text-orange-500 dark:text-orange-400" />
             <div>
-              <p className="text-[10px] font-bold text-orange-600 uppercase tracking-wider">Current Streak</p>
-              <p className="font-black text-orange-700 text-lg leading-tight">{streakDays} Days</p>
+              <p className="text-[10px] font-bold text-orange-600 dark:text-orange-400 uppercase tracking-wider">Current Streak</p>
+              <p className="font-black text-orange-700 dark:text-orange-300 text-lg leading-tight">{streakDays} Days</p>
             </div>
           </div>
         </div>
