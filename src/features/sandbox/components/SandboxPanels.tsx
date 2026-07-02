@@ -67,7 +67,7 @@ export const SandboxPanels: React.FC<SandboxPanelsProps> = ({
   // Convert SandboxFile[] to EditorFile[] format for LivePreview
   const previewFiles = files.map(file => ({
     filename: file.name,
-    language: (file.language === 'javascript' ? 'js' : file.language) as EditorLanguage,
+    language: (file.language === 'javascript' ? 'js' : file.language === 'jsx' ? 'jsx' : file.language) as EditorLanguage,
     content: file.content,
   }));
 

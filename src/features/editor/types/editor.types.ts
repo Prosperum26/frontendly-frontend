@@ -54,6 +54,7 @@ export interface ExerciseDefinition {
   evaluationConfig?: EvaluationConfig;
   requirements: ExerciseRequirement[];
   starterFiles: EditorFile[];
+  codeTest?: BackendCodeTest; // For live preview with HTML/CSS/JS
   navigation?: {
     prev: ExerciseNavigation | null;
     next: ExerciseNavigation | null;

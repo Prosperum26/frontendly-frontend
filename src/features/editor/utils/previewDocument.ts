@@ -3,9 +3,18 @@ import type { EditorFile } from '../types/editor.types';
 export function buildPreviewHtml(html: string, css: string, js: string, jsx?: string): string {
   if (jsx && jsx.trim()) {
     // React/JSX preview - remove export default to make it work with Babel standalone
-    const jsxWithoutExport = jsx
+    let jsxWithoutExport = jsx
       .replace(/export default function\s+(\w+)/, 'function $1')
       .replace(/export default\s+/, '');
+
+    // Remove all import statements since we load React/ReactDOM globally
+    jsxWithoutExport = jsxWithoutExport.replace(/import\s+.*from\s+['"].*['"];?\s*/g, '');
+
+    // If HTML is provided, use it; otherwise use default with root div
+    const htmlContent = html || '<div id="root"></div>';
+
+    // Check if JSX already contains createRoot() call (like exercise_s2)
+    const hasCreateRoot = jsx.includes('createRoot');
 
     return `<!DOCTYPE html>
 <html lang="en">
@@ -20,10 +29,17 @@ ${css}
   <script crossorigin src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 </head>
 <body>
-  <div id="root"></div>
+${htmlContent}
+  <script>
+    // Make createRoot available globally for user code
+    if (typeof ReactDOM !== 'undefined' && ReactDOM.createRoot) {
+      window.createRoot = ReactDOM.createRoot;
+    }
+  </script>
   <script type="text/babel">
 ${jsxWithoutExport}
   </script>
+  ${!hasCreateRoot ? `
   <script type="text/babel">
     const root = ReactDOM.createRoot(document.getElementById('root'));
     // Try to find the default exported component
@@ -31,6 +47,14 @@ ${jsxWithoutExport}
       root.render(<App />);
     } else if (typeof Welcome !== 'undefined') {
       root.render(<Welcome />);
+    } else if (typeof Profile !== 'undefined') {
+      root.render(<Profile />);
+    } else if (typeof ProfileCard !== 'undefined') {
+      root.render(<ProfileCard />);
+    } else if (typeof Button !== 'undefined') {
+      root.render(<Button />);
+    } else if (typeof StatusBadge !== 'undefined') {
+      root.render(<StatusBadge />);
     } else {
       // Try to find any component that might be the main one
       const components = Object.keys(window).filter(key => 
@@ -44,7 +68,7 @@ ${jsxWithoutExport}
         root.render(<MainComponent />);
       }
     }
-  </script>
+  </script>` : ''}
 </body>
 </html>`;
   }

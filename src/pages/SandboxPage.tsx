@@ -128,16 +128,17 @@ export const SandboxPage: React.FC = () => {
   }, [sandbox, navigate]);
 
   const handleAddFile = useCallback(() => {
-    const fileName = prompt('Enter file name (e.g., component.js):');
+    const fileName = prompt('Enter file name (e.g., component.js or component.jsx):');
     if (!fileName) return;
 
     const extension = fileName.split('.').pop()?.toLowerCase();
-    const languageMap: Record<string, 'html' | 'css' | 'javascript'> = {
+    const languageMap: Record<string, 'html' | 'css' | 'javascript' | 'jsx'> = {
       html: 'html',
       htm: 'html',
       css: 'css',
       js: 'javascript',
       javascript: 'javascript',
+      jsx: 'jsx',
     };
     const language = languageMap[extension || ''] || 'javascript';
 

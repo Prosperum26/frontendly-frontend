@@ -1,7 +1,7 @@
 export interface SandboxFile {
   name: string;
   content: string;
-  language: 'html' | 'css' | 'javascript';
+  language: 'html' | 'css' | 'javascript' | 'jsx';
 }
 
 export interface Sandbox {
@@ -25,10 +25,7 @@ export const DEFAULT_SANDBOX_FILES: SandboxFile[] = [
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="container">
-    <h1>Hello, World!</h1>
-    <p>Start coding here...</p>
-  </div>
+  <div id="root"></div>
   <script src="script.js"></script>
 </body>
 </html>`,
@@ -51,7 +48,7 @@ body {
   justify-content: center;
 }
 
-.container {
+.root-card {
   background: white;
   padding: 2rem;
   border-radius: 12px;
@@ -60,31 +57,33 @@ body {
   max-width: 400px;
 }
 
-h1 {
+.root-card h1 {
   color: #333;
   margin-bottom: 1rem;
 }
 
-p {
+.root-card p {
   color: #666;
   line-height: 1.6;
 }`,
   },
   {
     name: 'script.js',
-    language: 'javascript',
-    content: `console.log('Sandbox loaded!');
+    language: 'jsx',
+    content: `// TODO: Use createRoot() to mount a small UI into the page.
+// The import is already done for you — follow the steps in the
+// exercise description to create the root and render your markup.
 
-// Add your JavaScript code here
-document.addEventListener('DOMContentLoaded', () => {
-  const container = document.querySelector('.container');
-  
-  container.addEventListener('click', () => {
-    container.style.transform = 'scale(1.05)';
-    setTimeout(() => {
-      container.style.transform = 'scale(1)';
-    }, 200);
-  });
-});`,
+import { createRoot } from 'react-dom/client';
+
+const rootElement = document.getElementById('root');
+const root = createRoot(rootElement);
+
+root.render(
+  <div className="root-card">
+    <h1>React Root Node</h1>
+    <p>Learning createRoot()</p>
+  </div>
+);`,
   },
 ];
