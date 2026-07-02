@@ -20,8 +20,14 @@ export const ROUTES = {
   CONTACT: '/contact',
   PRIVACY: '/privacy',
   TERMS: '/terms',
+  SANDBOX_LIST: '/sandbox',
+  SANDBOX: '/sandbox/:sandboxId',
 } as const;
 
 export function workspacePath(exerciseId: string): string {
   return `/workspace/${exerciseId}`;
+}
+
+export function sandboxPath(sandboxId: string): string {
+  return `/sandbox/${sandboxId}`;
 }

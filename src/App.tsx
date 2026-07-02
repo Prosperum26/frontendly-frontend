@@ -29,6 +29,8 @@ import NotFoundPage from './pages/NotFoundPage';
 import ProfilePage from './pages/ProfilePage';
 import RegisterPage from './pages/RegisterPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
+import SandboxListPage from './pages/SandboxListPage';
+import SandboxPage from './pages/SandboxPage';
 import WorkspacePage from './pages/WorkspacePage';
 
 const queryClient = new QueryClient({
@@ -88,6 +90,14 @@ function App() {
                   }
                 />
                 <Route path={ROUTES.LEADERBOARD} element={<LeaderboardPage />} />
+                <Route
+                  path={ROUTES.SANDBOX_LIST}
+                  element={
+                    <ProtectedRoute>
+                      <SandboxListPage />
+                    </ProtectedRoute>
+                  }
+                />
               </Route>
 
               <Route path={ROUTES.LESSON_THEORY} element={<TheoryPage />} />
@@ -100,6 +110,14 @@ function App() {
                   element={
                     <ProtectedRoute allowGuest>
                       <WorkspacePage />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path={ROUTES.SANDBOX}
+                  element={
+                    <ProtectedRoute>
+                      <SandboxPage />
                     </ProtectedRoute>
                   }
                 />

@@ -9,12 +9,14 @@ import type { User } from '../features/auth/types/auth.types';
 import { leaderboardService } from '../features/leaderboard/services/leaderboard.service';
 import { profileService } from '../features/profile/services/profile.service';
 import { challengeService } from '../features/challenge';
+import { SandboxStorageService } from '../features/sandbox/services/sandboxStorage.service';
 import type {
   Badge as BadgeType,
   LearningProgress,
   UserProfile,
 } from '../features/profile/types/profile.types';
 import type { ChallengeExercise } from '../features/challenge';
+import type { Sandbox } from '../features/sandbox/types/sandbox.types';
 import { useAuthStore } from '../store/auth.store';
 import { HeroSection } from '../components/landing/HeroSection';
 import { CurriculumPreview } from '../components/landing/CurriculumPreview';
@@ -52,6 +54,11 @@ const Dashboard: React.FC<DashboardProps> = ({
   const user = profileData || currentUser;
   const streakDays =
     profileData?.streakDays ?? profileData?.stats?.streakDays ?? currentUser?.stats?.streakDays ?? 0;
+  const [recentSandboxes, setRecentSandboxes] = useState<Sandbox[]>([]);
+
+  useEffect(() => {
+    setRecentSandboxes(SandboxStorageService.getAllSandboxes().slice(0, 2));
+  }, []);
 
   if (loading) {
     return (
@@ -156,22 +163,35 @@ const Dashboard: React.FC<DashboardProps> = ({
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {/* Thẻ tạo mới */}
-                <Link to={'#'} className="group flex flex-col items-center justify-center p-6 bg-surface-raised border border-border border-dashed rounded-xl hover:bg-slate-50 transition-colors">
+                <Link to={ROUTES.SANDBOX_LIST} className="group flex flex-col items-center justify-center p-6 bg-surface-raised border border-border border-dashed rounded-xl hover:bg-slate-50 transition-colors">
                   <div className="w-8 h-8 rounded-full bg-white border border-border flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
                     <span className="text-slate-400 font-bold text-xl leading-none">+</span>
                   </div>
                   <span className="text-sm font-semibold text-heading">New Sandbox</span>
                 </Link>
-                {/* Sandbox gần đây (Mock) */}
-                <div className="p-5 bg-surface-raised border border-border rounded-xl flex flex-col justify-between">
-                  <div>
-                    <h3 className="font-semibold text-heading text-sm mb-1">Flexbox Layout Test</h3>
-                    <p className="text-xs text-muted">Edited 2 hours ago</p>
+                {/* Sandbox gần đây */}
+                {recentSandboxes.length > 0 ? (
+                  recentSandboxes.map((sandbox) => (
+                    <div key={sandbox.id} className="p-5 bg-surface-raised border border-border rounded-xl flex flex-col justify-between">
+                      <div>
+                        <h3 className="font-semibold text-heading text-sm mb-1">{sandbox.name}</h3>
+                        <p className="text-xs text-muted">
+                          Edited {Math.floor((Date.now() - sandbox.updatedAt) / 3600000)}h ago
+                        </p>
+                      </div>
+                      <Link to={`/sandbox/${sandbox.id}`} className="text-primary text-xs font-bold mt-4 hover:underline flex items-center gap-1">
+                        Open Editor <ArrowRight className="w-3 h-3" />
+                      </Link>
+                    </div>
+                  ))
+                ) : (
+                  <div className="p-5 bg-surface-raised border border-border rounded-xl flex flex-col justify-center items-center text-center">
+                    <p className="text-xs text-muted mb-2">No recent sandboxes</p>
+                    <Link to={ROUTES.SANDBOX_LIST} className="text-primary text-xs font-bold hover:underline">
+                      Create one
+                    </Link>
                   </div>
-                  <Link to={'#'} className="text-primary text-xs font-bold mt-4 hover:underline flex items-center gap-1">
-                    Open Editor <ArrowRight className="w-3 h-3" />
-                  </Link>
-                </div>
+                )}
               </div>
             </div>
           </div>

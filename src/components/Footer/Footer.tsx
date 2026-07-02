@@ -29,6 +29,11 @@ export const Footer: React.FC = () => {
               </Link>
             </li>
             <li>
+              <Link to={ROUTES.SANDBOX_LIST} className="text-blue-600 dark:text-blue-400 hover:underline transition-colors">
+                Sandbox
+              </Link>
+            </li>
+            <li>
               <Link to={ROUTES.CHALLENGE_LOBBY} className="text-blue-600 dark:text-blue-400 hover:underline transition-colors">
                 Challenges
               </Link>
