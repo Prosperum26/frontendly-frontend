@@ -32,8 +32,24 @@ export const leaderboardService = {
   async fetchUserRank(userId: string | Record<string, unknown>): Promise<number> {
     // Handle case where userId might be an object
     const userIdStr = typeof userId === 'string' ? userId : String(userId);
-    const response = await api.get<{ success: boolean; data: { rank: number } }>(`/leaderboard/${userIdStr}/rank`);
-    return response.data.data.rank;
+    try {
+      const response = await api.get<{ success: boolean; data: { rank: number } }>(`/leaderboard/${userIdStr}/rank`);
+      return response.data.data.rank;
+    } catch (error) {
+      // If authenticated request fails, try without authentication
+      if (axios.isAxiosError(error) && error.response?.status === 401) {
+        const publicApi = axios.create({
+          baseURL: ENV.API_URL,
+          timeout: 30000,
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+        const response = await publicApi.get<{ success: boolean; data: { rank: number } }>(`/leaderboard/${userIdStr}/rank`);
+        return response.data.data.rank;
+      }
+      throw error;
+    }
   },
 };
 
