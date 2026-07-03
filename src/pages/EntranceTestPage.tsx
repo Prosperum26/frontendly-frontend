@@ -116,10 +116,12 @@ export const EntranceTestPage: React.FC = () => {
             </div>
           )}
 
-          <Button onClick={() => navigate(ROUTES.LEARNING_PATH)}>Go to Learning Path</Button>
-          <Button variant="secondary" className="mt-4" onClick={resetTest}>
-            Retake Test
-          </Button>
+          <div className="flex flex-wrap gap-4 mt-6">
+            <Button onClick={() => navigate(ROUTES.LEARNING_PATH)}>Go to Learning Path</Button>
+            <Button variant="secondary" onClick={resetTest}>
+              Retake Test
+            </Button>
+          </div>
         </div>
       </div>
     );
