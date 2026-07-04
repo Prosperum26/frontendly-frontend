@@ -621,6 +621,89 @@
   }
 }
 
+@media (max-width: 768px) {
+  .tp-top-header {
+    padding: 0 16px;
+    height: 56px;
+  }
+
+  .tp-header-nav {
+    display: none;
+  }
+
+  .tp-header-title {
+    font-size: 14px;
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .tp-main-body {
+    padding: 24px 16px 100px 16px;
+  }
+
+  .tp-title {
+    font-size: 24px;
+  }
+
+  .tp-fixed-footer {
+    height: auto;
+    padding: 12px 16px;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .tp-footer-back-link,
+  .tp-footer-continue-btn {
+    width: 100%;
+    justify-content: center;
+    padding: 12px 16px;
+  }
+
+  .tp-footer-continue-btn {
+    order: 2;
+  }
+
+  .tp-footer-back-link {
+    order: 1;
+  }
+
+  .tp-badge {
+    font-size: 10px;
+    padding: 3px 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .tp-top-header {
+    padding: 0 12px;
+    height: 52px;
+  }
+
+  .tp-header-title {
+    font-size: 13px;
+    max-width: 150px;
+  }
+
+  .tp-main-body {
+    padding: 20px 12px 100px 12px;
+  }
+
+  .tp-title {
+    font-size: 20px;
+  }
+
+  .tp-theory-contentHtml p,
+  .tp-theory-contentHtml h2 {
+    font-size: 14px;
+  }
+
+  .tp-theory-contentHtml code {
+    font-size: 12px;
+  }
+}
+
 .tp-theory-contentHtml {
   display: flex;
   flex-direction: column;
