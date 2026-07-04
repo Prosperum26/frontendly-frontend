@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
-import { ArrowLeft, CheckCircle, Circle } from "lucide-react";
+import { ArrowLeft, CheckCircle, Circle, Lightbulb, BookOpen } from "lucide-react";
 import api from "../../../services/api";
 import { useRoadmapStore } from "../stores/roadmapStore";
 import { useRoadmap } from "../hooks/useRoadmap";
@@ -18,6 +18,7 @@ interface TheoryApiData {
   referenceLinks?: Array<
     string | { url?: string; link?: string; title?: string; name?: string }
   >;
+  keyTakeaways?: string[];
 }
 
 export const TheoryPage: React.FC = () => {
@@ -40,6 +41,8 @@ export const TheoryPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [isUnlocking, setIsUnlocking] = useState(false);
   const [unlockMessage, setUnlockMessage] = useState<string | null>(null);
+  const [scrollProgress, setScrollProgress] = useState(0);
+  const contentRef = useRef<HTMLDivElement>(null);
 
   const stageId = lessonId ?? "";
 
@@ -52,6 +55,22 @@ export const TheoryPage: React.FC = () => {
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [lessonId]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (contentRef.current) {
+        const { scrollTop, scrollHeight, clientHeight } = contentRef.current;
+        const progress = (scrollTop / (scrollHeight - clientHeight)) * 100;
+        setScrollProgress(Math.min(progress, 100));
+      }
+    };
+
+    const contentElement = contentRef.current;
+    if (contentElement) {
+      contentElement.addEventListener('scroll', handleScroll);
+      return () => contentElement.removeEventListener('scroll', handleScroll);
+    }
+  }, []);
 
   useEffect(() => {
     const fetchTheory = async () => {
@@ -188,6 +207,14 @@ export const TheoryPage: React.FC = () => {
 
   return (
     <div className="tp-page-container">
+      {/* Scroll Progress Bar */}
+      <div className="tp-scroll-progress-bar">
+        <div 
+          className="tp-scroll-progress-fill" 
+          style={{ width: `${scrollProgress}%` }}
+        />
+      </div>
+
       <header className="tp-top-header">
         <button
           type="button"
@@ -257,7 +284,7 @@ export const TheoryPage: React.FC = () => {
           </div>
         </aside>
 
-        <main className="tp-main-body">
+        <main className="tp-main-body" ref={contentRef}>
           <div className="tp-body-grid">
             {isLoading ? (
               <div
@@ -389,6 +416,24 @@ export const TheoryPage: React.FC = () => {
                       </ul>
                     </div>
                   )}
+
+                {/* Enhanced Key Takeaways */}
+                {theoryData?.keyTakeaways && theoryData.keyTakeaways.length > 0 && (
+                  <div className="tp-key-takeaways-enhanced">
+                    <div className="tp-takeaways-header">
+                      <Lightbulb size={20} />
+                      <h3>Key Takeaways</h3>
+                    </div>
+                    <ul className="tp-takeaways-list">
+                      {theoryData.keyTakeaways.map((takeaway, index) => (
+                        <li key={index} className="tp-takeaway-item">
+                          <BookOpen size={16} className="tp-takeaway-icon" />
+                          <span>{takeaway}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
               </div>
             )}
           </div>
