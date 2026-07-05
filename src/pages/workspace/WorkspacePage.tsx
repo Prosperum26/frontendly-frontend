@@ -79,6 +79,8 @@ interface WorkspaceToastState {
 }
 
 const WorkspacePageContent: React.FC<WorkspacePageContentProps> = ({ exercise }) => {
+  const completeGuestLesson = useGuestStore((state) => state.completeLesson);
+
   const editorTabs = resolveEditorTabs(exercise);
   const defaultTab = pickDefaultTab(editorTabs);
 
@@ -193,9 +195,39 @@ const WorkspacePageContent: React.FC<WorkspacePageContentProps> = ({ exercise })
     setConsoleMessage('Submitting your solution...');
 
     try {
-      const currentUser = useAuthStore.getState().currentUser;
-      console.log("🚨 BẮT LỖI USER:", currentUser);
-      const userId = currentUser?.id ?? currentUser?._id ?? 'guest';
+      const currentAuthState = useAuthStore.getState();
+      const currentUser = currentAuthState.currentUser;
+      const isUserAuthenticated = currentAuthState.isAuthenticated;
+      
+      let userId = 'guest';
+      if (isUserAuthenticated) {
+        if (currentUser?.id && currentUser.id !== '') {
+          userId = currentUser.id;
+        } 
+        else if ((currentUser as any)?._id && (currentUser as any)._id !== '') {
+          userId = (currentUser as any)._id;
+        } 
+        else {
+          try {
+            const rawData = localStorage.getItem('currentUser');
+            if (rawData) {
+              const parsedData = JSON.parse(rawData);
+              userId = parsedData.id || parsedData._id || 'guest';
+            }
+          } catch (e) {
+            console.error("Local Storage parsing error: ", e);
+          }
+        }
+      }
+      if (isUserAuthenticated && userId === 'guest') {
+        showToast({
+          type: 'error',
+          title: 'Account Data Error',
+          message: 'Cannot find the user ID for the authenticated account. Please log out and log in again!',
+        });
+        setIsSubmitting(false);
+        return; 
+      }
 
       const result = await editorService.submitWorkspace(
         userId,
@@ -208,13 +240,14 @@ const WorkspacePageContent: React.FC<WorkspacePageContentProps> = ({ exercise })
       setEvaluationResult(result);
       setConsoleMessage(result.output);
       setIsModalOpen(true);
+      
       if (result.passed) {
         setIsCompleted(true);
-        const isAuthenticated = useAuthStore.getState().isAuthenticated;
-        if (!isAuthenticated) {
-          useGuestStore.getState().completeLesson(stageId);
+        if (!isUserAuthenticated) {
+          completeGuestLesson(stageId);
         }
       }
+      
       showToast(
         result.passed
           ? {
@@ -239,7 +272,14 @@ const WorkspacePageContent: React.FC<WorkspacePageContentProps> = ({ exercise })
     } finally {
       setIsSubmitting(false);
     }
-  }, [exercise.id, exercise.requirements, files, showToast, stageId]);
+  }, [
+    exercise.id, 
+    exercise.requirements, 
+    files, 
+    showToast, 
+    stageId, 
+    completeGuestLesson
+  ]);
 
   const handleReset = useCallback(() => {
     reset();

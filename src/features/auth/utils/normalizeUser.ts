@@ -1,7 +1,7 @@
 import type { User } from '../types/auth.types';
 
 interface ProfileApiData {
-  _id?: string;
+  _id?: any; 
   id?: string;
   email?: string;
   username?: string;
@@ -25,8 +25,23 @@ interface ProfileApiData {
 export function normalizeUser(data: ProfileApiData): User {
   const avatarUrl = data.avatarUrl ?? data.avatar;
 
+  let realId = data.id || ''; 
+
+  if (!realId && data._id) {
+    const rawId = data._id;
+    if (typeof rawId === 'string') {
+      realId = rawId;
+    } else if (typeof rawId === 'object') {
+      if (rawId.$oid) realId = rawId.$oid;
+      else if (rawId.toString && typeof rawId.toString === 'function') {
+        const str = rawId.toString();
+        if (str !== '[object Object]') realId = str;
+      }
+    }
+  }
+
   return {
-    id: String(data._id ?? data.id ?? ''),
+    id: realId, 
     email: data.email ?? '',
     username: data.username ?? data.name ?? '',
     firstName: data.firstName,
