@@ -193,7 +193,12 @@ const WorkspacePageContent: React.FC<WorkspacePageContentProps> = ({ exercise })
     setConsoleMessage('Submitting your solution...');
 
     try {
+      const currentUser = useAuthStore.getState().currentUser;
+      console.log("🚨 BẮT LỖI USER:", currentUser);
+      const userId = currentUser?.id ?? currentUser?._id ?? 'guest';
+
       const result = await editorService.submitWorkspace(
+        userId,
         exercise.id,
         files,
         exercise.requirements

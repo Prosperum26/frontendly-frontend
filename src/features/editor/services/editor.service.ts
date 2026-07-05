@@ -112,12 +112,13 @@ export const editorService = {
   },
 
   async submitWorkspace(
+    userId: string,
     exerciseId: string,
     files: EditorFile[],
     requirements: ExerciseRequirement[]
   ): Promise<EvaluationResult> {
     const response = await api.post<{ success: boolean; data: BackendSubmitResponse }>(
-      `/exercises/${exerciseId}/submit`,
+      `/exercises/${exerciseId}/${userId}/submit`,
       {
         editorContent: {
           files: files,
