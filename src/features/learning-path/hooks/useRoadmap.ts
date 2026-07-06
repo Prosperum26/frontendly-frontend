@@ -14,7 +14,7 @@ export function useRoadmap(skillId: string = DEFAULT_SKILL_ID): ReturnType<typeo
       const response = await learningService.fetchFullRoadmap(skillId);
       const mapped = learningService.mapRoadmapResponse(response);
       if (!mapped) {
-        throw new Error(response.message || "Không có dữ liệu lộ trình.");
+        throw new Error(response.message || "Cannot find roadmap.");
       }
       setRoadmap({
         skillId: mapped.skillId || skillId,

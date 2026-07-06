@@ -19,13 +19,15 @@ export const WorkspaceFooter: React.FC<WorkspaceFooterProps> = ({
   const navigate = useNavigate();
 
   const handleNext = () => {
-    if (navigation?.next?.id && navigation.next.milestoneId) {
-      // Navigate to theory lesson
-      navigate(`/learning-path/milestone/${navigation.next.milestoneId}/lesson/${navigation.next.id}`);
+    const targetMilestoneId = navigation?.next?.milestoneId || navigation?.currentMilestoneId;
+    if (navigation?.next?.id && targetMilestoneId) {
+      navigate(`/learning-path/milestone/${targetMilestoneId}/lesson/${navigation.next.id}`);
+    } else {
+      console.warn('Cannot navigate to next lesson!', { navigation });
     }
   };
 
-  return (
+    return (
     <footer className="workspace-footer">
       <div className="workspace-footer__inner">
         <button
@@ -35,12 +37,18 @@ export const WorkspaceFooter: React.FC<WorkspaceFooterProps> = ({
         >
           ← Back to Learning Path
         </button>
+        
         {navigation?.next?.id && (
           <button
             type="button"
             className="workspace-footer__next"
             onClick={handleNext}
             disabled={!isCompleted}
+            style={{
+              opacity: isCompleted ? 1 : 0.5, 
+              cursor: isCompleted ? 'pointer' : 'not-allowed', 
+              transition: 'all 0.3s ease'
+            }}
           >
             Next Lesson →
           </button>

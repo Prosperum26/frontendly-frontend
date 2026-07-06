@@ -25,6 +25,10 @@ import { useAuthStore } from '../../store/auth.store';
 import { useGuestStore } from '../../store/guest.store';
 import '../../features/editor/components/editor-ui.css';
 
+// Import hook useRoadmap để lấy dữ liệu tiến trình học
+import { useRoadmap } from '../../features/learning-path/hooks/useRoadmap';
+import { DEFAULT_SKILL_ID } from '../../features/learning-path/utils/roadmapMappers';
+
 export const WorkspacePage: React.FC = () => {
   const { exerciseId } = useParams<{ exerciseId: string }>();
 
@@ -87,6 +91,9 @@ const WorkspacePageContent: React.FC<WorkspacePageContentProps> = ({ exercise })
   const queryParams = new URLSearchParams(window.location.search);
   const stageId = queryParams.get('stageId') || exercise.id.replace('exercise_', '');
 
+  // Gọi API lấy thông tin lộ trình và tiến độ user
+  const { data: roadmapData } = useRoadmap(DEFAULT_SKILL_ID);
+
   const { files, activeTab, isDirty, setActiveTab, setFile, replaceFiles, reset } =
     useWorkspaceEditor(exercise.starterFiles, { defaultTab, visibleTabs: editorTabs });
 
@@ -99,6 +106,7 @@ const WorkspacePageContent: React.FC<WorkspacePageContentProps> = ({ exercise })
   const [evaluationResult, setEvaluationResult] = useState<EditorEvaluationResult | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isCompleted, setIsCompleted] = useState(false);
+  const [isPopupVisible, setIsPopupVisible] = useState(false);
   const [toast, setToast] = useState<WorkspaceToastState | null>(null);
   const [editVersion, setEditVersion] = useState(0);
   const [previewRefreshKey, setPreviewRefreshKey] = useState(0);
@@ -119,6 +127,35 @@ const WorkspacePageContent: React.FC<WorkspacePageContentProps> = ({ exercise })
     discardDraft,
     restoreDraft,
   } = useDraftPersistence(exercise.id, files, { isDirty });
+
+  useEffect(() => {
+    // 1. Lấy mảng từ userProgress
+    const unlockedStages = roadmapData?.userProgress?.unlockedStages;
+
+    if (unlockedStages && unlockedStages.length > 0) {
+      // 💡 LOG SỐ 1: Xem mảng thực tế có gì
+      console.log("📦 [Debug] Mảng unlockedStages từ DB:", unlockedStages);
+      
+      // 💡 LOG SỐ 2: Xem ID trên URL đang là gì
+      console.log("🔗 [Debug] stageId trên URL hiện tại đang là:", stageId);
+
+      // Tìm đúng bài (stage) hiện tại đang mở
+      const currentStageProgress = unlockedStages.find(
+        (stage: any) => stage.stageId === stageId
+      );
+
+      // 💡 LOG SỐ 3: Kết quả sau khi tìm
+      console.log("🎯 [Debug] Kết quả tìm kiếm currentStage:", currentStageProgress);
+
+      // Nếu đã từng nộp bài thành công -> Bật sáng nút Next Lesson
+      if (currentStageProgress?.hasSubmittedExercise) {
+        setIsCompleted(true);
+        console.log("✅ Đã bật isCompleted = true");
+      }
+    } else {
+      console.log("⚠️ [Debug] unlockedStages vẫn đang trống hoặc undefined", unlockedStages);
+    }
+  }, [roadmapData, stageId]);
 
   const updateFile = useCallback(
     (tab: EditorTab, value: string) => {
@@ -241,8 +278,12 @@ const WorkspacePageContent: React.FC<WorkspacePageContentProps> = ({ exercise })
       setConsoleMessage(result.output);
       setIsModalOpen(true);
       
-      if (result.passed) {
+      if (result.passed && isCompleted === false) {
         setIsCompleted(true);
+      };
+
+      if (result.passed) {
+        setIsPopupVisible(true);
         if (!isUserAuthenticated) {
           completeGuestLesson(stageId);
         }
@@ -386,7 +427,7 @@ const WorkspacePageContent: React.FC<WorkspacePageContentProps> = ({ exercise })
           exercise={exercise}
         />
       )}
-      {isCompleted && (
+      {isPopupVisible && (
         <div className="completion-popup" style={{
           position: 'fixed',
           top: '20px',
@@ -408,7 +449,7 @@ const WorkspacePageContent: React.FC<WorkspacePageContentProps> = ({ exercise })
             <div style={{ fontSize: '14px', opacity: 0.9 }}>Great work! You've passed all requirements.</div>
           </div>
           <button
-            onClick={() => setIsCompleted(false)}
+            onClick={() => setIsPopupVisible(false)}
             style={{
               background: 'rgba(255, 255, 255, 0.2)',
               border: 'none',

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+  import React, { useEffect, useMemo, useState } from "react";
 import "./LearningPathPage.css";
 import { SideBar } from "../features/learning-path/components/SideBar";
 import { VideoModule } from "../features/learning-path/components/VideoModule";

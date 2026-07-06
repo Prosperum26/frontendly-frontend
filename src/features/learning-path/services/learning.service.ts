@@ -85,6 +85,7 @@ export const learningService = {
         currentXp: completedIds.length * 50,
         streakDays: 0,
         placementTestCompleted: !!studyPlan.length,
+        unlockedStages: response.data.userProgress.unlockedStages,
       };
     }
 

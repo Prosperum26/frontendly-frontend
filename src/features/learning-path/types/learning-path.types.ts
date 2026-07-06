@@ -44,11 +44,17 @@ export interface ApiMilestone {
   stages: ApiStage[];
 }
 
+export interface UnlockedStage {
+  stageId: string;
+  hasSubmittedExercise?: boolean;
+}
+
 export interface UserProgress {
   currentXp: number;
   streakDays: number;
   placementTestCompleted?: boolean;
   skipToMilestoneId?: string | null;
+  unlockedStages?: UnlockedStage[];
 }
 
 export interface Pagination {

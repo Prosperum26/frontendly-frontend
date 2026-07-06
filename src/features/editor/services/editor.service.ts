@@ -98,12 +98,11 @@ export const editorService = {
       navigation: data.navigation
         ? {
             prev: data.navigation.prev
-              ? { ...data.navigation.prev, milestoneId: undefined }
+              ? { ...data.navigation.prev }
               : null,
             next: data.navigation.next
-              ? { ...data.navigation.next, milestoneId: undefined }
+              ? { ...data.navigation.next }
               : null,
-            currentMilestoneId: undefined,
           }
         : undefined,
       starterFiles,
