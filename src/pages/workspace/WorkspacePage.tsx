@@ -8,6 +8,7 @@ import { Toast, type ToastType } from '../../components/Toast';
 import { Toolbar } from '../../features/editor/components/Toolbar';
 import { WorkspacePanels } from '../../features/editor/components/WorkspacePanels';
 import { EvaluationResultModal } from '../../features/editor/components/EvaluationResultModal';
+import { AiChatFloatingButton, AiChatModal } from '../../features/ai-chat';
 import type {
   EditorTab,
   EvaluationCriterion,
@@ -110,6 +111,7 @@ const WorkspacePageContent: React.FC<WorkspacePageContentProps> = ({ exercise })
   const [toast, setToast] = useState<WorkspaceToastState | null>(null);
   const [editVersion, setEditVersion] = useState(0);
   const [previewRefreshKey, setPreviewRefreshKey] = useState(0);
+  const [isAiChatOpen, setIsAiChatOpen] = useState(false);
   const lastSubmitAtRef = useRef(0);
   const hasSetCompletedRef = useRef(false);
   const [forcedPreview, setForcedPreview] = useState<{
@@ -483,6 +485,18 @@ const WorkspacePageContent: React.FC<WorkspacePageContentProps> = ({ exercise })
           `}</style>
         </div>
       )}
+      <AiChatFloatingButton
+        onClick={() => setIsAiChatOpen(true)}
+      />
+      <AiChatModal
+        isOpen={isAiChatOpen}
+        onClose={() => setIsAiChatOpen(false)}
+        exerciseId={exercise.id}
+        userCode={files.map(f => f.content).join('\n')}
+        exerciseTitle={exercise.title}
+        exerciseDescription={exercise.description}
+        codeTest={exercise.codeTest ? JSON.stringify(exercise.codeTest) : undefined}
+      />
     </>
   );
 };
