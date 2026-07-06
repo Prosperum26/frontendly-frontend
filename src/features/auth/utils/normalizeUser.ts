@@ -1,7 +1,11 @@
 import type { User } from '../types/auth.types';
 
+interface MongoObjectId {
+  $oid?: string;
+}
+
 interface ProfileApiData {
-  _id?: any; 
+  _id?: string | MongoObjectId | { toString?: () => string };
   id?: string;
   email?: string;
   username?: string;
@@ -25,15 +29,16 @@ interface ProfileApiData {
 export function normalizeUser(data: ProfileApiData): User {
   const avatarUrl = data.avatarUrl ?? data.avatar;
 
-  let realId = data.id || ''; 
+  let realId = data.id || '';
 
   if (!realId && data._id) {
     const rawId = data._id;
     if (typeof rawId === 'string') {
       realId = rawId;
     } else if (typeof rawId === 'object') {
-      if (rawId.$oid) realId = rawId.$oid;
-      else if (rawId.toString && typeof rawId.toString === 'function') {
+      if ('$oid' in rawId && rawId.$oid) {
+        realId = rawId.$oid;
+      } else if (rawId.toString && typeof rawId.toString === 'function') {
         const str = rawId.toString();
         if (str !== '[object Object]') realId = str;
       }

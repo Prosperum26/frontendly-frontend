@@ -111,6 +111,7 @@ const WorkspacePageContent: React.FC<WorkspacePageContentProps> = ({ exercise })
   const [editVersion, setEditVersion] = useState(0);
   const [previewRefreshKey, setPreviewRefreshKey] = useState(0);
   const lastSubmitAtRef = useRef(0);
+  const hasSetCompletedRef = useRef(false);
   const [forcedPreview, setForcedPreview] = useState<{
     files: EditorFile[];
     editVersion: number;
@@ -141,14 +142,15 @@ const WorkspacePageContent: React.FC<WorkspacePageContentProps> = ({ exercise })
 
       // Tìm đúng bài (stage) hiện tại đang mở
       const currentStageProgress = unlockedStages.find(
-        (stage: any) => stage.stageId === stageId
+        (stage: { stageId: string; hasSubmittedExercise?: boolean }) => stage.stageId === stageId
       );
 
       // 💡 LOG SỐ 3: Kết quả sau khi tìm
       console.log("🎯 [Debug] Kết quả tìm kiếm currentStage:", currentStageProgress);
 
       // Nếu đã từng nộp bài thành công -> Bật sáng nút Next Lesson
-      if (currentStageProgress?.hasSubmittedExercise) {
+      if (currentStageProgress?.hasSubmittedExercise && !hasSetCompletedRef.current) {
+        hasSetCompletedRef.current = true;
         setIsCompleted(true);
         console.log("✅ Đã bật isCompleted = true");
       }
@@ -241,8 +243,8 @@ const WorkspacePageContent: React.FC<WorkspacePageContentProps> = ({ exercise })
         if (currentUser?.id && currentUser.id !== '') {
           userId = currentUser.id;
         } 
-        else if ((currentUser as any)?._id && (currentUser as any)._id !== '') {
-          userId = (currentUser as any)._id;
+        else if ((currentUser as { _id?: string })?._id && (currentUser as { _id?: string })._id !== '') {
+          userId = (currentUser as { _id?: string })._id;
         } 
         else {
           try {
@@ -319,7 +321,8 @@ const WorkspacePageContent: React.FC<WorkspacePageContentProps> = ({ exercise })
     files, 
     showToast, 
     stageId, 
-    completeGuestLesson
+    completeGuestLesson,
+    isCompleted
   ]);
 
   const handleReset = useCallback(() => {
