@@ -4,6 +4,7 @@ export interface EditorFile {
   filename: string;
   language: EditorLanguage;
   content: string;
+  isSystemGenerated?: boolean; // If true, file won't appear in editable tabs
 }
 
 export type EditorTab = EditorLanguage | string; // Can be filename or language
