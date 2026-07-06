@@ -242,10 +242,13 @@ const WorkspacePageContent: React.FC<WorkspacePageContentProps> = ({ exercise })
       if (isUserAuthenticated) {
         if (currentUser?.id && currentUser.id !== '') {
           userId = currentUser.id;
-        } 
-        else if ((currentUser as { _id?: string })?._id && (currentUser as { _id?: string })._id !== '') {
-          userId = (currentUser as { _id?: string })._id;
-        } 
+        }
+        else if ((currentUser as { _id?: string })?._id) {
+          const _id = (currentUser as { _id?: string })._id;
+          if (_id && _id !== '') {
+            userId = _id;
+          }
+        }
         else {
           try {
             const rawData = localStorage.getItem('currentUser');
