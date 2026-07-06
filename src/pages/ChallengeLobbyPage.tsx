@@ -176,9 +176,9 @@ const ChallengeCard: React.FC<ChallengeCardProps> = ({ challenge }) => {
 
           {/* Tags */}
           <div className="flex flex-wrap gap-2">
-            {challenge.tags.map((tag) => (
+            {challenge.tags.map((tag, index) => (
               <span
-                key={tag}
+                key={`${challenge.id}-${tag}-${index}`}
                 className="text-xs bg-surface dark:bg-surface-raised text-muted px-2 py-1 rounded"
               >
                 {tag}
