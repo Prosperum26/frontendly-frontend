@@ -15,13 +15,17 @@ export const useGoogleLogin = (rememberMe: boolean = false) => {
 
   const googleLoginMutation = useMutation({
     mutationFn: async (credentialResponse: CredentialResponse) => {
+      console.log('Google login mutation started with rememberMe:', rememberMe);
       if (!credentialResponse.credential) {
+        console.error('No credential received from Google');
         throw new Error('No credential received from Google');
       }
+      console.log('Sending Google login request to API');
       const response = await authService.googleLogin({
         idToken: credentialResponse.credential,
         rememberMe,
       });
+      console.log('Google login API response:', response);
       return response;
     },
     onSuccess: async (response) => {
@@ -68,6 +72,14 @@ export const useGoogleLogin = (rememberMe: boolean = false) => {
       }, 1500);
     },
     onError: (error: unknown) => {
+      console.error('Google login error:', error);
+      if (error instanceof AxiosError) {
+        console.error('Axios error details:', {
+          status: error.response?.status,
+          data: error.response?.data,
+          message: error.message
+        });
+      }
       if (error instanceof AxiosError && error.response?.status === 401) {
         addToast('Unauthorized', 'Invalid Google credentials. Please try again.', 'error');
         logout();

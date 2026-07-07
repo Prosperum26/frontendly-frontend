@@ -14,17 +14,21 @@ export const GoogleButton: React.FC<GoogleButtonProps> = ({ rememberMe = false }
   const [error, setError] = useState<string | null>(null);
   const { theme } = useTheme();
 
+  console.log('Google Client ID:', ENV.GOOGLE_CLIENT_ID);
   const isConfigured =
     ENV.GOOGLE_CLIENT_ID &&
     ENV.GOOGLE_CLIENT_ID !== 'your-google-client-id' &&
-    ENV.GOOGLE_CLIENT_ID !== 'dummy_google_client_id';
+    ENV.GOOGLE_CLIENT_ID !== 'dummy_google_client_id' &&
+    ENV.GOOGLE_CLIENT_ID !== 'your-google-client-id-here';
+  console.log('Is Google Configured:', isConfigured);
 
   const handleGoogleError = () => {
-    setError('Google login failed. Please try again.');
     console.error('Google Login Failed');
+    setError('Google login failed. Please try again.');
   };
 
   const handleSuccess = (credentialResponse: CredentialResponse) => {
+    console.log('Google credential received:', credentialResponse);
     setError(null);
     handleGoogleLogin(credentialResponse);
   };
