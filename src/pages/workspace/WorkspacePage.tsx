@@ -92,7 +92,6 @@ const WorkspacePageContent: React.FC<WorkspacePageContentProps> = ({ exercise })
   const queryParams = new URLSearchParams(window.location.search);
   const stageId = queryParams.get('stageId') || exercise.id.replace('exercise_', '');
 
-  // Gọi API lấy thông tin lộ trình và tiến độ user
   const { data: roadmapData } = useRoadmap(DEFAULT_SKILL_ID);
 
   const { files, activeTab, isDirty, setActiveTab, setFile, replaceFiles, reset } =
@@ -132,32 +131,18 @@ const WorkspacePageContent: React.FC<WorkspacePageContentProps> = ({ exercise })
   } = useDraftPersistence(exercise.id, files, { isDirty });
 
   useEffect(() => {
-    // 1. Lấy mảng từ userProgress
     const unlockedStages = roadmapData?.userProgress?.unlockedStages;
 
     if (unlockedStages && unlockedStages.length > 0) {
-      // 💡 LOG SỐ 1: Xem mảng thực tế có gì
-      console.log("📦 [Debug] Mảng unlockedStages từ DB:", unlockedStages);
-      
-      // 💡 LOG SỐ 2: Xem ID trên URL đang là gì
-      console.log("🔗 [Debug] stageId trên URL hiện tại đang là:", stageId);
-
-      // Tìm đúng bài (stage) hiện tại đang mở
       const currentStageProgress = unlockedStages.find(
         (stage: { stageId: string; hasSubmittedExercise?: boolean }) => stage.stageId === stageId
       );
-
-      // 💡 LOG SỐ 3: Kết quả sau khi tìm
-      console.log("🎯 [Debug] Kết quả tìm kiếm currentStage:", currentStageProgress);
-
-      // Nếu đã từng nộp bài thành công -> Bật sáng nút Next Lesson
       if (currentStageProgress?.hasSubmittedExercise && !hasSetCompletedRef.current) {
         hasSetCompletedRef.current = true;
         setIsCompleted(true);
-        console.log("✅ Đã bật isCompleted = true");
       }
     } else {
-      console.log("⚠️ [Debug] unlockedStages vẫn đang trống hoặc undefined", unlockedStages);
+      console.warn('No unlocked stages found in roadmap data.');
     }
   }, [roadmapData, stageId]);
 

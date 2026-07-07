@@ -99,11 +99,11 @@ export const Header: React.FC = () => {
       </nav>
 
       {/* Desktop Auth Buttons */}
-      <div className="hidden md:flex space-x-3 items-center">
+      <div className="hidden md:flex space-x-3 items-center cursor-pointer">
         {/* Dark Mode Toggle */}
         <button
           onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
-          className="p-3 rounded-lg hover:bg-surface dark:hover:bg-surface transition-colors min-h-[48px] min-w-[48px]"
+          className="p-3 rounded-lg hover:bg-surface dark:hover:bg-surface transition-colors min-h-[48px] min-w-[48px] cursor-pointer"
           aria-label="Toggle dark mode"
         >
           {resolvedTheme === 'dark' ? <Sun className="w-5 h-5 text-body" /> : <Moon className="w-5 h-5 text-body" />}
@@ -113,7 +113,7 @@ export const Header: React.FC = () => {
           <div className="relative">
             <button
               onClick={() => setDropdownOpen(!dropdownOpen)}
-              className="flex items-center space-x-2 p-2 rounded-lg hover:bg-surface transition-colors min-h-[48px] min-w-[48px]"
+              className="flex items-center space-x-2 p-2 rounded-lg hover:bg-surface transition-colors min-h-[48px] min-w-[48px] cursor-pointer"
               aria-label="User menu"
             >
               <img

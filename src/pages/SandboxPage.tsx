@@ -211,16 +211,16 @@ export const SandboxPage: React.FC = () => {
             <div className="editor-toolbar__right" style={{ display: 'flex', gap: '8px' }}>
               <button
                 type="button"
-                className="editor-toolbar__button editor-toolbar__button--secondary"
+                className="editor-toolbar__button editor-toolbar__button--secondary cursor-pointer"
                 onClick={handleRun}
                 title="Run code"
               >
-                <Play className="w-4 h-4" />
+                <Play className="w-4 h-4 " />
                 <span>Run</span>
               </button>
               <button
                 type="button"
-                className="editor-toolbar__button editor-toolbar__button--secondary"
+                className="editor-toolbar__button editor-toolbar__button--secondary cursor-pointer"
                 onClick={handleSave}
                 title="Save sandbox"
               >
@@ -229,7 +229,7 @@ export const SandboxPage: React.FC = () => {
               </button>
               <button
                 type="button"
-                className="editor-toolbar__button editor-toolbar__button--secondary"
+                className="editor-toolbar__button editor-toolbar__button--secondary cursor-pointer"
                 onClick={handleReset}
                 title="Reset to default"
               >
@@ -238,7 +238,7 @@ export const SandboxPage: React.FC = () => {
               </button>
               <button
                 type="button"
-                className="editor-toolbar__button editor-toolbar__button--danger"
+                className="editor-toolbar__button editor-toolbar__button--danger cursor-pointer"
                 onClick={() => setShowDeleteConfirm(true)}
                 title="Delete sandbox"
               >

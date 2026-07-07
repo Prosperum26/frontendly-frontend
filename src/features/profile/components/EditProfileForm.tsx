@@ -121,7 +121,7 @@ export const EditProfileForm = ({ currentUser, onSuccess }: { currentUser: Profi
         <button
           type="submit"
           disabled={loading || !isChanged}
-          className="w-full mt-4 flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 hover:shadow-lg hover:-translate-y-0.5 text-white font-bold py-3.5 rounded-xl transition-all duration-300 disabled:bg-slate-300 disabled:text-slate-500 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-none"
+          className="cursor-pointer w-full mt-4 flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 hover:shadow-lg hover:-translate-y-0.5 text-white font-bold py-3.5 rounded-xl transition-all duration-300 disabled:bg-slate-300 disabled:text-slate-500 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-none"
         >
           {loading && <Loader2 className="w-5 h-5 animate-spin" />}
           {loading ? 'Saving Changes...' : 'Save Changes'}

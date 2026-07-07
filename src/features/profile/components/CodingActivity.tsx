@@ -39,7 +39,7 @@ export const CodingActivity = () => {
   }, []);
 
   const getColorClass = (count: number) => {
-    if (count === 0) return 'bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700';
+    if (count === 0) return 'bg-gray-200 dark:bg-slate-800 border border-slate-200 dark:border-slate-700';
     if (count <= 2) return 'bg-green-200 dark:bg-green-900/40 border border-green-300 dark:border-green-800';
     if (count <= 4) return 'bg-green-400 dark:bg-green-700/60 border border-green-500 dark:border-green-600';
     return 'bg-green-600 dark:bg-syntax-green border border-green-700 dark:border-green-400';
@@ -56,7 +56,7 @@ export const CodingActivity = () => {
               <div
                 key={index}
                 title={`${day.date}: ${day.count} activities`}
-                className={`w-4 h-4 rounded-sm ${getColorClass(day.count)} transition-all hover:ring-2 hover:ring-slate-300 dark:hover:ring-slate-600 cursor-help`}
+                className={`cursor-pointer  w-4 h-4 rounded-sm ${getColorClass(day.count)} transition-all hover:ring-2 hover:ring-slate-300 dark:hover:ring-slate-600`}
               />
             ))
         }
