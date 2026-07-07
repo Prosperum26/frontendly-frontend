@@ -36,8 +36,8 @@ export function useAiChat() {
         }));
 
         return response.message;
-      } catch (err: any) {
-        const errorMessage = err.response?.data?.message || err.message || 'Failed to send message';
+      } catch (err: unknown) {
+        const errorMessage = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || (err as Error).message || 'Failed to send message';
         setError(errorMessage);
         throw err;
       } finally {

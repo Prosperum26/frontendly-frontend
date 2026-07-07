@@ -214,6 +214,9 @@ export const ProfilePage: React.FC = () => {
                   {userData?.role === 'user' ? 'Frontend Student' : 'Frontend Master'}
                 </p>
                 <p className="text-muted dark:text-syntax-grey text-sm font-mono">{userData?.email}</p>
+                {userData?.bio && (
+                  <p className="text-body dark:text-slate-300 text-sm italic mt-1">{userData.bio}</p>
+                )}
               </div>
 
               {/* Action Buttons */}

@@ -24,10 +24,26 @@ export const AvatarUpload: React.FC<AvatarUploadProps> = ({ currentAvatarUrl, le
   // 1. CHỌN ẢNH VÀ HIỂN THỊ PREVIEW
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     console.log('1. Đã click và chọn file');
-    
+
     const file = e.target.files?.[0];
     if (!file) {
       console.log('2. Không tìm thấy file (có thể do bấm Cancel)');
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    const maxSize = 5 * 1024 * 1024; // 5MB
+    if (file.size > maxSize) {
+      alert('File size exceeds 5MB limit. Please choose a smaller image.');
+      if (fileInputRef.current) fileInputRef.current.value = '';
+      return;
+    }
+
+    // Validate file type
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif'];
+    if (!allowedTypes.includes(file.type)) {
+      alert('Invalid file type. Please upload a JPEG, PNG, WebP, or GIF image.');
+      if (fileInputRef.current) fileInputRef.current.value = '';
       return;
     }
 
@@ -46,7 +62,7 @@ export const AvatarUpload: React.FC<AvatarUploadProps> = ({ currentAvatarUrl, le
   // 3. NÚT LƯU VÀ GỌI API (Giữ nguyên toàn bộ logic API và log của bạn)
   const handleSave = async () => {
     if (!selectedFile) return;
-    
+
     console.log('4. Bắt đầu gọi API...');
     setUploading(true);
 
@@ -55,8 +71,10 @@ export const AvatarUpload: React.FC<AvatarUploadProps> = ({ currentAvatarUrl, le
       alert('Avatar updated successfully!');
       setSelectedFile(null);
       onSuccess(avatarUrl);
-    } catch {
-      alert('Server connection error');
+    } catch (error: unknown) {
+      console.error('Upload error:', error);
+      const errorMessage = (error as { response?: { data?: { message?: string } } })?.response?.data?.message || (error as Error).message || 'Failed to upload avatar';
+      alert(`Upload failed: ${errorMessage}`);
     } finally {
       setUploading(false);
       if (fileInputRef.current) fileInputRef.current.value = '';

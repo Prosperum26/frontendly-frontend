@@ -7,27 +7,31 @@ interface ProfileData {
   username?: string;
   bio?: string;
   dateOfBirth?: string;
+  phoneNumber?: string;
   [key: string]: unknown;
 }
 
-export const EditProfileForm = ({ currentUser, onSuccess }: { currentUser: ProfileData | UserProfile | null, onSuccess: () => void }) => { 
+export const EditProfileForm = ({ currentUser, onSuccess }: { currentUser: ProfileData | UserProfile | null, onSuccess: () => void }) => {
   const initialUsername = currentUser?.username || '';
   const initialBio = currentUser?.bio || '';
   const initialDateOfBirth = currentUser?.dateOfBirth ? new Date(currentUser.dateOfBirth).toISOString().split('T')[0] : '';
+  const initialPhoneNumber = currentUser?.phoneNumber || '';
 
   const [username, setUsername] = useState<string>(initialUsername);
   const [bio, setBio] = useState<string>(initialBio);
   const [dateOfBirth, setDateOfBirth] = useState<string>(initialDateOfBirth);
-  
+  const [phoneNumber, setPhoneNumber] = useState<string>(initialPhoneNumber);
+
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
-  
+
   const [showSuccess, setShowSuccess] = useState(false);
 
-  const isChanged = 
+  const isChanged =
     username !== initialUsername ||
     bio !== initialBio ||
-    dateOfBirth !== initialDateOfBirth;
+    dateOfBirth !== initialDateOfBirth ||
+    phoneNumber !== initialPhoneNumber;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -55,7 +59,7 @@ export const EditProfileForm = ({ currentUser, onSuccess }: { currentUser: Profi
     }
 
     try {
-      await profileService.updateProfile({ username, bio, dateOfBirth });
+      await profileService.updateProfile({ username, bio, dateOfBirth, phoneNumber });
       setShowSuccess(true);
       setTimeout(() => {
         onSuccess();
@@ -108,13 +112,30 @@ export const EditProfileForm = ({ currentUser, onSuccess }: { currentUser: Profi
         </div>
 
         <div>
-          <label className="block text-sm font-bold text-gray-700 mb-2">Bio</label>
+          <label className="block text-sm font-bold text-gray-700 mb-2">Bio (max 50 characters)</label>
           <textarea
             value={bio}
-            onChange={(e) => setBio(e.target.value)}
-            rows={4}
+            onChange={(e) => {
+              if (e.target.value.length <= 50) {
+                setBio(e.target.value);
+              }
+            }}
+            rows={2}
+            maxLength={50}
             className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-300 resize-none text-slate-900 shadow-sm hover:border-gray-300"
             placeholder="Tell us a little bit about yourself..."
+          />
+          <p className="text-xs text-gray-500 mt-1 text-right">{bio.length}/50</p>
+        </div>
+
+        <div>
+          <label className="block text-sm font-bold text-gray-700 mb-2">Phone Number</label>
+          <input
+            type="tel"
+            value={phoneNumber}
+            onChange={(e) => setPhoneNumber(e.target.value)}
+            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-300 text-slate-900 shadow-sm hover:border-gray-300"
+            placeholder="Enter your phone number"
           />
         </div>
 
