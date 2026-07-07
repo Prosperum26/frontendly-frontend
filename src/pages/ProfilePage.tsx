@@ -8,7 +8,7 @@ import type { UserProfile, Badge as BadgeType, ActivityLog } from '../features/p
 import NetworkErrorCard from '../components/NetworkErrorCard';
 import { Share2, Flame, Star, Trophy, Zap, BookOpen, Target, Bot } from 'lucide-react';
 import { EditProfileForm } from '../features/profile/components/EditProfileForm';
-import { CodingActivity } from '../features/profile/components/CodingActivity';
+import { CodingActivity, ActivityClock } from '../features/profile/components/CodingActivity';
 import { ProgressTrack } from '../features/profile/components/ProgressTrack';
 import { Badge } from '../features/profile/components/Badge';
 import { AiChatHistoryTab } from '../features/ai-chat';
@@ -356,48 +356,10 @@ export const ProfilePage: React.FC = () => {
             <CodingActivity />
           </div>
 
-          {/* Proficiency Radar - Compact circular */}
+          {/* Activity Clock - Learning time distribution */}
           <div className="bg-surface dark:bg-editor-panel rounded-xl border border-border dark:border-slate-800 p-6 hover:border-slate-700 transition-all duration-300">
-            <h3 className="text-xs font-display font-bold text-muted dark:text-syntax-grey uppercase tracking-wider mb-4">Proficiency Radar</h3>
-            <div className="relative w-full aspect-square max-w-[280px] mx-auto flex flex-col items-center justify-center">
-              {userData?.skills && userData.skills.length >= 3 ? (
-                <svg viewBox="0 0 100 100" className="w-full h-full text-muted dark:text-syntax-grey">
-                  <polygon points="50,10 90,80 10,80" fill="none" stroke="currentColor" strokeWidth="0.5" strokeDasharray="2,2" />
-                  <polygon points="50,30 78,70 22,70" fill="none" stroke="currentColor" strokeWidth="0.5" strokeDasharray="2,2" />
-                  <polygon points="50,50 65,60 35,60" fill="none" stroke="currentColor" strokeWidth="0.5" strokeDasharray="2,2" />
-                  <line x1="50" y1="50" x2="50" y2="10" stroke="currentColor" strokeWidth="0.5" />
-                  <line x1="50" y1="50" x2="90" y2="80" stroke="currentColor" strokeWidth="0.5" />
-                  <line x1="50" y1="50" x2="10" y2="80" stroke="currentColor" strokeWidth="0.5" />
-                  
-                  {(() => {
-                    const htmlSkill = userData.skills?.find((s: { name: string; level: number }) => s.name.toLowerCase() === 'html')?.level || 1;
-                    const cssSkill = userData.skills?.find((s: { name: string; level: number }) => s.name.toLowerCase() === 'css')?.level || 1;
-                    const jsSkill = userData.skills?.find((s: { name: string; level: number }) => s.name.toLowerCase() === 'js')?.level || 1;
-                    
-                    const r1 = (htmlSkill / 10) * 40;
-                    const r2 = (cssSkill / 10) * 40;
-                    const r3 = (jsSkill / 10) * 40;
-                    
-                    const p1 = `50,${50 - r1}`;
-                    const p2 = `${50 + r2 * Math.cos(Math.PI / 6)},${50 + r2 * Math.sin(Math.PI / 6)}`;
-                    const p3 = `${50 - r3 * Math.cos(Math.PI / 6)},${50 + r3 * Math.sin(Math.PI / 6)}`;
-                    
-                    return <polygon points={`${p1} ${p2} ${p3}`} fill="rgba(88, 166, 255, 0.2)" stroke="#58A6FF" strokeWidth="2" strokeLinejoin="round" style={{ filter: 'drop-shadow(0 0 8px rgba(88, 166, 255, 0.3))' }} />;
-                  })()}
-
-                  <text x="50" y="5" fontSize="6" textAnchor="middle" fill="currentColor" fontWeight="bold">HTML</text>
-                  <text x="95" y="85" fontSize="6" textAnchor="middle" fill="currentColor" fontWeight="bold">CSS</text>
-                  <text x="5" y="85" fontSize="6" textAnchor="middle" fill="currentColor" fontWeight="bold">JS</text>
-                </svg>
-              ) : (
-                <div className="text-center py-8">
-                  <div className="w-12 h-12 bg-surface-raised dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-3">
-                    <Zap className="w-6 h-6 text-muted dark:text-syntax-grey" />
-                  </div>
-                  <p className="text-[10px] text-muted dark:text-syntax-grey font-medium px-4">Complete more lessons to see your proficiency radar</p>
-                </div>
-              )}
-            </div>
+            <h3 className="text-xs font-display font-bold text-muted dark:text-syntax-grey uppercase tracking-wider mb-4">Learning Time Distribution</h3>
+            <ActivityClock activities={activities} />
           </div>
         </div>
 
