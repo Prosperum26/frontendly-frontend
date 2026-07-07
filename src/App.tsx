@@ -1,9 +1,11 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider } from 'next-themes';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 import { ToastContainer, ToastProvider } from './components/Toast';
 import { ProtectedRoute } from './components/ProtectedRoute/ProtectedRoute';
 import { ROUTES, workspacePath } from './constants/routes';
+import { ENV } from './config/env';
 import { useSessionVerification } from './features/auth/hooks/useSessionVerification';
 import ContactPage from './pages/ContactPage';
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
@@ -45,6 +47,11 @@ const queryClient = new QueryClient({
 function App() {
   useSessionVerification();
 
+  const isGoogleConfigured =
+    ENV.GOOGLE_CLIENT_ID &&
+    ENV.GOOGLE_CLIENT_ID !== 'your-google-client-id' &&
+    ENV.GOOGLE_CLIENT_ID !== 'dummy_google_client_id';
+
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider
@@ -53,93 +60,185 @@ function App() {
         disableTransitionOnChange
         storageKey="frontendly-theme"
       >
-        <ToastProvider>
-          <Router>
-            <Routes>
-              <Route path={ROUTES.BANNED} element={<BannedPage />} />
+        {isGoogleConfigured ? (
+          <GoogleOAuthProvider clientId={ENV.GOOGLE_CLIENT_ID}>
+            <ToastProvider>
+              <Router>
+                <Routes>
+                  <Route path={ROUTES.BANNED} element={<BannedPage />} />
 
-              <Route element={<AuthLayout />}>
-                <Route path={ROUTES.LOGIN} element={<LoginPage />} />
-                <Route path={ROUTES.REGISTER} element={<RegisterPage />} />
-                <Route path={ROUTES.FORGOT_PASSWORD} element={<ForgotPasswordPage />} />
-                <Route path={ROUTES.RESET_PASSWORD} element={<ResetPasswordPage />} />
-                <Route path={ROUTES.CONTACT} element={<ContactPage />} />
-                <Route path={ROUTES.PRIVACY} element={<PrivacyPolicyPage />} />
-                <Route path={ROUTES.TERMS} element={<TermsPage />} />
-              </Route>
+                  <Route element={<AuthLayout />}>
+                    <Route path={ROUTES.LOGIN} element={<LoginPage />} />
+                    <Route path={ROUTES.REGISTER} element={<RegisterPage />} />
+                    <Route path={ROUTES.FORGOT_PASSWORD} element={<ForgotPasswordPage />} />
+                    <Route path={ROUTES.RESET_PASSWORD} element={<ResetPasswordPage />} />
+                    <Route path={ROUTES.CONTACT} element={<ContactPage />} />
+                    <Route path={ROUTES.PRIVACY} element={<PrivacyPolicyPage />} />
+                    <Route path={ROUTES.TERMS} element={<TermsPage />} />
+                  </Route>
 
-              <Route element={<MainLayout />}>
-                <Route path={ROUTES.HOME} element={<HomePage />} />
-                <Route
-                  path={ROUTES.ENTRANCE_TEST}
-                  element={
-                    <ProtectedRoute>
-                      <EntranceTestPage />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route path={ROUTES.LEARNING_PATH} element={<LearningPathPage />} />
-                <Route path={ROUTES.MILESTONE_DETAIL} element={<MilestoneDetailPage />} />
-                <Route
-                  path={ROUTES.CHALLENGE_LOBBY}
-                  element={
-                    <ProtectedRoute>
-                      <ChallengeLobbyPage />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path={ROUTES.PROFILE}
-                  element={
-                    <ProtectedRoute>
-                      <ProfilePage />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route path={ROUTES.LEADERBOARD} element={<LeaderboardPage />} />
-                <Route
-                  path={ROUTES.SANDBOX_LIST}
-                  element={
-                    <ProtectedRoute>
-                      <SandboxListPage />
-                    </ProtectedRoute>
-                  }
-                />
-              </Route>
+                  <Route element={<MainLayout />}>
+                    <Route path={ROUTES.HOME} element={<HomePage />} />
+                    <Route
+                      path={ROUTES.ENTRANCE_TEST}
+                      element={
+                        <ProtectedRoute>
+                          <EntranceTestPage />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route path={ROUTES.LEARNING_PATH} element={<LearningPathPage />} />
+                    <Route path={ROUTES.MILESTONE_DETAIL} element={<MilestoneDetailPage />} />
+                    <Route
+                      path={ROUTES.CHALLENGE_LOBBY}
+                      element={
+                        <ProtectedRoute>
+                          <ChallengeLobbyPage />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path={ROUTES.PROFILE}
+                      element={
+                        <ProtectedRoute>
+                          <ProfilePage />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route path={ROUTES.LEADERBOARD} element={<LeaderboardPage />} />
+                    <Route
+                      path={ROUTES.SANDBOX_LIST}
+                      element={
+                        <ProtectedRoute>
+                          <SandboxListPage />
+                        </ProtectedRoute>
+                      }
+                    />,
+                  </Route>
 
-              <Route path={ROUTES.LESSON_THEORY} element={<TheoryPage />} />
-              <Route path={ROUTES.LESSON_COMPLETE} element={<LessonComplete />} />
-              <Route path={ROUTES.MILESTONE_COMPLETE} element={<MilestoneCompletePage />} />
+                  <Route path={ROUTES.LESSON_THEORY} element={<TheoryPage />} />
+                  <Route path={ROUTES.LESSON_COMPLETE} element={<LessonComplete />} />
+                  <Route path={ROUTES.MILESTONE_COMPLETE} element={<MilestoneCompletePage />} />
 
-              <Route element={<WorkspaceLayout />}>
-                <Route
-                  path={ROUTES.WORKSPACE}
-                  element={
-                    <ProtectedRoute allowGuest>
-                      <WorkspacePage />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path={ROUTES.SANDBOX}
-                  element={
-                    <ProtectedRoute>
-                      <SandboxPage />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/workspace"
-                  element={<Navigate to={workspacePath('exercise_s1')} replace />}
-                />
-              </Route>
+                  <Route element={<WorkspaceLayout />}>
+                    <Route
+                      path={ROUTES.WORKSPACE}
+                      element={
+                        <ProtectedRoute allowGuest>
+                          <WorkspacePage />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path={ROUTES.SANDBOX}
+                      element={
+                        <ProtectedRoute>
+                          <SandboxPage />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/workspace"
+                      element={<Navigate to={workspacePath('exercise_s1')} replace />}
+                    />
+                  </Route>
 
-              <Route path="/" element={<Navigate to={ROUTES.HOME} replace />} />
-              <Route path="*" element={<NotFoundPage />} />
-            </Routes>
-          </Router>
-          <ToastContainer />
-        </ToastProvider>
+                  <Route path="/" element={<Navigate to={ROUTES.HOME} replace />} />
+                  <Route path="*" element={<NotFoundPage />} />
+                </Routes>
+              </Router>
+              <ToastContainer />
+            </ToastProvider>
+          </GoogleOAuthProvider>
+        ) : (
+          <ToastProvider>
+            <Router>
+              <Routes>
+                <Route path={ROUTES.BANNED} element={<BannedPage />} />
+
+                <Route element={<AuthLayout />}>
+                  <Route path={ROUTES.LOGIN} element={<LoginPage />} />
+                  <Route path={ROUTES.REGISTER} element={<RegisterPage />} />
+                  <Route path={ROUTES.FORGOT_PASSWORD} element={<ForgotPasswordPage />} />
+                  <Route path={ROUTES.RESET_PASSWORD} element={<ResetPasswordPage />} />
+                  <Route path={ROUTES.CONTACT} element={<ContactPage />} />
+                  <Route path={ROUTES.PRIVACY} element={<PrivacyPolicyPage />} />
+                  <Route path={ROUTES.TERMS} element={<TermsPage />} />
+                </Route>
+
+                <Route element={<MainLayout />}>
+                  <Route path={ROUTES.HOME} element={<HomePage />} />
+                  <Route
+                    path={ROUTES.ENTRANCE_TEST}
+                    element={
+                      <ProtectedRoute>
+                        <EntranceTestPage />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route path={ROUTES.LEARNING_PATH} element={<LearningPathPage />} />
+                  <Route path={ROUTES.MILESTONE_DETAIL} element={<MilestoneDetailPage />} />
+                  <Route
+                    path={ROUTES.CHALLENGE_LOBBY}
+                    element={
+                      <ProtectedRoute>
+                        <ChallengeLobbyPage />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path={ROUTES.PROFILE}
+                    element={
+                      <ProtectedRoute>
+                        <ProfilePage />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route path={ROUTES.LEADERBOARD} element={<LeaderboardPage />} />
+                  <Route
+                    path={ROUTES.SANDBOX_LIST}
+                    element={
+                      <ProtectedRoute>
+                        <SandboxListPage />
+                      </ProtectedRoute>
+                    }
+                  />,
+                </Route>
+
+                <Route path={ROUTES.LESSON_THEORY} element={<TheoryPage />} />
+                <Route path={ROUTES.LESSON_COMPLETE} element={<LessonComplete />} />
+                <Route path={ROUTES.MILESTONE_COMPLETE} element={<MilestoneCompletePage />} />
+
+                <Route element={<WorkspaceLayout />}>
+                  <Route
+                    path={ROUTES.WORKSPACE}
+                    element={
+                      <ProtectedRoute allowGuest>
+                        <WorkspacePage />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path={ROUTES.SANDBOX}
+                    element={
+                      <ProtectedRoute>
+                        <SandboxPage />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/workspace"
+                    element={<Navigate to={workspacePath('exercise_s1')} replace />}
+                  />
+                </Route>
+
+                <Route path="/" element={<Navigate to={ROUTES.HOME} replace />} />
+                <Route path="*" element={<NotFoundPage />} />
+              </Routes>
+            </Router>
+            <ToastContainer />
+          </ToastProvider>
+        )}
       </ThemeProvider>
     </QueryClientProvider>
   );
