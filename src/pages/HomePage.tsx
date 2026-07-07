@@ -292,7 +292,7 @@ const Dashboard: React.FC<DashboardProps> = ({
                   {userRank ? `#${userRank}` : 'Unranked'}
                 </p>
               </div>
-              <Link to={'#'} className="w-full block text-center bg-surface-raised border border-border text-heading px-4 py-2.5 rounded-lg text-sm font-semibold hover:bg-slate-50 transition-colors">
+              <Link to={ROUTES.LEADERBOARD} className="w-full block text-center bg-surface-raised border border-border text-heading px-4 py-2.5 rounded-lg text-sm font-semibold hover:bg-slate-50 transition-colors">
                 View Leaderboard
               </Link>
             </div>
