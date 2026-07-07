@@ -146,18 +146,22 @@ export const EntranceTestPage: React.FC = () => {
               currentQuestion.type === 'single-choice') &&
               currentQuestion.options && (
                 <div className="space-y-3">
-                  {currentQuestion.options.map((option, idx) => (
-                    <button
-                      key={idx}
-                      type="button"
-                      className={`entrance-test-option ${
-                        testState.answers[currentQuestion.id] === option ? 'is-selected' : ''
-                      }`}
-                      onClick={() => selectAnswer(currentQuestion.id, option)}
-                    >
-                      {option}
-                    </button>
-                  ))}
+                  {currentQuestion.options.map((option, idx) => {
+                    const optionKey = typeof option === 'string' ? option : option.key;
+                    const optionValue = typeof option === 'string' ? option : option.value;
+                    return (
+                      <button
+                        key={idx}
+                        type="button"
+                        className={`entrance-test-option ${
+                          testState.answers[currentQuestion.id] === optionKey ? 'is-selected' : ''
+                        }`}
+                        onClick={() => selectAnswer(currentQuestion.id, optionKey)}
+                      >
+                        {optionValue}
+                      </button>
+                    );
+                  })}
                 </div>
               )}
           </div>

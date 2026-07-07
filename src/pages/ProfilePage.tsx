@@ -6,11 +6,12 @@ import { profileService } from '../features/profile/services/profile.service';
 import { authService } from '../features/auth/services/auth.service';
 import type { UserProfile, Badge as BadgeType, ActivityLog } from '../features/profile/types/profile.types';
 import NetworkErrorCard from '../components/NetworkErrorCard';
-import { Share2, Flame, Star, Trophy, Zap, BookOpen, Target } from 'lucide-react';
+import { Share2, Flame, Star, Trophy, Zap, BookOpen, Target, Bot } from 'lucide-react';
 import { EditProfileForm } from '../features/profile/components/EditProfileForm';
 import { CodingActivity } from '../features/profile/components/CodingActivity';
 import { ProgressTrack } from '../features/profile/components/ProgressTrack';
 import { Badge } from '../features/profile/components/Badge';
+import { AiChatHistoryTab } from '../features/ai-chat';
 
 export const ProfilePage: React.FC = () => {
   const { currentUser, logout } = useAuthStore();
@@ -22,6 +23,7 @@ export const ProfilePage: React.FC = () => {
   const [isOffline, setIsOffline] = useState(!navigator.onLine);
   const [isEditing, setIsEditing] = useState(false);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState<'achievements' | 'ai-chat'>('achievements');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -429,37 +431,68 @@ export const ProfilePage: React.FC = () => {
           </div>
         </div>
 
-        {/* QUIET SECTION: Recent Achievements - Simple list, not boxed */}
-        <div className="space-y-3">
-          <h3 className="text-sm font-display font-bold text-heading dark:text-white flex items-center gap-2">
-            <Star className="w-4 h-4 text-primary dark:text-syntax-blue" />
-            Recent Achievements
-          </h3>
-          {activities.length === 0 ? (
-            <p className="text-center text-muted dark:text-syntax-grey text-sm italic py-4">No recent activities</p>
-          ) : (
-            <div className="space-y-2">
-              {activities.slice(0, 5).map((activity, index) => (
-                <div 
-                  key={typeof activity.id === 'string' ? activity.id : `activity-${index}`} 
-                  className="flex items-start gap-4 p-3 rounded-lg hover:bg-surface-raised dark:hover:bg-slate-800/50 transition-colors group"
-                >
-                  <div className={`mt-0.5 p-2 rounded-lg ${
-                    activity.type === 'lesson_completed' ? 'bg-green-50 dark:bg-green-950/30 text-green-600 dark:text-syntax-green' :
-                    activity.type === 'challenge_won' ? 'bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-syntax-blue' :
-                    'bg-orange-50 dark:bg-orange-950/30 text-orange-600 dark:text-syntax-amber'
-                  }`}>
-                    {activity.type === 'lesson_completed' ? <BookOpen className="w-4 h-4" /> :
-                     activity.type === 'challenge_won' ? <Trophy className="w-4 h-4" /> :
-                     <Zap className="w-4 h-4" />}
-                  </div>
-                  <div className="flex-grow">
-                    <p className="text-sm text-body dark:text-slate-200 font-medium leading-tight">{activity.description}</p>
-                    <p className="text-xs text-muted dark:text-syntax-grey mt-1 font-mono">{new Date(activity.timestamp).toLocaleString()}</p>
-                  </div>
-                  <Link to="#" className="text-xs font-mono text-primary dark:text-syntax-blue opacity-0 group-hover:opacity-100 transition-opacity hover:underline shrink-0">View Details</Link>
+        {/* QUIET SECTION: Tabbed Content - Achievements & AI Chat History */}
+        <div className="space-y-4">
+          {/* Tab Navigation */}
+          <div className="flex gap-2 border-b border-border dark:border-slate-800">
+            <button
+              onClick={() => setActiveTab('achievements')}
+              className={`px-4 py-2 text-sm font-medium transition-colors ${
+                activeTab === 'achievements'
+                  ? 'text-primary dark:text-syntax-blue border-b-2 border-primary dark:border-syntax-blue'
+                  : 'text-muted dark:text-syntax-grey hover:text-heading dark:hover:text-white'
+              }`}
+            >
+              <Star className="w-4 h-4 inline mr-2" />
+              Recent Achievements
+            </button>
+            <button
+              onClick={() => setActiveTab('ai-chat')}
+              className={`px-4 py-2 text-sm font-medium transition-colors ${
+                activeTab === 'ai-chat'
+                  ? 'text-primary dark:text-syntax-blue border-b-2 border-primary dark:border-syntax-blue'
+                  : 'text-muted dark:text-syntax-grey hover:text-heading dark:hover:text-white'
+              }`}
+            >
+              <Bot className="w-4 h-4 inline mr-2" />
+              AI Chat History
+            </button>
+          </div>
+
+          {/* Tab Content */}
+          {activeTab === 'achievements' ? (
+            <div className="space-y-3">
+              {activities.length === 0 ? (
+                <p className="text-center text-muted dark:text-syntax-grey text-sm italic py-4">No recent activities</p>
+              ) : (
+                <div className="space-y-2">
+                  {activities.slice(0, 5).map((activity, index) => (
+                    <div 
+                      key={typeof activity.id === 'string' ? activity.id : `activity-${index}`} 
+                      className="flex items-start gap-4 p-3 rounded-lg hover:bg-surface-raised dark:hover:bg-slate-800/50 transition-colors group"
+                    >
+                      <div className={`mt-0.5 p-2 rounded-lg ${
+                        activity.type === 'lesson_completed' ? 'bg-green-50 dark:bg-green-950/30 text-green-600 dark:text-syntax-green' :
+                        activity.type === 'challenge_won' ? 'bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-syntax-blue' :
+                        'bg-orange-50 dark:bg-orange-950/30 text-orange-600 dark:text-syntax-amber'
+                      }`}>
+                        {activity.type === 'lesson_completed' ? <BookOpen className="w-4 h-4" /> :
+                         activity.type === 'challenge_won' ? <Trophy className="w-4 h-4" /> :
+                         <Zap className="w-4 h-4" />}
+                      </div>
+                      <div className="flex-grow">
+                        <p className="text-sm text-body dark:text-slate-200 font-medium leading-tight">{activity.description}</p>
+                        <p className="text-xs text-muted dark:text-syntax-grey mt-1 font-mono">{new Date(activity.timestamp).toLocaleString()}</p>
+                      </div>
+                      <Link to="#" className="text-xs font-mono text-primary dark:text-syntax-blue opacity-0 group-hover:opacity-100 transition-opacity hover:underline shrink-0">View Details</Link>
+                    </div>
+                  ))}
                 </div>
-              ))}
+              )}
+            </div>
+          ) : (
+            <div className="bg-surface dark:bg-editor-panel rounded-xl border border-border dark:border-slate-800 p-6">
+              <AiChatHistoryTab />
             </div>
           )}
         </div>
