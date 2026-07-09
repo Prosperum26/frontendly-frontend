@@ -17,7 +17,10 @@ export const useAuth = () => {
     setLoading(true);
     try {
       const response = await authService.login(credentials);
-      // Tokens are now stored in HttpOnly cookies by the backend
+      
+      // Store tokens in localStorage for API interceptor
+      localStorage.setItem('accessToken', response.accessToken);
+      localStorage.setItem('refreshToken', response.refreshToken);
       
       const dailyCheckIn = response.dailyCheckIn;
       
