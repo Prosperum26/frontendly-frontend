@@ -14,8 +14,8 @@ export function useChatHistory() {
     try {
       const response = await aiChatService.getSessions();
       setSessions(response.sessions);
-    } catch (err: any) {
-      const errorMessage = err.response?.data?.message || err.message || 'Failed to fetch sessions';
+    } catch (err: unknown) {
+      const errorMessage = (err as { response?: { data?: { message?: string } }; message?: string }).response?.data?.message || (err as { message?: string }).message || 'Failed to fetch sessions';
       setError(errorMessage);
     } finally {
       setIsLoading(false);
@@ -29,8 +29,8 @@ export function useChatHistory() {
       const response = await aiChatService.getSessionMessages(sessionId);
       setCurrentSession(response);
       return response;
-    } catch (err: any) {
-      const errorMessage = err.response?.data?.message || err.message || 'Failed to fetch messages';
+    } catch (err: unknown) {
+      const errorMessage = (err as { response?: { data?: { message?: string } }; message?: string }).response?.data?.message || (err as { message?: string }).message || 'Failed to fetch messages';
       setError(errorMessage);
       throw err;
     } finally {

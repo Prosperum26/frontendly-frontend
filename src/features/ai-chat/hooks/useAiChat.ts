@@ -13,7 +13,7 @@ export function useAiChat() {
     try {
       const quotaData = await aiChatService.getQuota();
       setQuota(quotaData);
-    } catch (err:any) {
+    } catch (err:unknown) {
       console.error('Failed to fetch quota:', err);
     }
   }, []);
@@ -30,14 +30,14 @@ export function useAiChat() {
         });
 
         setSessionId(response.sessionId);
-        setQuota((prev:any) => ({
+        setQuota((prev) => ({
           ...prev!,
           remainingQuota: response.remainingQuota,
         }));
 
         return response.message;
-      } catch (err: any) {
-        const errorMessage = err.response?.data?.message || err.message || 'Failed to send message';
+      } catch (err: unknown) {
+        const errorMessage = (err as { response?: { data?: { message?: string } }; message?: string }).response?.data?.message || (err as { message?: string }).message || 'Failed to send message';
         setError(errorMessage);
         throw err;
       } finally {
@@ -53,7 +53,7 @@ export function useAiChat() {
       setSessionId(newSessionId);
       setMessages([]);
       return newSessionId;
-    } catch (err:any) {
+    } catch (err:unknown) {
       console.error('Failed to create session:', err);
       throw err;
     }
