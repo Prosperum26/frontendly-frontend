@@ -27,7 +27,10 @@ export const useAuthStore = create<AuthState>((set) => ({
   },
 
   logout: () => {
-    // Tokens are cleared via HttpOnly cookies by backend logout endpoint
+    // Clear tokens from localStorage
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
+    // Clear auth state
     set({ isAuthenticated: false, currentUser: null, isAuthChecking: false, previousRoute: null });
   },
 
