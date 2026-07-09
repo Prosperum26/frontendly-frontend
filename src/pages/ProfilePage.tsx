@@ -223,20 +223,20 @@ export const ProfilePage: React.FC = () => {
               <div className="flex flex-wrap gap-3 w-full lg:w-auto">
                 <button 
                   onClick={() => setIsEditing(true)} 
-                  className="flex items-center gap-2 bg-primary hover:bg-primary-hover text-white dark:bg-syntax-blue dark:hover:bg-blue-500 dark:text-editor-dark px-5 py-2.5 rounded-lg font-semibold transition-all duration-200 hover:shadow-lg hover:shadow-blue-500/25 hover:-translate-y-0.5"
+                  className="cursor-pointer flex items-center gap-2 bg-primary hover:bg-primary-hover text-white dark:bg-syntax-blue dark:hover:bg-blue-500 dark:text-editor-dark px-5 py-2.5 rounded-lg font-semibold transition-all duration-200 hover:shadow-lg hover:shadow-blue-500/25 hover:-translate-y-0.5"
                 >
                   Edit Profile
                 </button>
                 <button 
                   onClick={() => setIsShareModalOpen(true)} 
-                  className="flex items-center justify-center gap-2 border border-border dark:border-slate-600 text-body dark:text-slate-200 px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-surface dark:hover:bg-slate-700/50 transition-all duration-200"
+                  className="cursor-pointer flex items-center justify-center gap-2 border-1 border-gray-300 dark:border-slate-600 text-body dark:text-slate-200 px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-surface dark:hover:bg-slate-700/50 transition-all duration-200 hover:-translate-y-0.5"
                 >
                   <Share2 className="w-4 h-4" />
                   Share Profile
                 </button>
                 <button 
                   onClick={handleLogout}
-                  className="flex items-center justify-center gap-2 border border-red-300 dark:border-red-900/50 text-red-700 dark:text-red-400 px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-red-50 dark:hover:bg-red-900/20 transition-all duration-200"
+                  className="cursor-pointer   flex items-center justify-center gap-2 border border-red-300 dark:border-red-900/50 text-red-700 dark:text-red-400 px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-red-50 dark:hover:bg-red-900/20 transition-all duration-200 hover:-translate-y-0.5"
                 >
                   Logout
                 </button>
@@ -272,7 +272,7 @@ export const ProfilePage: React.FC = () => {
                   </h3>
                   <button 
                     onClick={() => setIsEditing(false)}
-                    className="text-sm text-muted dark:text-syntax-grey hover:text-heading dark:hover:text-white transition-colors"
+                    className="cursor-pointer text-sm text-muted dark:text-syntax-grey hover:text-heading dark:hover:text-white transition-colors"
                   >
                     Cancel
                   </button>
@@ -289,13 +289,13 @@ export const ProfilePage: React.FC = () => {
         {/* PRIMARY SECTION: Learning Path + Stats Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Learning Path - Tall card, left column */}
-          <div className="lg:col-span-2">
+          <div className="cursor-pointer lg:col-span-2">
             <ProgressTrack />
           </div>
 
           {/* Stats Grid - Compact 2x2 */}
           <div className="grid grid-cols-2 gap-4">
-            <div className="bg-surface dark:bg-editor-panel rounded-xl p-4 border border-border dark:border-slate-800 hover:border-slate-700 transition-all duration-300 hover:shadow-lg hover:shadow-orange-500/10">
+            <div className="cursor-pointer bg-surface dark:bg-editor-panel rounded-xl p-4 border border-border dark:border-slate-800 hover:border-slate-700 transition-all duration-300 hover:shadow-lg hover:shadow-orange-500/10">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-lg bg-orange-50 dark:bg-orange-950/30 flex items-center justify-center">
                   <Flame className="w-5 h-5 text-orange-500 dark:text-syntax-amber" />
@@ -307,7 +307,7 @@ export const ProfilePage: React.FC = () => {
               </div>
             </div>
 
-            <div className="bg-surface dark:bg-editor-panel rounded-xl p-4 border border-border dark:border-slate-800 hover:border-slate-700 transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/10">
+            <div className="cursor-pointer bg-surface dark:bg-editor-panel rounded-xl p-4 border border-border dark:border-slate-800 hover:border-slate-700 transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/10">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-lg bg-blue-50 dark:bg-blue-950/30 flex items-center justify-center">
                   <Star className="w-5 h-5 text-blue-500 dark:text-syntax-blue" />
@@ -319,7 +319,7 @@ export const ProfilePage: React.FC = () => {
               </div>
             </div>
 
-            <div className="bg-surface dark:bg-editor-panel rounded-xl p-4 border border-border dark:border-slate-800 hover:border-slate-700 transition-all duration-300 hover:shadow-lg hover:shadow-green-500/10">
+            <div className="cursor-pointer bg-surface dark:bg-editor-panel rounded-xl p-4 border border-border dark:border-slate-800 hover:border-slate-700 transition-all duration-300 hover:shadow-lg hover:shadow-green-500/10">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-lg bg-green-50 dark:bg-green-950/30 flex items-center justify-center">
                   <Target className="w-5 h-5 text-green-500 dark:text-syntax-green" />
@@ -331,7 +331,7 @@ export const ProfilePage: React.FC = () => {
               </div>
             </div>
 
-            <div className="bg-surface dark:bg-editor-panel rounded-xl p-4 border border-border dark:border-slate-800 hover:border-slate-700 transition-all duration-300 hover:shadow-lg hover:shadow-yellow-500/10">
+            <div className="cursor-pointer bg-surface dark:bg-editor-panel rounded-xl p-4 border border-border dark:border-slate-800 hover:border-slate-700 transition-all duration-300 hover:shadow-lg hover:shadow-yellow-500/10">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-lg bg-yellow-50 dark:bg-yellow-950/30 flex items-center justify-center">
                   <Trophy className="w-5 h-5 text-yellow-500 dark:text-yellow-400" />
@@ -402,7 +402,7 @@ export const ProfilePage: React.FC = () => {
           <div className="flex gap-2 border-b border-border dark:border-slate-800">
             <button
               onClick={() => setActiveTab('achievements')}
-              className={`px-4 py-2 text-sm font-medium transition-colors ${
+              className={`px-4 py-2 text-sm font-medium transition-colors cursor-pointer ${
                 activeTab === 'achievements'
                   ? 'text-primary dark:text-syntax-blue border-b-2 border-primary dark:border-syntax-blue'
                   : 'text-muted dark:text-syntax-grey hover:text-heading dark:hover:text-white'
@@ -413,7 +413,7 @@ export const ProfilePage: React.FC = () => {
             </button>
             <button
               onClick={() => setActiveTab('ai-chat')}
-              className={`px-4 py-2 text-sm font-medium transition-colors ${
+              className={`px-4 py-2 text-sm font-medium transition-colors cursor-pointer ${
                 activeTab === 'ai-chat'
                   ? 'text-primary dark:text-syntax-blue border-b-2 border-primary dark:border-syntax-blue'
                   : 'text-muted dark:text-syntax-grey hover:text-heading dark:hover:text-white'

@@ -92,7 +92,6 @@ const WorkspacePageContent: React.FC<WorkspacePageContentProps> = ({ exercise })
   const queryParams = new URLSearchParams(window.location.search);
   const stageId = queryParams.get('stageId') || exercise.id.replace('exercise_', '');
 
-  // Gọi API lấy thông tin lộ trình và tiến độ user
   const { data: roadmapData } = useRoadmap(DEFAULT_SKILL_ID);
 
   const { files, activeTab, isDirty, setActiveTab, setFile, replaceFiles, reset } =
@@ -132,7 +131,6 @@ const WorkspacePageContent: React.FC<WorkspacePageContentProps> = ({ exercise })
   } = useDraftPersistence(exercise.id, files, { isDirty });
 
   useEffect(() => {
-    // 1. Lấy mảng từ userProgress
     const unlockedStages = roadmapData?.userProgress?.unlockedStages;
 
     if (unlockedStages && unlockedStages.length > 0) {

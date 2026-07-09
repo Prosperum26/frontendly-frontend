@@ -110,7 +110,8 @@ const Dashboard: React.FC<DashboardProps> = ({
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
           
           {/* Cột trái (Trọng tâm: Học & Code) - Chiếm 2/3 */}
-          <div className="lg:col-span-2 space-y-6 sm:space-y-8">
+          {/* Thay đổi 1: Biến cột trái thành flex column để các phần tử con có thể giãn ra */}
+          <div className="lg:col-span-2 flex flex-col gap-6 sm:gap-8">
             
             {/* Tiếp tục lộ trình */}
             <div className="bg-main-bg rounded-2xl border border-border p-6 sm:p-8 shadow-sm">
@@ -168,7 +169,8 @@ const Dashboard: React.FC<DashboardProps> = ({
             </div>
 
             {/* Quick Workspace */}
-            <div className="bg-main-bg rounded-2xl border border-border p-6 sm:p-8 shadow-sm">
+            {/* Thay đổi 2: Thêm `flex flex-col flex-1` để card tự động giãn hết chiều dọc */}
+            <div className="bg-main-bg rounded-2xl border border-border p-6 sm:p-8 shadow-sm flex flex-col flex-1">
                <div className="flex items-center gap-3 mb-6">
                 <div className="w-10 h-10 rounded-lg bg-slate-50 flex items-center justify-center">
                   <Terminal className="w-5 h-5 text-slate-600" />
@@ -178,34 +180,42 @@ const Dashboard: React.FC<DashboardProps> = ({
                   <p className="text-sm text-muted">Experiment with code freely</p>
                 </div>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              
+              {/* Thay đổi 3: Đổi từ `grid-cols-2` sang `flex-col` và thêm `flex-1` để giãn ra */}
+              <div className="flex flex-col gap-4 flex-1">
                 {/* Thẻ tạo mới */}
                 <Link 
                   to={isAuthenticated ? ROUTES.SANDBOX_LIST : ROUTES.LOGIN} 
-                  className="group flex flex-col items-center justify-center p-6 bg-surface-raised border border-border border-dashed rounded-xl hover:bg-slate-50 transition-colors"
+                  /* Thay đổi 4: Thêm `flex-1` để chiếm đều 50% không gian dọc */
+                  className="group flex-1 flex flex-col items-center justify-center p-6 bg-surface-raised border border-border border-dashed rounded-xl hover:bg-slate-50 transition-colors"
                 >
                   <div className="w-8 h-8 rounded-full bg-white border border-border flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
                     <span className="text-slate-400 font-bold text-xl leading-none">+</span>
                   </div>
                   <span className="text-sm font-semibold text-heading">New Sandbox</span>
                 </Link>
+
                 {/* Sandbox gần đây */}
                 {sandboxTimeAgo.length > 0 ? (
-                  sandboxTimeAgo.map((sandbox) => (
-                    <div key={sandbox.id} className="p-5 bg-surface-raised border border-border rounded-xl flex flex-col justify-between">
-                      <div>
-                        <h3 className="font-semibold text-heading text-sm mb-1">{sandbox.name}</h3>
-                        <p className="text-xs text-muted">
-                          Edited {sandbox.timeAgo}h ago
-                        </p>
+                  <div className="flex-1 flex flex-col gap-4">
+                    {sandboxTimeAgo.map((sandbox) => (
+                      /* Thêm `flex-1` ở đây để box sandbox kéo dài bằng box ở trên */
+                      <div key={sandbox.id} className="flex-1 p-5 bg-surface-raised border border-border rounded-xl flex flex-col justify-between">
+                        <div>
+                          <h3 className="font-semibold text-heading text-sm mb-1">{sandbox.name}</h3>
+                          <p className="text-xs text-muted">
+                            Edited {sandbox.timeAgo}h ago
+                          </p>
+                        </div>
+                        <Link to={`/sandbox/${sandbox.id}`} className="text-primary text-xs font-bold mt-4 hover:underline flex items-center gap-1">
+                          Open Editor <ArrowRight className="w-3 h-3" />
+                        </Link>
                       </div>
-                      <Link to={`/sandbox/${sandbox.id}`} className="text-primary text-xs font-bold mt-4 hover:underline flex items-center gap-1">
-                        Open Editor <ArrowRight className="w-3 h-3" />
-                      </Link>
-                    </div>
-                  ))
+                    ))}
+                  </div>
                 ) : (
-                  <div className="p-5 bg-surface-raised border border-border rounded-xl flex flex-col justify-center items-center text-center">
+                  /* Thêm `flex-1` ở đây nếu list sandbox trống */
+                  <div className="flex-1 p-5 bg-surface-raised border border-border rounded-xl flex flex-col justify-center items-center text-center">
                     <p className="text-xs text-muted mb-2">No recent sandboxes</p>
                     <Link to={ROUTES.SANDBOX_LIST} className="text-primary text-xs font-bold hover:underline">
                       Create one
@@ -215,6 +225,7 @@ const Dashboard: React.FC<DashboardProps> = ({
               </div>
             </div>
           </div>
+
 
           {/* Cột phải (Khám phá & Thử thách) - Chiếm 1/3 */}
           <div className="space-y-6 sm:space-y-8">

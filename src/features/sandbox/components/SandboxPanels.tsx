@@ -103,20 +103,30 @@ export const SandboxPanels: React.FC<SandboxPanelsProps> = ({
   return (
     <div className="editor-panels">
       <div className="editor-panels__main-wrap">{mainRow}</div>
+      
+      {/* KHU VỰC CONSOLE ĐÃ ĐƯỢC LÀM MỚI */}
       {isConsoleOpen && (
         <div
-          className="editor-console-drawer"
+          className="w-full flex flex-col bg-[#0f172a] border-t border-gray-700/50 shadow-2xl relative z-40"
           aria-label="Console output"
           style={{ height: `${consoleHeight}px` }}
         >
-          <div className="editor-panel editor-panel--console">
-            <div className="result-console">
-              <pre className="result-console__output">{consoleMessage || 'No output'}</pre>
-            </div>
+          {/* Header Bar */}
+          <div className="flex items-center px-4 py-2 bg-[#0F172A] border-b border-white">
+            <span className="text-[12px] font-bold tracking-widest text-gray-400 uppercase">
+              Console Output
+            </span>
+          </div>
+
+          {/* Console Content */}
+          <div className="flex-1 overflow-y-auto p-4">
+            <pre className="font-mono text-[13px] text-gray-200 whitespace-pre-wrap leading-relaxed">
+              {consoleMessage || 'Preview refreshed with your latest code.'}
+            </pre>
           </div>
           <button
             type="button"
-            className="editor-console-drawer__resize"
+            className="editor-console-drawer__resize cursor-pointer"
             aria-label="Resize console output"
             onPointerDown={startConsoleResize}
             onPointerMove={updateConsoleResize}

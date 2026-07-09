@@ -31,7 +31,7 @@ export function ChatInput({ onSendMessage, disabled, placeholder = 'Ask for help
       <button
         type="submit"
         disabled={disabled || !input.trim()}
-        className="px-4 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white rounded-xl transition-colors"
+        className="px-4 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white rounded-xl transition-colors cursor-pointer"
       >
         <Send className="w-5 h-5" />
       </button>
