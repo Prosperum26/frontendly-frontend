@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { ArrowLeft, CheckCircle, Circle, Lightbulb, BookOpen } from "lucide-react";
+import DOMPurify from 'dompurify';
 import api from "../../../services/api";
 import { useRoadmapStore } from "../stores/roadmapStore";
 import { useRoadmap } from "../hooks/useRoadmap";
@@ -316,7 +317,7 @@ export const TheoryPage: React.FC = () => {
                   <div
                     className="tp-theory-contentHtml"
                     dangerouslySetInnerHTML={{
-                      __html: theoryData.contentHtml,
+                      __html: DOMPurify.sanitize(theoryData.contentHtml),
                     }}
                     style={{
                       lineHeight: "1.7",
@@ -358,7 +359,7 @@ export const TheoryPage: React.FC = () => {
                         fontSize: "13px",
                         textAlign: "justify",
                       }}
-                      dangerouslySetInnerHTML={{ __html: theoryData.proTips }}
+                      dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(theoryData.proTips) }}
                     />
                   </div>
                 )}

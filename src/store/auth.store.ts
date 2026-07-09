@@ -16,25 +16,18 @@ interface AuthState {
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
-  isAuthenticated: !!localStorage.getItem('accessToken'),
-  currentUser: JSON.parse(localStorage.getItem('currentUser') || 'null'),
+  isAuthenticated: false, // Will be determined by API call
+  currentUser: null,
   isAuthChecking: true,
   previousRoute: null,
 
   setAuth: (isAuthenticated, currentUser) => {
     const normalizedUser = currentUser ? normalizeUser(currentUser) : null;
-    if (normalizedUser) {
-      localStorage.setItem('currentUser', JSON.stringify(normalizedUser));
-    } else {
-      localStorage.removeItem('currentUser');
-    }
     set({ isAuthenticated, currentUser: normalizedUser, isAuthChecking: false });
   },
 
   logout: () => {
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('refreshToken');
-    localStorage.removeItem('currentUser');
+    // Tokens are cleared via HttpOnly cookies by backend logout endpoint
     set({ isAuthenticated: false, currentUser: null, isAuthChecking: false, previousRoute: null });
   },
 
@@ -43,7 +36,6 @@ export const useAuthStore = create<AuthState>((set) => ({
 
   updateUser: (user) => {
     const normalizedUser = normalizeUser(user);
-    localStorage.setItem('currentUser', JSON.stringify(normalizedUser));
     set({ currentUser: normalizedUser });
   },
 }));

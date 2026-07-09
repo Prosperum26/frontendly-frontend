@@ -17,10 +17,8 @@ export const authService = {
   },
 
   async logout(): Promise<void> {
-    const refreshToken = localStorage.getItem('refreshToken');
-    if (refreshToken) {
-      await api.post('/auth/logout', { refreshToken });
-    }
+    // Refresh token is now in HttpOnly cookie, backend will handle it
+    await api.post('/auth/logout');
   },
 
   async logoutAll(): Promise<void> {
@@ -28,14 +26,10 @@ export const authService = {
   },
 
   async refreshToken(): Promise<{ message: string; accessToken: string; refreshToken: string }> {
-    const refreshToken = localStorage.getItem('refreshToken');
-    if (!refreshToken) {
-      throw new Error('No refresh token available');
-    }
-
+    // Refresh token is now in HttpOnly cookie, backend will handle it
     const response = await axios.post<{ message: string; accessToken: string; refreshToken: string }>(
       `${ENV.API_URL}/auth/refresh-token`,
-      { refreshToken },
+      {},
     );
     return response.data;
   },

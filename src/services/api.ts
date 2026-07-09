@@ -13,7 +13,7 @@ const api = axios.create({
 });
 
 let isRefreshing = false;
-let refreshSubscribers: ((token: string) => void)[] = [];
+let refreshSubscribers: (() => void)[] = [];
 
 interface ErrorResponseData {
   message?: string;
@@ -21,10 +21,8 @@ interface ErrorResponseData {
 
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('accessToken');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
+    // Tokens are now sent via HttpOnly cookies, no need to manually add Authorization header
+    // Cookies are automatically sent by the browser
     return config;
   },
   (error) => Promise.reject(error),
@@ -42,8 +40,7 @@ api.interceptors.response.use(
       const isBanError = data.message?.toLowerCase().includes('banned');
 
       if (isBanError) {
-        localStorage.removeItem('accessToken');
-        localStorage.removeItem('refreshToken');
+        // Tokens are cleared via HttpOnly cookies by backend
         window.location.href = '/banned';
       }
       return Promise.reject(error);
@@ -52,8 +49,7 @@ api.interceptors.response.use(
     if (error.response?.status === 401 && !originalRequest._retry) {
       if (isRefreshing) {
         return new Promise((resolve) => {
-          refreshSubscribers.push((token: string) => {
-            originalRequest.headers.Authorization = `Bearer ${token}`;
+          refreshSubscribers.push(() => {
             resolve(api(originalRequest));
           });
         });
@@ -63,26 +59,15 @@ api.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        const refreshToken = localStorage.getItem('refreshToken');
-        if (!refreshToken) {
-          throw new Error('No refresh token available');
-        }
+        // Refresh token is now handled by HttpOnly cookie, just call the endpoint
+        await authService.refreshToken();
+        // Tokens are automatically set in HttpOnly cookies by the backend
 
-        const response = await authService.refreshToken();
-        const { accessToken, refreshToken: newRefreshToken } = response;
-
-        localStorage.setItem('accessToken', accessToken);
-        localStorage.setItem('refreshToken', newRefreshToken);
-
-        refreshSubscribers.forEach((callback) => callback(accessToken));
+        refreshSubscribers.forEach((callback) => callback());
         refreshSubscribers = [];
 
-        originalRequest.headers.Authorization = `Bearer ${accessToken}`;
         return api(originalRequest);
       } catch (refreshError) {
-        localStorage.removeItem('accessToken');
-        localStorage.removeItem('refreshToken');
-
         const { logout } = useAuthStore.getState();
         logout();
 
