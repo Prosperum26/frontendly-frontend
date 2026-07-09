@@ -26,10 +26,11 @@ export const authService = {
   },
 
   async refreshToken(): Promise<{ message: string; accessToken: string; refreshToken: string }> {
-    // Refresh token is now in HttpOnly cookie, backend will handle it
+    // Send refresh token from localStorage in request body
+    const refreshToken = localStorage.getItem('refreshToken');
     const response = await axios.post<{ message: string; accessToken: string; refreshToken: string }>(
       `${ENV.API_URL}/auth/refresh-token`,
-      {},
+      { refreshToken },
     );
     return response.data;
   },
