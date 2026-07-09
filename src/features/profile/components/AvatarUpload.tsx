@@ -24,11 +24,8 @@ export const AvatarUpload: React.FC<AvatarUploadProps> = ({ currentAvatarUrl, le
 
   // 1. CHỌN ẢNH VÀ HIỂN THỊ PREVIEW
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log('1. Đã click và chọn file');
-
     const file = e.target.files?.[0];
     if (!file) {
-      console.log('2. Không tìm thấy file (có thể do bấm Cancel)');
       return;
     }
 
@@ -48,7 +45,6 @@ export const AvatarUpload: React.FC<AvatarUploadProps> = ({ currentAvatarUrl, le
       return;
     }
 
-    console.log('3. Chuẩn bị preview file:', file.name);
     setSelectedFile(file);
     setPreviewUrl(URL.createObjectURL(file));
   };
@@ -64,7 +60,6 @@ export const AvatarUpload: React.FC<AvatarUploadProps> = ({ currentAvatarUrl, le
   const handleSave = async () => {
     if (!selectedFile) return;
 
-    console.log('4. Bắt đầu gọi API...');
     setUploading(true);
 
     try {

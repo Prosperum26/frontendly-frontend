@@ -119,7 +119,6 @@ export const syncGuestProgress = async () => {
   const completedIds = guestStore.completedLessonIds;
   if (completedIds.length === 0) return;
 
-  console.log('Syncing guest completed lessons:', completedIds);
   for (const lessonId of completedIds) {
     try {
       await api.patch(`/stages/${lessonId}/complete`, {});

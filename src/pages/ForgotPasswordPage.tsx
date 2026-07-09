@@ -17,9 +17,7 @@ export const ForgotPasswordPage: React.FC = () => {
     setIsLoading(true);
 
     try {
-      console.log('Sending password reset request for email:', email);
-      const result = await authService.forgotPassword(email);
-      console.log('Password reset response:', result);
+      await authService.forgotPassword(email);
 
       // Gọi API thành công -> chuyển sang giao diện thông báo
       setIsSubmitted(true);
