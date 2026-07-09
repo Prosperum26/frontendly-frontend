@@ -44,7 +44,7 @@ export const PlatformStats: React.FC = () => {
             return (
               <div
                 key={index}
-                className="bg-white dark:bg-slate-800/80 backdrop-blur-sm rounded-2xl p-6 text-center border-2 border-slate-200 dark:border-slate-700 hover:border-cyan-300 dark:hover:border-cyan-500 transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-cyan-500/10 dark:hover:shadow-cyan-500/20"
+                className="bg-white dark:bg-slate-800/80 backdrop-blur-sm rounded-2xl p-6 text-center border-2 border-slate-200 dark:border-slate-700 hover:border-cyan-300 dark:hover:border-cyan-500 transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-cyan-500/10 dark:hover:shadow-cyan-500/20 cursor-pointer"
               >
                 <div className="w-12 h-12 bg-gradient-to-br from-cyan-500 to-blue-500 rounded-xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-cyan-500/20">
                   <Icon className="w-6 h-6 text-white" />

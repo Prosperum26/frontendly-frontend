@@ -23,7 +23,7 @@ export const CurriculumPreview: React.FC = () => {
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-16">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-16 cursor-pointer">
           {[
             { label: 'Milestones', value: curriculumData.totalMilestones, icon: Target },
             { label: 'Lessons', value: curriculumData.totalLessons, icon: BookOpen },
@@ -46,7 +46,7 @@ export const CurriculumPreview: React.FC = () => {
           {curriculumData.milestones.map((milestone, index) => (
             <div
               key={milestone.id}
-              className="group relative bg-gradient-to-r from-white to-gray-50 dark:from-slate-800 dark:to-slate-800 rounded-2xl p-8 border-2 border-slate-200 dark:border-slate-700 hover:border-cyan-300 dark:hover:border-cyan-500 transition-all duration-300 hover:shadow-xl hover:shadow-cyan-500/10 dark:hover:shadow-cyan-500/20"
+              className="group relative bg-gradient-to-r from-white to-gray-50 dark:from-slate-800 dark:to-slate-800 rounded-2xl p-8 border-2 border-slate-200 dark:border-slate-700 hover:border-cyan-300 dark:hover:border-cyan-500 transition-all duration-300 hover:shadow-xl hover:shadow-cyan-500/10 dark:hover:shadow-cyan-500/20 cursor-pointer"
             >
               {/* Milestone number */}
               <div className="absolute -top-4 -left-4 w-12 h-12 bg-gradient-to-br from-cyan-600 to-blue-600 rounded-xl flex items-center justify-center text-white font-black text-xl shadow-lg shadow-cyan-500/20">
