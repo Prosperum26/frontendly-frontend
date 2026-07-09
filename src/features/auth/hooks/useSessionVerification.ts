@@ -34,14 +34,19 @@ export const useSessionVerification = () => {
         }
       } catch {
         // Session is invalid or expired
-        logout();
+        // Only logout if currently authenticated to prevent loop during login
+        if (isAuthenticated) {
+          logout();
+        } else {
+          setAuthChecking(false);
+        }
       } finally {
         setAuthChecking(false);
       }
     };
 
     verifySession();
-  }, [setAuth, setAuthChecking, logout]);
+  }, [setAuth, setAuthChecking, logout, isAuthenticated]);
 
   return { isAuthenticated };
 };

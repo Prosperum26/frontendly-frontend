@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import './workspace.css';
@@ -89,13 +89,31 @@ const WorkspacePageContent: React.FC<WorkspacePageContentProps> = ({ exercise })
   const editorTabs = resolveEditorTabs(exercise);
   const defaultTab = pickDefaultTab(editorTabs);
 
+  // Ensure all visible tabs have corresponding files
+  const allFiles = useMemo(() => {
+    const fileMap = new Map(exercise.starterFiles.map(f => [f.filename, f]));
+    
+    // Add empty files for any visible tabs that don't exist
+    editorTabs.forEach(tab => {
+      if (!fileMap.has(tab)) {
+        const language = tab.endsWith('.html') ? 'html' : 
+                        tab.endsWith('.css') ? 'css' : 
+                        tab.endsWith('.js') ? 'js' : 
+                        tab.endsWith('.jsx') ? 'jsx' : 'jsx'; // Default to jsx for other files
+        fileMap.set(tab, { filename: tab, language, content: '' });
+      }
+    });
+    
+    return Array.from(fileMap.values());
+  }, [exercise.starterFiles, editorTabs]);
+
+  const { files, activeTab, isDirty, setActiveTab, setFile, replaceFiles, reset } =
+    useWorkspaceEditor(allFiles, { defaultTab, visibleTabs: editorTabs });
+
   const queryParams = new URLSearchParams(window.location.search);
   const stageId = queryParams.get('stageId') || exercise.id.replace('exercise_', '');
 
   const { data: roadmapData } = useRoadmap(DEFAULT_SKILL_ID);
-
-  const { files, activeTab, isDirty, setActiveTab, setFile, replaceFiles, reset } =
-    useWorkspaceEditor(exercise.starterFiles, { defaultTab, visibleTabs: editorTabs });
 
   const [consoleMessage, setConsoleMessage] = useState(
     'Run or submit your code to see results here.'

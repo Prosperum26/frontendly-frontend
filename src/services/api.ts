@@ -21,8 +21,11 @@ interface ErrorResponseData {
 
 api.interceptors.request.use(
   (config) => {
-    // Tokens are now sent via HttpOnly cookies, no need to manually add Authorization header
-    // Cookies are automatically sent by the browser
+    // Add Authorization header from localStorage for backward compatibility
+    const token = localStorage.getItem('accessToken');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
     return config;
   },
   (error) => Promise.reject(error),
@@ -59,9 +62,17 @@ api.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        // Refresh token is now handled by HttpOnly cookie, just call the endpoint
-        await authService.refreshToken();
-        // Tokens are automatically set in HttpOnly cookies by the backend
+        // Refresh token using localStorage tokens for backward compatibility
+        const refreshToken = localStorage.getItem('refreshToken');
+        if (!refreshToken) {
+          throw new Error('No refresh token available');
+        }
+        
+        const response = await authService.refreshToken();
+        
+        // Update localStorage with new tokens
+        localStorage.setItem('accessToken', response.accessToken);
+        localStorage.setItem('refreshToken', response.refreshToken);
 
         refreshSubscribers.forEach((callback) => callback());
         refreshSubscribers = [];
