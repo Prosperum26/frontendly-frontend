@@ -244,30 +244,40 @@ const WorkspacePageContent: React.FC<WorkspacePageContentProps> = ({ exercise })
       const currentUser = currentAuthState.currentUser;
       const isUserAuthenticated = currentAuthState.isAuthenticated;
       
+      // Guest users should not submit to backend - only local evaluation
+      if (!isUserAuthenticated) {
+        showToast({
+          type: 'error',
+          title: 'Guest Mode',
+          message: 'Guest users can test code but cannot submit to save progress. Please login to save your work.',
+        });
+        setIsSubmitting(false);
+        return;
+      }
+      
       let userId = 'guest';
-      if (isUserAuthenticated) {
-        if (currentUser?.id && currentUser.id !== '') {
-          userId = currentUser.id;
-        }
-        else if ((currentUser as { _id?: string })?._id) {
-          const _id = (currentUser as { _id?: string })._id;
-          if (_id && _id !== '') {
-            userId = _id;
-          }
-        }
-        else {
-          try {
-            const rawData = localStorage.getItem('currentUser');
-            if (rawData) {
-              const parsedData = JSON.parse(rawData);
-              userId = parsedData.id || parsedData._id || 'guest';
-            }
-          } catch (e) {
-            console.error("Local Storage parsing error: ", e);
-          }
+      if (currentUser?.id && currentUser.id !== '') {
+        userId = currentUser.id;
+      }
+      else if ((currentUser as { _id?: string })?._id) {
+        const _id = (currentUser as { _id?: string })._id;
+        if (_id && _id !== '') {
+          userId = _id;
         }
       }
-      if (isUserAuthenticated && userId === 'guest') {
+      else {
+        try {
+          const rawData = localStorage.getItem('currentUser');
+          if (rawData) {
+            const parsedData = JSON.parse(rawData);
+            userId = parsedData.id || parsedData._id || 'guest';
+          }
+        } catch (e) {
+          console.error("Local Storage parsing error: ", e);
+        }
+      }
+      
+      if (userId === 'guest') {
         showToast({
           type: 'error',
           title: 'Account Data Error',

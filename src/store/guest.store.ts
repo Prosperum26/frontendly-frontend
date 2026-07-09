@@ -114,18 +114,5 @@ export const useGuestStore = create<GuestState>((set, get) => {
   };
 });
 
-export const syncGuestProgress = async () => {
-  const guestStore = useGuestStore.getState();
-  const completedIds = guestStore.completedLessonIds;
-  if (completedIds.length === 0) return;
-
-  for (const lessonId of completedIds) {
-    try {
-      await api.patch(`/stages/${lessonId}/complete`, {});
-    } catch (err) {
-      console.error(`Failed to sync lesson ${lessonId}:`, err);
-    }
-  }
-
-  guestStore.clearProgress();
-};
+// Guest progress should NOT be synced to database
+// syncGuestProgress function removed to prevent guest data from being saved to backend

@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuthStore } from '../store/auth.store';
-import { syncGuestProgress } from '../store/guest.store';
+import { useGuestStore } from '../store/guest.store';
 import { authService } from '../features/auth/services/auth.service';
 import NetworkErrorCard from '../components/NetworkErrorCard';
 import { GoogleButton } from '../features/auth/components/GoogleButton';
@@ -22,6 +22,7 @@ export const LoginPage: React.FC = () => {
   const setAuth = useAuthStore((state) => state.setAuth);
   const previousRoute = useAuthStore((state) => state.previousRoute);
   const setPreviousRoute = useAuthStore((state) => state.setPreviousRoute);
+  const clearGuestProgress = useGuestStore((state) => state.clearProgress);
   const navigate = useNavigate();
 
   const [isOffline, setIsOffline] = useState(!navigator.onLine);
@@ -57,12 +58,8 @@ export const LoginPage: React.FC = () => {
       // Set auth state
       setAuth(true, response.user ?? null);
       
-      // Sync guest progress
-      try {
-        await syncGuestProgress();
-      } catch (syncErr) {
-        console.error('Error syncing guest progress:', syncErr);
-      }
+      // Clear guest progress (guest data should not be synced to database)
+      clearGuestProgress();
       
       if (previousRoute === ROUTES.ENTRANCE_TEST) {
         const hasCompleted = hasCompletedEntranceTest();
