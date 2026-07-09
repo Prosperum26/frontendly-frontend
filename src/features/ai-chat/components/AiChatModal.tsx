@@ -88,8 +88,8 @@
           created_at: new Date(),
         };
         setMessages((prev) => [...prev, assistantMsg]);
-      } catch (err) {
-        // Remove user message if failed
+      } catch (err:any) {
+        console.log('Error sending message:', err);
         setMessages((prev) => prev.filter((msg) => msg._id !== userMsg._id));
       }
     };
