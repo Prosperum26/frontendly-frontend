@@ -1,6 +1,5 @@
 import { create } from 'zustand';
 import { guestProgressStorage, type StorageType } from '../utils/storage';
-import api from '../services/api';
 
 const GUEST_THEORY_KEY = 'guest_viewed_theories';
 const GUEST_COMPLETED_KEY = 'guest_completed_lessons';
