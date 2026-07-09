@@ -46,7 +46,7 @@ export const useSessionVerification = () => {
     };
 
     verifySession();
-  }, [setAuth, setAuthChecking, logout, isAuthenticated]);
+  }, [setAuth, setAuthChecking, logout]); // Remove isAuthenticated from dependencies to prevent re-run loops
 
   return { isAuthenticated };
 };
