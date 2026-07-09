@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useMemo } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Trophy, Play, Terminal, Swords, Flame, ArrowRight } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
@@ -65,13 +65,16 @@ const Dashboard: React.FC<DashboardProps> = ({
     }
   }, [isAuthenticated]);
 
-  // Calculate time ago - useMemo is acceptable here as it's derived data
-  const sandboxTimeAgo = useMemo(() => {
-    return recentSandboxes.map(sandbox => ({
+  // Calculate time ago - use state to avoid purity violation
+  const [sandboxTimeAgo, setSandboxTimeAgo] = useState<Array<typeof recentSandboxes[0] & { timeAgo: number }>>([]);
+
+  useEffect(() => {
+    const timeAgoData = recentSandboxes.map(sandbox => ({
       ...sandbox,
-      // eslint-disable-next-line react-hooks/purity
       timeAgo: Math.floor((Date.now() - sandbox.updatedAt) / 3600000)
     }));
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setSandboxTimeAgo(timeAgoData);
   }, [recentSandboxes]);
 
   if (loading) {

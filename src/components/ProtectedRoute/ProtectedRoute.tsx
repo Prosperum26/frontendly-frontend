@@ -51,9 +51,16 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, requir
 
   // Check progression if requiredStage is specified
   if (requiredStage && currentUser?.stage_progress) {
-    // Simple progression check - can be enhanced based on actual stage logic
-    // For now, we'll allow access if user has any stage progress
-    // You can implement more complex logic here based on your stage system
+    const userStage = currentUser.stage_progress;
+    
+    // Extract stage numbers from stage IDs (format: "stage_1", "stage_2", etc.)
+    const requiredStageNumber = parseInt(requiredStage.replace('stage_', ''), 10);
+    const userStageNumber = parseInt(userStage.replace('stage_', ''), 10);
+    
+    // Check if user's stage is less than required stage
+    if (!isNaN(requiredStageNumber) && !isNaN(userStageNumber) && userStageNumber < requiredStageNumber) {
+      return <Navigate to={ROUTES.LEARNING_PATH} replace />;
+    }
   }
 
   return <>{children}</>;

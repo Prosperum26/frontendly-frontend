@@ -1,21 +1,28 @@
-import React, { useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Play, Sparkles, Code2 } from 'lucide-react';
 import { ROUTES } from '../../constants/routes';
 
 export const HeroSection: React.FC = () => {
-  // Generate random positions once - useMemo is acceptable here as positions don't need to be reactive
-  const symbolPositions = useMemo(() => {
-    return ['<', '>', '{', '}', '()', '[]', '//', '=>'].map((symbol, i) => ({
+  const [symbolPositions, setSymbolPositions] = useState<Array<{
+    symbol: string;
+    left: number;
+    top: number;
+    animationDelay: number;
+    animationDuration: number;
+  }>>([]);
+
+  useEffect(() => {
+    // Generate random positions once on mount
+    const positions = ['<', '>', '{', '}', '()', '[]', '//', '=>'].map((symbol, i) => ({
       symbol,
-      // eslint-disable-next-line react-hooks/purity
       left: Math.random() * 100,
-      // eslint-disable-next-line react-hooks/purity
       top: Math.random() * 100,
       animationDelay: i * 0.5,
-      // eslint-disable-next-line react-hooks/purity
       animationDuration: 3 + Math.random() * 2
     }));
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setSymbolPositions(positions);
   }, []);
   return (
     <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden bg-gradient-to-br from-slate-50 via-cyan-50/50 to-blue-50/50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">

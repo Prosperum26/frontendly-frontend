@@ -12,12 +12,13 @@ export const AvatarUpload: React.FC<AvatarUploadProps> = ({ currentAvatarUrl, le
   const [previewUrl, setPreviewUrl] = useState<string | undefined>(currentAvatarUrl);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const prevAvatarUrlRef = useRef(currentAvatarUrl);
 
-  // ĐỒNG BỘ ẢNH (Có comment tắt cảnh báo lỗi set-state-in-effect của ESLint)
+  // Sync previewUrl when currentAvatarUrl prop changes and no file is selected
   useEffect(() => {
-    if (!selectedFile) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
+    if (!selectedFile && currentAvatarUrl !== prevAvatarUrlRef.current) {
       setPreviewUrl(currentAvatarUrl);
+      prevAvatarUrlRef.current = currentAvatarUrl;
     }
   }, [currentAvatarUrl, selectedFile]);
 
