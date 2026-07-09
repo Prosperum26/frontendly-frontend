@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Play, Sparkles, Code2 } from 'lucide-react';
+import { ArrowRight, Play, Code2 } from 'lucide-react';
 import { ROUTES } from '../../constants/routes';
 
 export const HeroSection: React.FC = () => {
@@ -52,61 +52,67 @@ export const HeroSection: React.FC = () => {
       </div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-        <div className="text-center">
-          {/* Badge */}
-          <div className="inline-flex items-center gap-2 bg-cyan-100 dark:bg-cyan-500/20 text-cyan-700 dark:text-cyan-300 px-4 py-2 rounded-full text-sm font-semibold mb-6 animate-fade-in-up border border-cyan-200 dark:border-cyan-500/30">
-            <Sparkles className="w-4 h-4" />
-            <span>React Learning Platform</span>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+          {/* Left column - content */}
+          <div className="lg:col-span-7 text-left">
+            {/* Headline */}
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-slate-900 dark:text-white leading-tight tracking-tight mb-6 animate-fade-in-up delay-100 hover:-translate-y-1 transition-transform duration-300 cursor-default">
+              Master React by
+              <span className="block bg-gradient-to-r from-cyan-600 to-blue-600 dark:from-cyan-400 dark:to-blue-400 bg-clip-text text-transparent hover:-translate-y-1 transition-transform duration-300 cursor-default">
+                Building Real Projects
+              </span>
+            </h1>
+
+            {/* Subtitle */}
+            <p className="text-lg sm:text-xl md:text-2xl text-slate-600 dark:text-slate-300 max-w-2xl mb-8 leading-relaxed animate-fade-in-up delay-200 hover:-translate-y-1 transition-transform duration-300 cursor-default">
+              Interactive lessons, hands-on coding exercises, and instant feedback — 
+              no setup required. Go from beginner to job-ready developer.
+            </p>
+
+            {/* CTAs */}
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-12 animate-fade-in-up delay-300">
+              <Link
+                to={ROUTES.REGISTER}
+                className="group relative inline-flex items-center gap-2 bg-gradient-to-r from-cyan-600 to-blue-600 dark:from-cyan-500 dark:to-blue-500 text-white px-8 py-4 rounded-xl font-bold text-lg hover:shadow-2xl hover:shadow-cyan-500/25 dark:hover:shadow-cyan-500/40 transition-all duration-300 hover:scale-105 hover:-translate-y-1"
+              >
+                <Play className="w-5 h-5" />
+                <span>Start Learning Free</span>
+                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              </Link>
+              
+              <Link
+                to={ROUTES.LEARNING_PATH}
+                className="group inline-flex items-center gap-2 bg-white dark:bg-slate-800/80 backdrop-blur-sm text-slate-900 dark:text-white px-8 py-4 rounded-xl font-bold text-lg border-2 border-slate-200 dark:border-slate-600 hover:border-cyan-300 dark:hover:border-cyan-500 transition-all duration-300 hover:scale-105 hover:-translate-y-1 hover:shadow-lg dark:hover:shadow-cyan-500/20"
+              >
+                <Code2 className="w-5 h-5 text-cyan-600 dark:text-cyan-400" />
+                <span>Explore Curriculum</span>
+              </Link>
+            </div>
+
+            {/* Trust indicators */}
+            <div className="flex flex-wrap items-center gap-4 text-sm text-slate-500 dark:text-slate-400 animate-fade-in-up delay-400">
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+                <span>No credit card required</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+                <span>40 hours of content</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+                <span>12 hands-on exercises</span>
+              </div>
+            </div>
           </div>
 
-          {/* Headline */}
-          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-slate-900 dark:text-white leading-tight tracking-tight mb-6 animate-fade-in-up delay-100">
-            Master React by
-            <span className="block bg-gradient-to-r from-cyan-600 to-blue-600 dark:from-cyan-400 dark:to-blue-400 bg-clip-text text-transparent">
-              Building Real Projects
-            </span>
-          </h1>
-
-          {/* Subtitle */}
-          <p className="text-lg sm:text-xl md:text-2xl text-slate-600 dark:text-slate-300 max-w-3xl mx-auto mb-8 leading-relaxed animate-fade-in-up delay-200">
-            Interactive lessons, hands-on coding exercises, and instant feedback — 
-            no setup required. Go from beginner to job-ready developer.
-          </p>
-
-          {/* CTAs */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12 animate-fade-in-up delay-300">
-            <Link
-              to={ROUTES.REGISTER}
-              className="group relative inline-flex items-center gap-2 bg-gradient-to-r from-cyan-600 to-blue-600 dark:from-cyan-500 dark:to-blue-500 text-white px-8 py-4 rounded-xl font-bold text-lg hover:shadow-2xl hover:shadow-cyan-500/25 dark:hover:shadow-cyan-500/40 transition-all duration-300 hover:scale-105 hover:-translate-y-1"
-            >
-              <Play className="w-5 h-5" />
-              <span>Start Learning Free</span>
-              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-            </Link>
-            
-            <Link
-              to={ROUTES.LEARNING_PATH}
-              className="group inline-flex items-center gap-2 bg-white dark:bg-slate-800/80 backdrop-blur-sm text-slate-900 dark:text-white px-8 py-4 rounded-xl font-bold text-lg border-2 border-slate-200 dark:border-slate-600 hover:border-cyan-300 dark:hover:border-cyan-500 transition-all duration-300 hover:scale-105 hover:-translate-y-1 hover:shadow-lg dark:hover:shadow-cyan-500/20"
-            >
-              <Code2 className="w-5 h-5 text-cyan-600 dark:text-cyan-400" />
-              <span>Explore Curriculum</span>
-            </Link>
-          </div>
-
-          {/* Trust indicators */}
-          <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-slate-500 dark:text-slate-400 animate-fade-in-up delay-400">
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-              <span>No credit card required</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-              <span>40 hours of content</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-              <span>12 hands-on exercises</span>
-            </div>
+          {/* Right column - React logo */}
+          <div className="lg:col-span-5 flex items-center justify-center lg:justify-end">
+            <img 
+              src="https://upload.wikimedia.org/wikipedia/commons/a/a7/React-icon.svg"
+              alt="React Logo"
+              className="w-64 h-64 sm:w-80 sm:h-80 md:w-96 md:h-96 lg:w-[400px] lg:h-[400px] transform rotate-12 hover:rotate-0 transition-transform duration-500 animate-float"
+            />
           </div>
         </div>
 

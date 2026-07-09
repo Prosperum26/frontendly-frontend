@@ -25,6 +25,7 @@ import { WhyLearnHere } from '../components/landing/WhyLearnHere';
 import { CodingExperiencePreview } from '../components/landing/CodingExperiencePreview';
 import { PlatformStats } from '../components/landing/PlatformStats';
 import { FinalCTA } from '../components/landing/FinalCTA';
+import { FloatingEasterEgg } from '../components/landing/FloatingEasterEgg';
 
 interface DashboardProps {
   profileData: UserProfile | undefined;
@@ -329,6 +330,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ isOffline, navigate }) => {
   return (
     <div className="w-full flex-grow flex flex-col bg-surface font-sans">
       <AuthRequiredModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
+      <FloatingEasterEgg />
       <main className="flex-grow flex flex-col">
         {isOffline ? (
           <div className="w-full flex-grow flex items-center justify-center p-4 sm:p-6 mt-12">

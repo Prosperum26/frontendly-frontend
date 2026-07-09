@@ -22,10 +22,6 @@ export const WhyLearnHere: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center mb-16">
-          <div className="inline-flex items-center gap-2 bg-green-100 dark:bg-green-500/20 text-green-700 dark:text-green-300 px-4 py-2 rounded-full text-sm font-semibold mb-4 border border-green-200 dark:border-green-500/30">
-            <Heart className="w-4 h-4" />
-            <span>Why FrontEndly?</span>
-          </div>
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 dark:text-white mb-4">
             Built for Modern React Developers
           </h2>

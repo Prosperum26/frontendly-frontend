@@ -88,7 +88,7 @@
           created_at: new Date(),
         };
         setMessages((prev) => [...prev, assistantMsg]);
-      } catch (err) {
+      } catch {
         // Remove user message if failed
         setMessages((prev) => prev.filter((msg) => msg._id !== userMsg._id));
       }

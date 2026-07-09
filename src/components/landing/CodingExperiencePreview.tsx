@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Play, CheckCircle, Terminal, Code2 } from 'lucide-react';
+import { Play, CheckCircle, Terminal } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { ROUTES } from '../../constants/routes';
 
@@ -36,10 +36,6 @@ export const CodingExperiencePreview: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center mb-16">
-          <div className="inline-flex items-center gap-2 bg-cyan-500/20 text-cyan-300 px-4 py-2 rounded-full text-sm font-semibold mb-4 border border-cyan-500/30">
-            <Code2 className="w-4 h-4" />
-            <span>Interactive Coding</span>
-          </div>
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-black mb-4">
             Write Code, See Results Instantly
           </h2>
