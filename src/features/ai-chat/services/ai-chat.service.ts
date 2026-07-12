@@ -1,4 +1,3 @@
-import axios from 'axios';
 import api from '../../../services/api';
 
 import type {
@@ -21,16 +20,18 @@ export const aiChatService = {
           timeout: AI_CHAT_TIMEOUT,
         });
         return response.data.data;
-      } catch (error: any) {
-        lastError = error;
-        
+      } catch (error: unknown) {
+        lastError = error as Error;
+
+        const axiosError = error as { response?: { status?: number; data?: { message?: string } } };
+
         // Don't retry on client errors (4xx) except 408 Request Timeout
-        if (error.response?.status && error.response.status >= 400 && error.response.status < 500 && error.response.status !== 408) {
+        if (axiosError.response?.status && axiosError.response.status >= 400 && axiosError.response.status < 500 && axiosError.response.status !== 408) {
           throw error;
         }
 
         // Don't retry on quota exceeded
-        if (error.response?.data?.message?.includes('quota')) {
+        if (axiosError.response?.data?.message?.includes('quota')) {
           throw error;
         }
 

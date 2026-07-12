@@ -46,7 +46,7 @@ export const useSessionVerification = () => {
     };
 
     verifySession();
-  }, [setAuth, setAuthChecking, logout]); // Remove isAuthenticated from dependencies to prevent re-run loops
+  }, [setAuth, setAuthChecking, logout]); // eslint-disable-line react-hooks/exhaustive-deps -- Remove isAuthenticated from dependencies to prevent re-run loops
 
   return { isAuthenticated };
 };
