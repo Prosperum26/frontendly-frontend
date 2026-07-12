@@ -99,7 +99,7 @@ export const ActivityClock = ({ activities }: { activities: ActivityLog[] }) => 
   };
 
   return (
-    <div className="relative w-full aspect-square max-w-[280px] mx-auto">
+    <div className="relative w-full aspect-square max-w-[280px] mx-auto mb-4">
       <svg viewBox="0 0 200 200" className="w-full h-full">
         {/* Clock face */}
         <circle cx="100" cy="100" r="90" fill="none" stroke="currentColor" strokeWidth="1" className="text-slate-200 dark:text-slate-700" />
@@ -157,7 +157,7 @@ export const ActivityClock = ({ activities }: { activities: ActivityLog[] }) => 
       <Clock className="w-6 h-6 text-slate-400 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
 
       {/* Legend */}
-      <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-2 text-xs text-muted">
+      <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-2 text-xs text-muted mb-2">
         <div className="flex items-center gap-1">
           <div className="w-3 h-3 rounded bg-slate-100 dark:bg-slate-800" />
           <span>0</span>

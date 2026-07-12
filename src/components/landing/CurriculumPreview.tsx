@@ -28,7 +28,7 @@ export const CurriculumPreview: React.FC = () => {
           ].map((stat, i) => (
             <div
               key={i}
-              className="bg-gradient-to-br from-cyan-50 to-blue-50 dark:from-slate-800 dark:to-slate-800 rounded-2xl p-6 text-center hover:scale-105 transition-transform duration-300 border border-slate-200 dark:border-slate-700 shadow-sm dark:shadow-lg dark:shadow-cyan-500/10"
+              className="cursor-pointer bg-gradient-to-br from-cyan-50 to-blue-50 dark:from-slate-800 dark:to-slate-800 rounded-2xl p-6 text-center hover:scale-105 transition-transform duration-300 border border-slate-200 dark:border-slate-700 shadow-sm dark:shadow-lg dark:shadow-cyan-500/10"
             >
               <stat.icon className="w-8 h-8 text-cyan-600 dark:text-cyan-400 mx-auto mb-3" />
               <div className="text-3xl font-black text-slate-900 dark:text-white mb-1">{stat.value}</div>
@@ -38,7 +38,7 @@ export const CurriculumPreview: React.FC = () => {
         </div>
 
         {/* Milestones */}
-        <div className="space-y-8 mb-16">
+        <div className="space-y-8 mb-16 cursor-pointer">
           {curriculumData.milestones.map((milestone, index) => (
             <div
               key={milestone.id}

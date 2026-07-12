@@ -358,7 +358,7 @@ export const ProfilePage: React.FC = () => {
 
           {/* Activity Clock - Learning time distribution */}
           <div className="bg-surface dark:bg-editor-panel rounded-xl border border-border dark:border-slate-800 p-6 hover:border-slate-700 transition-all duration-300">
-            <h3 className="text-xs font-display font-bold text-muted dark:text-syntax-grey uppercase tracking-wider mb-4">Learning Time Distribution</h3>
+            <h3 className="text-xs font-display font-bold text-muted dark:text-syntax-grey uppercase tracking-wider">Learning Time Distribution</h3>
             <ActivityClock activities={activities} />
           </div>
         </div>

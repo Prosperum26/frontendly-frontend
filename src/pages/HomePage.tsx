@@ -188,9 +188,9 @@ const Dashboard: React.FC<DashboardProps> = ({
                 <Link 
                   to={isAuthenticated ? ROUTES.SANDBOX_LIST : ROUTES.LOGIN} 
                   /* Thay đổi 4: Thêm `flex-1` để chiếm đều 50% không gian dọc */
-                  className="group flex-1 flex flex-col items-center justify-center p-6 bg-surface-raised border border-border border-dashed rounded-xl hover:bg-slate-50 transition-colors"
+                  className="group flex-1 flex flex-col items-center justify-center p-6 bg-surface-raised border border-border border-dashed rounded-xl hover:bg-slate-600 transition-colors"
                 >
-                  <div className="w-8 h-8 rounded-full bg-white border border-border flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                  <div className="w-8 h-8 rounded-full bg-white border border-border flex items-center justify-center mb-3 transition-transform">
                     <span className="text-slate-400 font-bold text-xl leading-none">+</span>
                   </div>
                   <span className="text-sm font-semibold text-heading">New Sandbox</span>
@@ -255,7 +255,7 @@ const Dashboard: React.FC<DashboardProps> = ({
                     <Link
                       key={challenge.id}
                       to={`/workspace/${challenge.id}`}
-                      className="block p-4 bg-surface-raised rounded-xl border border-border hover:bg-slate-50 transition-colors"
+                      className="block p-4 bg-surface-raised rounded-xl border border-border hover:bg-slate-600 transition-colors "
                     >
                       <div className="flex justify-between items-start gap-3">
                         <div className="flex-grow">
@@ -307,7 +307,7 @@ const Dashboard: React.FC<DashboardProps> = ({
                   {userRank ? `#${userRank}` : 'Unranked'}
                 </p>
               </div>
-              <Link to={ROUTES.LEADERBOARD} className="w-full block text-center bg-surface-raised border border-border text-heading px-4 py-2.5 rounded-lg text-sm font-semibold hover:bg-slate-50 transition-colors">
+              <Link to={ROUTES.LEADERBOARD} className="w-full block text-center bg-surface-raised border border-border text-heading px-4 py-2.5 rounded-lg text-sm font-semibold hover:bg-slate-500 transition-colors">
                 View Leaderboard
               </Link>
             </div>

@@ -117,7 +117,7 @@ export const HeroSection: React.FC = () => {
         </div>
 
         {/* Preview cards */}
-        <div className="mt-20 grid grid-cols-1 md:grid-cols-3 gap-6 animate-fade-in-up delay-500">
+        <div className="mt-20 grid grid-cols-1 md:grid-cols-3 gap-6 animate-fade-in-up delay-500 cursor-pointer">
           {[
             { title: "Interactive Lessons", desc: "Learn by doing with real code", icon: "BookOpen" },
             { title: "Instant Feedback", desc: "Get real-time validation", icon: "Zap" },

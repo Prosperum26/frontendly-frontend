@@ -734,6 +734,7 @@ body:has(.workspace-shell) {
 
 .workspace-coding--editor .editor-panels {
   flex: 1 1 auto;
+  display: flex;
   min-height: 640px;
   overflow: hidden;
 }
