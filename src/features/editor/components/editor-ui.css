@@ -212,6 +212,7 @@
   width: 100%;
   display: flex;
   flex-direction: column;
+  height: auto;
 }
 
 .editor-panels__root {
@@ -231,7 +232,25 @@
   min-height: 520px;
   min-width: 0;
   display: flex;
-  overflow: hidden;
+  overflow: visible;
+}
+
+@media (max-width: 1024px) {
+  .editor-panels__main-wrap {
+    flex-direction: column;
+    min-height: 500px;
+    height: auto;
+  }
+
+  .editor-panels--with-console .editor-panels__main {
+    min-height: 500px;
+    height: auto;
+  }
+
+  .editor-panels {
+    min-height: 500px;
+    height: auto;
+  }
 }
 
 @media (max-width: 768px) {
@@ -303,6 +322,11 @@
 .editor-panel--console {
   background: #0f172a;
   min-height: 120px;
+}
+
+.editor-panel--spacer {
+  background: transparent;
+  min-height: 0;
 }
 
 .editor-console-drawer {
@@ -396,6 +420,22 @@
 .editor-resize-handle--horizontal::before {
   width: 4px;
   height: 40px;
+}
+
+@media (max-width: 1024px) {
+  .editor-resize-handle--horizontal {
+    display: none;
+  }
+
+  .editor-resize-handle--vertical {
+    height: 12px;
+    min-height: 12px;
+  }
+
+  .editor-resize-handle--vertical::before {
+    width: 40px;
+    height: 4px;
+  }
 }
 
 @media (max-width: 768px) {

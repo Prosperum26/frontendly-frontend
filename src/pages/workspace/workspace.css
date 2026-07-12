@@ -44,7 +44,7 @@ body:has(.workspace-shell) {
   padding: 16px clamp(16px, 3vw, 48px) 16px;
   box-sizing: border-box;
   overflow-x: hidden;
-  overflow-y: auto;
+  overflow-y: visible;
 }
 
 /* —— Exercise panel (collapsible) —— */
@@ -223,7 +223,7 @@ body:has(.workspace-shell) {
 
   .workspace-coding {
     min-height: calc(100svh - 180px);
-    height: calc(100svh - 180px);
+    height: auto;
   }
 
   .workspace-footer {
@@ -320,7 +320,7 @@ body:has(.workspace-shell) {
 
   .workspace-coding {
     min-height: calc(100svh - 160px);
-    height: calc(100svh - 160px);
+    height: auto;
   }
 
   .workspace-footer {
@@ -705,7 +705,7 @@ body:has(.workspace-shell) {
   flex-direction: column;
   /* Tall workspace: scroll page + scroll inside Monaco */
   min-height: max(720px, calc(100svh - 220px));
-  height: max(720px, calc(100svh - 220px));
+  height: auto;
   min-width: 0;
   width: 100%;
   max-width: 1824px;
@@ -715,6 +715,7 @@ body:has(.workspace-shell) {
 @media (max-width: 1200px) {
   .workspace-coding {
     min-height: clamp(480px, calc(100svh - 280px), 800px);
+    height: auto;
   }
 }
 
@@ -723,11 +724,11 @@ body:has(.workspace-shell) {
   flex-direction: column;
   flex: 1;
   width: 100%;
-  height: 100%;
+  height: auto;
   min-height: 0;
   border: 1px solid var(--color-border);
   border-radius: 12px;
-  overflow: hidden;
+  overflow: visible;
   background: var(--color-main-bg);
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
@@ -736,18 +737,20 @@ body:has(.workspace-shell) {
   flex: 1 1 auto;
   display: flex;
   min-height: 640px;
-  overflow: hidden;
+  overflow: visible;
 }
 
 @media (max-width: 768px) {
   .workspace-coding--editor .editor-panels {
     min-height: 400px;
+    height: auto;
   }
 }
 
 @media (max-width: 480px) {
   .workspace-coding--editor .editor-panels {
     min-height: 350px;
+    height: auto;
   }
 }
 

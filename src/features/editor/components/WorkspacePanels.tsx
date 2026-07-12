@@ -7,6 +7,8 @@ import { PanelResizeHandle } from './PanelResizeHandle';
 import type { EditorFile } from '../types/editor.types';
 import './editor-ui.css';
 
+const TABLET_BREAKPOINT = 1024;
+
 export interface WorkspacePanelsProps {
   files: EditorFile[];
   previewFiles: EditorFile[];
@@ -31,7 +33,19 @@ export const WorkspacePanels: React.FC<WorkspacePanelsProps> = ({
   onFileChange,
 }) => {
   const [consoleHeight, setConsoleHeight] = useState(220);
+  const [isMobile, setIsMobile] = useState(false);
   const dragStateRef = useRef<{ startY: number; startHeight: number } | null>(null);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= TABLET_BREAKPOINT);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const horizontalLayout = useDefaultLayout({
     id: 'frontendly-workspace-horizontal',
@@ -67,12 +81,12 @@ export const WorkspacePanels: React.FC<WorkspacePanelsProps> = ({
   const mainRow = (
     <Group
       id="workspace-main-row"
-      orientation="horizontal"
+      orientation={isMobile ? 'vertical' : 'horizontal'}
       className="editor-panels__main"
-      defaultLayout={horizontalLayout.defaultLayout ?? { editor: 50, preview: 50 }}
-      onLayoutChanged={horizontalLayout.onLayoutChanged}
+      defaultLayout={isMobile ? undefined : (horizontalLayout.defaultLayout ?? { editor: 50, preview: 50 })}
+      onLayoutChanged={isMobile ? undefined : horizontalLayout.onLayoutChanged}
     >
-      <Panel id="editor" defaultSize={50} minSize={20}>
+      <Panel id="editor" defaultSize={isMobile ? 33 : 50} minSize={isMobile ? 20 : 20}>
         <div className="editor-panel editor-panel--editor">
           <CodeEditor
             activeTab={activeTab}
@@ -83,8 +97,12 @@ export const WorkspacePanels: React.FC<WorkspacePanelsProps> = ({
           />
         </div>
       </Panel>
-      <PanelResizeHandle direction="horizontal" id="split-editor-preview" />
-      <Panel id="preview" defaultSize={50} minSize={20}>
+      {isMobile ? (
+        <PanelResizeHandle direction="vertical" id="split-editor-preview" />
+      ) : (
+        <PanelResizeHandle direction="horizontal" id="split-editor-preview" />
+      )}
+      <Panel id="preview" defaultSize={isMobile ? 33 : 50} minSize={isMobile ? 20 : 20}>
         <div className="editor-panel editor-panel--preview">
           <LivePreview files={previewFiles} refreshKey={previewRefreshKey} />
         </div>
@@ -96,6 +114,52 @@ export const WorkspacePanels: React.FC<WorkspacePanelsProps> = ({
     return <div className="editor-panels">{mainRow}</div>;
   }
 
+  // Mobile layout: all 3 panels in one vertical group
+  if (isMobile) {
+    return (
+      <div className="editor-panels editor-panels--with-console">
+        <Group
+          id="workspace-mobile-full"
+          orientation="vertical"
+          className="editor-panels__main"
+        >
+          <Panel id="editor" defaultSize={33} minSize={20}>
+            <div className="editor-panel editor-panel--editor">
+              <CodeEditor
+                activeTab={activeTab}
+                files={files}
+                visibleTabs={visibleTabs}
+                onTabChange={onTabChange}
+                onChange={onFileChange}
+              />
+            </div>
+          </Panel>
+          <PanelResizeHandle direction="vertical" id="split-editor-preview-mobile" />
+          <Panel id="preview" defaultSize={33} minSize={20}>
+            <div className="editor-panel editor-panel--preview">
+              <LivePreview files={previewFiles} refreshKey={previewRefreshKey} />
+            </div>
+          </Panel>
+          {isConsoleOpen && (
+            <>
+              <PanelResizeHandle direction="vertical" id="split-preview-console-mobile" />
+              <Panel id="console" defaultSize={34} minSize={20}>
+                <div className="editor-panel editor-panel--console">
+                  <ResultConsole message={consoleMessage} />
+                </div>
+              </Panel>
+            </>
+          )}
+          <PanelResizeHandle direction="vertical" id="split-bottom-spacer-mobile" />
+          <Panel id="bottom-spacer" defaultSize={0} minSize={0} maxSize={50}>
+            <div className="editor-panel editor-panel--spacer" />
+          </Panel>
+        </Group>
+      </div>
+    );
+  }
+
+  // Desktop layout: console at bottom
   return (
     <div className="editor-panels editor-panels--with-console">
       <div className="editor-panels__main-wrap">{mainRow}</div>
