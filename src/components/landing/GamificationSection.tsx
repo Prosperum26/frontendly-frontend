@@ -23,10 +23,10 @@ export const GamificationSection: React.FC = () => {
         {/* Section Header */}
         <div className="text-center mb-16">
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 dark:text-white mb-4">
-            Learn While You Play
+            Complete Gamification System
           </h2>
           <p className="text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">
-            Stay motivated with XP, levels, streaks, and achievements as you master React
+            Stay motivated with XP, levels, streaks, badges, and leaderboards as you master React
           </p>
         </div>
 
@@ -63,10 +63,10 @@ export const GamificationSection: React.FC = () => {
           </div>
           <div className="relative z-10 text-center">
             <h3 className="text-2xl md:text-3xl font-black mb-3">
-              Compete & Climb the Ranks
+              Complete Motivation System
             </h3>
             <p className="text-blue-100 text-lg max-w-2xl mx-auto">
-              Test your skills with coding challenges, climb the leaderboards, and earn exclusive rewards
+              XP, levels, daily streaks, achievement badges, and competitive leaderboards — everything to keep you engaged and progressing
             </p>
           </div>
         </div>

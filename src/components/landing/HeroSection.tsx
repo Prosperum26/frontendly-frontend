@@ -65,8 +65,8 @@ export const HeroSection: React.FC = () => {
 
             {/* Subtitle */}
             <p className="text-lg sm:text-xl md:text-2xl text-slate-600 dark:text-slate-300 max-w-2xl mb-8 leading-relaxed animate-fade-in-up delay-200 hover:-translate-y-1 transition-transform duration-300 cursor-default">
-              Interactive lessons, hands-on coding exercises, and instant feedback — 
-              no setup required. Go from beginner to job-ready developer.
+              AI-powered tutor that understands your context, 20 diverse challenges across 3 difficulty levels, 
+              and a free sandbox for experimentation — no setup required.
             </p>
 
             {/* CTAs */}
@@ -93,15 +93,15 @@ export const HeroSection: React.FC = () => {
             <div className="flex flex-wrap items-center gap-4 text-sm text-slate-500 dark:text-slate-400 animate-fade-in-up delay-400">
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-                <span>No credit card required</span>
+                <span>AI-powered tutor</span>
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-                <span>40 hours of content</span>
+                <span>20 coding challenges</span>
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-                <span>12 hands-on exercises</span>
+                <span>Free sandbox</span>
               </div>
             </div>
           </div>
@@ -119,9 +119,9 @@ export const HeroSection: React.FC = () => {
         {/* Preview cards */}
         <div className="mt-20 grid grid-cols-1 md:grid-cols-3 gap-6 animate-fade-in-up delay-500 cursor-pointer">
           {[
-            { title: "Interactive Lessons", desc: "Learn by doing with real code", icon: "BookOpen" },
-            { title: "Instant Feedback", desc: "Get real-time validation", icon: "Zap" },
-            { title: "Track Progress", desc: "XP, levels, and achievements", icon: "Trophy" }
+            { title: "AI Tutor", desc: "Context-aware personalized guidance", icon: "BookOpen" },
+            { title: "20 Challenges", desc: "Easy, medium, hard difficulty levels", icon: "Zap" },
+            { title: "Free Sandbox", desc: "Experiment with code freely", icon: "Trophy" }
           ].map((item, i) => (
             <div
               key={i}

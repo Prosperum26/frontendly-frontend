@@ -5,6 +5,7 @@ export const curriculumData = {
   totalLessons: 12,
   totalExercises: 12,
   totalTopics: 20, // entrance test questions
+  totalChallenges: 20, // coding challenges with 3 difficulty levels
   estimatedHours: 40, // estimated learning time
   
   milestones: [
@@ -141,14 +142,19 @@ export const gamificationFeatures = [
 
 export const whyLearnHere = [
   {
-    title: "Structured Curriculum",
-    description: "Carefully designed learning path from basics to advanced React concepts",
+    title: "AI-Powered Tutor",
+    description: "Personalized AI tutor that understands your context and provides tailored guidance",
     icon: "BookOpen"
   },
   {
-    title: "Interactive Coding",
-    description: "Write code directly in the browser with live preview and instant feedback",
+    title: "20 Coding Challenges",
+    description: "Diverse challenges across 3 difficulty levels: easy, medium, and hard",
     icon: "Code2"
+  },
+  {
+    title: "Free Sandbox",
+    description: "Experiment freely with code in our interactive playground environment",
+    icon: "Terminal"
   },
   {
     title: "Instant Feedback",
@@ -156,14 +162,9 @@ export const whyLearnHere = [
     icon: "Zap"
   },
   {
-    title: "Visual Progress",
-    description: "Track your journey with XP, levels, badges, and detailed analytics",
+    title: "Complete Gamification",
+    description: "XP, levels, streaks, badges, and leaderboards to keep you motivated",
     icon: "Trophy"
-  },
-  {
-    title: "Practical Projects",
-    description: "Build real projects while learning, not just theoretical exercises",
-    icon: "FolderOpen"
   },
   {
     title: "React-Focused",

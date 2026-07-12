@@ -2,7 +2,7 @@ import React from 'react';
 import { whyLearnHere } from '../../data/curriculum-data';
 import { 
   BookOpen, Code2, Zap, Trophy, FolderOpen, 
-  Cpu, Sparkles, Heart
+  Cpu, Sparkles, Heart, Terminal
 } from 'lucide-react';
 
 const iconMap: Record<string, React.ElementType> = {
@@ -13,7 +13,8 @@ const iconMap: Record<string, React.ElementType> = {
   FolderOpen,
   Cpu,
   Sparkles,
-  Heart
+  Heart,
+  Terminal
 };
 
 export const WhyLearnHere: React.FC = () => {
@@ -53,29 +54,6 @@ export const WhyLearnHere: React.FC = () => {
           })}
         </div>
 
-        {/* Bottom Banner */}
-        <div className="mt-16 text-center bg-gradient-to-r from-gray-50 to-cyan-50 dark:from-slate-800 dark:to-slate-800 rounded-3xl p-8 md:p-12 border border-slate-200 dark:border-slate-700">
-          <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">
-            Ready to Transform Your Career?
-          </h3>
-          <p className="text-slate-600 dark:text-slate-300 mb-6 max-w-xl mx-auto">
-            Join thousands of developers who have accelerated their React journey with FrontEndly
-          </p>
-          <div className="flex flex-wrap justify-center gap-4">
-            <div className="flex items-center gap-2 text-sm font-semibold text-heading dark:text-slate-100">
-              <div className="w-3 h-3 bg-green-500 rounded-full" />
-              <span>No credit card required</span>
-            </div>
-            <div className="flex items-center gap-2 text-sm font-semibold text-heading dark:text-slate-100">
-              <div className="w-3 h-3 bg-green-500 rounded-full" />
-              <span>Start for free</span>
-            </div>
-            <div className="flex items-center gap-2 text-sm font-semibold text-heading dark:text-slate-100">
-              <div className="w-3 h-3 bg-green-500 rounded-full" />
-              <span>Cancel anytime</span>
-            </div>
-          </div>
-        </div>
       </div>
     </section>
   );
