@@ -17,6 +17,7 @@ interface RoadmapState {
     milestones: Milestone[];
     userProgress?: UserProgress | null;
   }) => void;
+  reset: () => void;
   getMilestoneById: (id: string) => Milestone | undefined;
   getMilestoneDetailById: (id: string) => MilestoneDetail | undefined;
   getNextLessonId: (
@@ -37,6 +38,14 @@ export const useRoadmapStore = create<RoadmapState>((set, get) => ({
       skillTitle,
       milestones,
       userProgress: userProgress ?? null,
+    }),
+
+  reset: () =>
+    set({
+      skillId: DEFAULT_SKILL_ID,
+      skillTitle: "",
+      milestones: [],
+      userProgress: null,
     }),
 
   getMilestoneById: (id) => get().milestones.find((m) => m.id === id),

@@ -2,6 +2,8 @@
 import { create } from 'zustand';
 import type { User } from '../features/auth/types/auth.types';
 import { normalizeUser } from '../features/auth/utils/normalizeUser';
+import { useRoadmapStore } from '../features/learning-path/stores/roadmapStore';
+import { clearPersonalizedPath } from '../features/entrance-test/utils/personalized-path.storage';
 
 interface AuthState {
   isAuthenticated: boolean;
@@ -32,6 +34,10 @@ export const useAuthStore = create<AuthState>((set) => ({
     localStorage.removeItem('refreshToken');
     // Clear auth state
     set({ isAuthenticated: false, currentUser: null, isAuthChecking: false, previousRoute: null });
+    // Clear learning progress
+    useRoadmapStore.getState().reset();
+    // Clear personalized study plan
+    clearPersonalizedPath();
   },
 
   setAuthChecking: (isChecking) => set({ isAuthChecking: isChecking }),
