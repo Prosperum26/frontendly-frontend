@@ -43,9 +43,103 @@ export const TheoryPage: React.FC = () => {
   const [isUnlocking, setIsUnlocking] = useState(false);
   const [unlockMessage, setUnlockMessage] = useState<string | null>(null);
   const [scrollProgress, setScrollProgress] = useState(0);
+  const [copiedCodeId, setCopiedCodeId] = useState<string | null>(null);
   const contentRef = useRef<HTMLDivElement>(null);
 
   const stageId = lessonId ?? "";
+
+  const getSectionIconType = (heading: string) => {
+    const lowerHeading = heading.toLowerCase();
+    if (lowerHeading.includes('code') || lowerHeading.includes('jsx') || lowerHeading.includes('render') || lowerHeading.includes('syntax')) {
+      return 'code';
+    }
+    if (lowerHeading.includes('component') || lowerHeading.includes('tree') || lowerHeading.includes('structure')) {
+      return 'component';
+    }
+    if (lowerHeading.includes('state') || lowerHeading.includes('hook') || lowerHeading.includes('use')) {
+      return 'state';
+    }
+    if (lowerHeading.includes('prop') || lowerHeading.includes('attribute') || lowerHeading.includes('pass')) {
+      return 'prop';
+    }
+    if (lowerHeading.includes('dom') || lowerHeading.includes('virtual') || lowerHeading.includes('browser')) {
+      return 'dom';
+    }
+    if (lowerHeading.includes('style') || lowerHeading.includes('css') || lowerHeading.includes('module')) {
+      return 'style';
+    }
+    if (lowerHeading.includes('if') || lowerHeading.includes('conditional') || lowerHeading.includes('expression')) {
+      return 'conditional';
+    }
+    if (lowerHeading.includes('tip') || lowerHeading.includes('pro') || lowerHeading.includes('note')) {
+      return 'tip';
+    }
+    return 'default';
+  };
+
+  const addIconsToContent = (html: string) => {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
+    const headings = doc.querySelectorAll('h2, h3');
+    
+    headings.forEach((heading) => {
+      const text = heading.textContent || '';
+      const iconType = getSectionIconType(text);
+      heading.setAttribute('data-icon-type', iconType);
+      
+      // Generate slug for anchor link
+      const slug = text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+      heading.id = slug;
+      
+      // Add anchor link button
+      const anchorButton = document.createElement('button');
+      anchorButton.className = 'tp-anchor-link';
+      anchorButton.setAttribute('data-anchor', slug);
+      anchorButton.innerHTML = '#';
+      anchorButton.onclick = (e) => {
+        e.preventDefault();
+        const url = new URL(window.location.href);
+        url.hash = slug;
+        navigator.clipboard.writeText(url.toString());
+        // Brief feedback
+        anchorButton.textContent = 'Link copied!';
+        setTimeout(() => {
+          anchorButton.textContent = '#';
+        }, 1500);
+      };
+      heading.appendChild(anchorButton);
+    });
+
+    // Add copy buttons to code blocks
+    const codeContainers = doc.querySelectorAll('.theory-code-container');
+    codeContainers.forEach((container, index) => {
+      const codeId = `code-${index}`;
+      container.setAttribute('data-code-id', codeId);
+      
+      const header = container.querySelector('.theory-code-filename');
+      if (header) {
+        const copyButton = document.createElement('button');
+        copyButton.className = 'tp-code-copy-btn';
+        copyButton.setAttribute('data-code-id', codeId);
+        copyButton.innerHTML = copiedCodeId === codeId ? 'Copied!' : 'Copy';
+        if (copiedCodeId === codeId) {
+          copyButton.classList.add('copied');
+        }
+        copyButton.onclick = (e) => {
+          e.preventDefault();
+          const codeBlock = container.querySelector('code');
+          if (codeBlock) {
+            navigator.clipboard.writeText(codeBlock.textContent || '');
+            setCopiedCodeId(codeId);
+            setTimeout(() => setCopiedCodeId(null), 2000);
+          }
+        };
+        header.appendChild(copyButton);
+      }
+    });
+    
+    return doc.body.innerHTML;
+  };
 
   useEffect(() => {
     if (milestones.length === 0) {
@@ -317,7 +411,7 @@ export const TheoryPage: React.FC = () => {
                   <div
                     className="tp-theory-contentHtml"
                     dangerouslySetInnerHTML={{
-                      __html: DOMPurify.sanitize(theoryData.contentHtml),
+                      __html: DOMPurify.sanitize(addIconsToContent(theoryData.contentHtml)),
                     }}
                     style={{
                       lineHeight: "1.7",

@@ -729,6 +729,138 @@
   font-weight: 700;
   color: var(--color-heading);
   margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tp-theory-contentHtml h2::before,
+.tp-theory-contentHtml h3::before {
+  content: '';
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.tp-theory-contentHtml h2[data-icon-type="code"]::before,
+.tp-theory-contentHtml h3[data-icon-type="code"]::before {
+  content: '</>';
+  font-family: var(--font-jetbrains);
+  font-size: 12px;
+  color: var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(99, 102, 241, 0.1);
+  border-radius: 4px;
+}
+
+.tp-theory-contentHtml h2[data-icon-type="component"]::before,
+.tp-theory-contentHtml h3[data-icon-type="component"]::before {
+  content: '◇';
+  font-size: 16px;
+  color: var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tp-theory-contentHtml h2[data-icon-type="state"]::before,
+.tp-theory-contentHtml h3[data-icon-type="state"]::before {
+  content: '⚡';
+  font-size: 16px;
+  color: var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tp-theory-contentHtml h2[data-icon-type="prop"]::before,
+.tp-theory-contentHtml h3[data-icon-type="prop"]::before {
+  content: '⚙';
+  font-size: 16px;
+  color: var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tp-theory-contentHtml h2[data-icon-type="dom"]::before,
+.tp-theory-contentHtml h3[data-icon-type="dom"]::before {
+  content: '◉';
+  font-size: 16px;
+  color: var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tp-theory-contentHtml h2[data-icon-type="style"]::before,
+.tp-theory-contentHtml h3[data-icon-type="style"]::before {
+  content: '🎨';
+  font-size: 16px;
+  color: var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tp-theory-contentHtml h2[data-icon-type="conditional"]::before,
+.tp-theory-contentHtml h3[data-icon-type="conditional"]::before {
+  content: '❓';
+  font-size: 16px;
+  color: var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tp-theory-contentHtml h2[data-icon-type="tip"]::before,
+.tp-theory-contentHtml h3[data-icon-type="tip"]::before {
+  content: '💡';
+  font-size: 16px;
+  color: var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tp-theory-contentHtml h2[data-icon-type="default"]::before,
+.tp-theory-contentHtml h3[data-icon-type="default"]::before {
+  content: '📄';
+  font-size: 16px;
+  color: var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tp-theory-contentHtml h2 .tp-anchor-link,
+.tp-theory-contentHtml h3 .tp-anchor-link {
+  opacity: 0;
+  margin-left: auto;
+  padding: 4px 8px;
+  background: rgba(99, 102, 241, 0.1);
+  border: 1px solid rgba(99, 102, 241, 0.3);
+  border-radius: 4px;
+  color: var(--color-primary);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: var(--font-jetbrains);
+}
+
+.tp-theory-contentHtml h2:hover .tp-anchor-link,
+.tp-theory-contentHtml h3:hover .tp-anchor-link {
+  opacity: 1;
+}
+
+.tp-theory-contentHtml h2 .tp-anchor-link:hover,
+.tp-theory-contentHtml h3 .tp-anchor-link:hover {
+  background: rgba(99, 102, 241, 0.2);
+  border-color: rgba(99, 102, 241, 0.5);
 }
 
 .tp-theory-contentHtml .theory-code-container {
@@ -835,9 +967,10 @@
 }
 
 .tp-takeaway-item:hover {
-  background: rgba(255, 255, 255, 0.8);
+  background: rgba(99, 102, 241, 0.05);
   border-color: rgba(99, 102, 241, 0.3);
-  transform: translateX(4px);
+  border-left: 3px solid var(--color-primary);
+  transform: none;
 }
 
 .tp-takeaway-icon {
@@ -878,6 +1011,12 @@
   overflow: hidden;
   margin-top: 16px;
   box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.15);
+  border: 2px solid transparent;
+  transition: border-color 0.2s ease;
+}
+
+.tp-theory-contentHtml .theory-code-container:hover {
+  border-color: rgba(99, 102, 241, 0.5);
 }
 
 .tp-theory-contentHtml .theory-code-filename {
