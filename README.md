@@ -1,188 +1,195 @@
 # Frontendly Frontend
 
-React/Vite app cho nền tảng học frontend gamified: entrance test, personalized learning path, workspace editor, profile, leaderboard.
+**Deploy:** https://frontendly-frontend.vercel.app
 
-Backend repo: `../frontendly-backend`.
+Frontend của Frontendly — học React qua challenges, gamification, leaderboard.
 
-## Chạy local
+## Tech Stack
+
+- **React:** ^19.2.5
+- **Vite:** ^8.0.9
+- **TypeScript:** ~6.0.2
+- **Socket.IO Client:** ^4.8.3
+- **State Management:** Zustand ^5.0.10
+- **Styling:** Tailwind CSS ^4.2.2 (no CSS Modules)
+- **Routing:** React Router ^7.12.0
+- **Data Fetching:** TanStack Query ^5.90.12
+- **Code Editor:** Monaco Editor ^0.55.1
+- **Theme:** next-themes ^0.4.6
+- **Animations:** framer-motion ^12.40.0
+- **Icons:** lucide-react ^1.17.0
+
+## Environment Requirements
+
+- **Node Version:** Not specified in package.json
+- **Package Manager:** Yarn (yarn.lock present)
+
+## Installation
 
 ```bash
+git clone <repository-url>
+cd frontendly-frontend
 yarn install
-yarn dev
 ```
 
-App: `http://localhost:5173` · API: `http://localhost:3000/api/v1`
+## Environment Variables
 
-Backend cần chạy trước (`yarn seed` + `yarn start:dev`).
-
-## Env (`.env`)
+Required environment variables (create `.env` file):
 
 ```env
 VITE_API_URL=http://localhost:3000/api/v1
 VITE_SOCKET_URL=http://localhost:3000
-VITE_GOOGLE_CLIENT_ID=replace-with-google-client-id
+VITE_GOOGLE_CLIENT_ID=your-google-client-id
 ```
 
-## Scripts
+## Running the Project
 
 ```bash
 yarn dev       # Vite dev server
-yarn build     # tsc + vite build
+yarn build     # TypeScript build + Vite build
 yarn lint      # ESLint
-yarn preview   # preview production build
+yarn preview   # Preview production build
+yarn test      # Vitest tests
 ```
 
-## Trạng thái kiểm tra
-
-```
-yarn lint   ✅
-yarn build  ✅
-```
-
-## Tech stack
-
-React 19 · Vite 8 · TypeScript · React Router 7 · TanStack Query · Zustand · Tailwind CSS 4 · Monaco · next-themes · framer-motion
-
-## Routes
-
-| Route | Mô tả |
-|-------|--------|
-| `/` | Home / landing |
-| `/entrance-test` | Bài test đầu vào (20 câu) |
-| `/learning-path` | Roadmap + study plan |
-| `/learning-path/milestone/:id/lesson/:lessonId` | Theory |
-| `/workspace/:exerciseId` | Code editor |
-| `/challenge/lobby` | Challenge catalog |
-| `/profile` | Profile + gamification |
-| `/leaderboard` | Bảng xếp hạng |
-
-## Features
-
-### Entrance Test + Personalized Path
-
-1. User làm 20 câu → `POST /entrance-test/submit`
-2. Hiển thị score, level, study plan, lesson status (`auto_passed` / `required` / `locked`)
-3. Auth user: sync qua `POST /learning-content/sync-placement-test` (cấp XP)
-4. Guest: lưu path trong `localStorage` (`frontendly-personalized-path`)
-
-Files: `src/features/entrance-test/`, `src/pages/EntranceTestPage.tsx`
-
-### Learning Path
-
-- Roadmap từ `GET /roadmaps/:skillId` merge với personalized path
-- Study plan panel trên Learning Path page
-- Lesson icons: ✓ Mastered · ▶ Active · 🔒 Locked
-
-Files: `src/features/learning-path/`, `src/pages/LearningPathPage.tsx`
-
-### Gamification
-
-- SideBar + ProfilePage: XP, level, streak, badges từ `/users/me`, `/users/progress`
-- Entrance test: hiển thị XP earned khi auto-pass
-- Hook: `src/features/gamification/hooks/useGamificationProfile.ts`
-
-### Dark mode
-
-- Toggle: Header (Sun/Moon icon)
-- Provider: `next-themes` trong `App.tsx` (`storageKey: frontendly-theme`)
-- Design tokens: `src/index.css` — `--color-main-bg`, `--color-surface`, `--color-heading`, ...
-- Class `.dark` / `.light` trên `<html>`
-
-Tất cả page chính dùng CSS variables, không hardcode màu light-only.
-
-### Workspace Editor
-
-Monaco editor 4 file (html/css/js/jsx), submit tới `/exercises/:id/:userId/submit`.
-
-## Cấu trúc
+## Directory Structure
 
 ```text
 src/
-├── components/       # Button, Card, Header, Toast...
-├── features/
-│   ├── auth/
-│   ├── entrance-test/
-│   ├── learning-path/
-│   ├── editor/
-│   ├── gamification/
-│   ├── profile/
-│   └── challenge/
-├── pages/
-├── services/api.ts   # Axios client
-├── store/            # Zustand (auth, guest, roadmap)
-└── index.css         # Design tokens + dark mode
+├── App.tsx
+├── main.tsx
+├── index.css
+├── assets/              # Static assets (images, icons)
+├── components/          # Reusable UI components
+│   ├── AuthRequiredModal/
+│   ├── Avatar/
+│   ├── Badge/
+│   ├── Button/
+│   ├── Card/
+│   ├── Header/
+│   ├── Footer/
+│   ├── Input/
+│   ├── Modal/
+│   ├── Toast/
+│   ├── landing/         # Landing page components
+│   └── ...
+├── config/              # Environment configuration
+├── constants/           # Route constants
+├── data/                # Static data (curriculum)
+├── features/            # Feature-specific modules
+│   ├── ai-chat/         # AI tutoring feature
+│   ├── auth/            # Authentication
+│   ├── challenge/       # Challenge catalog
+│   ├── editor/          # Code workspace
+│   ├── entrance-test/   # Placement test
+│   ├── gamification/    # XP, badges, streak
+│   ├── leaderboard/     # Rankings
+│   ├── learning-path/   # Roadmap, theory, practice
+│   ├── profile/         # User profile
+│   └── sandbox/         # Free coding environment
+├── hooks/               # Custom React hooks
+├── layouts/             # Page layouts
+├── pages/               # Route pages
+├── services/            # API layer
+├── store/               # Zustand stores
+├── types/               # TypeScript types
+└── utils/               # Utility functions
 ```
 
-## Deploy — Vercel
+## Main Pages/Features
 
-### Bước 1: Import project
+| Page/Route | Description |
+|-------------|-------------|
+| `/` | Landing page with hero section, features, gamification preview |
+| `/entrance-test` | 20-question placement test for personalized learning path |
+| `/learning-path` | Roadmap with milestones, study plan, lesson progress |
+| `/learning-path/milestone/:milestoneId/lesson/:lessonId` | Theory content with enhanced reading experience |
+| `/workspace/:exerciseId` | Code editor with Monaco, 4-file support (html/css/js/jsx) |
+| `/challenge/lobby` | Challenge catalog with 20 exercises across 3 difficulty levels |
+| `/profile` | User profile with XP, badges, streak, activity heatmap |
+| `/leaderboard` | Global rankings with gamification stats |
+| `/sandbox` | Sandbox list for free code experimentation |
+| `/sandbox/:sandboxId` | Individual sandbox editor |
+| `/login` | Login page with email/password and Google OAuth |
+| `/register` | Registration page |
+| `/forgot-password` | Password reset request |
+| `/reset-password` | Password reset with token |
+| `/contact` | Contact page |
+| `/privacy` | Privacy policy |
+| `/terms` | Terms of service |
+| `/banned` | Banned user page |
+| `/404` | Not found page |
 
-1. [vercel.com](https://vercel.com) → **Add New Project** → import GitHub repo frontend
-2. Framework: **Vite**
-3. Build: `yarn build` · Output: `dist`
+## Coding Conventions
 
-### Bước 2: Environment Variables
+**ESLint Config:**
+- Extends: `js.configs.recommended`, `tseslint.configs.recommended`, `reactHooks`, `reactRefresh`
+- Files: `**/*.{ts,tsx}`
+- ECMA Version: 2020
+- Globals: browser environment
 
-| Variable | Production value |
-|----------|------------------|
-| `VITE_API_URL` | `https://<your-backend>.onrender.com/api/v1` |
-| `VITE_SOCKET_URL` | `https://<your-backend>.onrender.com` |
-| `VITE_GOOGLE_CLIENT_ID` | Google OAuth client ID |
+**Component/File Naming:**
+- Components: PascalCase (e.g., `UserProfile.tsx`, `TheoryPage.tsx`)
+- Utilities: camelCase (e.g., `editorHelpers.ts`, `storage.ts`)
+- Styles: kebab-case (e.g., `workspace.css`, `TheoryPage.css`)
+- Feature folders: kebab-case (e.g., `learning-path`, `entrance-test`)
 
-### Bước 3: Deploy
+**State Management:**
+- Zustand stores in `src/store/` directory
+- Stores: `auth.store.ts`, `guest.store.ts`, `roadmapStore.ts`
+- Pattern: `create()` with typed state and actions
 
-Vercel tự deploy mỗi push lên `main`. File `vercel.json` đã cấu hình SPA rewrite.
+## Backend Connection
 
-## CI/CD (GitHub Actions)
+**API Layer:** `src/services/api.ts`
 
-Workflow: `.github/workflows/ci.yml`
+**Configuration:**
+- Base URL: `ENV.API_URL` from `src/config/env.ts`
+- Timeout: 30 seconds
+- Default headers: `Content-Type: application/json`
 
-| Trigger | Jobs |
-|---------|------|
-| push/PR `main`, `develop` | `yarn lint` → `yarn build` |
+**Authentication:**
+- Token storage: `localStorage` (`accessToken`, `refreshToken`)
+- Request interceptor: Adds `Authorization: Bearer ${token}` header
+- Response interceptor: Handles 401 errors with automatic token refresh
+- Refresh flow: Queues requests during refresh, updates localStorage with new tokens
+- 403 handling: Redirects to `/banned` for banned users
 
-Vercel có thể kết nối GitHub để auto-deploy song song với CI.
+**Socket.IO:**
+- Connection URL: `ENV.SOCKET_URL` from environment
+- Used for real-time features (currently minimal: `hello` event in UserGateway)
 
-## Luồng deploy end-to-end
+## Testing
 
-```text
-Developer push main
-    │
-    ├─► GitHub Actions (backend): lint → build → Render deploy hook
-    │
-    ├─► GitHub Actions (frontend): lint → build
-    │
-    └─► Vercel: auto deploy frontend
-              │
-              ▼
-    User browser ──► Vercel (SPA) ──► Render API (NestJS + MongoDB)
-```
+**Test Setup:**
+- Framework: Vitest ^4.1.10
+- Testing Library: @testing-library/react ^16.3.2, @testing-library/jest-dom ^6.9.1
+- Test Environment: jsdom ^29.1.1
 
-**Checklist production:**
+**Test Files:**
+- `src/features/editor/utils/editorHelpers.test.ts` (1 test file found)
 
-1. MongoDB Atlas (hoặc Render MongoDB) → set `DB_URI` trên Render
-2. Render backend deploy + `yarn seed`
-3. Set `CORS_ORIGINS` = URL Vercel frontend
-4. Vercel frontend deploy + env vars
-5. Google OAuth: thêm redirect URIs cho cả local + production
+**Status:** Minimal test coverage — TODO: expand test suite
 
-## Trạng thái kiểm tra
+## Build & Deploy
 
-```
-yarn lint   ✅
-yarn build  ✅
-```
+**Platform:** Vercel (configured via `vercel.json`)
 
-## API phụ thuộc
+**Vercel Configuration:**
+- Rewrites: SPA routing (`/(.*)` → `/index.html`)
+- Headers: Cache control for assets (`/assets/*` → public, max-age=31536000, immutable)
 
-Chi tiết đầy đủ: xem `../frontendly-backend/README.md`.
+**Build Settings:**
+- Framework: Vite
+- Build Command: `yarn build`
+- Output Directory: `dist`
 
-Các endpoint frontend gọi trực tiếp:
+**Environment Variables (Production):**
+- `VITE_API_URL`: Backend API URL
+- `VITE_SOCKET_URL`: WebSocket URL
+- `VITE_GOOGLE_CLIENT_ID`: Google OAuth client ID
 
-- Auth: `/auth/*`
-- User: `/users/me`, `/users/progress`, `/users/badges`, `/users/activity`
-- Entrance: `/entrance-test/questions`, `/entrance-test/submit`
-- Learning: `/roadmaps/:skillId`, `/stages/:stageId/*`, `/learning-content/sync-placement-test`
-- Exercises: `/exercises/:id/:userId`, `/exercises/:id/:userId/submit`
-- Challenge: `/challenge/exercises`
-- Leaderboard: `/leaderboard`
+## Known Issues / Roadmap
+
+- Easter egg interactions (in progress)
+- Profile redesign (in progress)
