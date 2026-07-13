@@ -384,7 +384,7 @@ export const RegisterPage: React.FC = () => {
                 {isProgressComplete && (
                   <div className="animate-in fade-in duration-300">
                     <button
-                      onClick={() => navigate('/login')}
+                      onClick={() => navigate('/')}
                       className="w-full bg-blue-600 text-white font-bold py-3.5 rounded-lg hover:bg-blue-700 transition-colors shadow-md shadow-blue-600/20"
                     >
                       Continue

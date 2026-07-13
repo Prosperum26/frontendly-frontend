@@ -72,8 +72,43 @@ export const useAuth = () => {
     setLoading(true);
     try {
       const response = await authService.register(credentials);
-      addToast('Registration Successful', response.message || 'Your account has been created successfully. Please log in.', 'success');
-      navigate(ROUTES.LOGIN);
+      
+      // Store tokens in localStorage for API interceptor
+      localStorage.setItem('accessToken', response.accessToken);
+      localStorage.setItem('refreshToken', response.refreshToken);
+      
+      // Update user XP if daily check-in earned XP
+      let updatedUser = response.user;
+      if (response.dailyCheckIn?.checkedIn && updatedUser) {
+        updatedUser = {
+          ...updatedUser,
+          xp: (updatedUser.xp || 0) + response.dailyCheckIn.xpEarned,
+        };
+      }
+      
+      setAuth(true, updatedUser ?? null);
+
+      // Clear guest progress - users start fresh after registration
+      const { useGuestStore } = await import('../../../store/guest.store');
+      useGuestStore.getState().clearProgress();
+
+      addToast('Registration Successful', response.message || 'Your account has been created successfully.', 'success');
+
+      // Show daily check-in toast if applicable
+      const dailyCheckIn = response.dailyCheckIn;
+      if (dailyCheckIn?.checkedIn) {
+        setTimeout(() => {
+          addToast(
+            'Điểm danh thành công',
+            `Bạn đã nhận được ${dailyCheckIn.xpEarned} XP! Streak hiện tại: ${dailyCheckIn.currentStreak} ngày.`,
+            'xp'
+          );
+        }, 1600);
+      }
+      
+      setTimeout(() => {
+        navigate(ROUTES.HOME);
+      }, 1500);
     } catch {
       addToast('Registration Failed', 'Unable to create your account. Please try again.', 'error');
     } finally {
