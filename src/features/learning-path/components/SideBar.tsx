@@ -113,18 +113,13 @@ export const SideBar: React.FC<SideBarProps> = ({ className = "" }) => {
 
   const currentXp = progressData?.xp ?? 0;
   const maxXp = progressData?.xpToNextLevel ?? 0;
-  const xpPercentage = maxXp
-    ? Math.min(100, Math.max(0, Math.round((currentXp / maxXp) * 100)))
-    : 0;
+  const xpPercentage = progressData?.progressPercent ?? 0;
 
   const streakText =
     typeof progressData?.streak === "number"
       ? `${progressData.streak} Days`
       : (progressData?.streak ?? "-");
-  const rankText =
-    typeof progressData?.rank === "number"
-      ? `Top ${progressData.rank}%`
-      : (progressData?.rank ?? "-");
+  const rankText = progressData?.rank ?? "-";
 
   return (
     <aside className={`sidebar ${className}`}>
