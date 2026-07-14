@@ -166,11 +166,6 @@ src/
 - Testing Library: @testing-library/react ^16.3.2, @testing-library/jest-dom ^6.9.1
 - Test Environment: jsdom ^29.1.1
 
-**Test Files:**
-- `src/features/editor/utils/editorHelpers.test.ts` (1 test file found)
-
-**Status:** Minimal test coverage — TODO: expand test suite
-
 ## Build & Deploy
 
 **Platform:** Vercel (configured via `vercel.json`)
@@ -189,7 +184,3 @@ src/
 - `VITE_SOCKET_URL`: WebSocket URL
 - `VITE_GOOGLE_CLIENT_ID`: Google OAuth client ID
 
-## Known Issues / Roadmap
-
-- Easter egg interactions (in progress)
-- Profile redesign (in progress)
