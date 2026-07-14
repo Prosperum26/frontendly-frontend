@@ -53,8 +53,8 @@ export const ProfilePage: React.FC = () => {
         setProfileData(profile);
         setBadges(Array.isArray(badgeList) ? badgeList : []);
         setActivities(Array.isArray(activityList) ? activityList : []);
-      } catch (error) {
-        console.error('Failed to fetch profile data:', error);
+      } catch {
+        // Silent error handling
       } finally {
         setIsLoading(false);
       }
@@ -68,8 +68,8 @@ export const ProfilePage: React.FC = () => {
       await authService.logout();
       logout();
       navigate('/login');
-    } catch (error) {
-      console.error('Logout failed:', error);
+    } catch {
+      // Silent error handling
     }
   };
 

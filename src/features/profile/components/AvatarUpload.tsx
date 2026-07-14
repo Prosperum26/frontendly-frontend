@@ -68,7 +68,6 @@ export const AvatarUpload: React.FC<AvatarUploadProps> = ({ currentAvatarUrl, le
       setSelectedFile(null);
       onSuccess(avatarUrl);
     } catch (error: unknown) {
-      console.error('Upload error:', error);
       const errorMessage = (error as { response?: { data?: { message?: string } } })?.response?.data?.message || (error as Error).message || 'Failed to upload avatar';
       alert(`Upload failed: ${errorMessage}`);
     } finally {

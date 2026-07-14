@@ -23,13 +23,7 @@ export const ForgotPasswordPage: React.FC = () => {
       setIsSubmitted(true);
       addToast('Email Sent', 'Password reset link has been sent to your email.', 'success');
     } catch (error) {
-      console.error('Lỗi khi gửi email:', error);
       const err = error as { response?: { data?: { message?: string }; status?: number; statusText?: string } };
-      console.error('Error details:', {
-        status: err.response?.status,
-        statusText: err.response?.statusText,
-        data: err.response?.data,
-      });
       addToast('Send Failed', err.response?.data?.message || `Failed to send reset email (Status: ${err.response?.status || 'Unknown'}). Please try again.`, 'error');
     } finally {
       setIsLoading(false);
